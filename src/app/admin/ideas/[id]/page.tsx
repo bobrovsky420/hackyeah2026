@@ -30,7 +30,9 @@ export default async function AdminIdeaPage({ params, searchParams }: PageProps<
   return (
     <AdminShell session={session} current="ideas" title={idea.title} saved={wasSaved(query)}>
       <p>
-        <Link href="/rops/pomysly">{t("admin.ideas.back")}</Link> · <Link href={`/pomysl/${idea.id}`}>{t("admin.ideas.public")}</Link>
+        <Link href="/rops/pomysly">{t("admin.ideas.back")}</Link>
+        {/* The demonstration data has no public card. */}
+        {idea.demo ? ` · ${t("admin.demo")}` : <> · <Link href={`/pomysl/${idea.id}`}>{t("admin.ideas.public")}</Link></>}
       </p>
       <dl className="grid gap-x-6 gap-y-2 @xl:grid-cols-[max-content_minmax(0,1fr)]">
         <dt className="font-bold">{t("admin.ideas.submitted")}</dt>

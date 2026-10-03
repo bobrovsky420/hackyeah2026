@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { isSector, sectorCodes, sectorLabel, targetGroupLabel } from "@/lib/labels";
 import { repository } from "@/server/db";
+import { isReal } from "@/server/db/repository";
 
 export const metadata: Metadata = { title: t("talk.board.title") };
 
@@ -21,7 +22,7 @@ export default async function PartnershipsPage({ searchParams }: PageProps<"/par
   const query = await searchParams;
   const sector = isSector(query.sektor) ? (query.sektor as Sector) : null;
   const posts = (await repository().listPosts({ moderation: "zatwierdzone" })).filter(
-    (post) => !sector || post.sector === sector || post.seeking.includes(sector),
+    (post) => isReal(post) && (!sector || post.sector === sector || post.seeking.includes(sector)),
   );
 
   return (

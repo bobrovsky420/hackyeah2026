@@ -535,3 +535,24 @@ test("module I: a route shows a similar need of the bank, approved and with cons
   await expect(cases.getByText("Temat naboru")).toBeVisible();
   await expect(cases.getByRole("link", { name: "Kapsuła czasu - recepta na samotność" })).toBeVisible();
 });
+
+test("module II: a group of the questions trend opens its questions, and the date narrows them", async ({ page, request }) => {
+  const text = "Cudzoziemcy w naszej gminie nie mogą znaleźć pracy, szukamy wsparcia (lista pytań e2e).";
+  const asked = await request.post("/api/routes", { data: { problem_text: text, target_groups: ["cudzoziemcy", "rynek-pracy"] } });
+  expect(asked.ok()).toBe(true);
+
+  await signIn(page);
+  await page.goto("/rops/trendy");
+  await expect(page.getByRole("heading", { name: "Pytania według grup" })).toBeVisible();
+  // One question about two groups counts in both.
+  await expect(page.getByRole("link", { name: "Osoby szukające pracy" })).toBeVisible();
+  await page.getByRole("link", { name: "Cudzoziemcy" }).click();
+  await page.waitForURL(/\/rops\/trendy\/pytania\?grupa=cudzoziemcy/);
+  await expect(page.getByRole("combobox", { name: "Grupa" })).toHaveValue("cudzoziemcy");
+  await expect(page.getByText(text)).toBeVisible();
+
+  await page.getByLabel("Do dnia").fill("2020-01-31");
+  await page.getByRole("button", { name: "Pokaż" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Znalezione pytania: 0" })).toBeVisible();
+  await expect(page.getByText(text)).toHaveCount(0);
+});
