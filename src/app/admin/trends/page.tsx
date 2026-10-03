@@ -1,29 +1,24 @@
+import Link from "next/link";
 import { AdminLogin, gate } from "@/components/admin/admin-gate";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { BarTable } from "@/components/admin/bar-table";
 import { getInnovation } from "@/lib/catalogue";
-import type { IdeaStage, Route } from "@/lib/contracts";
+import type { IdeaStage } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
-import { t, type MessageKey } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
 import { ideaStageLabel, isIdeaStage, targetGroupLabel } from "@/lib/labels";
-import { trends } from "@/server/admin/data";
+import { NO_GROUP, trends } from "@/server/admin/data";
+import { routeModeLabel } from "@/server/admin/labels";
 
 export const metadata = { title: t("admin.trends.title") };
 
-const groupLabel = (code: string) => (code === "bez-grupy" ? t("admin.trends.noGroup") : targetGroupLabel(code));
-const MODE_KEYS: Record<Route["mode"], MessageKey> = {
-  route: "admin.trends.mode.route",
-  partial: "admin.trends.mode.partial",
-  none: "admin.trends.mode.none",
-  redirected: "admin.trends.mode.redirected",
-  declined: "admin.trends.mode.declined",
-  off_topic: "admin.trends.mode.off_topic",
-};
+const groupLabel = (code: string) => (code === NO_GROUP ? t("admin.trends.noGroup") : targetGroupLabel(code));
 
 /**
  * Module II, the part only the administrator sees: the needs gathered by
  * the tool, aggregated by area, place and week, with the ideas and the
  * evaluations beside them, so ROPS can set the topics of the next call.
+ * The questions by group lead to the questions themselves.
  */
 export default async function AdminTrendsPage() {
   const session = await gate();
@@ -34,6 +29,22 @@ export default async function AdminTrendsPage() {
   return (
     <AdminShell session={session} current="trends" title={t("admin.trends.title")} lead={t("admin.trends.lead")}>
       <div className="grid gap-10 @4xl:grid-cols-2">
+        <div className="grid content-start gap-2">
+          <BarTable
+            caption={t("admin.trends.questionsByGroup")}
+            keyHeader={t("admin.trends.group")}
+            rows={data.questionsByGroup.map((row) => ({
+              label: groupLabel(row.key),
+              count: row.count,
+              href: `/rops/trendy/pytania?grupa=${encodeURIComponent(row.key)}`,
+            }))}
+            empty={empty}
+          />
+          <p className="text-muted-foreground">
+            {t("admin.trends.questionsNote", { count: data.totals.questions })}{" "}
+            <Link href="/rops/trendy/pytania">{t("admin.trends.allQuestions")}</Link>
+          </p>
+        </div>
         <BarTable
           caption={t("admin.trends.needsByGroup")}
           keyHeader={t("admin.trends.group")}
@@ -67,7 +78,7 @@ export default async function AdminTrendsPage() {
         <BarTable
           caption={t("admin.trends.routesByMode")}
           keyHeader={t("admin.trends.mode")}
-          rows={data.routesByMode.map((row) => ({ label: t(MODE_KEYS[row.key as Route["mode"]] ?? "admin.trends.mode.route"), count: row.count }))}
+          rows={data.routesByMode.map((row) => ({ label: routeModeLabel(row.key), count: row.count }))}
           empty={empty}
         />
         <BarTable

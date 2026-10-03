@@ -41,6 +41,7 @@ export const PAGE_ROUTES: readonly { folder: string; url: string }[] = [
   { folder: "/admin/readiness", url: "/rops/gotowosc" },
   { folder: "/admin/reports", url: "/rops/zgloszenia" },
   { folder: "/admin/trends", url: "/rops/trendy" },
+  { folder: "/admin/trends/questions", url: "/rops/trendy/pytania" },
   { folder: "/admin/knowledge", url: "/rops/wiedza" },
   { folder: "/admin/knowledge/:id", url: "/rops/wiedza/:id" },
   { folder: "/admin/innovations/:id", url: "/rops/innowacje/:id" },

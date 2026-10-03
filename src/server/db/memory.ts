@@ -2,6 +2,7 @@ import type { ContactRequest, ContentReport, Evaluation, Feedback, Idea, Innovat
 import { exampleIdeas, exampleMentors, exampleNeeds, examplePosts, exampleReadiness, exampleThreads } from "./examples";
 import {
   SCREENING_LOG_RETENTION_MS,
+  questionGroups,
   storableRoute,
   type Counters,
   type PlaceFilter,
@@ -114,6 +115,7 @@ function routeFacts(route: Route): RouteFacts {
     latency_ms: route.engine.latency_ms,
     cached: route.engine.cached,
     solution_ids: route.solutions.map((solution) => solution.innovation_id),
+    target_groups: [...questionGroups(route)],
   };
 }
 
@@ -147,6 +149,9 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
     },
     async listRouteFacts() {
       return [...state.routes.values()].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).map(routeFacts);
+    },
+    async listRoutes() {
+      return [...state.routes.values()].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).map(copy);
     },
 
     async addNeed(entry) {

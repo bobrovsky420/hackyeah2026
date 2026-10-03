@@ -1,6 +1,8 @@
 import { catalogue } from "@/lib/catalogue";
-import type { ContactRequest, Evaluation, Idea, Need, Readiness } from "@/lib/contracts";
+import type { ContactRequest, Evaluation, Idea, Need, Readiness, Route } from "@/lib/contracts";
+import { warsawDay } from "@/lib/dates";
 import { repository, type Repository } from "@/server/db";
+import { questionGroups } from "@/server/db/repository";
 import { waitsForRops } from "@/server/threads/access";
 
 /*
@@ -91,7 +93,17 @@ export function weekStart(iso: string): string {
   return day.toISOString().slice(0, 10);
 }
 
+/** The key of the items without a target group in the group trends and the questions filter. */
+export const NO_GROUP = "bez-grupy";
+
+const groupsOf = (groups: string[]) => (groups.length > 0 ? groups : [NO_GROUP]);
+
+/** The routes that answer a question about a need; a declined text or another purpose asks for nothing. */
+const isQuestion = (mode: Route["mode"]) => mode !== "declined" && mode !== "off_topic";
+
 export interface Trends {
+  /** The questions asked of the route, by the target groups they are about; a question counts in each of its groups. */
+  questionsByGroup: Tally[];
   needsByGroup: Tally[];
   needsByPowiat: Tally[];
   needsByWeek: Tally[];
@@ -102,7 +114,7 @@ export interface Trends {
   topRecommended: Tally[];
   /** Innovation ids with their number of ratings and average, most rated first. */
   rated: { id: string; ratings: number; average: number; testers: number }[];
-  totals: { needs: number; ideas: number; evaluations: number; routes: number; contacts: number };
+  totals: { needs: number; ideas: number; evaluations: number; routes: number; contacts: number; questions: number };
 }
 
 const WEEKS = 12;
@@ -118,7 +130,7 @@ export async function trends(repo: Repository = repository()): Promise<Trends> {
     repo.listContacts(),
   ]);
   const gminy = catalogue().gminaByTerc;
-  const groupsOf = (groups: string[]) => (groups.length > 0 ? groups : ["bez-grupy"]);
+  const asked = routes.filter((route) => isQuestion(route.mode));
 
   const weeks = tally(needs.map((need) => weekStart(need.created_at))).sort((a, b) => a.key.localeCompare(b.key));
   const counted = evaluations.filter((item) => item.moderation.status !== "odrzucone");
@@ -135,6 +147,7 @@ export async function trends(repo: Repository = repository()): Promise<Trends> {
   });
 
   return {
+    questionsByGroup: tally(asked.flatMap((route) => groupsOf(route.target_groups))),
     needsByGroup: tally(needs.flatMap((need) => groupsOf(need.target_groups))),
     needsByPowiat: tally(needs.map((need) => gminy.get(need.place_terc ?? "")?.powiat ?? "bez-miejsca")).slice(0, TOP),
     needsByWeek: weeks.slice(-WEEKS),
@@ -143,8 +156,30 @@ export async function trends(repo: Repository = repository()): Promise<Trends> {
     routesByMode: tally(routes.map((route) => route.mode)),
     topRecommended: tally(routes.flatMap((route) => route.solution_ids)).slice(0, TOP),
     rated: rated.sort((a, b) => b.ratings + b.testers - (a.ratings + a.testers) || b.average - a.average).slice(0, TOP),
-    totals: { needs: needs.length, ideas: ideas.length, evaluations: counted.length, routes: routes.length, contacts: contacts.length },
+    totals: { needs: needs.length, ideas: ideas.length, evaluations: counted.length, routes: routes.length, contacts: contacts.length, questions: asked.length },
   };
+}
+
+export interface QuestionFilter {
+  /** A target group code, or NO_GROUP for the questions without one. */
+  group?: string;
+  /** First and last day, YYYY-MM-DD in Polish time, both included. */
+  from?: string;
+  to?: string;
+}
+
+/** The questions behind questionsByGroup, newest first, narrowed to a group and a date range. */
+export async function questions(filter: QuestionFilter = {}, repo: Repository = repository()): Promise<Route[]> {
+  const routes = await repo.listRoutes();
+  return routes.filter((route) => {
+    const day = warsawDay(route.created_at);
+    return (
+      isQuestion(route.mode) &&
+      (!filter.group || groupsOf(questionGroups(route)).includes(filter.group)) &&
+      (!filter.from || day >= filter.from) &&
+      (!filter.to || day <= filter.to)
+    );
+  });
 }
 
 // --------------------------------------------------------- CSV (FR-9.2)
