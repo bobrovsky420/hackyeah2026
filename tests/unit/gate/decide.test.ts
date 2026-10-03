@@ -82,6 +82,19 @@ describe("rule 4: crisis and individual case", () => {
 });
 
 describe("rule 5: harm", () => {
+  it("never declines a text about child abuse or sexual violence: it goes to human help (E.5)", () => {
+    // R02: "Moja sąsiadka … krzyczy na niego i go bije" read once by the live model as harm.
+    const report = decide(input({ model: model("harm", 0.9, { topics: ["child_abuse", "violence"] }) }));
+    expect(report).toMatchObject({ outcome: "redirected", crisis_banner: false });
+    expect(report.rules_fired).toEqual([`model:harm>=${DECLINE_MIN_CONFIDENCE}`, "protective:child_abuse"]);
+    const lexicon = { crisis: [], community: [{ topic: "sexual_violence" as SensitiveTopic, entry: "molestuje" }] };
+    expect(decide(input({ lexicon, model: model("harm", 0.9) })).outcome).toBe("redirected");
+  });
+
+  it("still declines harm whose only sensitive topic is violence, as an expulsion by force", () => {
+    expect(decide(input({ model: model("harm", 0.9, { topics: ["violence"] }) })).outcome).toBe("declined");
+  });
+
   it("declines at the threshold and routes just below it, without a banner", () => {
     expect(decide(input({ model: model("harm", DECLINE_MIN_CONFIDENCE) })).outcome).toBe("declined");
     expect(decide(input({ model: model("harm", below(DECLINE_MIN_CONFIDENCE)) }))).toMatchObject({ outcome: "need", crisis_banner: false });
@@ -136,6 +149,7 @@ describe("a message in an ongoing conversation (module V)", () => {
     const lexicon = { crisis: [{ topic: "suicide" as SensitiveTopic, entry: "nie$ chce$ ~ zyc$" }], community: [] };
     expect(decide(message({ lexicon, model: null })).outcome).toBe("redirected");
     expect(decide(message({ model: model("harm", DECLINE_MIN_CONFIDENCE) })).outcome).toBe("declined");
+    expect(decide(message({ model: model("harm", DECLINE_MIN_CONFIDENCE, { topics: ["child_abuse"] }) })).outcome).toBe("redirected");
   });
 
   it("does not redirect an individual case: a person at ROPS reads the conversation", () => {
