@@ -1626,7 +1626,7 @@ change to a prompt.
 | `node scripts/build-data-types.mjs [--check]` | Generates `src/lib/data/schema-types.ts` from `schemas/*.schema.json` (json-schema-to-typescript through npx); `--check` type-checks every file present in `data/` against `src/lib/data/types.ts` with tsc (the contract is `data/README.md`) |
 | `.venv/Scripts/python scripts/embedding-service.py` | Local HTTP service the app calls to embed a need (FR-3.7) |
 | `.venv/Scripts/python scripts/embedding-probe.py <model> ...` | The self-retrieval probe of embedding models on the built records (model-evaluation.md section 7); Ollama models by name, sentence-transformers models as `st:<id>` |
-| `pnpm eval [--provider anthropic|openai-compatible|replay]` | Runs the test problems, writes `reports/eval-<timestamp>.md` |
+| `pnpm eval [--provider anthropic|openai-compatible|replay]` | Runs the test problems, writes `.local/reports/eval-<timestamp>.md` |
 | `pnpm test`, `pnpm test:e2e`, `pnpm a11y`, `pnpm screenshots` | Quality gates |
 | `pnpm cache:warm` | Pre-generates and caches the routes of the test problems and the demo path |
 | `.venv/Scripts/python scripts/llm-probe.py [--model ...] [--reps 2] [--max-tokens N] [--reasoning-effort low] [--out ...]` | The bounded feasibility probe of a model on the Hugging Face router (9.3): screening and shortlist cases, JSON validity, latency, tokens; ad-hoc results stay out of git, runs worth keeping are copied into `docs/model-evaluation/` with date, model and host in the name and a row in `docs/model-evaluation.md` |
