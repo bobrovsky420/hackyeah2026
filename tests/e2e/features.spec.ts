@@ -5,7 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
  * redaction and crisis banner, the quick exit, the clarification, the rate
  * limit, the path selection, the recompute, the content report, the MIIS
  * attribution, the accessibility statement, the register card, the map
- * table and the idea card of module III.
+ * table, the idea card of module III and the tester of module IV.
  */
 
 const problem = (page: Page) => page.getByLabel("Co się dzieje i kogo dotyczy?");
@@ -220,4 +220,44 @@ test("module III: a crisis text in an idea card shows human help, and nothing is
   await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
   await expect(page.getByRole("link", { name: /^112/ })).toHaveAttribute("href", "tel:112");
   await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toHaveCount(0);
+});
+
+test("module IV: an evaluation with a test sign-up is stored and the innovation shows only the numbers", async ({ page }) => {
+  // An innovation no other test evaluates, so the counts start at zero.
+  await page.goto("/innowacja/inn-rops-senior-cuder");
+  const section = page.getByRole("region", { name: "Opinie i testy" });
+  await expect(section.getByText(/Nikt jeszcze nie ocenił/)).toBeVisible();
+  await section.getByRole("link", { name: "Oceń albo zgłoś się do testów" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Oceń rozwiązanie albo zgłoś się do testów" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Wyślij opinię" }).click();
+  await expect(page.getByRole("group", { name: "Sprawdź formularz" }).getByRole("link")).toHaveCount(2);
+
+  await page.getByRole("checkbox", { name: "Chcę wziąć udział w testach tego rozwiązania" }).check();
+  await page.getByRole("button", { name: "Wyślij opinię" }).click();
+  await expect(page.getByRole("group", { name: "Sprawdź formularz" }).getByRole("link")).toHaveCount(4);
+
+  await page.getByRole("radio", { name: "5, bardzo dobrze" }).check();
+  await page.getByRole("radio", { name: "Z wdrażania go w mojej instytucji lub organizacji" }).check();
+  await page.getByLabel("Twoja opinia").fill("Seniorzy chętnie przychodzą, ale przygotowanie zajmuje dużo czasu.");
+  await page.getByLabel("Propozycja usprawnienia").fill("Gotowy zestaw materiałów na pierwsze spotkanie.");
+  await page.getByRole("radio", { name: "Jako organizacja lub instytucja, która wdroży je na próbę" }).check();
+  await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Stowarzyszenie Razem");
+  await page.getByLabel("E-mail", { exact: true }).fill("razem@example.org");
+  await page.getByRole("checkbox", { name: /przechowywał moją opinię/ }).check();
+  await page.getByRole("button", { name: "Wyślij opinię" }).click();
+  await expect(page.getByText(/Zapisaliśmy też Twoje zgłoszenie do testów/)).toBeVisible();
+
+  await page.getByRole("link", { name: "Wróć do opisu rozwiązania" }).last().click();
+  await expect(section.getByText("5 na 5 (1 ocena)")).toBeVisible();
+  await expect(section.getByText(/Seniorzy chętnie przychodzą/)).toHaveCount(0);
+  await expect(page.getByText("razem@example.org")).toHaveCount(0);
+});
+
+test("module IV: an anonymous rating needs no name or e-mail address", async ({ page }) => {
+  await page.goto("/innowacja/inn-nat-865/testuj");
+  await page.getByRole("radio", { name: "4, dobrze" }).check();
+  await page.getByRole("checkbox", { name: /przechowywał moją opinię/ }).check();
+  await page.getByRole("button", { name: "Wyślij opinię" }).click();
+  await expect(page.getByText("Dziękujemy za opinię")).toBeVisible();
 });
