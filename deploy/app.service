@@ -1,0 +1,27 @@
+# The app on the server (docs/server-deploy.md): `next start` over the
+# build in .next, behind Caddy. deploy/setup.sh fills in @APP_DIR@ and
+# @APP_USER@ and installs it as /etc/systemd/system/app.service.
+[Unit]
+Description=Problem router app (Next.js)
+After=network-online.target embedding.service
+Wants=network-online.target embedding.service
+
+[Service]
+Type=simple
+User=@APP_USER@
+WorkingDirectory=@APP_DIR@
+EnvironmentFile=@APP_DIR@/.env.server
+Environment=NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+# Only Caddy on this machine reaches the port.
+ExecStart=@APP_DIR@/node_modules/.bin/next start -H 127.0.0.1 -p 3000
+Restart=always
+RestartSec=3
+# The store writes its pending change on exit (docs/storage.md).
+KillSignal=SIGTERM
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

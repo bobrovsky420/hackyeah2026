@@ -128,7 +128,14 @@ export function ContactForm({
             aria-describedby={describedBy("wiadomosc-podpowiedz", messageError && "wiadomosc-blad")}
           />
         </Field>
-        <Checkbox id="zgoda" checked={consent} onChange={setConsent} error={errorFor("zgoda")}>
+        <Checkbox
+          id="zgoda"
+          checked={consent}
+          onChange={setConsent}
+          error={errorFor("zgoda")}
+          required
+          hint={t("forms.consent.required")}
+        >
           {t("s9a.consent")}
         </Checkbox>
         <div>

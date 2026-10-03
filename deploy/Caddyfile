@@ -1,0 +1,8 @@
+# Caddy in front of the app (docs/server-deploy.md): automatic TLS for the
+# site address, which deploy/setup.sh puts in place of @SITE@ and installs
+# as /etc/caddy/Caddyfile. Caddy ignores an X-Forwarded-For sent by the
+# client and sets its own, so the app's rate limiter sees the real address.
+@SITE@ {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}
