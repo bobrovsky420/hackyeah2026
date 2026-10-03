@@ -239,6 +239,8 @@ export function SaveNeedForm({
           checked={consentStore}
           onChange={setConsentStore}
           error={errorFor("zgoda-przechowywanie")}
+          required
+          hint={t("forms.consent.required")}
         >
           {t("s9c.consent.store")}
         </Checkbox>

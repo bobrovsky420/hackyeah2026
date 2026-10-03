@@ -106,6 +106,8 @@ export function ReadinessForm({ places, localities }: { places: PlaceOption[]; l
           checked={consentStore}
           onChange={setConsentStore}
           error={errorFor("zgoda-przechowywanie")}
+          required
+          hint={t("forms.consent.required")}
         >
           {t("s9b.consent.store")}
         </Checkbox>

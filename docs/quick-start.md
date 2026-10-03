@@ -5,8 +5,7 @@ installed beyond Node.js: there is no database, [storage.md](storage.md)), the d
 an API key or a recording. Commands are for Windows (Git Bash or
 PowerShell) from the repository root; on Linux and macOS write
 `.venv/bin/python` for `.venv/Scripts/python` and set variables as
-`VAR=value command`. Without Node.js or Python at all, the Docker stack of
-[local-stack.md](local-stack.md) runs everything as two containers.
+`VAR=value command`.
 
 ## 1. Run the app (five minutes)
 
@@ -114,5 +113,5 @@ Details in [data-setup.md](data-setup.md), sections 3 and 4.
 - [functional-specification.md](functional-specification.md): what is
   built and why; [decision-log.md](decision-log.md): the decisions.
 - [storage.md](storage.md): the store; [data-setup.md](data-setup.md):
-  the data; [local-stack.md](local-stack.md): Docker;
+  the data; [server-deploy.md](server-deploy.md): the server;
   [data/README.md](../data/README.md): the data contract.

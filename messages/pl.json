@@ -377,6 +377,7 @@
   "forms.email.label": "E-mail",
   "forms.email.error": "Wpisz adres e-mail w formacie nazwa@domena.pl.",
   "forms.consent.error": "Zaznacz zgodę, żeby wysłać formularz.",
+  "forms.consent.required": "Ta zgoda jest obowiązkowa. Bez niej nie możemy wysłać formularza.",
   "forms.sending": "Wysyłamy",
   "forms.backToRoute": "Wróć do drogi",
   "forms.backToInnovation": "Wróć do opisu innowacji",

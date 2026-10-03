@@ -98,23 +98,33 @@ export function CheckboxList({
   );
 }
 
-/** A single checkbox, such as a consent; the label may be several sentences. */
+/**
+ * A single checkbox, such as a consent; the label may be several sentences.
+ * A required one says so before the first submit: the hint is visible and
+ * read with the checkbox, and aria-required marks it for screen readers.
+ */
 export function Checkbox({
   id,
   checked,
   onChange,
   error,
+  required,
+  hint,
   children,
 }: {
   id: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   error?: string;
+  required?: boolean;
+  hint?: string;
   children: ReactNode;
 }) {
+  const hintId = hint ? `${id}-podpowiedz` : undefined;
   const errorId = error ? `${id}-blad` : undefined;
   return (
     <div className={cn("grid gap-2", error && "border-l-4 border-destructive pl-4")}>
+      {hint && <Hint id={hintId}>{hint}</Hint>}
       {error && <FieldError id={errorId}>{error}</FieldError>}
       <label className={cn(tileClass, "items-start py-3")}>
         <input
@@ -122,8 +132,9 @@ export function Checkbox({
           type="checkbox"
           checked={checked}
           onChange={(event) => onChange(event.target.checked)}
+          aria-required={required ? true : undefined}
           aria-invalid={error ? true : undefined}
-          aria-describedby={errorId}
+          aria-describedby={[hintId, errorId].filter(Boolean).join(" ") || undefined}
           className={cn(markClass, "mt-0.5")}
         />
         <span>{children}</span>

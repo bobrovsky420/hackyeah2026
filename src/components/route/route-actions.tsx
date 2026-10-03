@@ -60,7 +60,8 @@ export function RouteActions({ routeId, markdown }: { routeId: string; markdown:
         <h2 id="ocena-drogi" className="text-[1.2rem] font-bold">
           {t("s2.feedback.title")}
         </h2>
-        <div role="group" aria-labelledby="ocena-drogi" className="flex flex-wrap gap-2">
+        {/* No group role: the section already carries the question, and a group named the same is read twice. */}
+        <div className="flex flex-wrap gap-2">
           {votes.map((item) => (
             <Button key={item.value} variant="secondary" aria-pressed={vote === item.value} onClick={() => choose(item.value)}>
               {t(item.label)}
