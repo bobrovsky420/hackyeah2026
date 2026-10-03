@@ -3,16 +3,40 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ConsolePage, DataTable, Empty, Td, Th } from "@/components/console/console-parts";
 import { DecisionForm, QueueMessagesProvider, QueueStatus } from "@/components/console/decision-form";
-import { logActionLabel, reportReasons, targetLabel } from "@/lib/console";
+import { isOneOf, logActionLabel, reportReasons, targetLabel } from "@/lib/console";
 import type { ContentReport } from "@/lib/contracts/records";
 import { formatDateTime } from "@/lib/dates";
-import { t } from "@/lib/i18n";
-import { getInnovation } from "@/lib/mock/data";
+import { t, type MessageKey } from "@/lib/i18n";
+import { getInnovation } from "@/lib/catalogue";
 import { placeText } from "@/lib/places";
 import { isAuthenticated } from "@/lib/server/auth";
-import { store } from "@/lib/server/store";
+import { loadQueues } from "@/server/console/queries";
+import type { GateTextKind, ScreeningCategory } from "@/server/contracts";
+import { repository } from "@/server/db";
 
 export const metadata: Metadata = { title: t("console.moderation.title") };
+
+/** Where a declined text was sent (FR-12.7). */
+const reviewKindKeys = {
+  need: "console.review.kind.need",
+  saved_need: "console.review.kind.savedNeed",
+  contact: "console.review.kind.contact",
+  readiness: "console.review.kind.readiness",
+  offer: "console.review.kind.offer",
+} as const satisfies Record<GateTextKind, MessageKey>;
+
+const categoryKeys = {
+  need: "console.review.category.need",
+  crisis: "console.review.category.crisis",
+  individual_case: "console.review.category.individualCase",
+  harm: "console.review.category.harm",
+  off_topic: "console.review.category.offTopic",
+  spam: "console.review.category.spam",
+} as const satisfies Record<ScreeningCategory, MessageKey>;
+
+function categoryLabel(category: string): string {
+  return isOneOf(categoryKeys, category) ? t(categoryKeys[category]) : category;
+}
 
 /** What a content report points at, with a link where the content has a page. */
 function ReportTarget({ target }: { target: ContentReport["target"] }) {
@@ -43,12 +67,8 @@ function Queue({ id, title, count, children }: { id: string; title: string; coun
 /** The moderation tab of FR-12.8, first because it is the daily job. */
 export default async function ModerationPage() {
   if (!(await isAuthenticated())) return null;
-  const needs = store.needs.filter((need) => need.consents.publish_anonymised && need.moderation.status === "do-weryfikacji");
-  const contacts = store.contacts.filter((contact) => contact.moderation.status === "do-weryfikacji");
-  const readiness = store.readiness.filter((entry) => entry.verification.status === "niezweryfikowane");
-  const declined = [...store.routes.values()].filter((route) => route.mode === "declined" && !store.reviewedDeclines.has(route.id));
-  const reports = store.reports.filter((report) => report.moderation.status === "do-weryfikacji");
-  const log = store.log.slice(0, 20);
+  const repo = repository();
+  const [{ needs, contacts, readiness, reports, declined }, log] = await Promise.all([loadQueues(repo), repo.listModerationLog(20)]);
 
   return (
     <ConsolePage title={t("console.moderation.title")} lead={t("console.moderation.lead")}>
@@ -196,25 +216,36 @@ export default async function ModerationPage() {
               <tr>
                 <Th>{t("console.col.date")}</Th>
                 <Th>{t("console.col.code")}</Th>
+                <Th>{t("console.col.source")}</Th>
                 <Th>{t("console.col.category")}</Th>
+                <Th>{t("console.col.text")}</Th>
                 <Th>{t("console.col.decision")}</Th>
               </tr>
             </thead>
             <tbody>
-              {declined.map((route) => (
-                <tr key={route.id}>
-                  <Td>{formatDateTime(route.created_at)}</Td>
-                  <Td id={`wpis-${route.id}`} className="font-mono">
-                    {route.reference_code}
+              {declined.map((item) => (
+                <tr key={item.id}>
+                  <Td>{formatDateTime(item.created_at)}</Td>
+                  <Td id={`wpis-${item.id}`} className="font-mono">
+                    {item.reference_code ?? item.id}
                   </Td>
-                  <Td>{route.screening.category}</Td>
+                  <Td>{t(reviewKindKeys[item.kind])}</Td>
+                  <Td>{item.mild ? t("console.review.mild") : categoryLabel(item.category)}</Td>
+                  <Td>
+                    {item.text ?? t("console.review.noText")}
+                    {item.text_until && (
+                      <span className="mt-1 block text-[0.9rem] text-muted-foreground">
+                        {t("console.review.textUntil", { date: formatDateTime(item.text_until) })}
+                      </span>
+                    )}
+                  </Td>
                   <Td>
                     <DecisionForm
                       kind="declined"
-                      id={route.id}
+                      id={item.id}
                       queue="kolejka-odmowy"
                       approve={{ value: "przejrzane", label: "console.decision.reviewed" }}
-                      describedBy={`wpis-${route.id}`}
+                      describedBy={`wpis-${item.id}`}
                       withReason={false}
                     />
                   </Td>

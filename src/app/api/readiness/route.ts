@@ -1,19 +1,33 @@
 import type { Readiness } from "@/lib/contracts/records";
 import { targetGroupCodes } from "@/lib/labels";
-import { getGmina } from "@/lib/mock/data";
-import { CONSENT_VERSION, countEvent, newId, nowIso, store } from "@/lib/server/store";
+import { getLlm } from "@/lib/llm";
+import { getGmina } from "@/lib/catalogue";
+import { CONSENT_VERSION, countEvent, newId, nowIso } from "@/lib/server/store";
 import { invalid, readJson, requiredText, stringList } from "@/lib/server/validate";
+import { repository } from "@/server/db";
+import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
 
 /** S9b: stores a readiness registration (8.6), kept for 12 months and verified by ROPS. */
 export async function POST(request: Request) {
+  const closed = publicWritesClosed();
+  if (closed) return closed;
   const body = await readJson(request);
   if (!body) return Response.json({ error: "invalid_json" }, { status: 400 });
+  // A bot filled the hidden field: answered like a success, nothing stored (FR-12.14).
+  if (honeypotFilled(body)) return Response.json({ id: newId("gt") }, { status: 201 });
 
   const displayName = requiredText(body.display_name, 200);
   if (!displayName) return invalid("display_name");
   const contact = requiredText(body.contact, 200);
   if (!contact) return invalid("contact");
   if (body.consent_store !== true) return invalid("consent_store");
+
+  // At most two registrations per e-mail address or phone a day (FR-12.14).
+  const byEmail = contact.includes("@");
+  if (!allowSubmission("readiness", limitKeys("readiness", byEmail ? { email: contact } : { phone: contact }))) return limitReached();
+  // The gate (7.12) screens the display name for harm only.
+  const gate = await screenText({ text: displayName, kind: "readiness", placeName: null }, { llm: getLlm() });
+  if (gate.screening.outcome !== "need") return screenedResponse(gate.screening.outcome);
 
   const now = new Date();
   const retention = new Date(now);
@@ -32,7 +46,7 @@ export async function POST(request: Request) {
     retention_until: retention.toISOString().slice(0, 10),
     note_pl: null,
   };
-  store.readiness.unshift(entry);
-  countEvent("readiness_registered");
+  await repository().addReadiness(entry);
+  await countEvent("readiness_registered");
   return Response.json({ id: entry.id }, { status: 201 });
 }

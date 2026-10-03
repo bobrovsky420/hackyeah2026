@@ -26,10 +26,19 @@ export function ConsolePage({ title, lead, children }: { title: string; lead: st
 }
 
 /** A table in a labelled region that scrolls sideways on its own, never the page. */
-export function DataTable({ caption, children }: { caption: string; children: ReactNode }) {
+export function DataTable({
+  caption,
+  children,
+  minWidth = "min-w-[52rem]",
+}: {
+  caption: string;
+  children: ReactNode;
+  /** The width below which the table scrolls; narrow tables take less. */
+  minWidth?: "min-w-[52rem]" | "min-w-[30rem]" | "min-w-[20rem]";
+}) {
   return (
     <div role="region" aria-label={caption} tabIndex={0} className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full min-w-[52rem] border-collapse text-left">
+      <table className={cn("w-full border-collapse text-left", minWidth)}>
         <caption className="sr-only">{caption}</caption>
         {children}
       </table>

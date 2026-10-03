@@ -13,7 +13,7 @@ import {
   timeLabel,
   whereItRunsLabel,
 } from "@/lib/labels";
-import { getInnovation } from "@/lib/mock/data";
+import { getInnovation } from "@/lib/catalogue";
 
 /** A solution on S2 (FR-4.2) or a nearest partial match on S3. */
 export function SolutionCard({

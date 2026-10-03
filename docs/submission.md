@@ -11,7 +11,7 @@ HubMI: From Need to Solution
 
 ## Description
 
-Our solution is a working prototype of the digital core that ROPS Kraków
+Our solution is a working prototype of HubMI.pl, the digital core that ROPS Kraków
 plans for the Małopolska Social Innovation Hub. It answers the partner's
 question: how do proven solutions to social problems reach the places
 that need them?
@@ -39,11 +39,10 @@ gminas of Małopolska by GUS indicators and shows where it is needed but
 not yet implemented, so ROPS can target its dissemination.
 
 **Real data.** 381 innovations from the national base
-innowacjespoleczne.pl and the ROPS library (415 source records, 34
-duplicates merged), each linked back with its licence and attribution.
+innowacjespoleczne.pl and the ROPS library, each linked back with its licence and attribution.
 The catalogues stay the systems of record.
 
-**Nothing invented.** A language model, primarily the Polish open model
+**Nothing invented.** A language model, the Polish open model
 Bielik, selects and explains; it never creates a solution, an
 organisation, a person, an amount or a deadline. Every identifier it
 returns is checked against the catalogue, every reason quotes the source,
@@ -63,10 +62,10 @@ three loops: need to implementation, need to new innovation, innovation to
 places. From day one it counts what ROPS would report: routes, contact
 requests, needs turned into call topics, new implementations.
 
-**Built for everyone.** A plain-language Polish interface, 7:1 text
+**Built for everyone.** Polish interface in Atkinson Hyperlegible, a
+typeface designed for readers with low vision, 7:1 text
 contrast, three display themes, full keyboard use, a phone layout and an
-axe check of every screen. A ROPS console lists needs and contact requests
-and exports them to Excel.
+axe check of every screen.
 
 Built with Next.js, TypeScript, MapLibre and a Python data pipeline.
 AI coding assistants were used and are credited in the repository, with

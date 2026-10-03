@@ -4,6 +4,7 @@ import type { RoleCode } from "./catalogue";
  * What the forms store and the ROPS console works on: the need (8.5), the
  * contact request, the readiness registration and the feedback (8.6).
  * `note_pl` is the console's note field (S7); `example` marks seed entries.
+ * The records are kept by the repository of src/server/db/.
  */
 
 export type ModerationStatus = "do-weryfikacji" | "zatwierdzone" | "odrzucone";
@@ -76,6 +77,8 @@ export interface Readiness {
   verification: { status: VerificationStatus; reviewer: string | null; decided_at: string | null };
   retention_until: string;
   note_pl: string | null;
+  /** A seed entry of the team (FR-6.5); absent on real registrations. */
+  example?: boolean;
 }
 
 export type FeedbackValue = "tak" | "czesciowo" | "nie";

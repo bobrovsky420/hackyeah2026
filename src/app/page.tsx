@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IntakeForm } from "@/components/intake/intake-form";
 import { t, type MessageKey } from "@/lib/i18n";
+import { placeOptions } from "@/lib/places";
 
 export const metadata: Metadata = { title: t("s1.meta.title") };
 
@@ -9,7 +10,7 @@ const howSteps: MessageKey[] = ["s1.how.step1", "s1.how.step2", "s1.how.step3"];
 /** S1: get the need in (specification, section 10). */
 export default function StartPage() {
   return (
-    <IntakeForm>
+    <IntakeForm places={placeOptions()}>
       <section aria-labelledby="jak-to-dziala" className="grid gap-5">
         <h2 id="jak-to-dziala" className="text-[1.4rem] font-bold @3xl:text-[1.6rem]">
           {t("s1.how.title")}

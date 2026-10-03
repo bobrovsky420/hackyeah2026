@@ -1,0 +1,165 @@
+# Polish crisis lexicon of the screening gate (specification 7.12, FR-12.1,
+# FR-12.3; principles E3 and E7 of 3.6). Hand-written, committed to git.
+# Read by src/server/gate/lexicon.ts at the first screening; a change needs
+# a restart of the server.
+#
+# Owner: the team's lawyer, who decides every entry and then fills reviewer.
+# This file is a draft written by an AI assistant.
+#
+# Two groups, with very different effects:
+#
+#   crisis     A hit forces the outcome `redirected` (screen S10, helplines,
+#              nothing stored), whatever the model says, and the model is
+#              not asked. An entry here must signal a person in danger now:
+#              first-person speech ("nie chcę żyć") or one person hurting
+#              another ("mąż mnie bije"). A word that a social worker would
+#              use about the community ("samobójstwa", "przemoc domowa")
+#              never belongs here, because it would send the three
+#              legitimate cases S01-S03 of 13.1 away from their route.
+#   community  A hit only adds the sensitive topic, so the route shows the
+#              crisis banner with the helplines (E3: when in doubt, show the
+#              helplines and still route). The model adds its own topics.
+#
+# Under each group the keys are the sensitive topics of schema 8.10
+# (suicide, self_harm, violence, child_abuse, sexual_violence, addiction),
+# plus `other` in `crisis` for a person in need with no topic of that list.
+#
+# How an entry matches (write entries with or without Polish letters):
+#   - letters are compared after lower-casing and removing diacritics, so
+#     "samobój" also finds "SAMOBOJSTWO";
+#   - every word is a stem: it must start a word of the text and may go on,
+#     so "samobój" finds "samobójstwo" and "samobójczych";
+#   - a word ending in "$" must end there: "bije$" finds "bije", never
+#     "bijemy"; use it for short words and for first-person forms;
+#   - "~" between two words lets up to two other words stand between them:
+#     "nie chce$ ~ żyć$" finds "nie chcę już żyć".
+#
+# For the lawyer's review (open points of this draft):
+#   1. Without diacritics the first and the third person of some verbs
+#      coincide: "nie chcę żyć" and "(uczeń) nie chce żyć" both read "nie
+#      chce zyc", so a sentence about one pupil is redirected too. We
+#      accepted this (a report about one identifiable person is an
+#      individual case, J10), but a counsellor's "coraz więcej uczniów
+#      mówi, że nie chce żyć" is redirected as well; decide whether to keep
+#      the entry or to move it to `community`.
+#   2. The specification's examples "samobój", "bije" and "przemoc w domu"
+#      are in `community`, not in `crisis`, for the reason above; "bije" is
+#      kept only together with a person ("mnie bije", "bije dziecko").
+#   3. "grozi mi" also finds "grozi mi eksmisja", which is an individual
+#      case and therefore redirected as well; confirm.
+#   4. Missing on purpose: "nie daję rady" (also "gmina nie daje rady"),
+#      "skoczę" alone, "alkohol" in `crisis`.
+#   5. "chcę umrzeć" is also found inside "nie chcę umrzeć w samotności",
+#      a fear a senior may voice in a community text; confirm.
+#   6. Every entry and its topic; the spam and threshold rules are in
+#      src/server/gate/thresholds.ts, not here.
+owner: prawniczka zespołu
+status: szkic przygotowany przez asystenta AI, do przeglądu
+date: "2026-10-03"
+reviewer: null
+
+crisis:
+  suicide:
+    - nie$ chce$ ~ zyc$
+    - nie$ chcialbym$ ~ zyc$
+    - nie$ chcialabym$ ~ zyc$
+    - chce$ ~ umrzec$
+    - chce$ sie$ zabic$
+    - chce$ ~ zabic$ sie$
+    - zabije$ sie$
+    - sie$ zabije$
+    - chce$ odebrac$ sobie$ zycie$
+    - chce$ sobie$ odebrac$ zycie$
+    - odbiore$ sobie$ zycie$
+    - mysle$ o$ samoboj
+    - planuje$ samoboj
+    - nie$ mam$ po$ co$ zyc$
+    - nie$ mam$ ~ sily$ zyc$
+    - skocze$ z$ mostu$
+    - skocze$ z$ dachu$
+    - skocze$ z$ okna$
+    - rzuce$ sie$ pod$ pociag
+  self_harm:
+    - tne$ sie$
+    - sie$ tne$
+    - okaleczam$ sie$
+    - samookaleczam$
+    - robie$ sobie$ krzywde$
+    - zrobie$ sobie$ krzywde$
+  violence:
+    - mnie$ bij
+    - mnie$ bil
+    - bije$ mnie$
+    - mnie$ katuj
+    - mnie$ dusi
+    - mnie$ zabije$
+    - zabije$ mnie$
+    - grozi$ mi$
+    - boje$ sie$ meza$
+    - boje$ sie$ partnera$
+    - boje$ sie$ wrocic$ do$ domu$
+    - przemoc w$ moim$ dom
+    - przemoc w$ naszym$ dom
+    - przemoc u$ mnie$ w$ domu$
+  child_abuse:
+    - bije$ dziecko$
+    - bije$ dzieci$
+    - bije$ swoje$ dziec
+    - bije$ moje$ dziec
+    - bije$ corke$
+    - bije$ syna$
+    - dziecko$ jest$ bite$
+  sexual_violence:
+    - molestuje$
+    - mnie$ molestow
+    - molestowal$ mnie$
+    - molestowala$ mnie$
+    - zgwalcil$
+    - zgwalcona$
+    - zgwalcony$
+  other:
+    - gloduje$
+    - nie$ mam$ co$ jesc$
+    - nie$ mam$ gdzie$ spac$
+
+community:
+  suicide:
+    - samoboj
+    - targn ~ na$ zycie$
+    - zamach na$ wlasne$ zycie$
+  self_harm:
+    - samookalecz
+    - samouszkodz
+    - okaleczen
+  violence:
+    - przemoc
+    - przemocow
+    - niebiesk karty$
+    - niebiesk karta$
+    - niebieskich kart
+    - znecan
+  child_abuse:
+    - krzywdz ~ dziec
+    - zaniedbywan ~ dziec
+    - wykorzystywan ~ dziec
+  sexual_violence:
+    - molestowan
+    - wykorzystywan seksualn
+    - przemoc seksualn
+    - gwalt$
+    - gwaltu$
+    - gwalty$
+    - gwaltow$
+  addiction:
+    - uzaleznien
+    - uzaleznion
+    - alkoholizm
+    - alkohol
+    - nalog
+    - narkoty
+    - narkoman
+    - dopalacz
+    - hazard
+    - pijanstw
+    - pijak
+    - chleja$

@@ -3,8 +3,7 @@
 import { useMemo, useState, type KeyboardEvent } from "react";
 import { controlClass, describedBy, Field, FieldError, Hint, Label } from "@/components/ui/field";
 import { t } from "@/lib/i18n";
-import { gminy } from "@/lib/mock/data";
-import { placeLabel } from "@/lib/places";
+import { placeLabeller, type PlaceOption } from "@/lib/place-options";
 import { fold, pluralPl } from "@/lib/text";
 import { cn } from "@/lib/utils";
 
@@ -13,15 +12,25 @@ export interface PlaceValue {
   terc: string | null;
 }
 
-const options = gminy.map((gmina) => {
-  const label = placeLabel(gmina);
-  return { terc: gmina.terc, label, name: fold(gmina.name), full: fold(label) };
-});
+interface SearchOption {
+  terc: string;
+  label: string;
+  name: string;
+  full: string;
+}
+
+function searchOptions(places: PlaceOption[]): SearchOption[] {
+  const label = placeLabeller(places);
+  return places.map((place) => {
+    const text = label(place);
+    return { terc: place.terc, label: text, name: fold(place.name), full: fold(text) };
+  });
+}
 
 const MAX_RESULTS = 8;
 
 /** FR-2.2: names that start with the query first, then any other match; no diacritics needed. */
-function search(query: string) {
+function search(options: SearchOption[], query: string) {
   const needle = fold(query.trim());
   if (needle.length === 0) return [];
   const starts = options.filter((option) => option.name.startsWith(needle));
@@ -31,30 +40,34 @@ function search(query: string) {
 
 /**
  * Type-ahead over the gminas of Małopolska, following the ARIA 1.2 combobox
- * pattern with a list popup. Empty means "cała Małopolska".
+ * pattern with a list popup. Empty means "cała Małopolska". The gminas come
+ * from the server page as props (placeOptions in src/lib/places.ts).
  */
 export function PlaceCombobox({
   id,
   name,
+  places,
   value,
   onChange,
   error,
 }: {
   id: string;
   name: string;
+  places: PlaceOption[];
   value: PlaceValue;
   onChange: (value: PlaceValue) => void;
   error?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
-  const results = useMemo(() => search(value.text), [value.text]);
+  const options = useMemo(() => searchOptions(places), [places]);
+  const results = useMemo(() => search(options, value.text), [options, value.text]);
   const listId = `${id}-lista`;
   const hintId = `${id}-podpowiedz`;
   const errorId = error ? `${id}-blad` : undefined;
   const expanded = open && results.length > 0;
 
-  function choose(option: (typeof options)[number]) {
+  function choose(option: SearchOption) {
     onChange({ text: option.label, terc: option.terc });
     setOpen(false);
     setActive(-1);

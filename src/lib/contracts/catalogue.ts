@@ -3,7 +3,8 @@
  * and the parts of the built records and the place register the screens use.
  */
 
-export type SourceName = "baza-krajowa" | "rops-biblioteka";
+/** The two public catalogues and a partner hand-over from ROPS (FR-1.6). */
+export type SourceName = "baza-krajowa" | "rops-biblioteka" | "partner-rops";
 export type CostBand = "low" | "medium" | "high" | "unknown";
 export type TimeToImplement = "days" | "weeks" | "months" | "year-plus" | "unknown";
 export type EvidenceLevel =
@@ -29,6 +30,7 @@ export interface Innovation {
   organisation: string | null;
   website: string | null;
   source: SourceName;
+  /** Empty when the record has no web page (a partner spreadsheet row): then no source link. */
   sourceUrl: string;
   licence: string;
   retrievedAt: string | null;

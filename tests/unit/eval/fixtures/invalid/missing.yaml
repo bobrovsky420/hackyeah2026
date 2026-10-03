@@ -1,0 +1,10 @@
+# Invalid: one of the ten without a mode, the lists and the notes.
+id: P04
+title: Brak pól
+author: lawyer
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: "1207062"
+problem_text_pl: Tekst.
+expected:
+  target_groups: [seniorzy]

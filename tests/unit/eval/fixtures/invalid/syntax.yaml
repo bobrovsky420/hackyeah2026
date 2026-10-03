@@ -1,0 +1,4 @@
+# Invalid: a plain scalar continued on the next line (not in the YAML subset).
+id: P03
+title: Tytuł, który
+  ciągnie się dalej

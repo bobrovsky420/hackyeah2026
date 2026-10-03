@@ -1,0 +1,30 @@
+# The local PostgreSQL 16 of the app (specification 9.1, docs/database.md).
+# The image carries pgvector, installed but unused unless FR-3.7 is switched
+# on. Hosting with the app and Caddy is Analyst 2's (12.9).
+#
+#   npx pnpm@12.6.0 db:up    (docker compose --env-file .env.dev up -d db)
+#
+# POSTGRES_PASSWORD comes from .env.dev (git-ignored); no password is in git.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hubmi
+      POSTGRES_DB: hubmi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env.dev, see docs/database.md}
+    ports:
+      # Only this machine can reach it.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # Runs once, on an empty volume: the second database for tests/unit/db/.
+      - ./docker/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hubmi -d hubmi"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  db-data:

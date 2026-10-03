@@ -7,8 +7,8 @@ import { t } from "@/lib/i18n";
 import { targetGroupLabel } from "@/lib/labels";
 import { placeText } from "@/lib/places";
 import { isAuthenticated } from "@/lib/server/auth";
-import { store } from "@/lib/server/store";
-import { fold } from "@/lib/text";
+import { placesMatching } from "@/lib/server/place-filter";
+import { repository } from "@/server/db";
 
 export const metadata: Metadata = { title: t("console.readiness.title") };
 
@@ -18,10 +18,7 @@ export default async function ReadinessPage({ searchParams }: PageProps<"/rops/g
   const query = await searchParams;
   const status = typeof query.status === "string" && isOneOf(verificationStatuses, query.status) ? query.status : "";
   const gmina = typeof query.gmina === "string" ? query.gmina.trim() : "";
-  const rows = store.readiness.filter(
-    (entry) =>
-      (!status || entry.verification.status === status) && (!gmina || fold(placeText(entry.place_terc)).includes(fold(gmina))),
-  );
+  const rows = await repository().listReadiness({ status: status || undefined, places: placesMatching(gmina) });
 
   return (
     <ConsolePage title={t("console.readiness.title")} lead={t("console.readiness.lead")}>
@@ -50,6 +47,7 @@ export default async function ReadinessPage({ searchParams }: PageProps<"/rops/g
                   <span className="mt-1 block text-[0.9rem] text-muted-foreground">
                     {t("console.retention", { date: formatDate(entry.retention_until) })}
                   </span>
+                  {entry.example && <span className="mt-1 block text-[0.9rem] font-bold text-muted-foreground">{t("console.example")}</span>}
                 </Td>
                 <Td id={`wpis-${entry.id}`}>
                   {entry.display_name}

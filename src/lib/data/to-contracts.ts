@@ -13,11 +13,21 @@
  *   cannot mark it); "unknown" and an absent status pass as they are;
  * - contact_in_source: the contact details were not copied, so the entry
  *   itself is offered as the channel;
- * - paths keep notes_pl, which opens with the prototype note of FR-1.8.
+ * - paths keep notes_pl, which opens with the prototype note of FR-1.8;
+ * - an indicator value BDL marks as "no information" is dropped, so the
+ *   gmina shows "brak danych" like Szczawa (1207132), which has none.
  */
 import type { Gmina, Implementation, Innovation, Material } from "@/lib/contracts/catalogue";
+import type { Department, Helpline as HelplineContract } from "@/lib/contracts/contacts";
+import type {
+  GminaBoundaries as BoundariesContract,
+  IndicatorKey,
+  IndicatorSet,
+  IndicatorValue as IndicatorValueContract,
+} from "@/lib/contracts/map";
 import type { ImplementationPath } from "@/lib/contracts/path";
 import type { Channel, Route, RouteSolution } from "@/lib/contracts/route";
+import { t, type MessageKey } from "@/lib/i18n";
 import type {
   Advisor,
   AdvisorsFile,
@@ -25,11 +35,13 @@ import type {
   BuiltMaterial,
   DataVersion,
   GminaPlace,
+  Helpline,
   HelplinesFile,
   IncubatorsFile,
   IndexCard,
   IndexVectorsFile,
   IndicatorsFile,
+  IndicatorValue,
   KnowledgeFile,
   KnowledgeItem,
   MergedImplementation,
@@ -106,9 +118,8 @@ export function toInnovation(record: BuiltInnovation, orgs: OrganisationIndex): 
     title: record.title,
     organisation: organisationName(record, orgs),
     website: organisationWebsite(record, orgs),
-    // The contract knows two catalogues; a partner hand-over (FR-1.6) comes from ROPS,
-    // so it is shown as ROPS until the contract gets its own source (docs/data-to-contracts.md).
-    source: record.source === "partner-rops" ? "rops-biblioteka" : record.source,
+    source: record.source,
+    // A partner spreadsheet row has no web page: empty means no source link.
     sourceUrl: source.url ?? "",
     licence: source.licence,
     retrievedAt: source.retrieved_at,
@@ -226,7 +237,7 @@ export function toImplementation(row: MergedImplementation, orgs: OrganisationIn
   };
 }
 
-/** The shape of LocatedImplementation in src/lib/mock/implementations.ts: an implementation with its gmina's centroid. */
+/** An implementation with its gmina's centroid: the map marks and the distances of FR-4.4. */
 export type LocatedImplementation = Implementation & { centroid: [number, number] };
 
 export function locate(item: Implementation, gminaByTerc: Map<string, Gmina>): LocatedImplementation | null {
@@ -272,6 +283,105 @@ export function toImplementationPath(path: Path, today?: string): Implementation
     reviewer: path.reviewer,
     notes_pl: path.notes_pl.startsWith(PROTOTYPE_NOTE) ? path.notes_pl : `${PROTOTYPE_NOTE} ${path.notes_pl}`,
   };
+}
+
+// ------------------------------------------------------ map: indicators, boundaries
+
+/** BDL symbols that stand for "no information" (x, X, -, n): the value is not shown. */
+const NO_INFORMATION_FLAGS = new Set(["x", "X", "-", "n"]);
+
+/** A value of data/indicators.json; null when BDL marks it as no information. */
+export function toIndicatorValue(value: IndicatorValue): IndicatorValueContract | null {
+  if (value.flag !== undefined && NO_INFORMATION_FLAGS.has(value.flag)) return null;
+  return { value: value.value, year: value.year, flag: value.flag ?? null, flagText: value.flag_pl ?? null };
+}
+
+/** data/indicators.json to the map contract (8.8); median, min and max stay null when the file has none. */
+export function toIndicatorSet(file: IndicatorsFile): IndicatorSet {
+  const values: IndicatorSet["values"] = {};
+  for (const [terc, gmina] of Object.entries(file.gminas)) {
+    const entry: IndicatorSet["values"][string] = {};
+    for (const [key, value] of Object.entries(gmina.values) as [IndicatorKey, IndicatorValue][]) {
+      const mapped = toIndicatorValue(value);
+      if (mapped) entry[key] = mapped;
+    }
+    values[terc] = entry;
+  }
+  return {
+    source: { name: file.source.name, url: file.source.url, licence: file.source.licence, retrieved_at: file.source.retrieved_at },
+    indicators: file.indicators.map((item) => ({
+      key: item.key,
+      variable_id: item.variable_id,
+      year: item.year,
+      gminas_with_value: item.gminas_with_value,
+      median: item.median,
+      min: item.min,
+      max: item.max,
+    })),
+    needByTargetGroup: file.need_by_target_group as IndicatorSet["needByTargetGroup"],
+    values,
+  };
+}
+
+/** data/map/malopolska-gminy.geojson with the properties the map reads: the TERC in JPT_KOD_JE becomes `terc`. */
+export function toBoundaries(file: GminaBoundaries): BoundariesContract {
+  return {
+    type: "FeatureCollection",
+    features: file.features.map((feature) => ({
+      type: "Feature",
+      properties: {
+        terc: feature.properties.JPT_KOD_JE,
+        name: feature.properties.JPT_NAZWA_,
+        powiat: feature.properties.powiat,
+        kind: feature.properties.kind,
+      },
+      geometry: feature.geometry,
+    })),
+  };
+}
+
+// ---------------------------------------------------------------- contacts
+
+/*
+ * What data/helplines.yaml does not say: the short name of the crisis
+ * banner and the entry path of S10 that lists the line first. A line
+ * missing here shows its full name and stands in both paths.
+ */
+const HELPLINE_VIEW: Record<string, { short: MessageKey; forWhom: HelplineContract["forWhom"] }> = {
+  "hl-112": { short: "crisis.line.hl-112", forWhom: "both" },
+  "hl-116123": { short: "crisis.line.hl-116123", forWhom: "self" },
+  "hl-116111": { short: "crisis.line.hl-116111", forWhom: "someone" },
+  "hl-800120002": { short: "crisis.line.hl-800120002", forWhom: "both" },
+  "hl-800702222": { short: "crisis.line.hl-800702222", forWhom: "self" },
+  "hl-800121212": { short: "crisis.line.hl-800121212", forWhom: "someone" },
+  "hl-800100100": { short: "crisis.line.hl-800100100", forWhom: "someone" },
+};
+
+export function toHelpline(line: Helpline): HelplineContract {
+  const view = HELPLINE_VIEW[line.id];
+  return {
+    id: line.id,
+    number: line.number,
+    href: `tel:${line.number.replace(/\s/g, "")}`,
+    group: line.group,
+    name: line.name_pl,
+    short: view ? t(view.short) : line.name_pl,
+    forWhom: view?.forWhom ?? "both",
+    hours: line.hours_pl,
+    whoFor: line.who_for_pl,
+  };
+}
+
+/** The helplines in their order, split into the two groups of FR-12.5. */
+export function toHelplines(file: HelplinesFile): { alarm: HelplineContract[]; support: HelplineContract[] } {
+  const lines = [...file.helplines].sort((a, b) => a.order - b.order).map(toHelpline);
+  return { alarm: lines.filter((line) => line.group === "alarm"), support: lines.filter((line) => line.group === "support") };
+}
+
+/** The ROPS department of data/advisors.yaml, with its first phone number. */
+export function toDepartment(file: AdvisorsFile): Department {
+  const { department } = file;
+  return { name: department.name_pl, email: department.email, phone: department.phones[0] ?? "", hours: department.hours_pl };
 }
 
 // ----------------------------------------------------------------- dataset
@@ -322,7 +432,11 @@ export interface Dataset {
     /** model_by_target_group resolved to links. */
     byTargetGroup: Map<TargetGroup, KnowledgeLink[]>;
   };
-  /** No contract: index cards, vectors, indicators, boundaries, helplines, taxonomies and the built records stay in their data types. */
+  helplines: { alarm: HelplineContract[]; support: HelplineContract[] };
+  department: Department;
+  indicators: IndicatorSet;
+  boundaries: BoundariesContract;
+  /** No contract: index cards, vectors, taxonomies, organisations, incubators and the built records stay in their data types. */
   raw: RawData;
 }
 
@@ -366,6 +480,10 @@ export function mapDataset(raw: RawData, options: { today?: string } = {}): Data
         ]),
       ),
     },
+    helplines: toHelplines(raw.helplines),
+    department: toDepartment(raw.advisors),
+    indicators: toIndicatorSet(raw.indicators),
+    boundaries: toBoundaries(raw.boundaries),
     raw,
   };
 }

@@ -1,7 +1,7 @@
 import type { CostBand, EvidenceLevel, RoleCode, SourceName, TimeToImplement } from "@/lib/contracts/catalogue";
 import type { RouteSolution } from "@/lib/contracts/route";
 import { t, type MessageKey } from "@/lib/i18n";
-import type { IndicatorKey } from "@/lib/mock/indicators";
+import type { IndicatorKey } from "@/lib/contracts/map";
 
 /* Codes of the contracts (data/taxonomies.json, schemas 8.4 and 8.7) mapped to interface strings. */
 
@@ -42,11 +42,13 @@ export function roleNoun(code: RoleCode): string {
 const sourceKeys = {
   "baza-krajowa": "source.badge.national",
   "rops-biblioteka": "source.badge.rops",
+  "partner-rops": "source.badge.partner",
 } as const satisfies Record<SourceName, MessageKey>;
 
 const sourceNameKeys = {
   "baza-krajowa": "source.name.national",
   "rops-biblioteka": "source.name.rops",
+  "partner-rops": "source.name.partner",
 } as const satisfies Record<SourceName, MessageKey>;
 
 export function sourceBadge(source: SourceName): string {
@@ -112,6 +114,7 @@ const applicantKeys: Record<string, MessageKey> = {
   jst: "applicant.jst",
   ngo: "applicant.ngo",
   mieszkancy: "applicant.mieszkancy",
+  pes: "applicant.pes",
   osoby: "applicant.osoby",
   firmy: "applicant.firmy",
 };
@@ -155,6 +158,15 @@ const quoteFieldKeys: Record<string, MessageKey> = {
   na_czym_polega: "quote.field.naCzymPolega",
   jakich_problemow_dotyczy: "quote.field.jakichProblemow",
   komu_sluzy: "quote.field.komuSluzy",
+  rezultaty_testowania: "quote.field.rezultatyTestowania",
+  grupa_docelowa: "quote.field.grupaDocelowa",
+  kto_moze_skorzystac: "quote.field.ktoMozeSkorzystac",
+  czy_to_dziala: "quote.field.czyToDziala",
+  // Our derived text (src/server/match/assess.ts, QUOTE_FIELDS).
+  summary_pl: "quote.field.summary",
+  problem_pl: "quote.field.problemSummary",
+  mechanism_pl: "quote.field.mechanism",
+  requires_pl: "quote.field.requires",
 };
 
 export function quoteFieldLabel(field: string): string {

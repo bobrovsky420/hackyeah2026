@@ -7,8 +7,7 @@ import { Notice } from "@/components/ui/notice";
 import type { Channel, Route, SensitiveTopic } from "@/lib/contracts/route";
 import { t, type MessageKey } from "@/lib/i18n";
 import { knowledgeTypeLabel, roleLabel, targetGroupLabel, telHref } from "@/lib/labels";
-import { getInnovation } from "@/lib/mock/data";
-import { allPaths } from "@/lib/mock/paths";
+import { allPaths, getInnovation } from "@/lib/catalogue";
 import { placeText, placeWhere } from "@/lib/places";
 import { pluralPl } from "@/lib/text";
 import { ClarificationForm } from "./clarification-form";
@@ -122,7 +121,7 @@ function People({ route }: { route: Route }) {
 /** S2 (mode route) and S3 (modes partial and none) of section 10. */
 export function RouteView({ route, markdown }: { route: Route; markdown: string }) {
   const isRoute = route.mode === "route";
-  const title = isRoute ? route.need_summary_pl : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
+  const title = isRoute ? (route.need_summary_pl ?? t("s2.title.fallback")) : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
   const { sensitive_topics: topics, redactions } = route.screening;
   const hasPlace = route.input.place_terc !== null;
 
