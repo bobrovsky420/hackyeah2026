@@ -64,7 +64,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
         </ul>
       </nav>
       <p>{t(current.lead)}</p>
-      <div className="grid gap-10 @4xl:grid-cols-2">
+      <div className="grid gap-5 @4xl:grid-cols-2">
         {view === "potrzeby" && (
           <>
           <BarTable
