@@ -84,7 +84,8 @@ export function IntakeForm({
   const [step, setStep] = useState(0);
   const [announcement, setAnnouncement] = useState("");
   const summaryRef = useRef<HTMLDivElement>(null);
-  const waitingHeadingRef = useRef<HTMLHeadingElement>(null);
+  /** The waiting screen has no heading; focus goes to its first line, so a screen reader starts there. */
+  const waitingFocusRef = useRef<HTMLParagraphElement>(null);
   const failedRef = useRef<HTMLDivElement>(null);
   const timers = useRef<number[]>([]);
 
@@ -130,7 +131,7 @@ export function IntakeForm({
     setPhase("waiting");
     setStep(0);
     setAnnouncement(t("s1.waiting.announceStart"));
-    requestAnimationFrame(() => waitingHeadingRef.current?.focus());
+    requestAnimationFrame(() => waitingFocusRef.current?.focus());
     timers.current = [
       window.setTimeout(() => {
         setStep(1);
@@ -194,10 +195,9 @@ export function IntakeForm({
       <div className="grid max-w-[40rem] gap-7">
         {live}
         <div className="grid gap-2">
-          <h1 ref={waitingHeadingRef} tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
-            {t("s1.waiting.title")}
-          </h1>
-          <p>{t("s1.waiting.lead")}</p>
+          <p ref={waitingFocusRef} tabIndex={-1}>
+            {t("s1.waiting.lead")}
+          </p>
         </div>
         <ol className="grid gap-2">
           {steps.map((label, index) => {
