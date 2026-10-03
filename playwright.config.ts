@@ -53,6 +53,9 @@ export default defineConfig({
           ABUSE_LIMIT_READINESS_PER_DAY: "1000",
           ABUSE_LIMIT_IDEAS_PER_DAY: "1000",
           ABUSE_LIMIT_EVALUATIONS_PER_DAY: "1000",
+          ABUSE_LIMIT_THREADS_PER_DAY: "1000",
+          ABUSE_LIMIT_MESSAGES_PER_DAY: "1000",
+          ABUSE_LIMIT_POSTS_PER_DAY: "1000",
           // The panel's code of the runs (tests/e2e/admin.ts); production keeps the panel locked without one.
           ROPS_TOKEN: "e2e-kod-rops",
         },

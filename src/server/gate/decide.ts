@@ -19,7 +19,13 @@ import { DECLINE_MIN_CONFIDENCE, OFF_TOPIC_MIN_CONFIDENCE, REDIRECT_MIN_CONFIDEN
  * banner. The banner is set when the need touches a sensitive topic (the
  * model's or the community lexicon's) and is about a group or a place, not
  * one person. A readiness registration's display name is screened for harm
- * only (7.12, first paragraph).
+ * only (7.12, first paragraph). A message in an ongoing conversation with
+ * ROPS (module V) is never turned away as off-topic: a thank-you, a date or
+ * a mentor's link belong there. A crisis still leads to human help and a
+ * harmful text is still declined; an individual case is not redirected,
+ * because a person at ROPS reads the conversation. A partnership post or an
+ * answer to one is screened the same way: ROPS approves every post before
+ * anyone sees it, and a request to a company is not an advert.
  */
 
 export interface DecisionInput {
@@ -84,6 +90,24 @@ export function decide(input: DecisionInput): Decision {
       outcome: "redirected",
       crisis_banner: false,
       rules_fired: lexicon.crisis.length > 0 ? lexicon.crisis.map((hit) => `lexicon:${hit.entry}`) : ["repeat:redirected"],
+    };
+  }
+
+  if (kind === "message" || kind === "partnership") {
+    if (model?.category === "crisis" && model.confidence >= REDIRECT_MIN_CONFIDENCE) {
+      return { ...base(model), outcome: "redirected", crisis_banner: false, rules_fired: [`kind:${kind}`, `model:crisis>=${REDIRECT_MIN_CONFIDENCE}`] };
+    }
+    if (model?.category === "harm" && model.confidence >= DECLINE_MIN_CONFIDENCE) {
+      return { ...base(model), outcome: "declined", crisis_banner: false, rules_fired: [`kind:${kind}`, `model:harm>=${DECLINE_MIN_CONFIDENCE}`] };
+    }
+    return {
+      category: "need",
+      confidence: model?.confidence ?? 0,
+      individual_case: model?.individualCase ?? false,
+      sensitive_topics: unique([...(model?.topics ?? []), ...communityTopics]),
+      outcome: "need",
+      crisis_banner: false,
+      rules_fired: [`kind:${kind}`, model ? `model:${model.category}` : "model:unavailable"],
     };
   }
 

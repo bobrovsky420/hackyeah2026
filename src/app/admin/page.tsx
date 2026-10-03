@@ -9,6 +9,8 @@ import { EXPORT_KINDS, queueCounts, trends, type QueueKey } from "@/server/admin
 import { repository } from "@/server/db";
 
 const QUEUES: Record<QueueKey, { href: string; label: MessageKey }> = {
+  threads: { href: "/rops/rozmowy", label: "admin.queue.threads" },
+  partnerships: { href: "/rops/partnerstwa", label: "admin.queue.partnerships" },
   ideas: { href: "/rops/pomysly", label: "admin.queue.ideas" },
   evaluations: { href: "/rops/opinie", label: "admin.queue.evaluations" },
   needs: { href: "/rops/potrzeby", label: "admin.queue.needs" },

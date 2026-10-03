@@ -50,14 +50,16 @@ async function screen(input: GateRequest, deps: { llm: Llm }): Promise<GateOutpu
   // A display name is screened for harm only: no patterns, no lexicon, no repeats (7.12).
   const nameOnly = kind === "readiness";
   // A contact message is often the form's prefilled text; its daily limit covers repeats (FR-6.4).
-  const repeatsCount = !nameOnly && kind !== "contact" && input.countRepeats !== false;
+  // A message in a conversation may repeat ("Dziękuję") and may be links a mentor shares (module V).
+  const inConversation = kind === "message" || kind === "partnership";
+  const repeatsCount = !nameOnly && !inConversation && kind !== "contact" && input.countRepeats !== false;
 
   const patternSpans = nameOnly ? [] : findPatternSpans(text);
   const lexicon = nameOnly ? { crisis: [], community: [] } : matchLexicon(text);
   const key = repeatKey(kind, input.client, input.repeatScope ? `${text}
 ${input.repeatScope}` : text);
   const seen = repeatsCount ? seenBefore(key) : { count: 0, redirected: false };
-  const spam = { repeat: isRepeat(seen.count), repeatOfRedirected: seen.redirected, links: !nameOnly && mostlyLinks(text) };
+  const spam = { repeat: isRepeat(seen.count), repeatOfRedirected: seen.redirected, links: !nameOnly && !inConversation && mostlyLinks(text) };
 
   let model: ModelScreen | null = null;
   let stage: StageLog | null = null;

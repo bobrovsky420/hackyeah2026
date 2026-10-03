@@ -140,7 +140,7 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
       <Section id="co-dalej" title={t("card.next.title")}>
         <p>{t("card.next.text")}</p>
         <div className="no-print flex flex-wrap gap-3">
-          <Link href="/kontakt" className={buttonVariants()}>
+          <Link href={`/zapytaj?pomysl=${idea.id}`} className={buttonVariants()}>
             {t("card.next.contact")}
           </Link>
           <Link href="/zglos-pomysl" className={buttonVariants({ variant: "secondary" })}>

@@ -225,6 +225,9 @@ export default async function InnovationPage({ params, searchParams }: PageProps
         >
           {t("s2.card.contact")}
         </Link>
+        <Link href={`/zapytaj?innowacja=${item.id}&temat=mentor`} className={buttonVariants({ variant: "secondary" })}>
+          {t("talk.askExpert")}
+        </Link>
         <Link href={`/mapa?innowacja=${item.id}`} className={buttonVariants({ variant: "secondary" })}>
           {t("s5.whereNeeded")}
         </Link>

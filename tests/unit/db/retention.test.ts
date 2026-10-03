@@ -29,7 +29,7 @@ describe("retentionCutoffs", () => {
 
 describe("applyRetentionDefaults", () => {
   const now = new Date("2027-01-10T08:00:00.000Z");
-  const counts: RetentionCounts = { routes: 0, feedback: 0, contacts: 2, readiness: 0, ideas: 0, evaluations: 0, screeningEntries: 0, screeningTexts: 0 };
+  const counts: RetentionCounts = { routes: 0, feedback: 0, contacts: 2, readiness: 0, ideas: 0, evaluations: 0, threads: 0, posts: 0, screeningEntries: 0, screeningTexts: 0 };
   const applyRetention = vi.fn(async () => counts);
   const repo = { applyRetention } as unknown as Repository;
   let log: ReturnType<typeof vi.spyOn>;

@@ -6,10 +6,13 @@ import { Notice } from "@/components/ui/notice";
 import { t, type MessageKey } from "@/lib/i18n";
 import type { AdminSession } from "@/server/admin/auth";
 
-export type AdminSection = "start" | "ideas" | "evaluations" | "needs" | "contacts" | "readiness" | "reports" | "trends" | "knowledge";
+export type AdminSection = "start" | "threads" | "partnerships" | "mentors" | "ideas" | "evaluations" | "needs" | "contacts" | "readiness" | "reports" | "trends" | "knowledge";
 
 const SECTIONS: { key: AdminSection; href: string; label: MessageKey }[] = [
   { key: "start", href: "/rops", label: "admin.nav.start" },
+  { key: "threads", href: "/rops/rozmowy", label: "admin.nav.threads" },
+  { key: "partnerships", href: "/rops/partnerstwa", label: "admin.nav.partnerships" },
+  { key: "mentors", href: "/rops/mentorzy", label: "admin.nav.mentors" },
   { key: "ideas", href: "/rops/pomysly", label: "admin.nav.ideas" },
   { key: "evaluations", href: "/rops/opinie", label: "admin.nav.evaluations" },
   { key: "needs", href: "/rops/potrzeby", label: "admin.nav.needs" },
