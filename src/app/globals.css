@@ -25,16 +25,6 @@
   --success-tint: #edf7f0;
   --warning-tint: #fff4d1;
   --warning-border: #8a5a00;
-  /*
-   * The three groups of the panel's trends (needs, ideas and evaluations,
-   * routes): slots 1 to 3 of the data-viz reference palette, validated
-   * all-pairs on this surface (CVD ΔE 9.2, normal vision 24.0). Aqua sits
-   * at 2.8:1, so every bar carries its value as text and the table stays.
-   */
-  --trend-needs: #2a78d6;
-  --trend-ideas: #eb6834;
-  --trend-routes: #1baf7a;
-  --trend-track: #eef1f4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -57,11 +47,6 @@
     --success-tint: #132419;
     --warning-tint: #2b2410;
     --warning-border: #e0a526;
-    /* The same three hues stepped for the dark surface (CVD ΔE 9.4, normal vision 20.9, all >= 3:1). */
-    --trend-needs: #3987e5;
-    --trend-ideas: #d95926;
-    --trend-routes: #199e70;
-    --trend-track: #1f252c;
   }
 }
 
@@ -84,11 +69,6 @@
   --success-tint: #000000;
   --warning-tint: #000000;
   --warning-border: #ffffff;
-  /* High contrast: every bar is white on black; the groups stay apart by their headings and frames. */
-  --trend-needs: #ffffff;
-  --trend-ideas: #ffffff;
-  --trend-routes: #ffffff;
-  --trend-track: #000000;
 }
 
 /* The A+ and A++ buttons scale every rem, like browser zoom. */
@@ -117,10 +97,6 @@
   --color-success-tint: var(--success-tint);
   --color-warning-tint: var(--warning-tint);
   --color-warning-border: var(--warning-border);
-  --color-trend-needs: var(--trend-needs);
-  --color-trend-ideas: var(--trend-ideas);
-  --color-trend-routes: var(--trend-routes);
-  --color-trend-track: var(--trend-track);
   --font-sans: var(--font-ui), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-mono: var(--font-code), ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
