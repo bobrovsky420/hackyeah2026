@@ -11,6 +11,7 @@ import { getInnovation } from "@/lib/catalogue";
 import { repository } from "@/server/db";
 import { overlayInnovation } from "@/server/knowledge/overlay";
 import type { EvaluationSummary, Innovation, Material } from "@/lib/contracts";
+import { MAP_ENABLED } from "@/lib/features";
 import { t } from "@/lib/i18n";
 import { pluralPl } from "@/lib/text";
 import {
@@ -228,9 +229,11 @@ export default async function InnovationPage({ params, searchParams }: PageProps
         <Link href={`/zapytaj?innowacja=${item.id}&temat=mentor`} className={buttonVariants({ variant: "secondary" })}>
           {t("talk.askExpert")}
         </Link>
-        <Link href={`/mapa?innowacja=${item.id}`} className={buttonVariants({ variant: "secondary" })}>
-          {t("s5.whereNeeded")}
-        </Link>
+        {MAP_ENABLED && (
+          <Link href={`/mapa?innowacja=${item.id}`} className={buttonVariants({ variant: "secondary" })}>
+            {t("s5.whereNeeded")}
+          </Link>
+        )}
         {item.sourceUrl && (
           <a href={item.sourceUrl} className={buttonVariants({ variant: "secondary" })}>
             {t("s5.fullSource")}

@@ -483,6 +483,13 @@ export interface Route {
    * place, so S3 asks the one question of FR-2.3.
    */
   clarification_needed: boolean;
+  /**
+   * Proposed addition to 8.4: the target groups the question is about, the
+   * reader's answer and the groups stage 1 detected in the text, for the
+   * trends of module II. Missing on routes stored before it and on the
+   * screened routes; the store then falls back to `input.target_groups`.
+   */
+  question_groups?: string[];
   summary_pl: string | null;
   solutions: RouteSolution[];
   knowledge: { title: string; url: string; type: string; for_innovation_id: string | null }[];

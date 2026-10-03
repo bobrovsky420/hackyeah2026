@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { MAP_ENABLED } from "../../src/lib/features";
 
 /*
  * Journeys of section 6 on the mock data (specification 13): J1 route, J2
@@ -82,6 +83,7 @@ test("J2: a need without a proven solution goes to the needs bank", async ({ pag
 });
 
 test("J4: an innovation leads to the gminas where it is most needed", async ({ page }) => {
+  test.skip(!MAP_ENABLED, "the map is switched off in src/lib/features.ts");
   await page.goto("/innowacja/inn-nat-649");
   await page.getByRole("link", { name: "Gdzie jest najbardziej potrzebna" }).click();
   await expect(
@@ -97,6 +99,7 @@ test("J4: an innovation leads to the gminas where it is most needed", async ({ p
 });
 
 test("J5: a gmina shows its indicators, what runs there and the gminas nearby", async ({ page }) => {
+  test.skip(!MAP_ENABLED, "the map is switched off in src/lib/features.ts");
   await page.goto("/mapa?gmina=1214053");
   await expect(page.getByRole("heading", { level: 2, name: "Proszowice" })).toBeFocused();
   await expect(page.getByText(/na 10 tys\. mieszkańców \(2024\)/).first()).toBeVisible();

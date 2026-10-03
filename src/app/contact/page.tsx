@@ -5,6 +5,7 @@ import { ContactForm } from "@/components/forms/contact-form";
 import { InfoPage } from "@/components/info/info-page";
 import { Notice } from "@/components/ui/notice";
 import type { ContactRequest } from "@/lib/contracts";
+import { MAP_ENABLED } from "@/lib/features";
 import { t } from "@/lib/i18n";
 import { getGmina, getInnovation } from "@/lib/catalogue";
 import { getRoute } from "@/server/route-service";
@@ -47,7 +48,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
     defaultMessage = t("s9a.message.defaultNeed", { need });
   }
 
-  const fromMap = Boolean(gmina && item && purpose);
+  const fromMap = MAP_ENABLED && Boolean(gmina && item && purpose);
   const backHref = fromMap
     ? `/mapa?innowacja=${item?.id}`
     : route

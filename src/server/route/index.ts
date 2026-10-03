@@ -138,6 +138,7 @@ export const composeRoute: ComposeRoute = async (input, { llm, dataset, today, r
     mode_reason_pl: match.mode_reason_pl,
     screening: screeningOf(gate),
     clarification_needed: match.clarification_needed,
+    question_groups: [...new Set([...input.input.target_groups, ...match.detected_target_groups])],
     summary_pl: text.summary_pl,
     solutions,
     knowledge,

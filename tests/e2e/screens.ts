@@ -1,4 +1,5 @@
 import type { Page } from "@playwright/test";
+import { MAP_ENABLED } from "../../src/lib/features";
 
 /** Every screen of section 10 the prototype has, with a path that shows it filled; `admin` screens are seen signed in to the panel. */
 export const screens: { name: string; path: string; admin?: boolean }[] = [
@@ -24,10 +25,14 @@ export const screens: { name: string; path: string; admin?: boolean }[] = [
   { name: "s8-zrodla", path: "/zrodla" },
   { name: "s8-prywatnosc", path: "/prywatnosc" },
   { name: "s8-dostepnosc", path: "/dostepnosc" },
-  { name: "s4-mapa", path: "/mapa" },
-  { name: "s4-tabela", path: "/mapa?widok=tabela" },
-  { name: "s4-innowacja", path: "/mapa?innowacja=inn-nat-649" },
-  { name: "s4-gmina", path: "/mapa?gmina=1214053" },
+  ...(MAP_ENABLED
+    ? [
+        { name: "s4-mapa", path: "/mapa" },
+        { name: "s4-tabela", path: "/mapa?widok=tabela" },
+        { name: "s4-innowacja", path: "/mapa?innowacja=inn-nat-649" },
+        { name: "s4-gmina", path: "/mapa?gmina=1214053" },
+      ]
+    : []),
   { name: "s12-zglos", path: "/zglos?droga=przyklad-seniorzy" },
   { name: "m3-zglos-pomysl", path: "/zglos-pomysl" },
   { name: "m3-fiszka-pomyslu", path: "/pomysl/pm-przyklad-1" },
