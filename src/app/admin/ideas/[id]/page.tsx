@@ -4,6 +4,7 @@ import { updateIdea } from "@/app/admin/actions";
 import { AdminLogin, gate } from "@/components/admin/admin-gate";
 import { AdminShell, wasSaved } from "@/components/admin/admin-shell";
 import { DecisionForm, ModerationState } from "@/components/admin/decision-form";
+import { CanvasAnswers } from "@/components/idea/canvas-answers";
 import { Button } from "@/components/ui/button";
 import { controlClass, Hint, Label } from "@/components/ui/field";
 import { getGmina, getInnovation } from "@/lib/catalogue";
@@ -62,6 +63,15 @@ export default async function AdminIdeaPage({ params, searchParams }: PageProps<
         <h3 className="font-bold">{t("card.forWhom")}</h3>
         <p className="whitespace-pre-line">{idea.for_whom}</p>
       </section>
+
+      {idea.canvas && (
+        <section aria-labelledby="canvas" className="grid gap-3 border-t border-border pt-6">
+          <h2 id="canvas" className="text-[1.3rem] font-bold">
+            {t("card.canvas.title")}
+          </h2>
+          <CanvasAnswers canvas={idea.canvas} />
+        </section>
+      )}
 
       <section aria-labelledby="podobne" className="grid gap-3 border-t border-border pt-6">
         <h2 id="podobne" className="text-[1.3rem] font-bold">

@@ -35,6 +35,7 @@ export const screens: { name: string; path: string; admin?: boolean }[] = [
     : []),
   { name: "s12-zglos", path: "/zglos?droga=przyklad-seniorzy" },
   { name: "m3-zglos-pomysl", path: "/zglos-pomysl" },
+  { name: "m3-wniosek-canvas", path: "/zglos-pomysl/canvas" },
   { name: "m3-fiszka-pomyslu", path: "/pomysl/pm-przyklad-1" },
   { name: "m4-tester", path: "/innowacja/inn-nat-649/testuj" },
   { name: "m5-zapytaj", path: "/zapytaj" },

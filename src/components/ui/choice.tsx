@@ -15,6 +15,18 @@ const markClass = "size-5 shrink-0 accent-foreground focus-visible:outline-none"
 export interface ChoiceOption {
   value: string;
   label: string;
+  /** A second line under the label, such as the meaning of a level of a scale. */
+  description?: string;
+}
+
+function OptionText({ option }: { option: ChoiceOption }) {
+  if (!option.description) return <span>{option.label}</span>;
+  return (
+    <span className="grid gap-0.5">
+      <span>{option.label}</span>
+      <span className="font-normal text-muted-foreground">{option.description}</span>
+    </span>
+  );
 }
 
 interface GroupProps {
@@ -60,7 +72,7 @@ export function RadioList({
             onChange={() => onChange(option.value)}
             className={markClass}
           />
-          <span>{option.label}</span>
+          <OptionText option={option} />
         </label>
       ))}
     </GroupFrame>
@@ -91,7 +103,7 @@ export function CheckboxList({
             }
             className={markClass}
           />
-          <span>{option.label}</span>
+          <OptionText option={option} />
         </label>
       ))}
     </GroupFrame>

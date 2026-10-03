@@ -36,7 +36,10 @@ demand signal the incubators lack today.
 
 A person with an idea, or with a practice already tried in microscale,
 fills in an idea card: what it is, its essence, whom it is for and how
-far it got. The card's own page shows the proven solutions closest to
+far it got. Or they fill in the CANVAS application, the INNO AGH
+Social Innovation Canvas asked one block at a time: problem, actors of
+change, solution, recipients, value, costs, revenue, channels, partners
+and impact. The card's own page shows the proven solutions closest to
 it, with what is similar and what differs, quoted from the catalogue.
 
 Every innovation can be rated, commented on and improved, and people

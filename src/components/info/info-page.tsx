@@ -10,6 +10,7 @@ export function InfoPage({
   title,
   lead,
   top,
+  afterTitle,
   headingId = "naglowek-strony",
   leadId,
   children,
@@ -17,6 +18,8 @@ export function InfoPage({
   title: string;
   lead?: ReactNode;
   top?: ReactNode;
+  /** A line right under the heading, such as another way to the same goal. */
+  afterTitle?: ReactNode;
   headingId?: string;
   leadId?: string;
   children: ReactNode;
@@ -29,6 +32,7 @@ export function InfoPage({
         <h1 id={headingId} tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
           {title}
         </h1>
+        {afterTitle}
         {lead && (
           <p id={leadId} className="text-[1.1rem]">
             {lead}

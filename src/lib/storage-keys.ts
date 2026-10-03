@@ -9,5 +9,8 @@ export const CONTRAST_KEY = "view:contrast";
 /** The intake form's draft, so "Zmień opis" returns to the text as typed. */
 export const DRAFT_KEY = "intake:draft";
 
+/** The CANVAS application's answers until they are sent; never the author's contact. */
+export const CANVAS_DRAFT_KEY = "canvas:draft";
+
 /** One vote per route per browser (FR-10.1). */
 export const feedbackKey = (routeId: string) => `feedback:${routeId}`;
