@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { IntakeForm } from "@/components/intake/intake-form";
-import { ROPS_LIBRARY } from "@/lib/attribution";
 import { t, type MessageKey } from "@/lib/i18n";
-import { placeOptions } from "@/lib/places";
+import { localityOptions, placeOptions } from "@/lib/places";
 
 export const metadata: Metadata = { title: t("s1.meta.title") };
 
@@ -11,12 +10,12 @@ const howSteps: MessageKey[] = ["s1.how.step1", "s1.how.step2", "s1.how.step3"];
 /** S1: get the need in (specification, section 10). */
 export default function StartPage() {
   return (
-    <IntakeForm places={placeOptions()}>
-      <section aria-labelledby="jak-to-dziala" className="grid gap-5">
-        <h2 id="jak-to-dziala" className="text-[1.4rem] font-bold @3xl:text-[1.6rem]">
+    <IntakeForm places={placeOptions()} localities={localityOptions()}>
+      <section aria-labelledby="jak-to-dziala" className="grid gap-5 @5xl:rounded-lg @5xl:border-2 @5xl:border-border @5xl:p-6">
+        <h2 id="jak-to-dziala" className="text-[1.4rem] leading-tight font-bold @3xl:text-[1.6rem]">
           {t("s1.how.title")}
         </h2>
-        <ol className="grid gap-5 @3xl:grid-cols-3">
+        <ol className="grid gap-5 @3xl:grid-cols-3 @5xl:grid-cols-1">
           {howSteps.map((step, index) => (
             <li key={step} className="flex items-start gap-3">
               <span
@@ -30,11 +29,6 @@ export default function StartPage() {
           ))}
         </ol>
       </section>
-      <p className="max-w-[40rem] text-muted-foreground">
-        {t("s1.sources.before")} <a href="https://innowacjespoleczne.pl/">{t("source.name.national")}</a>{" "}
-        {t("common.and")}{" "}
-        <a href={ROPS_LIBRARY}>{t("source.name.rops")}</a>.
-      </p>
     </IntakeForm>
   );
 }

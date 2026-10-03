@@ -17,7 +17,7 @@
  * - an indicator value BDL marks as "no information" is dropped, so the
  *   gmina shows "brak danych" like Szczawa (1207132), which has none.
  */
-import type { Gmina, Implementation, Innovation, Material } from "@/lib/contracts/catalogue";
+import type { Gmina, Implementation, Innovation, Locality, Material } from "@/lib/contracts/catalogue";
 import type { Department, Helpline as HelplineContract } from "@/lib/contracts/contacts";
 import type {
   GminaBoundaries as BoundariesContract,
@@ -49,6 +49,7 @@ import type {
   OrganisationsFile,
   Path,
   PathTimingKind,
+  LocalitiesFile,
   PlacesRegister,
   GminaBoundaries,
   TargetGroup,
@@ -397,6 +398,7 @@ export interface RawData {
   organisations: OrganisationsFile;
   implementations: MergedImplementation[];
   places: PlacesRegister;
+  localities: LocalitiesFile;
   boundaries: GminaBoundaries;
   indicators: IndicatorsFile;
   advisors: AdvisorsFile;
@@ -415,6 +417,8 @@ export interface Dataset {
   gminy: Gmina[];
   /** The 183 gminas of Małopolska (TERC 12...), the set of the map (S4) and of the mock gminy.json. */
   gminyMalopolska: Gmina[];
+  /** Towns and villages of Małopolska for the picker, each with its gmina's TERC. */
+  localities: Locality[];
   gminaByTerc: Map<string, Gmina>;
   /** Rows with a gmina; the regional-model rows without a place are left out. */
   implementations: Implementation[];
@@ -461,6 +465,7 @@ export function mapDataset(raw: RawData, options: { today?: string } = {}): Data
     innovationById: new Map(innovations.map((item) => [item.id, item])),
     gminy,
     gminyMalopolska: gminy.filter((gmina) => gmina.terc.startsWith("12")),
+    localities: raw.localities.localities.map(({ simc, name, terc }) => ({ simc, name, terc })),
     gminaByTerc,
     implementations,
     locatedImplementations: implementations

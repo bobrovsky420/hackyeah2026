@@ -11,7 +11,7 @@ import { describedBy, Field, FieldError, Hint, Label, TextArea } from "@/compone
 import { Notice } from "@/components/ui/notice";
 import { t, type MessageKey } from "@/lib/i18n";
 import { isRoleCode, roleCodes, roleLabel } from "@/lib/labels";
-import { placeLabeller, type PlaceOption } from "@/lib/place-options";
+import { placeLabeller, type LocalityOption, type PlaceOption } from "@/lib/place-options";
 import { DRAFT_KEY } from "@/lib/storage-keys";
 import type { RoleCode } from "@/lib/contracts/catalogue";
 import { groupThousands, pluralPl } from "@/lib/text";
@@ -68,7 +68,15 @@ function writeDraft(draft: Draft) {
  * opis") through sessionStorage; nothing leaves the browser except the call
  * to the mock API. The gminas of the picker come from the server page.
  */
-export function IntakeForm({ children, places }: { children: ReactNode; places: PlaceOption[] }) {
+export function IntakeForm({
+  children,
+  places,
+  localities,
+}: {
+  children: ReactNode;
+  places: PlaceOption[];
+  localities: LocalityOption[];
+}) {
   const router = useRouter();
   const [draft, setDraft] = useState<Draft>({ problem: "", place: { text: "", terc: null }, role: "" });
   const [errors, setErrors] = useState<FormError[]>([]);
@@ -223,7 +231,7 @@ export function IntakeForm({ children, places }: { children: ReactNode; places: 
   }
 
   return (
-    <div className="grid gap-14">
+    <div className="grid gap-14 @5xl:grid-cols-[40rem_minmax(0,1fr)] @5xl:items-start @5xl:gap-x-12">
       {live}
       <div className="grid max-w-[40rem] gap-8">
         <div className="grid gap-3">
@@ -269,7 +277,7 @@ export function IntakeForm({ children, places }: { children: ReactNode; places: 
             </p>
           </Field>
 
-          <PlaceCombobox id="miejsce" name="miejsce" places={places} value={draft.place} onChange={(place) => update({ place })} />
+          <PlaceCombobox id="miejsce" name="miejsce" places={places} localities={localities} value={draft.place} onChange={(place) => update({ place })} />
 
           <RadioList
             idPrefix="rola"

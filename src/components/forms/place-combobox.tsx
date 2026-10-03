@@ -3,7 +3,7 @@
 import { useMemo, useState, type KeyboardEvent } from "react";
 import { controlClass, describedBy, Field, FieldError, Hint, Label } from "@/components/ui/field";
 import { t } from "@/lib/i18n";
-import { placeLabeller, type PlaceOption } from "@/lib/place-options";
+import { localityLabeller, placeLabeller, type LocalityOption, type PlaceOption } from "@/lib/place-options";
 import { fold, pluralPl } from "@/lib/text";
 import { cn } from "@/lib/utils";
 
@@ -13,18 +13,27 @@ export interface PlaceValue {
 }
 
 interface SearchOption {
+  key: string;
+  /** The gmina's TERC, also for a town or village. */
   terc: string;
   label: string;
   name: string;
   full: string;
 }
 
-function searchOptions(places: PlaceOption[]): SearchOption[] {
+/** The gminas first, so a gmina ranks above a village of the same name. */
+function searchOptions(places: PlaceOption[], localities: LocalityOption[]): SearchOption[] {
   const label = placeLabeller(places);
-  return places.map((place) => {
+  const labelLocality = localityLabeller(places);
+  const gminas = places.map((place) => {
     const text = label(place);
-    return { terc: place.terc, label: text, name: fold(place.name), full: fold(text) };
+    return { key: place.terc, terc: place.terc, label: text, name: fold(place.name), full: fold(text) };
   });
+  const towns = localities.flatMap((locality, index) => {
+    const text = labelLocality(locality);
+    return text ? [{ key: `m${index}`, terc: locality.terc, label: text, name: fold(locality.name), full: fold(text) }] : [];
+  });
+  return [...gminas, ...towns];
 }
 
 const MAX_RESULTS = 8;
@@ -39,14 +48,17 @@ function search(options: SearchOption[], query: string) {
 }
 
 /**
- * Type-ahead over the gminas of Małopolska, following the ARIA 1.2 combobox
- * pattern with a list popup. Empty means "cała Małopolska". The gminas come
- * from the server page as props (placeOptions in src/lib/places.ts).
+ * Type-ahead over the gminas, towns and villages of Małopolska, following
+ * the ARIA 1.2 combobox pattern with a list popup. A town or village only
+ * finds its gmina: the value is always a gmina's TERC. Empty means "cała
+ * Małopolska". The options come from the server page as props
+ * (placeOptions and localityOptions in src/lib/places.ts).
  */
 export function PlaceCombobox({
   id,
   name,
   places,
+  localities,
   value,
   onChange,
   error,
@@ -54,13 +66,14 @@ export function PlaceCombobox({
   id: string;
   name: string;
   places: PlaceOption[];
+  localities: LocalityOption[];
   value: PlaceValue;
   onChange: (value: PlaceValue) => void;
   error?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
-  const options = useMemo(() => searchOptions(places), [places]);
+  const options = useMemo(() => searchOptions(places, localities), [places, localities]);
   const results = useMemo(() => search(options, value.text), [options, value.text]);
   const listId = `${id}-lista`;
   const hintId = `${id}-podpowiedz`;
@@ -154,7 +167,7 @@ export function PlaceCombobox({
         >
           {results.map((option, index) => (
             <li
-              key={option.terc}
+              key={option.key}
               id={`${id}-opcja-${index}`}
               role="option"
               aria-selected={index === active}

@@ -2,8 +2,10 @@ import { t } from "@/lib/i18n";
 
 /*
  * The place labels of the picker (FR-2.2), safe for client components: the
- * server passes the gminas as PlaceOption props (src/lib/places.ts), and
- * the label is built here on both sides from the same list.
+ * server passes the gminas as PlaceOption props and the towns and villages
+ * as LocalityOption props (src/lib/places.ts), and the label is built here
+ * on both sides from the same lists. A locality only leads to its gmina:
+ * the picker passes on the gmina's TERC, never the locality.
  */
 
 /** What the picker needs of a gmina: 183 of these travel to the browser. */
@@ -12,6 +14,12 @@ export interface PlaceOption {
   name: string;
   powiat: string;
   kind: string;
+}
+
+/** What the picker needs of a town or village: its name and its gmina's TERC. */
+export interface LocalityOption {
+  name: string;
+  terc: string;
 }
 
 /** Names that occur twice in one powiat, such as the town and the rural gmina of Nowy Targ. */
@@ -39,4 +47,19 @@ export function formatPlaceLabel(place: PlaceOption, ambiguous: Set<string>): st
 export function placeLabeller(places: PlaceOption[]): (place: PlaceOption) => string {
   const ambiguous = ambiguousNames(places);
   return (place) => formatPlaceLabel(place, ambiguous);
+}
+
+/** "Mszana Górna, gmina Mszana Dolna, powiat limanowski"; undefined when its gmina is not in the list. */
+export function localityLabeller(places: PlaceOption[]): (locality: LocalityOption) => string | undefined {
+  const ambiguous = ambiguousNames(places);
+  const byTerc = new Map(places.map((place) => [place.terc, place]));
+  return (locality) => {
+    const gmina = byTerc.get(locality.terc);
+    if (!gmina) return undefined;
+    if (gmina.name === gmina.powiat) return t("place.label.localityInCity", { name: locality.name, gmina: gmina.name });
+    if (ambiguous.has(`${gmina.name}|${gmina.powiat}`)) {
+      return t("place.label.localityWithKind", { name: locality.name, kind: gmina.kind, gmina: gmina.name, powiat: gmina.powiat });
+    }
+    return t("place.label.locality", { name: locality.name, gmina: gmina.name, powiat: gmina.powiat });
+  };
 }
