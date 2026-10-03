@@ -18,6 +18,7 @@
 #   AZURE_SUBSCRIPTION    name or id; default the one `az account show` names
 #   GITHUB_REPO           default bobrovsky420/hackyeah2026
 #   GITHUB_BRANCH         the branch the workflow deploys from, default main
+#   GITHUB_OIDC_SUBJECT   the subject GitHub presents, when the CLI cannot look it up
 #   AZURE_RESOURCE_GROUP  default hackyeah2026-rg; an existing group is reused
 #   AZURE_LOCATION        default the existing group's region, else polandcentral
 #   AZURE_VM_NAME         default router
@@ -73,15 +74,31 @@ if [ -z "$CLIENT_ID" ]; then
   CLIENT_ID="$(az ad app create --display-name "$APP_NAME" --query appId -o tsv)"
 fi
 az ad sp show --id "$CLIENT_ID" -o none 2>/dev/null || az ad sp create --id "$CLIENT_ID" -o none
-SUBJECT="repo:$REPO:ref:refs/heads/$BRANCH"
-if [ "$(az ad app federated-credential list --id "$CLIENT_ID" --query "[?subject=='$SUBJECT'] | length(@)" -o tsv)" = 0 ]; then
-  az ad app federated-credential create --id "$CLIENT_ID" -o none --parameters "{
-    \"name\": \"github-$(printf %s "$BRANCH" | tr -c 'A-Za-z0-9-' -)\",
-    \"issuer\": \"https://token.actions.githubusercontent.com\",
-    \"subject\": \"$SUBJECT\",
-    \"audiences\": [\"api://AzureADTokenExchange\"]
-  }"
+# GitHub presents the subject in one of two forms: repo:<owner>/<repo>:... or,
+# for repositories on the newer format, with the numeric ids,
+# repo:<owner>@<owner id>/<repo>@<repo id>:... Register both; the ids come
+# from the GitHub CLI when it is logged in, or from GITHUB_OIDC_SUBJECT.
+SUBJECTS="repo:$REPO:ref:refs/heads/$BRANCH"
+if [ -n "${GITHUB_OIDC_SUBJECT:-}" ]; then
+  SUBJECTS="$SUBJECTS $GITHUB_OIDC_SUBJECT"
+elif command -v gh >/dev/null && IDS="$(gh api "repos/$REPO" --jq '"\(.owner.id) \(.id)"' 2>/dev/null)"; then
+  read -r OWNER_ID REPO_ID <<<"$IDS"
+  SUBJECTS="$SUBJECTS repo:${REPO%%/*}@$OWNER_ID/${REPO#*/}@$REPO_ID:ref:refs/heads/$BRANCH"
+else
+  echo "bootstrap: no GitHub CLI login; registering only $SUBJECTS (see docs/azure-deploy.md if the login fails)" >&2
 fi
+n=0
+for SUBJECT in $SUBJECTS; do
+  n=$((n + 1))
+  if [ "$(az ad app federated-credential list --id "$CLIENT_ID" --query "[?subject=='$SUBJECT'] | length(@)" -o tsv)" = 0 ]; then
+    az ad app federated-credential create --id "$CLIENT_ID" -o none --parameters "{
+      \"name\": \"github-$(printf %s "$BRANCH" | tr -c 'A-Za-z0-9-' -)-$n\",
+      \"issuer\": \"https://token.actions.githubusercontent.com\",
+      \"subject\": \"$SUBJECT\",
+      \"audiences\": [\"api://AzureADTokenExchange\"]
+    }"
+  fi
+done
 assign "$CLIENT_ID" Contributor "$RG_ID"
 
 echo "== the Key Vault $KV (the deploy secrets)"
