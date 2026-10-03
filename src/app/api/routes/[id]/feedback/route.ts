@@ -6,7 +6,7 @@ import { repository } from "@/server/db";
 
 const values: FeedbackValue[] = ["tak", "czesciowo", "nie"];
 
-/** POST /api/routes/{id}/feedback (9.2, FR-10.1): "Czy ta droga pomaga?", stored with the route id and counted. */
+/** POST /api/routes/{id}/feedback (9.2, FR-10.1): "Czy te rozwiązania pomagają?", stored with the route id and counted. */
 export async function POST(request: Request, { params }: RouteContext<"/api/routes/[id]/feedback">) {
   const { id } = await params;
   if (!(await getRoute(id))) return Response.json({ error: "not_found" }, { status: 404 });
