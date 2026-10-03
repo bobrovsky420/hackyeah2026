@@ -23,6 +23,12 @@ The answer is a route, not a list:
 - **Implementation path**: the legal vehicle, the funding calls and three
   next steps.
 
+Beside the proven solutions, a route shows the similar cases others
+brought to the tool: the needs of the needs bank and the idea cards
+close to this one, with what became of them. Only the ones whose
+authors consented and that ROPS approved are shown, a need in the
+gate's neutral words; the others are only counted.
+
 When nothing fits well enough, the tool says so, files the need in a
 needs bank and drafts the brief for the next incubator call, with a
 duplicate check against the existing innovations. Needs become the

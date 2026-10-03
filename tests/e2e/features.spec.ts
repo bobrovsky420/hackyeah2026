@@ -7,8 +7,8 @@ import { E2E_ROPS_TOKEN } from "./admin";
  * limit, the path selection, the recompute, the content report, the MIIS
  * attribution, the accessibility statement, the register card, the map
  * table, the idea card of module III, the tester of module IV, the
- * conversations and the partnership board of module V and the panel of
- * module VI.
+ * conversations and the partnership board of module V, the panel of
+ * module VI and the similar cases of module I.
  */
 
 const problem = (page: Page) => page.getByLabel("Co się dzieje i kogo dotyczy?");
@@ -350,6 +350,7 @@ test("module V: a question gets a private link, ROPS answers and invites a mento
   await page.getByRole("button", { name: "Wyślij wiadomość" }).click();
   await expect(page.getByText("To jest Twój prywatny link do rozmowy.")).toBeVisible();
   await page.getByRole("link", { name: "Otwórz rozmowę" }).click();
+  await page.waitForURL(/\/rozmowa\/rz-/);
   const authorUrl = page.url();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Pytanie o: Kapsuła czasu/);
   await expect(page.getByText("Czekamy na odpowiedź ROPS.")).toBeVisible();
@@ -423,4 +424,12 @@ test("module V: a partnership post waits for ROPS, then an answer reaches ROPS, 
 
   await page.goto("/rops/partnerstwa");
   await expect(page.getByRole("listitem").filter({ hasText: "Szukamy firmy do wsparcia warsztatów e2e" }).getByRole("link", { name: /Firma e2e/ })).toBeVisible();
+});
+
+test("module I: a route shows a similar need of the bank, approved and with consent, and how it went on", async ({ page }) => {
+  await page.goto("/droga/przyklad-seniorzy");
+  const cases = page.getByRole("region", { name: "Podobne przypadki" });
+  await expect(cases.getByRole("heading", { name: "Samotni seniorzy w gminie wiejskiej, brak domu dziennego pobytu." })).toBeVisible();
+  await expect(cases.getByText("Temat naboru")).toBeVisible();
+  await expect(cases.getByRole("link", { name: "Kapsuła czasu - recepta na samotność" })).toBeVisible();
 });
