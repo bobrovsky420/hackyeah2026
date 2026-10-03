@@ -90,7 +90,7 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
         )}
       </section>
 
-      <DocumentActions markdown={ideaMarkdown(idea)} filename={`fiszka-pomyslu-${idea.id}.md`} />
+      <DocumentActions markdown={ideaMarkdown(idea)} filename={`zgloszenie-pomyslu-${idea.id}.md`} />
 
       <Section id="opis" title={t("card.description")}>
         <p className="whitespace-pre-line">{idea.description}</p>

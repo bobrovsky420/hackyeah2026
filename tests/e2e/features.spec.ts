@@ -26,7 +26,7 @@ test("FR-2.5: personal data is removed before the route is stored, and the reade
   await problem(page).fill(
     "Samotni seniorzy w naszej gminie potrzebują klubu. Mój PESEL 44051401359, telefon 600 123 456, adres ul. Kwiatowa 5.",
   );
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByText("Usunęliśmy dane osobowe (3 fragmenty)")).toBeVisible({ timeout: 20_000 });
 
   // The stored text is what the needs form is prefilled with.
@@ -45,7 +45,7 @@ test("S02 (13.1): a community need about violence keeps its route, with the cris
   await problem(page).fill(
     "Pracuję w ośrodku pomocy społecznej. W gminie przybywa przemocy domowej, a zespół interdyscyplinarny nie nadąża.",
   );
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByRole("heading", { level: 1, name: /Przemoc domowa w gminie wiejskiej/ })).toBeVisible({
     timeout: 20_000,
   });
@@ -84,7 +84,7 @@ test("FR-2.4: a refused request says so and keeps the text", async ({ page }) =>
   );
   await page.goto("/");
   await problem(page).fill("Samotni seniorzy w naszej gminie nie mają gdzie się spotkać.");
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByText("Za dużo zapytań. Spróbuj za minutę.")).toBeVisible();
   await expect(problem(page)).toHaveValue(/Samotni seniorzy/);
 });
@@ -102,7 +102,7 @@ test("FR-8.2: the applicant type re-selects the paths on the route", async ({ pa
 test("FR-3.5: Policz ponownie runs the route again", async ({ page }) => {
   await page.goto("/droga/przyklad-seniorzy");
   await page.getByRole("button", { name: "Policz ponownie" }).click();
-  await expect(page.getByText("Liczymy drogę od nowa.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Szukamy rozwiązań od nowa.", { exact: false })).toBeVisible();
   await expect(page).toHaveURL(/\/droga\/rt-/, { timeout: 30_000 });
   await expect(page.getByRole("heading", { level: 1, name: /Samotni seniorzy/ })).toBeVisible();
 });
@@ -184,7 +184,7 @@ test("FR-7.5: the map's table lists all 183 gminas and sorts by value", async ({
 
 test("module III: an idea card is checked field by field, stored, and its page shows similar innovations", async ({ page }) => {
   await page.goto("/zglos-pomysl");
-  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
+  await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
   const summary = page.getByRole("group", { name: "Sprawdź formularz" });
   await expect(summary).toBeFocused();
   await expect(summary.getByRole("link")).toHaveCount(8);
@@ -198,11 +198,11 @@ test("module III: an idea card is checked field by field, stored, and its page s
   await page.getByRole("radio", { name: "Testowany w małej skali" }).check();
   await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Koło Gospodyń Wiejskich");
   await page.getByLabel("E-mail", { exact: true }).fill("kgw@example.org");
-  await page.getByRole("checkbox", { name: /przechowywał fiszkę/ }).check();
-  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
-  await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toBeVisible();
+  await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
+  await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
+  await expect(page.getByText("Zapisaliśmy zgłoszenie pomysłu")).toBeVisible();
 
-  await page.getByRole("link", { name: "Zobacz fiszkę" }).click();
+  await page.getByRole("link", { name: "Zobacz zgłoszenie" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Wspólne gotowanie seniorów i młodzieży" })).toBeFocused();
   await expect(page.getByText("Testowany w małej skali")).toBeVisible();
   const similar = page.getByRole("region", { name: "Podobne sprawdzone rozwiązania" });
@@ -221,10 +221,10 @@ test("module III: a crisis text in an idea card shows human help, and nothing is
   await page.getByRole("radio", { name: "Pomysł, jeszcze nie zaczęty" }).check();
   await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Osoba");
   await page.getByLabel("E-mail", { exact: true }).fill("osoba@example.org");
-  await page.getByRole("checkbox", { name: /przechowywał fiszkę/ }).check();
-  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
+  await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
+  await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
   await expect(page.getByRole("link", { name: /^112/ })).toHaveAttribute("href", "tel:112");
-  await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toHaveCount(0);
+  await expect(page.getByText("Zapisaliśmy zgłoszenie pomysłu")).toHaveCount(0);
 });
 
 test("module IV: an evaluation with a test sign-up is stored and the innovation shows only the numbers", async ({ page }) => {
@@ -278,10 +278,10 @@ test("module VI: the panel opens with the code, and the reply reaches the author
   await page.getByLabel("Kod dostępu").fill(E2E_ROPS_TOKEN);
   await page.getByRole("button", { name: "Wejdź do panelu" }).click();
   await expect(page.getByText("Zalogowano jako Anna Testowa")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Fiszki pomysłów" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Zgłoszenia pomysłów" }).first()).toBeVisible();
 
   await page.goto("/rops/pomysly/pm-przyklad-1");
-  await page.getByRole("combobox", { name: "Status fiszki", exact: true }).selectOption("przyjety");
+  await page.getByRole("combobox", { name: "Status zgłoszenia", exact: true }).selectOption("przyjety");
   await page.getByRole("textbox", { name: "Odpowiedź dla autora", exact: true }).fill("Pomysł przyjęty do najbliższego naboru inkubatora.");
   await page.getByRole("button", { name: "Zapisz status i odpowiedź" }).click();
   await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
@@ -320,7 +320,7 @@ test("module VI: a verified innovation with a film shows on the route at once, a
   await expect(page.getByRole("link", { name: "Film o rozwiązaniu" })).toHaveAttribute("href", "https://www.youtube.com/watch?v=e2e");
 
   await page.goto("/rops/innowacje/inn-nat-pomosty");
-  await page.getByRole("radio", { name: "Ukryj w drogach i na stronie rozwiązania" }).check();
+  await page.getByRole("radio", { name: "Ukryj w wynikach wyszukiwania i na stronie rozwiązania" }).check();
   await page.getByRole("button", { name: "Zapisz", exact: true }).click();
   await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
   await page.goto("/droga/przyklad-mlodziez");
