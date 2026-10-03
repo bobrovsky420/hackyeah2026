@@ -11,6 +11,7 @@ fields are added by the extraction skill (.claude/skills/extract-innovations).
 
 Rules applied here (spec 8.1, FR-1.9, R6): source text is copied verbatim;
 contact details are never copied, only the fact that the entry has them;
+postal addresses in the other fields are removed, the town kept (parse-v4);
 names of people are kept exactly as published and nothing else about them;
 websites are kept for organisations only.
 

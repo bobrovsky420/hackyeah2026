@@ -33,6 +33,12 @@ challenge, the team and the decisions made so far are in
   are git-ignored; `data/taxonomies.json`, `data/duplicates-decisions.json`,
   `data/advisors.yaml` and `data/implementations.yaml` are hand-written and
   committed.
+- A data release for another machine is
+  `.venv/Scripts/python scripts/pack-data.py --release X.Y.Z` (with
+  `--rebuild` after the records changed), which writes
+  `.local/bundles/data-X.Y.Z.zip` and its note; `scripts/unpack-data.py <zip>`
+  restores it and never touches the files git tracks
+  ([docs/data-setup.md](docs/data-setup.md)).
 
 ## App
 

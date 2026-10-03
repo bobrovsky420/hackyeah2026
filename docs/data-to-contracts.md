@@ -77,30 +77,23 @@ Defaults are in the Rule columns above; the embedding model defaults to
   `incubator_profile_url`, `merged_from`, the ROPS `source_fields` full text,
   per-material `licence`; `link_status` `ok` and `unknown` look the same.
   Use `Dataset.raw.records` until the contract grows.
-- MIIS: the 15 `MIIS-agreement` records get their derived text like every
-  record, but `isLinkOnly` in
-  `src/lib/attribution.ts` still hides text for any licence not starting
-  with "CC BY". Frontend to align.
 - Path: `decides`, `purposes`, `target_groups`, `scope`,
   `amount_min_pln`, `amount_max_pln`, `timing.calls[]` (labels, applicant
-  types, `opens_on`, `closes_on`; the annual roll-forward), `fit`. The
-  applicant code `pes` has no label in `src/lib/labels.ts` (shows the code);
-  the mock's `firmy` and `osoby` do not occur in the data.
+  types, `opens_on`, `closes_on`; the annual roll-forward), `fit`; the
+  composer reads them from `Dataset.raw.paths` (`src/server/route/paths.ts`).
+  The mock's `firmy` and `osoby` do not occur in the data.
 - Implementation: the regional-model rows (no place), `project_title_pl`,
   `organisation_id`, the organisation `type`, `match`, `origin_file`.
 - Gmina: `code`, `label` (the picker label), `wojewodztwo`, `parent`.
 - Knowledge: `description_pl`, `target_groups`, `source_url`,
-  `verified_on`. Advisor: `source_url`; the department and
-  `programme_contacts` of `advisors.yaml`.
-- No contract at all, kept in data types under `Dataset.raw`: helplines
-  (the view type `Helpline` lives in `src/lib/mock/contacts.ts`; its
-  `short` and `forWhom` have no data; the file has `group`, `hours_pl`,
-  `who_for_pl`), indicators (`IndicatorFacts` in `src/lib/mock/indicators.ts`;
-  in the data `median`, `min`, `max` may be null and a value is
-  `{value, year, flag?}`), boundaries (mock properties `terc`, data
-  `JPT_KOD_JE`), index cards, vectors, organisations, incubators,
-  taxonomies. Moving those view types into `src/lib/contracts/` lets the
-  mapper cover them.
+  `verified_on`. Advisor: `source_url`; the `programme_contacts` of
+  `advisors.yaml`.
+- Helplines, the ROPS department, indicators and boundaries have contracts (`src/lib/contracts/contacts.ts` and `map.ts`,
+  mapped in `to-contracts.ts` as `Dataset.helplines`, `department`,
+  `indicators`, `boundaries`); the helplines' `short` and `forWhom` come
+  from a table in `to-contracts.ts`, a BDL "no information" flag drops
+  the value. No contract, kept in data types under `Dataset.raw`: index
+  cards, vectors, organisations, incubators, taxonomies.
 
 ## Loader checks and errors
 
@@ -133,8 +126,6 @@ A stale file reads `data/<file> is stale: <what differs>; rebuild: <command>`.
 
 The schemas accept a third source, `partner-rops`, with ids `inn-partner-<slug>`
 and a `sources[].url` that may be null (a spreadsheet row has no web page).
-`SourceName` in `src/lib/contracts/catalogue.ts` knows only the two catalogues,
-so `toInnovation` shows a partner record as `rops-biblioteka` and an empty
-`sourceUrl` means no link; `toChannels` adds no entry link then. Gap for the
-frontend: add `partner-rops` to `SourceName` and a label for it, and render a
-record without a source URL without the "Pełny opis w źródle" link.
+`SourceName` in `src/lib/contracts/catalogue.ts` has `partner-rops` with its own
+label; an empty `sourceUrl` means no link, so the innovation page shows no
+"Pełny opis w źródle" link and `toChannels` adds no entry link.
