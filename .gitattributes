@@ -1,0 +1,3 @@
+# LF in every checkout, whatever core.autocrlf says: the replay key hashes
+# the exact prompt text, and the tests compare file text byte for byte
+* text=auto eol=lf
