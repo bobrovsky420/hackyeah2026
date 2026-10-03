@@ -10,6 +10,7 @@
 export const PAGE_ROUTES: readonly { folder: string; url: string }[] = [
   { folder: "/route/:id", url: "/droga/:id" },
   { folder: "/innovation/:id", url: "/innowacja/:id" },
+  { folder: "/innovation/:id/test", url: "/innowacja/:id/testuj" },
   { folder: "/need/:id/brief", url: "/potrzeba/:id/fiszka" },
   { folder: "/map", url: "/mapa" },
   { folder: "/how-it-works", url: "/jak-to-dziala" },

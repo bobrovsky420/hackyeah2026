@@ -1,4 +1,4 @@
-import type { ContactRequest, ContentReport, Feedback, Idea, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
+import type { ContactRequest, ContentReport, Evaluation, Feedback, Idea, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
 import { exampleIdeas, exampleNeeds, exampleReadiness } from "./examples";
 import {
   SCREENING_LOG_RETENTION_MS,
@@ -26,6 +26,7 @@ export interface MemoryState {
   contacts: ContactRequest[];
   readiness: Readiness[];
   ideas: Idea[];
+  evaluations: Evaluation[];
   feedback: Feedback[];
   reports: ContentReport[];
   log: ModerationLogEntry[];
@@ -49,6 +50,7 @@ export function createMemoryState(): MemoryState {
     contacts: [],
     readiness: exampleReadiness(),
     ideas: exampleIdeas(),
+    evaluations: [],
     feedback: [],
     reports: [],
     log: [],
@@ -289,6 +291,14 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       return copy(found);
     },
 
+    async addEvaluation(evaluation) {
+      insertNewestFirst(state.evaluations, evaluation, createdAt);
+      onChange();
+    },
+    async listEvaluations(innovationId) {
+      return state.evaluations.filter((item) => !innovationId || item.innovation_id === innovationId).map(copy);
+    },
+
     async addFeedback(entry) {
       insertNewestFirst(state.feedback, entry, createdAt);
       onChange();
@@ -349,6 +359,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       const oldContact = (item: ContactRequest) => Date.parse(item.created_at) < contactsBefore;
       const oldReadiness = (item: Readiness) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
       const oldIdea = (item: Idea) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
+      const oldEvaluation = (item: Evaluation) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
       const now = Date.parse(cutoffs.screeningAt);
       const counts: RetentionCounts = {
         routes: oldRoutes.size,
@@ -356,6 +367,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
         contacts: state.contacts.filter(oldContact).length,
         readiness: state.readiness.filter(oldReadiness).length,
         ideas: state.ideas.filter(oldIdea).length,
+        evaluations: state.evaluations.filter(oldEvaluation).length,
         screeningEntries: state.screeningLog.filter((entry) => logExpired(entry, now)).length,
         screeningTexts: state.screeningLog.filter((entry) => !logExpired(entry, now) && textExpired(entry, now)).length,
       };
@@ -368,6 +380,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       state.contacts = state.contacts.filter((item) => !oldContact(item));
       state.readiness = state.readiness.filter((item) => !oldReadiness(item));
       state.ideas = state.ideas.filter((item) => !oldIdea(item));
+      state.evaluations = state.evaluations.filter((item) => !oldEvaluation(item));
       pruneScreeningLog(state, now);
       if (Object.values(counts).some((count) => count > 0)) onChange();
       return counts;

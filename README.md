@@ -32,6 +32,11 @@ fills in an idea card: what it is, its essence, whom it is for and how
 far it got. The card's own page shows the proven solutions closest to
 it, with what is similar and what differs, quoted from the catalogue.
 
+Every innovation can be rated, commented on and improved, and people
+and organisations can sign up to test it. Its page shows only the
+numbers; the texts and the sign-ups go to ROPS, which passes them on to
+the innovators.
+
 It is not a web search: it never looks at the open internet, only at a
 closed catalogue of 381 described and attributed innovations. And it is
 not just RAG, a chatbot writing an answer over retrieved text: retrieval

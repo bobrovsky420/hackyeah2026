@@ -1,4 +1,4 @@
-import type { ContactRequest, ContactStatus, ContentReport, Feedback, Idea, Moderation, ModerationLogEntry, ModerationStatus, Need, NeedStatus, Readiness, VerificationStatus, NeedCluster, StoredBrief, Route, GateTextKind, ScreeningCategory, ScreeningOutcome, SensitiveTopic } from "@/lib/contracts";
+import type { ContactRequest, ContactStatus, ContentReport, Evaluation, Feedback, Idea, Moderation, ModerationLogEntry, ModerationStatus, Need, NeedStatus, Readiness, VerificationStatus, NeedCluster, StoredBrief, Route, GateTextKind, ScreeningCategory, ScreeningOutcome, SensitiveTopic } from "@/lib/contracts";
 
 /*
  * Everything the app keeps between requests, behind one async interface:
@@ -57,7 +57,7 @@ export interface RetentionCutoffs {
   routesBefore: string | null;
   /** Contact requests created before this instant go. */
   contactsBefore: string;
-  /** Readiness registrations and idea cards whose retention_until (YYYY-MM-DD) is before this day go. */
+  /** Readiness registrations, idea cards and evaluations whose retention_until (YYYY-MM-DD) is before this day go. */
   readinessBefore: string;
   /** The screening log as of this instant: entries past 14 days go, texts past text_until are cleared. */
   screeningAt: string;
@@ -70,6 +70,7 @@ export interface RetentionCounts {
   contacts: number;
   readiness: number;
   ideas: number;
+  evaluations: number;
   screeningEntries: number;
   screeningTexts: number;
 }
@@ -177,6 +178,11 @@ export interface Repository {
   listIdeas(): Promise<Idea[]>;
   /** Stores the similar innovations of a card once computed; undefined when the card is unknown. */
   setIdeaSimilar(id: string, similar: NonNullable<Idea["similar"]>): Promise<Idea | undefined>;
+
+  // Evaluations of innovations (module IV, "Tester innowacji").
+  addEvaluation(evaluation: Evaluation): Promise<void>;
+  /** Newest first; only the evaluations of one innovation when its id is given. */
+  listEvaluations(innovationId?: string): Promise<Evaluation[]>;
 
   // Feedback (FR-10.1).
   addFeedback(entry: Feedback): Promise<void>;

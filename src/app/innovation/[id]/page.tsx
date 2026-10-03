@@ -8,8 +8,9 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { getInnovation } from "@/lib/catalogue";
-import type { Innovation, Material } from "@/lib/contracts";
+import type { EvaluationSummary, Innovation, Material } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
+import { pluralPl } from "@/lib/text";
 import {
   costLabel,
   evidenceLabel,
@@ -18,6 +19,7 @@ import {
   targetGroupLabel,
   timeLabel,
 } from "@/lib/labels";
+import { evaluationSummary } from "@/server/evaluations";
 import { getRoute } from "@/server/route-service";
 
 export async function generateMetadata({ params }: PageProps<"/innovation/[id]">): Promise<Metadata> {
@@ -59,6 +61,50 @@ function Header({ item, routeId }: { item: Innovation; routeId: string | undefin
   );
 }
 
+/** Module IV, "Tester innowacji": the numbers of the innovation's evaluations and the way to add one. */
+function Evaluations({ item, summary }: { item: Innovation; summary: EvaluationSummary }) {
+  const empty = summary.ratings === 0 && summary.testers === 0 && summary.improvements === 0;
+  return (
+    <section aria-labelledby="opinie" className="grid gap-3">
+      <h2 id="opinie" className={sectionTitle}>
+        {t("tester.section.title")}
+      </h2>
+      {empty ? (
+        <p>{t("tester.section.empty")}</p>
+      ) : (
+        <dl className="grid gap-x-6 gap-y-2 @xl:grid-cols-[max-content_minmax(0,1fr)]">
+          {summary.average !== null && (
+            <>
+              <dt className="font-bold">{t("tester.section.average")}</dt>
+              <dd>
+                {t("tester.section.averageValue", {
+                  average: summary.average.toLocaleString("pl-PL", { maximumFractionDigits: 1 }),
+                  count: summary.ratings,
+                  unit: pluralPl(summary.ratings, {
+                    one: t("tester.section.unit.one"),
+                    few: t("tester.section.unit.few"),
+                    many: t("tester.section.unit.many"),
+                  }),
+                })}
+              </dd>
+            </>
+          )}
+          <dt className="font-bold">{t("tester.section.testers")}</dt>
+          <dd>{summary.testers}</dd>
+          <dt className="font-bold">{t("tester.section.improvements")}</dt>
+          <dd>{summary.improvements}</dd>
+        </dl>
+      )}
+      <p className="text-muted-foreground">{t("tester.section.note")}</p>
+      <div className="no-print">
+        <Link href={`/innowacja/${item.id}/testuj`} className={buttonVariants({ variant: "secondary" })}>
+          {t("tester.section.cta")}
+        </Link>
+      </div>
+    </section>
+  );
+}
+
 /**
  * S5: the innovation as a page, reached from a route or the map (rule R1:
  * no browse page). The MIIS items are shown like every ROPS item (decision
@@ -70,6 +116,7 @@ export default async function InnovationPage({ params, searchParams }: PageProps
   const item = getInnovation(id);
   if (!item) notFound();
   const routeId = typeof query.droga === "string" && (await getRoute(query.droga)) ? query.droga : undefined;
+  const summary = await evaluationSummary(item.id);
 
   return (
     <article aria-labelledby="naglowek-innowacji" className="grid max-w-[48rem] gap-8">
@@ -155,6 +202,8 @@ export default async function InnovationPage({ params, searchParams }: PageProps
           </p>
         )}
       </section>
+
+      <Evaluations item={item} summary={summary} />
 
       <div className="no-print flex flex-wrap gap-3">
         <Link
