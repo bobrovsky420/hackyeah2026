@@ -3,9 +3,10 @@
 How the app keeps its entries: the needs, contact requests, readiness
 registrations, idea cards (7.13), evaluations of innovations (7.14),
 routes, feedback, content reports, the moderation and
-screening logs and the counters. The statuses, moderation fields and the
-moderation log wait for the ROPS console of the roadmap (R.2); nothing
-in the app reads them yet. Decided: no database in any
+screening logs, the counters, and the knowledge the ROPS panel keeps (its
+knowledge items and its word on innovations). The ROPS panel (7.9) reads
+and decides the statuses and moderation fields and writes the
+moderation log. Decided: no database in any
 installation. The entries live in the server's memory
 and are saved to one JSON file, so they survive a restart and a redeploy,
 and a fresh clone runs with nothing to set up.
@@ -35,9 +36,12 @@ actions call `repository()`, client components never do.
   entries of the readiness registry (FR-6.5) and one idea card with its
   similar innovations (`pm-przyklad-1`, the stable address of the screen
   checks), all marked as examples.
-- A list added in a later version (the idea cards, the evaluations) is optional in the
+- A list added in a later version (the idea cards, the evaluations, the
+  panel's knowledge items and its word on innovations) is optional in the
   file: a file saved before it opens with the list empty instead of
-  being set aside as unreadable.
+  being set aside as unreadable. A field added later gets its default
+  when the file opens (an idea card's status "nowy" and reply null, an
+  evaluation's `forwarded_at` null).
 - Beside the file: `records.json.bak`, a copy taken every time the server
   starts (the recovery point of that start), and, after a file that could
   not be read, `records.json.unreadable-<time>`, which the server sets
