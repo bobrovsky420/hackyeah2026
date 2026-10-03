@@ -12,6 +12,8 @@ const navigation: { href: string; label: MessageKey }[] = [
   { href: "/", label: "shell.nav.describe" },
   { href: "/mapa", label: "shell.nav.map" },
   { href: "/zglos-pomysl", label: "shell.nav.idea" },
+  { href: "/zapytaj", label: "shell.nav.ask" },
+  { href: "/partnerstwa", label: "shell.nav.partnerships" },
   { href: "/chce-pomoc", label: "shell.nav.help" },
   { href: "/jak-to-dziala", label: "shell.nav.how" },
 ];
@@ -33,7 +35,7 @@ export function SiteHeader() {
           </span>
           <span className="text-[0.95rem] text-muted-foreground">{t("shell.tagline")}</span>
         </Link>
-        <div className="no-print @3xl:hidden">
+        <div className="no-print @6xl:hidden">
           <button
             type="button"
             className="view-tool"
@@ -48,9 +50,9 @@ export function SiteHeader() {
         <nav
           id="menu-glowne"
           aria-label={t("shell.nav.label")}
-          className={cn("no-print w-full @3xl:block @3xl:w-auto", menuOpen ? "block" : "hidden")}
+          className={cn("no-print w-full @6xl:block @6xl:w-auto", menuOpen ? "block" : "hidden")}
         >
-          <ul className="grid gap-1 @3xl:flex @3xl:gap-6">
+          <ul className="grid gap-1 @6xl:flex @6xl:gap-6">
             {navigation.map((item) => {
               const current = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
               return (
@@ -60,7 +62,7 @@ export function SiteHeader() {
                     aria-current={current ? "page" : undefined}
                     onClick={() => setMenuOpen(false)}
                     className={cn(
-                      "inline-flex min-h-11 items-center font-bold",
+                      "inline-flex min-h-11 items-center font-bold whitespace-nowrap",
                       current && "text-foreground no-underline shadow-[inset_0_-4px_0_var(--primary)]",
                     )}
                   >

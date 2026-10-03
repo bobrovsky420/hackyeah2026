@@ -1,4 +1,4 @@
-import type { ContactRequest, ContactStatus, ContentReport, Evaluation, Feedback, Idea, IdeaStatus, InnovationOverride, KnowledgeEntry, Moderation, ModerationLogEntry, ModerationStatus, Need, NeedStatus, Readiness, VerificationStatus, NeedCluster, StoredBrief, Route, GateTextKind, ScreeningCategory, ScreeningOutcome, SensitiveTopic } from "@/lib/contracts";
+import type { ContactRequest, ContactStatus, ContentReport, Evaluation, Feedback, Idea, IdeaStatus, InnovationOverride, KnowledgeEntry, Mentor, PartnershipPost, Thread, ThreadMessage, Moderation, ModerationLogEntry, ModerationStatus, Need, NeedStatus, Readiness, VerificationStatus, NeedCluster, StoredBrief, Route, GateTextKind, ScreeningCategory, ScreeningOutcome, SensitiveTopic } from "@/lib/contracts";
 
 /*
  * Everything the app keeps between requests, behind one async interface:
@@ -57,7 +57,7 @@ export interface RetentionCutoffs {
   routesBefore: string | null;
   /** Contact requests created before this instant go. */
   contactsBefore: string;
-  /** Readiness registrations, idea cards and evaluations whose retention_until (YYYY-MM-DD) is before this day go. */
+  /** Readiness registrations, idea cards, evaluations, conversations and partnership posts whose retention_until (YYYY-MM-DD) is before this day go. */
   readinessBefore: string;
   /** The screening log as of this instant: entries past 14 days go, texts past text_until are cleared. */
   screeningAt: string;
@@ -71,6 +71,8 @@ export interface RetentionCounts {
   readiness: number;
   ideas: number;
   evaluations: number;
+  threads: number;
+  posts: number;
   screeningEntries: number;
   screeningTexts: number;
 }
@@ -201,6 +203,26 @@ export interface Repository {
   getInnovationOverride(innovationId: string): Promise<InnovationOverride | undefined>;
   /** Adds the override or replaces the one of its innovation. */
   saveInnovationOverride(override: InnovationOverride): Promise<void>;
+
+  // Conversations, mentors and the partnership board (module V).
+  addThread(thread: Thread): Promise<void>;
+  getThread(id: string): Promise<Thread | undefined>;
+  /** Most recently active first. */
+  listThreads(): Promise<Thread[]>;
+  /** Adds a message, moves updated_at and the retention 12 months on; undefined when the thread is unknown. */
+  appendMessage(id: string, message: ThreadMessage, retentionUntil: string): Promise<Thread | undefined>;
+  updateThread(
+    id: string,
+    change: Partial<Pick<Thread, "status" | "mentor" | "access_hash" | "note_pl">>,
+  ): Promise<Thread | undefined>;
+  listMentors(): Promise<Mentor[]>;
+  getMentor(id: string): Promise<Mentor | undefined>;
+  /** Adds the mentor or replaces the one with its id. */
+  saveMentor(mentor: Mentor): Promise<void>;
+  addPost(post: PartnershipPost): Promise<void>;
+  getPost(id: string): Promise<PartnershipPost | undefined>;
+  listPosts(filter?: { moderation?: Moderation["status"] }): Promise<PartnershipPost[]>;
+  moderatePost(id: string, moderation: Moderation): Promise<PartnershipPost | undefined>;
 
   // Feedback (FR-10.1).
   addFeedback(entry: Feedback): Promise<void>;

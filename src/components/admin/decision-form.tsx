@@ -6,7 +6,7 @@ import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { REJECT_REASONS, rejectReasonCodes } from "@/server/admin/reasons";
 
-type Kind = "need" | "idea" | "evaluation" | "contact" | "readiness" | "report";
+type Kind = "need" | "idea" | "evaluation" | "contact" | "readiness" | "report" | "partnership";
 
 /** The moderation state of an entry in words. */
 export function ModerationState({ moderation }: { moderation: Pick<Moderation, "status" | "reviewer" | "decided_at" | "reason_pl"> }) {

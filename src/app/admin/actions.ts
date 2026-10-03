@@ -2,15 +2,18 @@
 
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getInnovation } from "@/lib/catalogue";
-import type { IdeaStatus, InnovationOverride, KnowledgeEntry, KnowledgeEntryType, ModerationLogEntry, NeedStatus } from "@/lib/contracts";
+import type { IdeaStatus, InnovationOverride, KnowledgeEntry, KnowledgeEntryType, Mentor, ModerationLogEntry, NeedStatus, ThreadStatus } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { targetGroupCodes } from "@/lib/labels";
 import { closeSession, markVisit, openSession, requireAdmin } from "@/server/admin/auth";
 import { isRejectReason, REJECT_REASONS } from "@/server/admin/reasons";
 import { repository } from "@/server/db";
-import { nowIso } from "@/server/ephemeral";
+import { newId, nowIso } from "@/server/ephemeral";
+import { hashKey, message, newKey, nextRetention, threadPath } from "@/server/threads";
+import { LINK_COOKIE } from "@/server/admin/link-flash";
 
 /*
  * The panel's server actions (module VI). Every one checks the session
@@ -64,8 +67,8 @@ async function log(entry: Omit<ModerationLogEntry, "ts">) {
   await repository().appendModerationLog({ ts: nowIso(), ...entry });
 }
 
-type Kind = "need" | "idea" | "evaluation" | "contact" | "readiness" | "report";
-const KINDS: Kind[] = ["need", "idea", "evaluation", "contact", "readiness", "report"];
+type Kind = "need" | "idea" | "evaluation" | "contact" | "readiness" | "report" | "partnership";
+const KINDS: Kind[] = ["need", "idea", "evaluation", "contact", "readiness", "report", "partnership"];
 
 /** Approve or reject one entry of a queue. */
 export async function moderate(form: FormData): Promise<void> {
@@ -99,6 +102,10 @@ export async function moderate(form: FormData): Promise<void> {
       break;
     case "report":
       await repo.decideReport(id, moderation);
+      break;
+    case "partnership":
+      await repo.moderatePost(id, moderation);
+      revalidatePath("/partnerstwa");
       break;
   }
   await log({
@@ -255,4 +262,97 @@ export async function saveInnovation(_state: KnowledgeFormState, form: FormData)
   revalidatePath(`/innowacja/${id}`);
   revalidatePath(`/rops/innowacje/${id}`);
   redirect(`/rops/innowacje/${id}?zapisano=1`);
+}
+
+// ------------------------------------------------ conversations (module V)
+
+const THREAD_STATUSES: ThreadStatus[] = ["nowa", "w-toku", "zamknieta"];
+
+/**
+ * A new private link is shown once, in the panel of the reviewer who made
+ * it, through a short-lived cookie: the store keeps only its hash.
+ */
+async function flashLink(threadId: string, path: string, kind: "mentor" | "autor") {
+  (await cookies()).set(LINK_COOKIE, JSON.stringify({ threadId, path, kind }), {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+    path: "/rops",
+    maxAge: 120,
+  });
+}
+
+/** ROPS's answer in a conversation, signed with the reviewer's name; the status moves to "w toku". */
+export async function replyThread(form: FormData): Promise<void> {
+  const { reviewer } = await requireAdmin();
+  const id = String(form.get("id") ?? "");
+  const reply = text(form, "odpowiedz", 3000);
+  const repo = repository();
+  const thread = await repo.getThread(id);
+  if (!thread || !reply) done(form);
+  await repo.appendMessage(id, message("rops", reviewer, reply), nextRetention());
+  if (thread.status === "nowa") await repo.updateThread(id, { status: "w-toku" });
+  await log({ reviewer, target_type: "thread", target_id: id, action: "odpowiedz", status: null, reason_pl: null, note_pl: null });
+  done(form);
+}
+
+export async function updateThreadStatus(form: FormData): Promise<void> {
+  const { reviewer } = await requireAdmin();
+  const id = String(form.get("id") ?? "");
+  const status = String(form.get("status")) as ThreadStatus;
+  if (!THREAD_STATUSES.includes(status)) done(form);
+  const note = text(form, "notatka", 1000);
+  if (await repository().updateThread(id, { status, note_pl: note })) {
+    await log({ reviewer, target_type: "thread", target_id: id, action: "status", status, reason_pl: null, note_pl: note });
+  }
+  done(form);
+}
+
+/** Invites a mentor into a conversation with a private link of their own; a new invitation revokes the old link. */
+export async function assignMentor(form: FormData): Promise<void> {
+  const { reviewer } = await requireAdmin();
+  const id = String(form.get("id") ?? "");
+  const repo = repository();
+  const mentor = await repo.getMentor(String(form.get("mentor") ?? ""));
+  const thread = await repo.getThread(id);
+  if (!thread || !mentor?.active) done(form);
+  const key = newKey();
+  await repo.updateThread(id, { mentor: { id: mentor.id, name: mentor.name, key_hash: hashKey(key) } });
+  await repo.appendMessage(id, message("rops", reviewer, t("admin.threads.mentorJoined", { name: mentor.name })), nextRetention());
+  await flashLink(id, threadPath(id, key), "mentor");
+  await log({ reviewer, target_type: "thread", target_id: id, action: "mentor", status: mentor.id, reason_pl: null, note_pl: null });
+  done(form);
+}
+
+/** A new private link for the author who lost theirs; the old one stops working. */
+export async function resetAuthorLink(form: FormData): Promise<void> {
+  const { reviewer } = await requireAdmin();
+  const id = String(form.get("id") ?? "");
+  const key = newKey();
+  if (await repository().updateThread(id, { access_hash: hashKey(key) })) {
+    await flashLink(id, threadPath(id, key), "autor");
+    await log({ reviewer, target_type: "thread", target_id: id, action: "link", status: null, reason_pl: null, note_pl: null });
+  }
+  done(form);
+}
+
+export async function saveMentor(form: FormData): Promise<void> {
+  const { reviewer } = await requireAdmin();
+  const name = text(form, "imie", 200);
+  const expertise = text(form, "dziedzina", 500);
+  if (!name || !expertise) done(form);
+  const repo = repository();
+  const existing = await repo.getMentor(String(form.get("id") ?? ""));
+  const mentor: Mentor = {
+    id: existing?.id ?? newId("mt"),
+    name,
+    expertise_pl: expertise,
+    target_groups: form.getAll("grupy").map(String).filter((code) => targetGroupCodes.includes(code)),
+    active: form.get("aktywny") === "on",
+    updated_at: nowIso(),
+    example: existing?.example,
+  };
+  await repo.saveMentor(mentor);
+  await log({ reviewer, target_type: "mentor", target_id: mentor.id, action: "edycja", status: mentor.active ? "aktywny" : "nieaktywny", reason_pl: null, note_pl: null });
+  done(form);
 }

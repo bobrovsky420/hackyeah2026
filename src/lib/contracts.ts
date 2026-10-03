@@ -401,9 +401,9 @@ export interface ContentReport {
 export interface ModerationLogEntry {
   ts: string;
   reviewer: string;
-  target_type: "need" | "contact" | "readiness" | "declined" | "report" | "idea" | "evaluation" | "knowledge" | "innovation";
+  target_type: "need" | "contact" | "readiness" | "declined" | "report" | "idea" | "evaluation" | "knowledge" | "innovation" | "thread" | "mentor" | "partnership";
   target_id: string;
-  action: "zatwierdzone" | "odrzucone" | "zweryfikowane" | "przejrzane" | "status" | "odpowiedz" | "przekazane" | "edycja";
+  action: "zatwierdzone" | "odrzucone" | "zweryfikowane" | "przejrzane" | "status" | "odpowiedz" | "przekazane" | "edycja" | "mentor" | "link";
   /** The new status code of a "status" action; null for decisions. */
   status: string | null;
   reason_pl: string | null;
@@ -596,6 +596,91 @@ export interface StoredBrief {
 }
 
 /** A named group of needs (FR-5.4); Need.cluster_id points to it. */
+// ------------------------------------------------ communication (module V)
+
+/** What a conversation is about: a question to ROPS, a mentor's support, or a partnership. */
+export type ThreadTopic = "pytanie" | "mentor" | "partnerstwo";
+
+/** Who wrote a message of a conversation. */
+export type MessageAuthor = "uzytkownik" | "rops" | "mentor";
+
+/** The sector a person or an organisation speaks for, for cross-sector partnerships. */
+export type Sector = "mieszkaniec" | "ngo" | "jst" | "instytucja" | "biznes" | "nauka";
+
+export interface ThreadMessage {
+  id: string;
+  at: string;
+  author: MessageAuthor;
+  /** The reviewer or the mentor; null for the user, whose name is the thread's. */
+  name: string | null;
+  /** Screened by the gate, personal data of others removed (7.12). */
+  text: string;
+}
+
+export type ThreadStatus = "nowa" | "w-toku" | "zamknieta";
+
+/**
+ * A conversation between a user and ROPS (module V), joined by a mentor
+ * when ROPS assigns one. No accounts: the user and the mentor each hold a
+ * private link with a key; only the keys' hashes are stored. Nothing is
+ * sent by e-mail; the e-mail address, when given, is for ROPS alone.
+ */
+export interface Thread {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  topic: ThreadTopic;
+  subject: string;
+  author: { display_name: string; organisation: string | null; email: string | null; sector: Sector | null };
+  place_terc: string | null;
+  target_groups: string[];
+  /** What the conversation started from: an idea card, an innovation or a partnership post. */
+  ref: { type: "idea" | "innovation" | "partnership"; id: string } | null;
+  /** sha256 of the user's key, hex. */
+  access_hash: string;
+  mentor: { id: string; name: string; key_hash: string } | null;
+  messages: ThreadMessage[];
+  status: ThreadStatus;
+  consent: Consent;
+  retention_until: string;
+  note_pl: string | null;
+  example?: boolean;
+}
+
+/** A mentor of the hub (module V): an expert ROPS can invite into a conversation. */
+export interface Mentor {
+  id: string;
+  name: string;
+  expertise_pl: string;
+  target_groups: string[];
+  active: boolean;
+  updated_at: string;
+  example?: boolean;
+}
+
+/**
+ * A post of the partnership board (module V): who looks for a partner or
+ * offers one, from which sector, for what. Shown after ROPS approved it;
+ * answers go through ROPS, so no contact is ever public.
+ */
+export interface PartnershipPost {
+  id: string;
+  created_at: string;
+  kind: "szukam" | "oferuje";
+  title: string;
+  description: string;
+  sector: Sector;
+  seeking: Sector[];
+  place_terc: string | null;
+  target_groups: string[];
+  author: { display_name: string; organisation: string | null; email: string | null };
+  /** The author's conversation with ROPS about the post, where answers are relayed. */
+  thread_id: string;
+  moderation: Moderation;
+  retention_until: string;
+  example?: boolean;
+}
+
 /** The kinds of a knowledge item; "video" only for the items ROPS adds in the panel (module II, VI). */
 export type KnowledgeEntryType = "guide" | "model" | "publication" | "catalogue" | "data" | "contact" | "project" | "video";
 
@@ -693,7 +778,7 @@ export interface ScreeningResult {
 }
 
 /** Which submitted text the gate screens (7.12, first paragraph). */
-export type GateTextKind = "need" | "saved_need" | "contact" | "readiness" | "offer" | "idea" | "evaluation";
+export type GateTextKind = "need" | "saved_need" | "contact" | "readiness" | "offer" | "idea" | "evaluation" | "message" | "partnership";
 
 export interface GateInput {
   text: string;

@@ -1,6 +1,7 @@
 import { catalogue } from "@/lib/catalogue";
 import type { ContactRequest, Evaluation, Idea, Need, Readiness } from "@/lib/contracts";
 import { repository, type Repository } from "@/server/db";
+import { waitsForRops } from "@/server/threads/access";
 
 /*
  * What the panel (module VI) reads of the store: the queues that wait for a
@@ -9,7 +10,7 @@ import { repository, type Repository } from "@/server/db";
  * of FR-9.2. Everything here runs behind the panel's door.
  */
 
-export type QueueKey = "ideas" | "evaluations" | "needs" | "contacts" | "readiness" | "reports" | "declined";
+export type QueueKey = "threads" | "partnerships" | "ideas" | "evaluations" | "needs" | "contacts" | "readiness" | "reports" | "declined";
 
 export interface QueueCount {
   key: QueueKey;
@@ -22,7 +23,9 @@ export interface QueueCount {
 const isFresh = (createdAt: string, since: string | null) => since === null || createdAt > since;
 
 export async function queueCounts(since: string | null, repo: Repository = repository(), now = Date.now()): Promise<QueueCount[]> {
-  const [ideas, evaluations, needs, contacts, readiness, reports, declined, log] = await Promise.all([
+  const [threads, posts, ideas, evaluations, needs, contacts, readiness, reports, declined, log] = await Promise.all([
+    repo.listThreads(),
+    repo.listPosts(),
     repo.listIdeas(),
     repo.listEvaluations(),
     repo.listNeeds(),
@@ -38,6 +41,13 @@ export async function queueCounts(since: string | null, repo: Repository = repos
     return { key, waiting: open.length, fresh: open.filter((item) => isFresh(item.created_at, since)).length };
   };
   return [
+    // A conversation is new since the last visit when its last message came after it.
+    {
+      key: "threads",
+      waiting: threads.filter(waitsForRops).length,
+      fresh: threads.filter((thread) => waitsForRops(thread) && isFresh(thread.updated_at, since)).length,
+    },
+    count("partnerships", posts, (item) => item.moderation.status === "do-weryfikacji"),
     count("ideas", ideas, (item) => item.moderation.status === "do-weryfikacji" || item.status === "nowy"),
     count("evaluations", evaluations, (item) => item.moderation.status === "do-weryfikacji" || (item.test_signup !== null && item.forwarded_at === null)),
     count("needs", needs, (item) => item.moderation.status === "do-weryfikacji"),

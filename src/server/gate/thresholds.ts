@@ -50,6 +50,10 @@ export const contactRequestsPerDay = () => envLimit("ABUSE_LIMIT_CONTACTS_PER_DA
 export const readinessRegistrationsPerDay = () => envLimit("ABUSE_LIMIT_READINESS_PER_DAY", 2);
 export const ideaCardsPerDay = () => envLimit("ABUSE_LIMIT_IDEAS_PER_DAY", 3);
 export const evaluationsPerDay = () => envLimit("ABUSE_LIMIT_EVALUATIONS_PER_DAY", 5);
+/** Module V: new conversations and partnership posts per e-mail address and client address, messages per conversation. */
+export const threadsPerDay = () => envLimit("ABUSE_LIMIT_THREADS_PER_DAY", 5);
+export const messagesPerDay = () => envLimit("ABUSE_LIMIT_MESSAGES_PER_DAY", 30);
+export const postsPerDay = () => envLimit("ABUSE_LIMIT_POSTS_PER_DAY", 3);
 export const LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 /** The model call of FR-12.2: effort low, about 1 000 tokens (9.3). */

@@ -47,6 +47,8 @@ const KIND_LABELS: Record<GateTextKind, string> = {
   offer: 'odpowiedź "Chcemy pomóc"',
   idea: "opis pomysłu na innowację społeczną",
   evaluation: "opinia o rozwiązaniu dla jego autorów",
+  message: "wiadomość w trwającej rozmowie z ROPS",
+  partnership: "ogłoszenie o partnerstwie lub odpowiedź na nie, do sprawdzenia przez ROPS",
 };
 
 const MAX_NAMES = 20;

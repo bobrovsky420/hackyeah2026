@@ -1,11 +1,14 @@
-import type { RoleCode, Idea, Need, Readiness } from "@/lib/contracts";
+import { createHash } from "node:crypto";
+import type { RoleCode, Idea, Mentor, Need, PartnershipPost, Readiness, Thread } from "@/lib/contracts";
 
 /*
  * The example entries every fresh store starts with (memory.ts): three
  * needs for the map and the brief (the prototype's store had them from
  * the start), the two consented and verified team entries of the
- * readiness registry (FR-6.5) and one idea card of the team (module III),
- * its similar innovations already stored. All are marked `example`. A store that
+ * readiness registry (FR-6.5), one idea card of the team (module III),
+ * its similar innovations already stored, and for module V two mentors,
+ * two conversations and one approved partnership post. All are marked
+ * `example`. A store that
  * exists already keeps what it has; deleting its file starts again from
  * these.
  */
@@ -153,6 +156,136 @@ export function exampleIdeas(): Idea[] {
       },
       retention_until: "2027-10-03",
       note_pl: null,
+      example: true,
+    },
+  ];
+}
+
+// ------------------------------------------------ communication (module V)
+
+/**
+ * The keys of the example conversations: the demo and the screen checks
+ * open them with these. Public on purpose, so they open only example data.
+ */
+export const EXAMPLE_THREAD_KEYS = { question: "przyklad-rozmowa-1", partnership: "przyklad-rozmowa-2", mentor: "przyklad-mentor-1" } as const;
+
+const sha256 = (key: string) => createHash("sha256").update(key).digest("hex");
+const REPLIED_AT = "2026-10-03T11:30:00+02:00";
+
+export function exampleMentors(): Mentor[] {
+  return [
+    {
+      id: "mt-przyklad-1",
+      name: "Ekspertka ds. usług dla seniorów (wpis przykładowy)",
+      expertise_pl: "Usługi opiekuńcze, kluby seniora, wolontariat międzypokoleniowy.",
+      target_groups: ["seniorzy"],
+      active: true,
+      updated_at: SEEDED_AT,
+      example: true,
+    },
+    {
+      id: "mt-przyklad-2",
+      name: "Ekspert ds. ekonomii społecznej (wpis przykładowy)",
+      expertise_pl: "Spółdzielnie socjalne, zlecanie zadań publicznych, finansowanie z FIO i PROO.",
+      target_groups: ["rynek-pracy", "inne"],
+      active: true,
+      updated_at: SEEDED_AT,
+      example: true,
+    },
+  ];
+}
+
+export function exampleThreads(): Thread[] {
+  const consent = { text_version: CONSENT_VERSION, timestamp: SEEDED_AT };
+  return [
+    {
+      id: "rz-przyklad-1",
+      created_at: SEEDED_AT,
+      updated_at: REPLIED_AT,
+      topic: "mentor",
+      subject: "Jak zacząć klub seniora w małej wsi? (wpis przykładowy)",
+      author: { display_name: "Koło Gospodyń Wiejskich (wpis przykładowy)", organisation: null, email: null, sector: "ngo" },
+      place_terc: "1207062",
+      target_groups: ["seniorzy"],
+      ref: { type: "innovation", id: "inn-nat-649" },
+      access_hash: sha256(EXAMPLE_THREAD_KEYS.question),
+      mentor: { id: "mt-przyklad-1", name: "Ekspertka ds. usług dla seniorów (wpis przykładowy)", key_hash: sha256(EXAMPLE_THREAD_KEYS.mentor) },
+      messages: [
+        {
+          id: "wd-przyklad-1",
+          at: SEEDED_AT,
+          author: "uzytkownik",
+          name: null,
+          text: "Chcemy zacząć spotkania dla seniorów w naszej świetlicy. Od czego zacząć i skąd wziąć pieniądze na pierwszy rok?",
+        },
+        {
+          id: "wd-przyklad-2",
+          at: "2026-10-03T10:15:00+02:00",
+          author: "rops",
+          name: "Dział Innowacji Społecznych ROPS",
+          text: "Dziękujemy za pytanie. Zaprosiliśmy do rozmowy ekspertkę, która prowadziła podobne kluby.",
+        },
+        {
+          id: "wd-przyklad-3",
+          at: REPLIED_AT,
+          author: "mentor",
+          name: "Ekspertka ds. usług dla seniorów (wpis przykładowy)",
+          text: "Na start wystarczy stały termin raz w tygodniu i jedna osoba prowadząca. Na pierwszy rok sprawdźcie mały grant z gminy albo fundusz sołecki.",
+        },
+      ],
+      status: "w-toku",
+      consent,
+      retention_until: "2027-10-03",
+      note_pl: null,
+      example: true,
+    },
+    {
+      id: "rz-przyklad-2",
+      created_at: SEEDED_AT,
+      updated_at: SEEDED_AT,
+      topic: "partnerstwo",
+      subject: "Szukamy szkoły do wolontariatu przy zakupach dla seniorów (wpis przykładowy)",
+      author: { display_name: "Stowarzyszenie Razem (wpis przykładowy)", organisation: null, email: null, sector: "ngo" },
+      place_terc: "1261011",
+      target_groups: ["seniorzy", "dzieci-mlodziez-rodziny"],
+      ref: { type: "partnership", id: "pp-przyklad-1" },
+      access_hash: sha256(EXAMPLE_THREAD_KEYS.partnership),
+      mentor: null,
+      messages: [
+        {
+          id: "wd-przyklad-4",
+          at: SEEDED_AT,
+          author: "uzytkownik",
+          name: null,
+          text: "Dodaliśmy ogłoszenie na tablicę partnerstw. Prosimy o kontakt, gdy zgłosi się szkoła.",
+        },
+      ],
+      status: "nowa",
+      consent,
+      retention_until: "2027-10-03",
+      note_pl: null,
+      example: true,
+    },
+  ];
+}
+
+export function examplePosts(): PartnershipPost[] {
+  return [
+    {
+      id: "pp-przyklad-1",
+      created_at: SEEDED_AT,
+      kind: "szukam",
+      title: "Szukamy szkoły do wolontariatu przy zakupach dla seniorów (wpis przykładowy)",
+      description:
+        "Organizujemy pomoc w zakupach dla samotnych seniorów w Krakowie. Szukamy szkoły, której uczniowie raz w tygodniu pomogą jako wolontariusze pod opieką nauczyciela.",
+      sector: "ngo",
+      seeking: ["instytucja", "jst"],
+      place_terc: "1261011",
+      target_groups: ["seniorzy", "dzieci-mlodziez-rodziny"],
+      author: { display_name: "Stowarzyszenie Razem (wpis przykładowy)", organisation: null, email: null },
+      thread_id: "rz-przyklad-2",
+      moderation: { status: "zatwierdzone", reviewer: "zespół HubMI.pl", decided_at: SEEDED_AT, reason_pl: null },
+      retention_until: "2027-10-03",
       example: true,
     },
   ];

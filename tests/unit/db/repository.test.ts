@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { StoredBrief, ContactRequest, ContentReport, Evaluation, Idea, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
+import type { StoredBrief, ContactRequest, ContentReport, Evaluation, Idea, Thread, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
 import { exampleIdeas, exampleNeeds, exampleReadiness } from "@/server/db/examples";
 import { createFileRepository } from "@/server/db/file";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
@@ -28,7 +28,7 @@ interface Target {
 }
 
 /** A store without the example entries. */
-const empty = () => ({ ...createMemoryState(), needs: [], readiness: [], ideas: [] });
+const empty = () => ({ ...createMemoryState(), needs: [], readiness: [], ideas: [], threads: [], posts: [], mentors: new Map() });
 /** The retention runs of the file store see the tests' clock, never the real day. */
 const clock = () => new Date(NOW);
 
@@ -437,6 +437,43 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
   });
 
+  describe("conversations, mentors and the partnership board (module V)", () => {
+    const thread = (id: string, updatedAt: string): Thread => ({
+      id, created_at: updatedAt, updated_at: updatedAt, topic: "pytanie", subject: "Pytanie",
+      author: { display_name: "Ala", organisation: null, email: null, sector: "ngo" }, place_terc: null, target_groups: [], ref: null,
+      access_hash: "ab", mentor: null, messages: [{ id: "wd-1", at: updatedAt, author: "uzytkownik", name: null, text: "Dzień dobry." }],
+      status: "zamknieta", consent: { text_version: "v1", timestamp: updatedAt }, retention_until: "2027-10-03", note_pl: null,
+    });
+
+    it("moves a conversation with a new message to the top, reopens it for its author and keeps it 12 more months", async () => {
+      await repo.addThread(thread("rz-1", at(-DAY)));
+      await repo.addThread(thread("rz-2", at(0)));
+      expect((await repo.listThreads()).map((item) => item.id)).toEqual(["rz-2", "rz-1"]);
+      const updated = await repo.appendMessage("rz-1", { id: "wd-2", at: at(DAY), author: "uzytkownik", name: null, text: "Jeszcze pytanie." }, "2027-10-04");
+      expect(updated).toMatchObject({ updated_at: at(DAY), retention_until: "2027-10-04", status: "w-toku" });
+      expect(updated?.messages).toHaveLength(2);
+      expect((await repo.listThreads()).map((item) => item.id)).toEqual(["rz-1", "rz-2"]);
+      expect(await repo.appendMessage("rz-9", { id: "wd-3", at: at(0), author: "rops", name: "AT", text: "x" }, "2027-10-04")).toBeUndefined();
+      const mentor = { id: "mt-1", name: "M", key_hash: "cd" };
+      expect((await repo.updateThread("rz-2", { mentor, status: "w-toku" }))?.mentor).toEqual(mentor);
+    });
+
+    it("keeps one mentor per id and moderates partnership posts", async () => {
+      const mentor = { id: "mt-1", name: "Bożena", expertise_pl: "Seniorzy", target_groups: ["seniorzy"], active: true, updated_at: at(0) };
+      await repo.saveMentor(mentor);
+      await repo.saveMentor({ ...mentor, active: false });
+      expect(await repo.listMentors()).toEqual([{ ...mentor, active: false }]);
+      await repo.addPost({
+        id: "pp-1", created_at: at(0), kind: "szukam", title: "Szukamy szkoły", description: "Opis współpracy.", sector: "ngo", seeking: ["instytucja"],
+        place_terc: null, target_groups: [], author: { display_name: "Ala", organisation: null, email: null }, thread_id: "rz-1",
+        moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null }, retention_until: "2027-10-03",
+      });
+      expect(await repo.listPosts({ moderation: "zatwierdzone" })).toEqual([]);
+      await repo.moderatePost("pp-1", { status: "zatwierdzone", reviewer: "AT", decided_at: at(0), reason_pl: null });
+      expect((await repo.listPosts({ moderation: "zatwierdzone" })).map((post) => post.id)).toEqual(["pp-1"]);
+    });
+  });
+
   describe("feedback and content reports", () => {
     it("keeps feedback per route", async () => {
       await repo.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(-DAY) });
@@ -571,7 +608,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
 
     it("counts without deleting in a dry run", async () => {
-      const expected = { routes: 1, feedback: 1, contacts: 1, readiness: 1, ideas: 1, evaluations: 1, screeningEntries: 1, screeningTexts: 1 };
+      const expected = { routes: 1, feedback: 1, contacts: 1, readiness: 1, ideas: 1, evaluations: 1, threads: 0, posts: 0, screeningEntries: 1, screeningTexts: 1 };
       expect(await repo.applyRetention(cutoffs, { dryRun: true })).toEqual(expected);
       expect(await repo.getRoute("rt-old")).toBeDefined();
       expect(await repo.listContacts()).toHaveLength(2);
@@ -587,6 +624,8 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
         readiness: 1,
         ideas: 1,
         evaluations: 1,
+        threads: 0,
+        posts: 0,
         screeningEntries: 1,
         screeningTexts: 1,
       });
@@ -607,6 +646,8 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
         readiness: 0,
         ideas: 0,
         evaluations: 0,
+        threads: 0,
+        posts: 0,
         screeningEntries: 0,
         screeningTexts: 0,
       });
@@ -696,6 +737,9 @@ describe("the example entries", () => {
     expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-przyklad-1", "nd-przyklad-2", "nd-przyklad-3"]);
     expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-przyklad-1", "gt-przyklad-2"]);
     expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-przyklad-1"]);
+    expect((await repo.listThreads()).map((item) => item.id)).toEqual(["rz-przyklad-1", "rz-przyklad-2"]);
+    expect((await repo.listPosts({ moderation: "zatwierdzone" })).map((item) => item.id)).toEqual(["pp-przyklad-1"]);
+    expect((await repo.listMentors()).every((mentor) => mentor.example)).toBe(true);
   });
 
   it("the example idea card is marked and already holds its similar innovations (module III)", () => {
