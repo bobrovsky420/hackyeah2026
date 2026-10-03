@@ -1,8 +1,10 @@
-import type { RetentionCutoffs } from "@/server/db/repository";
+import { envValue } from "@/lib/env";
+import type { Repository, RetentionCounts, RetentionCutoffs } from "@/server/db/repository";
 
 /*
  * The retention defaults of 12.6 (OP-18, the lawyer's call by 1 October
- * 2026) as the cut-offs of one run of `pnpm retention`:
+ * 2026) as the cut-offs of one run, which the store makes when it opens
+ * and once a day after that (src/server/db/file.ts):
  * - routes: 30 days after the event (HackYeah ends on 4 October 2026), so
  *   from ROUTES_UNTIL on, every route created before it goes with its
  *   feedback; routes created later stay until ROPS sets a later date;
@@ -42,4 +44,21 @@ export function retentionCutoffs(now: Date, options: RetentionOptions = {}): Ret
     readinessBefore: today,
     screeningAt: now.toISOString(),
   };
+}
+
+/**
+ * One run of the defaults at `now`: `RETENTION_ROUTES_UNTIL` moves the
+ * routes' day (a value that is not a date is reported and ignored, so a
+ * typo never keeps the store from opening); what went is logged.
+ */
+export async function applyRetentionDefaults(repo: Repository, now: Date): Promise<RetentionCounts> {
+  let routesUntil = envValue("RETENTION_ROUTES_UNTIL");
+  if (routesUntil !== undefined && !isDay(routesUntil)) {
+    console.error(`[store] RETENTION_ROUTES_UNTIL is not a date (YYYY-MM-DD): ${routesUntil}; the routes' day stays ${DEFAULT_ROUTES_UNTIL}`);
+    routesUntil = undefined;
+  }
+  const counts = await repo.applyRetention(retentionCutoffs(now, { routesUntil }), { dryRun: false });
+  const removed = Object.entries(counts).filter(([, count]) => count > 0);
+  if (removed.length > 0) console.log(`[store] retention removed ${removed.map(([name, count]) => `${name} ${count}`).join(", ")}`);
+  return counts;
 }

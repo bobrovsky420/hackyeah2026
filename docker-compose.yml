@@ -1,34 +1,10 @@
-# The local PostgreSQL 16 of the app (specification 9.1, docs/database.md),
-# and with the profile `stack` the whole app on one machine: the demo laptop
-# or any team member's laptop (docs/local-stack.md). The image carries
-# pgvector, installed but unused unless FR-3.7 is switched on. Hosting with
-# the app and Caddy is Analyst 2's (12.9).
+# With the profile `stack` the whole app on one machine: the demo laptop or
+# any team member's laptop (docs/local-stack.md). There is no database: the
+# app keeps its entries in one file in the volume `stack-local`
+# (docs/storage.md). Hosting with the app and Caddy is Analyst 2's (12.9).
 #
-#   npx pnpm@12.6.0 db:up    (docker compose --env-file .env.dev up -d db)
 #   docker compose --env-file .env.dev --profile stack up -d --wait
-#
-# POSTGRES_PASSWORD comes from .env.dev (git-ignored); no password is in git.
 services:
-  db:
-    image: pgvector/pgvector:pg16
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: hubmi
-      POSTGRES_DB: hubmi
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env.dev, see docs/database.md}
-    ports:
-      # Only this machine can reach it.
-      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      # Runs once, on an empty volume: the second database for tests/unit/db/.
-      - ./docker/db-init:/docker-entrypoint-initdb.d:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hubmi -d hubmi"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
   # The images carry the data release DATA_RELEASE (docker/Dockerfile): a
   # new release is `build` then `up`. Only this machine can reach the app.
   embedding:
@@ -57,8 +33,6 @@ services:
       secrets: [github_token]
     restart: unless-stopped
     depends_on:
-      db:
-        condition: service_healthy
       embedding:
         condition: service_healthy
     # The model keys (HF_TOKEN, ANTHROPIC_API_KEY, ...); the lines below win.
@@ -66,7 +40,6 @@ services:
       - path: .env.dev
         required: false
     environment:
-      DATABASE_URL: postgres://hubmi:${POSTGRES_PASSWORD}@db:5432/hubmi
       EMBEDDING_URL: http://embedding:8765
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-OPI-PIB/PolDense-400M}
       REPLAY_ONLY: ${REPLAY_ONLY:-false}
@@ -74,7 +47,8 @@ services:
     ports:
       - "127.0.0.1:${APP_PORT:-3000}:3000"
     volumes:
-      # The replay files: seeded from the image on start, then recorded here.
+      # The replay files, seeded from the image on start and recorded here,
+      # and the store file (docs/storage.md).
       - stack-local:/app/.local
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
@@ -90,5 +64,4 @@ secrets:
     environment: GITHUB_TOKEN
 
 volumes:
-  db-data:
   stack-local:

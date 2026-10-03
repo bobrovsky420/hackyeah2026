@@ -44,7 +44,7 @@ COPY --from=data /work/.local /app/replay-seed
 
 ENV NODE_ENV=production
 EXPOSE 3000
-CMD ["sh", "-c", "mkdir -p .local && cp -Rn replay-seed/. .local/ && node_modules/.bin/tsx scripts/db-migrate.ts && node_modules/.bin/tsx scripts/seed.ts && exec node_modules/.bin/next start -H 0.0.0.0 -p 3000"]
+CMD ["sh", "-c", "mkdir -p .local && cp -Rn replay-seed/. .local/ && exec node_modules/.bin/next start -H 0.0.0.0 -p 3000"]
 
 # ------------------------------------------------------------- embedding
 FROM python:3.14-slim AS embedding

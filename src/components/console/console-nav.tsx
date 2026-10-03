@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { t, type MessageKey } from "@/lib/i18n";
+import { publicPath } from "@/lib/page-routes";
 import { cn } from "@/lib/utils";
 
 const sections: { href: string; label: MessageKey }[] = [
@@ -15,7 +16,7 @@ const sections: { href: string; label: MessageKey }[] = [
 
 /** The console's tabs as navigation links: every tab has an address. */
 export function ConsoleNav() {
-  const pathname = usePathname();
+  const pathname = publicPath(usePathname());
   return (
     <nav aria-label={t("console.nav.label")} className="no-print border-b border-border">
       <ul className="flex flex-wrap gap-x-6">

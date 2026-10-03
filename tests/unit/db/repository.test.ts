@@ -1,21 +1,23 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { StoredBrief } from "@/lib/contracts/brief";
-import type { ContactRequest, ContentReport, Need, Readiness } from "@/lib/contracts/records";
+import type { ContactRequest, ContentReport, ModerationLogEntry, Need, Readiness } from "@/lib/contracts/records";
 import type { Route } from "@/lib/contracts/route";
 import { exampleNeeds, exampleReadiness } from "@/server/db/examples";
+import { createFileRepository } from "@/server/db/file";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
 import type { Repository, ScreeningLogEntry } from "@/server/db/repository";
 
 /*
- * One contract for both repositories (src/server/db/): always against
- * memory, and against PostgreSQL when DATABASE_URL_TEST names a database
- * the suite may empty (docs/database.md). Only the environment counts,
- * never .env.dev, so the suite never reaches a database by accident.
- * Timestamps are written as UTC with milliseconds, the form PostgreSQL
- * gives back, so records compare whole.
+ * One contract for the store (src/server/db/): the memory repository, and
+ * the same over a file (file.ts) in a temporary folder outside the
+ * repository, a fresh file for every test. Timestamps are written as UTC
+ * with milliseconds, so records compare whole after a round trip through
+ * the file.
  */
 
-const TEST_URL = process.env.DATABASE_URL_TEST;
 const DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse("2026-10-03T12:00:00.000Z");
 const at = (offsetMs: number) => new Date(NOW + offsetMs).toISOString();
@@ -23,33 +25,41 @@ const at = (offsetMs: number) => new Date(NOW + offsetMs).toISOString();
 interface Target {
   name: string;
   open: () => Promise<Repository>;
-  /** Empties every table before a test; memory starts afresh instead. */
+  /** A repository that starts afresh, before every test. */
   reset: (repo: Repository) => Promise<Repository>;
 }
 
+/** A store without the example entries. */
+const empty = () => ({ ...createMemoryState(), needs: [], readiness: [] });
+/** The retention runs of the file store see the tests' clock, never the real day. */
+const clock = () => new Date(NOW);
+
 const memoryTarget: Target = {
   name: "memory",
-  open: async () => createMemoryRepository({ ...createMemoryState(), needs: [] }),
-  reset: async () => createMemoryRepository({ ...createMemoryState(), needs: [] }),
+  open: async () => createMemoryRepository(empty()),
+  reset: async () => createMemoryRepository(empty()),
 };
 
-const postgresTarget: Target = {
-  name: "postgres",
-  open: async () => {
-    const { migrateDatabase } = await import("@/server/db/migrate");
-    const { createPostgresRepository } = await import("@/server/db/postgres");
-    await migrateDatabase(TEST_URL!);
-    return createPostgresRepository(TEST_URL!, { max: 2 });
-  },
+const storeDir = fs.mkdtempSync(path.join(os.tmpdir(), "store-"));
+let storeSeq = 0;
+const openStore = () => createFileRepository(path.join(storeDir, `contract-${++storeSeq}.json`), { fresh: empty, now: clock });
+
+const fileTarget: Target = {
+  name: "file",
+  open: async () => openStore(),
   reset: async (repo) => {
-    const { default: postgres } = await import("postgres");
-    const sql = postgres(TEST_URL!, { max: 1, onnotice: () => {} });
-    await sql`TRUNCATE routes, needs, contact_requests, readiness, feedback, content_reports, moderation_log,
-      screening_log, generated_briefs, event_counters, briefs, need_clusters RESTART IDENTITY`;
-    await sql.end();
-    return repo;
+    await repo.close();
+    return openStore();
   },
 };
+
+beforeAll(() => {
+  vi.spyOn(console, "log").mockImplementation(() => {});
+});
+afterAll(() => {
+  vi.restoreAllMocks();
+  fs.rmSync(storeDir, { recursive: true, force: true });
+});
 
 function need(id: string, over: Partial<Need> = {}): Need {
   return {
@@ -172,11 +182,11 @@ const moderation = (status: "zatwierdzone" | "odrzucone") => ({
   reason_pl: status === "odrzucone" ? "Dane osobowe" : null,
 });
 
-describe.each([memoryTarget, ...(TEST_URL ? [postgresTarget] : [])])("the repository in $name", (target) => {
+describe.each([memoryTarget, fileTarget])("the repository in $name", (target) => {
   let repo: Repository;
   beforeAll(async () => {
     repo = await target.open();
-  }, 60_000);
+  });
   beforeEach(async () => {
     repo = await target.reset(repo);
   });
@@ -567,10 +577,10 @@ ${title}
 });
 
 describe("the example entries", () => {
-  it("the memory store starts with the three example needs", async () => {
+  it("a fresh store starts with the three example needs and the two team entries", async () => {
     const repo = createMemoryRepository();
     expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-przyklad-1", "nd-przyklad-2", "nd-przyklad-3"]);
-    expect(await repo.listReadiness()).toEqual([]);
+    expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-przyklad-1", "gt-przyklad-2"]);
   });
 
   it("the seed holds two consented and verified team organisations, marked as examples (FR-6.5)", () => {
@@ -585,6 +595,105 @@ describe("the example entries", () => {
   });
 });
 
-describe.skipIf(Boolean(TEST_URL))("the repository in postgres", () => {
-  it.skip("runs with DATABASE_URL_TEST set (docs/database.md)", () => {});
+describe("the store file", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "store-file-"));
+  const fileOf = (name: string) => {
+    fs.mkdirSync(path.join(dir, name), { recursive: true });
+    return path.join(dir, name, "records.json");
+  };
+  afterAll(() => fs.rmSync(dir, { recursive: true, force: true }));
+
+  it("keeps every entry across a close and a reopen, and carries the screening sequence on", async () => {
+    const file = fileOf("reopen");
+    const entry: ModerationLogEntry = {
+      ts: at(0),
+      reviewer: "rops-1",
+      target_type: "need",
+      target_id: "nd-1",
+      action: "zatwierdzone",
+      status: null,
+      reason_pl: null,
+      note_pl: null,
+    };
+    const first = createFileRepository(file, { fresh: empty, now: clock });
+    await first.saveRoute(route("rt-1", "route"));
+    await first.addNeed(need("nd-1"));
+    await first.addContact(contact("kt-1"));
+    await first.addReadiness(registration("gt-1"));
+    await first.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) });
+    await first.addReport(report("zg-1"));
+    await first.appendModerationLog(entry);
+    await first.writeScreeningLog(screening(-DAY), NOW - DAY);
+    await first.writeScreeningLog(screening(-1000, { category: "need", outcome: "need", text: null, text_until: null }), NOW - 1000);
+    await first.countEvent("route");
+    await first.countEvent("route");
+    expect(await first.markBriefGenerated("nd-1", at(0))).toBe(true);
+    const { since } = await first.counters();
+    await first.close();
+
+    const second = createFileRepository(file, { fresh: empty, now: clock });
+    expect(await second.getRoute("rt-1")).toEqual(route("rt-1", "route"));
+    expect(await second.listNeeds()).toEqual([need("nd-1")]);
+    expect(await second.listContacts()).toEqual([contact("kt-1")]);
+    expect(await second.listReadiness()).toEqual([registration("gt-1")]);
+    expect(await second.listFeedback()).toEqual([{ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) }]);
+    expect(await second.listReports()).toEqual([report("zg-1")]);
+    expect(await second.listModerationLog(10)).toEqual([entry]);
+    expect((await second.listScreeningLog(NOW)).map((item) => item.id)).toEqual(["sl-2", "sl-1"]);
+    await second.writeScreeningLog(screening(0), NOW);
+    expect((await second.listScreeningLog(NOW))[0].id).toBe("sl-3");
+    expect(await second.counters()).toEqual({ since, counts: { route: 2 } });
+    expect(await second.markBriefGenerated("nd-1", at(0))).toBe(false);
+    // The recovery point of the second start.
+    expect(fs.existsSync(`${file}.bak`)).toBe(true);
+    await second.close();
+  });
+
+  it("writes the changes of one tick as one whole file and leaves no temporary behind", async () => {
+    const file = fileOf("burst");
+    const repo = createFileRepository(file, { fresh: empty, now: clock });
+    await repo.addNeed(need("nd-1"));
+    await repo.addNeed(need("nd-2"));
+    await repo.countEvent("need");
+    // Nothing is written on the request's own tick.
+    expect(fs.existsSync(file)).toBe(false);
+    await repo.close();
+    const saved = JSON.parse(fs.readFileSync(file, "utf8"));
+    expect(saved).toMatchObject({ version: 1, pid: process.pid, state: { screeningSeq: 0, counters: [["need", 1]] } });
+    expect(saved.state.needs.map((item: Need) => item.id)).toEqual(["nd-2", "nd-1"]);
+    expect(fs.readdirSync(path.dirname(file))).toEqual(["records.json"]);
+  });
+
+  it("applies the retention defaults when it opens, and saves the result", async () => {
+    const file = fileOf("retention");
+    const first = createFileRepository(file, { fresh: empty, now: clock });
+    await first.addContact(contact("kt-old", { created_at: at(-91 * DAY) }));
+    await first.addContact(contact("kt-new", { created_at: at(-89 * DAY) }));
+    await first.close();
+
+    const second = createFileRepository(file, { fresh: empty, now: clock });
+    expect((await second.listContacts()).map((item) => item.id)).toEqual(["kt-new"]);
+    await second.close();
+    expect(JSON.parse(fs.readFileSync(file, "utf8")).state.contacts.map((item: ContactRequest) => item.id)).toEqual(["kt-new"]);
+  });
+
+  it("moves a file that is not a store aside and starts with the examples", async () => {
+    const file = fileOf("unreadable");
+    fs.writeFileSync(file, "{ not a store");
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const repo = createFileRepository(file, { now: clock });
+    expect(error).toHaveBeenCalledOnce();
+    error.mockRestore();
+    expect(fs.readdirSync(path.dirname(file)).filter((name) => name.startsWith("records.json.unreadable-"))).toHaveLength(1);
+    expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-przyklad-1", "nd-przyklad-2", "nd-przyklad-3"]);
+    expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-przyklad-1", "gt-przyklad-2"]);
+    await repo.close();
+  });
+
+  it("refuses a file of a newer version instead of discarding it", () => {
+    const file = fileOf("newer");
+    fs.writeFileSync(file, JSON.stringify({ version: 2, saved_at: at(0), pid: 1, state: {} }));
+    expect(() => createFileRepository(file, { now: clock })).toThrow(/version 2/);
+    expect(fs.existsSync(file)).toBe(true);
+  });
 });

@@ -120,7 +120,7 @@ export function GminaMap({ settings, hrefBase, tableHref }: { settings: MapSetti
         const maplibre = await import("maplibre-gl");
         if (cancelled || map) return;
         maplibre.setWorkerUrl(new URL(WORKER_PATH, window.location.href).href);
-        const source = new URL("/api/map/gminy.geojson", window.location.href).href;
+        const source = new URL("/api/map/municipalities.geojson", window.location.href).href;
         map = new maplibre.Map({
           container,
           style: style(current, source),

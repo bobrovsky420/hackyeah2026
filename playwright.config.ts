@@ -40,12 +40,15 @@ export default defineConfig({
         // journeys make no model calls: the canned route engine answers routes,
         // and the gate of the forms reads an empty replay recording, so it takes
         // its deterministic path. They send many requests from one address, above
-        // the limits of FR-2.4, FR-6.4 and FR-12.14.
+        // the limits of FR-2.4, FR-6.4 and FR-12.14. The store stays in memory:
+        // every run starts from the example entries and never touches the
+        // developer's store file.
         env: {
           ROPS_TOKEN: CONSOLE_TOKEN,
           ROUTE_ENGINE: "canned",
           LLM_PROVIDER: "replay",
           LLM_REPLAY_DIR: ".local/playwright-replay",
+          STORE_FILE: "memory",
           RATE_LIMIT_ROUTES_PER_MINUTE: "1000",
           GATE_REPEAT_LIMIT: "1000",
           ABUSE_LIMIT_CONTACTS_PER_DAY: "1000",

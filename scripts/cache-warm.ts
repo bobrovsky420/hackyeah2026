@@ -22,6 +22,8 @@ async function main(): Promise<number> {
     return 0;
   }
   if (args.provider) process.env.LLM_PROVIDER = args.provider;
+  // The screening log of the runs stays in this process: a script never shares the store file with a running server.
+  process.env.STORE_FILE ??= "memory";
   const { warmMain } = await import("../src/server/eval/cli");
   return warmMain(args);
 }

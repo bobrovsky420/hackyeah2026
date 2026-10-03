@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { t, type MessageKey } from "@/lib/i18n";
+import { publicPath } from "@/lib/page-routes";
 import { cn } from "@/lib/utils";
 
 const navigation: { href: string; label: MessageKey }[] = [
@@ -15,7 +16,7 @@ const navigation: { href: string; label: MessageKey }[] = [
 ];
 
 export function SiteHeader() {
-  const pathname = usePathname();
+  const pathname = publicPath(usePathname());
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (

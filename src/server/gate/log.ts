@@ -8,9 +8,9 @@ import { LOG_TEXT_RETENTION_MS, REPEAT_WINDOW_MS, repeatLimit } from "./threshol
 export type { ScreeningLogEntry } from "@/server/db";
 
 /*
- * The screening log of FR-12.7, kept by the repository (PostgreSQL or
- * memory), and the memory of repeated texts (FR-12.1, FR-12.14), which
- * stays in the server's memory. A log entry never holds the requester's
+ * The screening log of FR-12.7, kept by the store (src/server/db/), and
+ * the memory of repeated texts (FR-12.1, FR-12.14), which stays in the
+ * server's memory. A log entry never holds the requester's
  * identity; it holds the text only for `declined` and for spam, with
  * personal data already removed, for seven days of review, and never the
  * text of a `redirected` case. Logs themselves go after 14 days (12.6).

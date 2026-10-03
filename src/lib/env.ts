@@ -149,3 +149,13 @@ export function llmTimeouts(): LlmTimeouts {
 export function llmReplayDir(): string {
   return path.resolve(process.cwd(), envValue("LLM_REPLAY_DIR") ?? ".local/llm-replay");
 }
+
+/**
+ * The file the store is saved to (git-ignored, docs/storage.md), or null
+ * for `STORE_FILE=memory`: the entries stay in the server's memory, as a
+ * throwaway server or the Playwright server wants.
+ */
+export function storeFile(): string | null {
+  const value = envValue("STORE_FILE") ?? ".local/store/records.json";
+  return value === "memory" ? null : path.resolve(process.cwd(), value);
+}

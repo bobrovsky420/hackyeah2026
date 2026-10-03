@@ -140,14 +140,14 @@ test("FR-2.2: the gmina picker ignores diacritics and lists Kraków first", asyn
 
 test("the view settings apply at once and survive a reload", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: /^A\+ / }).click();
+  await page.getByRole("button", { name: "A większy tekst", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-text-size", "2");
   await page.getByRole("button", { name: "Wersja kontrastowa" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-contrast", "on");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-text-size", "2");
   await expect(page.getByRole("button", { name: "Wersja kontrastowa" })).toHaveAttribute("aria-pressed", "true");
-  await page.getByRole("button", { name: /^A / }).click();
+  await page.getByRole("button", { name: "A standardowy rozmiar tekstu", exact: true }).click();
   await expect(page.locator("html")).not.toHaveAttribute("data-text-size", /.*/);
 });
 
