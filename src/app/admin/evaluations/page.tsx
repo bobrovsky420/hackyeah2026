@@ -31,12 +31,12 @@ export default async function AdminEvaluationsPage({ searchParams }: PageProps<"
       <nav aria-label={t("admin.filter.label")}>
         <ul className="flex flex-wrap gap-x-5">
           <li>
-            <Link href="/rops/opinie" aria-current={!onlyTests ? "page" : undefined} className="inline-flex min-h-11 items-center aria-[current=page]:font-bold">
+            <Link scroll={false} href="/rops/opinie" aria-current={!onlyTests ? "page" : undefined} className="inline-flex min-h-11 items-center aria-[current=page]:font-bold">
               {t("admin.filter.all")}
             </Link>
           </li>
           <li>
-            <Link href="/rops/opinie?testy=1" aria-current={onlyTests ? "page" : undefined} className="inline-flex min-h-11 items-center aria-[current=page]:font-bold">
+            <Link scroll={false} href="/rops/opinie?testy=1" aria-current={onlyTests ? "page" : undefined} className="inline-flex min-h-11 items-center aria-[current=page]:font-bold">
               {t("admin.evaluations.onlyTests")}
             </Link>
           </li>
