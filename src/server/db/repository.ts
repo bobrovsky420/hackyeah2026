@@ -273,7 +273,7 @@ export function storableRoute(route: Route): Route {
 }
 
 /**
- * False for a record of the panel's demonstration data (DEMO_DATA, demo.ts):
+ * False for a record of the panel's demonstration data (demo.ts):
  * public pages and the route leave those out; only the panel shows them.
  */
 export const isReal = (record: { demo?: boolean }) => !record.demo;

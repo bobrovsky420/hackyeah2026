@@ -250,7 +250,7 @@ export interface Need {
   brief_id: string | null;
   note_pl: string | null;
   example: boolean;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -269,7 +269,7 @@ export interface ContactRequest {
   moderation: Moderation;
   status: ContactStatus;
   note_pl: string | null;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -290,7 +290,7 @@ export interface Readiness {
   note_pl: string | null;
   /** A seed entry of the team (FR-6.5); absent on real registrations. */
   example?: boolean;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -339,7 +339,7 @@ export interface Idea {
   note_pl: string | null;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
   example?: boolean;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -373,7 +373,7 @@ export interface Evaluation {
   forwarded_at: string | null;
   retention_until: string;
   note_pl: string | null;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -405,7 +405,7 @@ export interface ContentReport {
   reason: ReportReason;
   comment: string | null;
   moderation: Moderation;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -526,7 +526,7 @@ export interface Route {
   label_pl: string;
   /** Proposed addition to 8.4: the reference code S11 shows for a declined request. */
   reference_code: string | null;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -666,7 +666,7 @@ export interface Thread {
   retention_until: string;
   note_pl: string | null;
   example?: boolean;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -679,7 +679,7 @@ export interface Mentor {
   active: boolean;
   updated_at: string;
   example?: boolean;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 
@@ -704,7 +704,7 @@ export interface PartnershipPost {
   moderation: Moderation;
   retention_until: string;
   example?: boolean;
-  /** A record of the simulated pilot (src/server/db/demo.ts, DEMO_DATA): the panel marks it, public pages skip it. */
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
 }
 

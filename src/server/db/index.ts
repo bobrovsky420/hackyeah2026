@@ -1,4 +1,4 @@
-import { demoData, storeFile } from "@/lib/env";
+import { storeFile } from "@/lib/env";
 import { withDemoData } from "./demo";
 import { createFileRepository } from "./file";
 import { createMemoryRepository, createMemoryState } from "./memory";
@@ -15,8 +15,9 @@ export type * from "./repository";
  * store, and `next dev` keeps it across reloads. Unit tests never reach a
  * file by accident: under Vitest the default is memory, and tests/unit/db/
  * builds its repositories itself; `next build` opens no file either.
- * DEMO_DATA=true adds the panel's demonstration data to a fresh store
- * (demo.ts), never under Vitest or in the build.
+ * A fresh store file gets the panel's demonstration data when data/built/
+ * holds its files (demo.ts); a memory store never does, so the Playwright
+ * server and the scripts start from the examples alone.
  */
 
 const holder = globalThis as typeof globalThis & { __repository?: Repository };
@@ -25,8 +26,9 @@ export function repository(): Repository {
   if (!holder.__repository) {
     const offline = Boolean(process.env.VITEST) || process.env.NEXT_PHASE === "phase-production-build";
     const file = offline ? null : storeFile();
-    const fresh = !offline && demoData() ? () => withDemoData(createMemoryState()) : createMemoryState;
-    holder.__repository = file ? createFileRepository(file, { fresh }) : createMemoryRepository(fresh());
+    holder.__repository = file
+      ? createFileRepository(file, { fresh: () => withDemoData(createMemoryState()) })
+      : createMemoryRepository(createMemoryState());
   }
   return holder.__repository;
 }

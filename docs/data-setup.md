@@ -56,6 +56,12 @@ since): check which side is right, then rerun with `--force`. A file that
 differs only in line endings counts as the same. Record files that are
 here but not in the bundle are listed; `--prune` deletes them.
 
+A bundle packed after `pnpm demo:routes` carries the panel's demonstration
+data, the three `data/built/demo-*` files (all or none: the pack refuses
+some of them); the pack and the unpack say whether it is in. The store
+does not change on an unpack: to see the data, stop the server, move
+`.local/store/records.json` aside and start again ([storage.md](storage.md)).
+
 A bundle of format 4 holds `data/curated/` and `data/built/`, with the
 legal and funding paths in `data/built/paths/` (they are not in git; a fresh clone gets them only from a bundle). A bundle of
 format 3 still unpacks, its `data/curated/paths/` moved to

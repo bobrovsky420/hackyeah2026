@@ -6,14 +6,16 @@
  * data/curated/demo-records.yaml through the gate, and matches every idea
  * card of demo-records.yaml against the catalogue, as the card's page
  * would; the results, with each route's nearest matches for the need saved
- * from it, go to data/built/demo-routes.json, which
- * src/server/db/demo.ts reads. Like cache:warm, the routes also land in the
+ * from it, go to data/built/demo-routes.json. At the end the two
+ * hand-written files are copied beside it, so data/built/ holds the set
+ * src/server/db/demo.ts reads; after an edit of a text, a run with nothing
+ * new to compute only copies. Like cache:warm, the routes also land in the
  * route cache and the per-call recording, so the same question asked live
  * is a cache hit. Resumable: the file is written after every result, and
  * an id the file holds is skipped unless --refresh is given.
  */
 
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
 import type { IdeaSimilar, RoleCode, Route } from "../src/lib/contracts";
@@ -189,12 +191,18 @@ async function main(): Promise<number> {
   // No model call: the needs of the demonstration data take their matches from their routes, as the needs bank does.
   for (const entry of out.entries) entry.nearest = nearestFromRoute(entry.route, dataset);
   writeOut(out);
+  // The app reads the demonstration data from data/built/ only; a question without a route yet is left out there.
+  const copies = [BANK, RECORDS].map((file) => {
+    const copy = path.join(path.dirname(OUT), path.basename(file));
+    copyFileSync(file, copy);
+    return copy;
+  });
 
   const modes = new Map<string, number>();
   for (const entry of out.entries) modes.set(entry.route.mode, (modes.get(entry.route.mode) ?? 0) + 1);
   process.stdout.write(
     `\n${OUT}: ${out.entries.length} of ${questions.length} questions (${[...modes].map(([mode, count]) => `${mode} ${count}`).join(", ")}), ` +
-      `${Object.keys(similar).length} of ${ideas.length} idea cards\n`,
+      `${Object.keys(similar).length} of ${ideas.length} idea cards\nCopied ${copies.join(", ")}\n`,
   );
   const failed = [...failedQuestions, ...failedIdeas];
   if (failed.length) process.stdout.write(`Failed (run again to retry): ${failed.join(", ")}\n`);

@@ -141,12 +141,3 @@ export function storeFile(): string | null {
   const value = envValue("STORE_FILE") ?? ".local/store/records.json";
   return value === "memory" ? null : path.resolve(process.cwd(), value);
 }
-
-/**
- * `DEMO_DATA=true`: a fresh store starts with the demonstration data of
- * the panel (src/server/db/demo.ts) beside the examples; a store file that
- * exists keeps what it has (docs/storage.md).
- */
-export function demoData(): boolean {
-  return envValue("DEMO_DATA") === "true";
-}

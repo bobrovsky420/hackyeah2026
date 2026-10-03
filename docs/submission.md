@@ -18,9 +18,9 @@ Działający prototyp HubMI.pl, cyfrowego serca, które ROPS w Krakowie
 planuje dla Małopolskiego Hubu Innowacji Społecznych: osoba zgłaszająca
 potrzebę znajduje rozwiązanie, a każdy wpis trafia do panelu ROPS.
 
-**Droga, nie katalog.** Mieszkaniec, pracownik socjalny, przedstawiciel
-organizacji albo urzędnik opisuje potrzebę własnymi słowami i wybiera
-gminę. Otrzymuje drogę z czterech części:
+**Więcej niż katalog: wsparcie w działaniu.** Mieszkaniec, pracownik
+socjalny, przedstawiciel organizacji albo urzędnik opisuje potrzebę
+własnymi słowami i wybiera gminę. Otrzymuje drogę z czterech części:
 
 - **Rozwiązania:** do trzech sprawdzonych innowacji, każda z
   uzasadnieniem opartym na cytatach ze źródła i z wymaganiami:
@@ -77,9 +77,9 @@ koordynator banku potrzeb) i domknie trzy cykle: od potrzeby do
 wdrożenia, od potrzeby do nowej innowacji, od innowacji do miejsc, które
 jej potrzebują.
 
-**Dla wszystkich.** Interfejs w kroju pisma Atkinson Hyperlegible,
-zaprojektowanym dla osób słabowidzących, kontrast 7:1, pełna obsługa
-klawiaturą i czytnikiem ekranu, wersja na telefon.
+**Dla wszystkich.** Interfejs w kroju Atkinson Hyperlegible dla osób
+słabowidzących, kontrast 7:1, pełna obsługa klawiaturą i czytnikiem
+ekranu, wersja na telefon.
 
 Korzystaliśmy z agenta AI do programowania Claude Code (Anthropic);
 każda decyzja zespołu, źródła danych i licencje są opisane w

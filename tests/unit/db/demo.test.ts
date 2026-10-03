@@ -1,11 +1,11 @@
-import { mkdtempSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import type { Route } from "@/lib/contracts";
 import { getExampleRoute } from "@/lib/mock/routes";
 import { demoCount, questions, queueCounts, trends } from "@/server/admin/data";
-import { buildDemo, withDemoData, type DemoSources } from "@/server/db/demo";
+import { buildDemo, readDemoSources, withDemoData, type DemoSources } from "@/server/db/demo";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
 import { isReal } from "@/server/db/repository";
 import { evaluationSummary } from "@/server/evaluations";
@@ -154,6 +154,22 @@ describe("the demonstration data of the panel", () => {
     const root = mkdtempSync(path.join(tmpdir(), "demo-"));
     expect(withDemoData(state, NOW, root)).toBe(state);
     expect(state.routes.size + state.needs.length).toBe(before);
+  });
+
+  it("reads the three files from data/built/ only: the hand-written ones in data/curated/ switch nothing on", () => {
+    const root = mkdtempSync(path.join(tmpdir(), "demo-"));
+    const write = (folder: string, file: string, text: string) => {
+      mkdirSync(path.join(root, "data", folder), { recursive: true });
+      writeFileSync(path.join(root, "data", folder, file), text);
+    };
+    write("curated", "demo-questions.yaml", "questions: []\n");
+    write("curated", "demo-records.yaml", "ideas: []\n");
+    write("built", "demo-routes.json", '{"entries": []}');
+    expect(readDemoSources(root)).toBeNull();
+
+    write("built", "demo-questions.yaml", "questions: []\n");
+    write("built", "demo-records.yaml", "ideas: []\n");
+    expect(readDemoSources(root)).toMatchObject({ questions: [], ideaSimilar: {}, records: { ideas: [] } });
   });
 });
 
