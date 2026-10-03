@@ -1,0 +1,93 @@
+# Advisors per target-group category (specification 8.6 and FR-6.2, open point OP-10).
+# Hand-written reference data, committed to git.
+# Source: the contact page of the ROPS social innovation department, read on
+# 2026-10-03 (copy in .local/docs/rops/rops.krakow.pl/kontakt/dzial-innowacji-spolecznych.html).
+# The page publishes no names, so every category points to the department
+# A row per code of data/taxonomies.json target_groups (tax-v2).
+version: "2026-10-03"
+source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+verified_on: "2026-10-03"
+
+department:
+  name_pl: Dział Innowacji Społecznych, Regionalny Ośrodek Polityki Społecznej w Krakowie
+  address_pl: ul. Piastowska 32, 30-070 Kraków
+  hours_pl: poniedziałek - piątek, 8:00 - 16:00
+  email: iws@rops.krakow.pl
+  phones:
+    - "+48 12 422 06 36 wew. 34"
+    - "+48 12 422 06 36 wew. 27"
+    - "+48 606 628 470"
+
+programme_contacts:
+  usluga-wrazliwa:
+    name_pl: Usługa wrażliwa - upowszechnianie innowacji społecznych w środowiskach lokalnych
+    email: uw@rops.krakow.pl
+    source_url: https://rops.krakow.pl/realizowane-projekty-i-zadania/usluga-wrazliwa-upowszechnianie-innowacji-spolecznych-w-srodowiskach-lokalnych,o-projekcie
+
+advisors:
+  - category: seniorzy
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: dzieci-mlodziez-rodziny
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: ograniczona-mobilnosc
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: niepelnosprawnosc-sensoryczna
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: zdrowie
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: rynek-pracy
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: cudzoziemcy
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: bezdomnosc
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: niepelnosprawnosc-intelektualna
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: spektrum-autyzmu
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych
+  - category: inne
+    name: null
+    role: Dział Innowacji Społecznych ROPS Kraków
+    email: iws@rops.krakow.pl
+    phone: "+48 12 422 06 36 wew. 34"
+    source_url: https://rops.krakow.pl/kontakt/dzial-innowacji-spolecznych

@@ -24,6 +24,12 @@ challenge, the team and the decisions made so far are in
   [docs/innovation-record.md](docs/innovation-record.md); the referee is
   `scripts/derive-records.py`; the extraction runs through the skill
   `/extract-innovations`. Do not edit a folder another step owns.
+- The static reference data flows `scripts/fetch-static-data.py`
+  (downloads into `.local/`) to `scripts/build-static-data.py` (builds
+  `data/places/`, `data/map/` and `data/indicators.json`). Build outputs
+  are git-ignored; `data/taxonomies.json`, `data/duplicates-decisions.json`,
+  `data/advisors.yaml` and `data/implementations.yaml` are hand-written and
+  committed.
 
 ## Commit messages
 

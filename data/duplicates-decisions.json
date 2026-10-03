@@ -1,0 +1,21 @@
+{
+  "note": "Decisions of a person on the duplicate pairs the build flags in .local/pipeline/duplicates.json (FR-1.4). Hand-written, committed. decision: keep-both (two innovations) or merge (with primary and secondary ids). derive-records.py build applies them and lists the pairs under decided.",
+  "decisions": [
+    {
+      "ids": ["inn-nat-asystent-osoby-starszej-2-2", "inn-nat-asystent-osoby-starszej-3"],
+      "title": "Asystent Osoby Starszej",
+      "decision": "keep-both",
+      "reason": "Two innovations with the same title from different regions.",
+      "decided_by": "the team",
+      "decided_on": "2026-10-03"
+    },
+    {
+      "ids": ["inn-rops-dialog-ponad-kulturami-1", "inn-rops-dialog-ponad-kulturami"],
+      "title": "Dialog ponad kulturami",
+      "decision": "keep-both",
+      "reason": "Two innovations with the same title for different target groups.",
+      "decided_by": "the team",
+      "decided_on": "2026-10-03"
+    }
+  ]
+}

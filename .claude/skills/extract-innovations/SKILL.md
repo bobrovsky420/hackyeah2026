@@ -43,7 +43,7 @@ stop and tell the user.
 The pilot set is `.claude/skills/extract-innovations/pilot.json` (ten ids: five from each
 catalogue, chosen to cover legal entities, natural persons, informal
 groups, a MIIS item and an entry with missing sections). Run it as one
-batch with one Haiku worker (section 3), validate, then run
+batch with one Sonnet worker (section 3), validate, then run
 `derive-records.py show <id>` for each of the ten and read the result
 against the source text yourself. Look first for the known failure mode
 of small workers, seen in the smoke test: a
@@ -51,7 +51,7 @@ sentence in `problem_pl` or `summary_pl` that states a cause, a feeling
 or a benefit the source never mentions. The validator cannot catch it;
 only reading can. Report to the user: how many are valid, how many are
 right, the unsupported sentences, the wording problems, and your
-recommendation (Haiku for the full run, or Sonnet). The user decides the
+recommendation (Sonnet at the session's default effort is the measured choice; say so if the pilot contradicts it). The user decides the
 model. Do not start the full run before that decision.
 
 ## 2. Batches
@@ -67,15 +67,18 @@ records are shorter; start with them).
 ## 3. Launching a worker
 
 Use the Agent tool with `subagent_type: "general-purpose"`, `model:
-"haiku"` (or the model the user chose), `run_in_background: true`. Run at
-most four workers at the same time. The prompt of a worker is exactly
+"sonnet"`, `run_in_background: true`. Run at most six workers at the same
+time. Workers inherit the reasoning effort of this session, so run the
+coordinator at the default effort (`/effort` shows it). The custom agent
+`extract-worker-max` (Sonnet, effort max) exists, but the measurement
+found no gain worth its four minutes per record. The prompt of a worker is exactly
 this text with the placeholders filled:
 
 ```
 Work in the repository at <absolute path of the repository root>.
 Read prompts/extract.md and follow it exactly; it names the two files to read first.
 Your batch: <comma-separated ids>.
-Write generated_by: "<model id, e.g. claude-haiku-4-5>" and generated_at: "<today, YYYY-MM-DD>".
+Write generated_by: "<model id, e.g. claude-sonnet-5>" and generated_at: "<today, YYYY-MM-DD>".
 Write only .local/pipeline/derived/<id>.json for the ids of your batch; do not edit any other file; do not use the network.
 When done, run the validator as prompts/extract.md says, fix ERROR lines (at most two rounds), and report in at most ten lines: ids written, the validator's summary line, doubts.
 ```
@@ -88,12 +91,21 @@ retry uses another model, the record carries that model.
 
 ```
 .venv/Scripts/python scripts/derive-records.py validate <the batch's ids>
+git status --short
 ```
 
-The coordinator's validation is the one that counts. For each id still
+The coordinator's validation is the one that counts. A worker's report
+is not evidence: in the smoke tests a Haiku worker
+reported ten valid records when five were invalid, and instead of writing
+the records it wrote two scripts into the repository root, one of which
+tried to call the Anthropic API. So, after every worker: if `git status`
+shows any new or changed file outside `.local/pipeline/derived/`, delete
+it and treat the whole batch as invalid (delete its derived files and
+requeue), whatever the worker reported. For each id still
 invalid: relaunch a worker for the failed ids only, with the error lines
 appended to the prompt under "Errors from the previous attempt:". After
-two failed attempts with Haiku, use Sonnet once. After that, leave the
+two failed attempts, launch the third with `subagent_type: "extract-worker-max"`
+once. After that, leave the
 record invalid and list it in the final report.
 
 Keep a short running log in your own words (batches launched, valid,
@@ -110,9 +122,10 @@ retried) so the user can follow. Do not print records.
 Report: the status table, the data version, merged and possible
 duplicates (`.local/pipeline/duplicates.json`), the records left invalid
 with their errors, the count of warnings by kind (wording, inferred cost,
-domain `inne`), and the path of `.local/pipeline/review-sample.md` for the
-human check. Propose a one-line commit message covering `data/`, which
-holds only what the app serves.
+domain `inne`), and the path of `docs/review-sample.md` for the human
+check (committed, so the reviewer on another machine can read and mark
+it). Propose a one-line commit message covering `docs/review-sample.md`;
+the build outputs in `data/` are git-ignored.
 
 ## 6. Resuming and reruns
 

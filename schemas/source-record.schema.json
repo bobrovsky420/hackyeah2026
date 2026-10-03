@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source-record.schema.json",
+  "title": "Source record of one innovation (parser parse-v1)",
+  "description": "What scripts/parse-catalogues.py writes to .local/pipeline/sources/<id>.json from the raw snapshots: source text verbatim, provenance, deterministic mappings. No model output. See docs/innovation-record.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "source", "title", "intro_pl", "sources", "source_fields", "tags", "mapped", "innovator", "organisation", "persons_public", "contact_in_source", "origin", "materials", "links", "text_pl", "review_flags", "fingerprint", "parser_version", "parsed_at"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^inn-(nat|rops)-[a-z0-9-]+$"},
+    "source": {"type": "string", "enum": ["baza-krajowa", "rops-biblioteka"]},
+    "title": {"type": "string", "minLength": 1},
+    "intro_pl": {"type": ["string", "null"]},
+    "sources": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["name", "url", "category_slug", "retrieved_at", "licence", "licence_url", "raw_path", "raw_sha256"],
+        "properties": {
+          "name": {"type": "string", "enum": ["baza-krajowa", "rops-biblioteka"]},
+          "url": {"type": "string", "pattern": "^https://"},
+          "category_slug": {"type": ["string", "null"]},
+          "retrieved_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+          "licence": {"type": "string", "enum": ["CC BY 4.0", "MIIS-agreement"]},
+          "licence_url": {"type": "string"},
+          "raw_path": {"type": "string"},
+          "raw_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "source_fields": {"type": "object", "additionalProperties": {"type": "string"}, "description": "Verbatim text per section of the entry; keys per docs/innovation-record.md; list items as lines starting with '- '"},
+    "tags": {
+      "type": "object", "additionalProperties": false, "required": ["advanced", "simple"],
+      "properties": {
+        "advanced": {"type": "array", "items": {"type": "object", "required": ["id", "taxonomy", "path", "name"], "properties": {"id": {"type": "integer"}, "taxonomy": {"type": "string"}, "path": {"type": "string"}, "name": {"type": "string"}, "name_en": {"type": ["string", "null"]}}}},
+        "simple": {"type": "array", "items": {"type": "object", "required": ["id", "facet", "name"], "properties": {"id": {"type": "integer"}, "facet": {"type": "string"}, "name": {"type": "string"}}}}
+      }
+    },
+    "mapped": {
+      "type": "object", "additionalProperties": false, "required": ["target_groups", "implementer_types", "character", "tools", "areas", "settings", "domain_hints"],
+      "description": "Deterministic mapping from the tags (national base) or the category (ROPS library); the worker must keep target_groups and implementer_types; settings and domain_hints are hints",
+      "properties": {
+        "target_groups": {"type": "array", "items": {"type": "string"}},
+        "implementer_types": {"type": "array", "items": {"type": "string"}},
+        "character": {"type": "array", "items": {"type": "string"}},
+        "tools": {"type": "array", "items": {"type": "string"}},
+        "areas": {"type": "array", "items": {"type": "string"}},
+        "settings": {"type": "array", "items": {"type": "string", "enum": ["rural", "urban"]}},
+        "domain_hints": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "innovator": {
+      "type": "object", "additionalProperties": false, "required": ["type", "place_name"],
+      "properties": {
+        "type": {"type": ["string", "null"], "description": "Podmiot prawny, Osoba fizyczna, Grupa nieformalna (national base) or null"},
+        "place_name": {"type": ["string", "null"]},
+        "name_unclassified": {"type": "string", "description": "Only when the innovator type is missing; for the human check"}
+      }
+    },
+    "organisation": {
+      "type": ["object", "null"], "additionalProperties": false, "required": ["name", "website"],
+      "properties": {
+        "name": {"type": "string"},
+        "website": {"type": ["string", "null"]},
+        "others": {"type": "array", "items": {"type": "string"}, "description": "Further organisations named among the authors"}
+      }
+    },
+    "persons_public": {"type": "array", "items": {"type": "string"}, "description": "Names exactly as the source publishes them; nothing else about a person is stored"},
+    "authors_unclassified": {"type": "array", "items": {"type": "string"}, "description": "ROPS author lines the parser could not classify as an organisation or a person; a reviewer decides"},
+    "contact_in_source": {"type": "boolean", "description": "The source entry carries contact details; they are not copied (FR-1.9, R6)"},
+    "origin": {
+      "type": "object", "additionalProperties": false,
+      "required": ["incubator_name", "incubator_years", "incubator_profile_url", "programme", "selected_for_dissemination", "dissemination_label_pl", "region", "rops_incubated"],
+      "properties": {
+        "incubator_name": {"type": ["string", "null"]},
+        "incubator_years": {"type": ["string", "null"]},
+        "incubator_profile_url": {"type": ["string", "null"]},
+        "programme": {"type": ["string", "null"], "enum": ["POWER 4.1", "FERS", null]},
+        "selected_for_dissemination": {"type": ["boolean", "null"]},
+        "dissemination_label_pl": {"type": ["string", "null"]},
+        "region": {"type": ["string", "null"]},
+        "rops_incubated": {"type": "boolean"}
+      }
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["type", "title", "url", "licence", "local_path"],
+        "properties": {
+          "type": {"type": "string", "enum": ["pdf", "doc", "sheet", "slides", "zip", "video", "image", "audio", "link"]},
+          "title": {"type": "string"},
+          "url": {"type": "string"},
+          "licence": {"type": ["string", "null"]},
+          "local_path": {"type": ["string", "null"], "description": "Path of the downloaded copy under .local/raw, when the crawl fetched it"},
+          "status": {"type": "string", "description": "e.g. dead-2026-10-03 for an empty download"}
+        }
+      }
+    },
+    "links": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["title", "url"], "properties": {"title": {"type": "string"}, "url": {"type": "string"}}}},
+    "text_pl": {"type": "string", "minLength": 20, "description": "Plain text of the whole entry for matching and for grounding checks: title, intro and every source field with its Polish label"},
+    "review_flags": {"type": "array", "items": {"type": "string"}, "description": "Parser doubts for the human check, e.g. authors-heuristic, unknown-label:<label>"},
+    "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{16}$", "description": "Hash of title, category and source fields; a derived record must repeat it"},
+    "parser_version": {"type": "string", "pattern": "^parse-v[0-9]+$"},
+    "parsed_at": {"type": "string"}
+  }
+}

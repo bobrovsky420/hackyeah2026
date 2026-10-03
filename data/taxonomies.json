@@ -1,6 +1,6 @@
 {
-  "version": "tax-v1",
-  "note": "Closed lists of the innovation record (docs/innovation-record.md, spec 8.2). Codes are lowercase ASCII slugs; labels are Polish. Workers may only use codes listed here. 'samodzielnosc' and 'inne' under domains are additions to the spec's 16 (the spec's own example uses 'samodzielnosc').",
+  "version": "tax-v3",
+  "note": "Closed lists of the innovation record (docs/innovation-record.md, spec 8.2). Codes are lowercase ASCII slugs; labels are Polish. Workers may only use codes listed here. 'samodzielnosc' and 'inne' under domains are additions to the spec's 16 (the spec's own example uses 'samodzielnosc'). tax-v2 (after the ROPS run) adds the target group 'spektrum-autyzmu' (autism is not an intellectual disability) and the domains 'zdrowie-fizyczne', 'kultura-sport-i-czas-wolny' and 'prawa-i-sprawy-urzedowe'. tax-v3 (mapping rules only, closed lists unchanged, derived records stay valid): the families pattern no longer matches 'rodzin' and 'opiekun', and the simple tag 'Rodziny i opiekunowie osób wymagających wsparcia' maps to no target group, because the catalogue's 'Rodzina i opiekunowie' branch names carers of seniors and of adults with disabilities; workers had dropped the code in 48 of 185 records with a reason.",
   "target_groups": [
     {"code": "seniorzy", "label_pl": "Dla seniorów", "rops_category_slug": "dla-seniorow"},
     {"code": "dzieci-mlodziez-rodziny", "label_pl": "Dla dzieci, młodzieży i rodziny", "rops_category_slug": "dla-dzieci-mlodziezy-i-rodziny"},
@@ -11,6 +11,7 @@
     {"code": "cudzoziemcy", "label_pl": "Dla cudzoziemców", "rops_category_slug": "dla-cudzoziemcow"},
     {"code": "bezdomnosc", "label_pl": "Dla osób w kryzysie bezdomności", "rops_category_slug": "dla-osob-w-kryzysie-bezdomnosci"},
     {"code": "niepelnosprawnosc-intelektualna", "label_pl": "Dla osób z niepełnosprawnością intelektualną", "rops_category_slug": "dla-osob-z-niepelnosprawnoscia-intelektualna"},
+    {"code": "spektrum-autyzmu", "label_pl": "Dla osób w spektrum autyzmu", "rops_category_slug": null},
     {"code": "inne", "label_pl": "Inne grupy", "rops_category_slug": null}
   ],
   "domains": [
@@ -30,7 +31,10 @@
     {"code": "opiekunowie-nieformalni", "label_pl": "Opiekunowie nieformalni", "hint_pl": "wsparcie rodzin i opiekunów osób zależnych"},
     {"code": "piecza-zastepcza", "label_pl": "Piecza zastępcza", "hint_pl": "rodziny zastępcze, usamodzielnianie, adopcja"},
     {"code": "aktywnosc-obywatelska", "label_pl": "Aktywność obywatelska", "hint_pl": "partycypacja, wolontariat, samoorganizacja mieszkańców"},
-    {"code": "samodzielnosc", "label_pl": "Samodzielność w codziennym życiu", "hint_pl": "trening samodzielności, komunikacja wspomagająca, czynności dnia codziennego, rehabilitacja"},
+    {"code": "samodzielnosc", "label_pl": "Samodzielność w codziennym życiu", "hint_pl": "trening samodzielności, komunikacja wspomagająca, czynności dnia codziennego"},
+    {"code": "zdrowie-fizyczne", "label_pl": "Zdrowie fizyczne i rehabilitacja", "hint_pl": "choroby, profilaktyka zdrowotna, rehabilitacja, żywienie, dostęp do leczenia"},
+    {"code": "kultura-sport-i-czas-wolny", "label_pl": "Kultura, sport i czas wolny", "hint_pl": "kultura, sztuka, sport, turystyka, rekreacja, wspólne spędzanie czasu"},
+    {"code": "prawa-i-sprawy-urzedowe", "label_pl": "Prawa i sprawy urzędowe", "hint_pl": "sprawy prawne, prawa konsumenta, spadki, sprawy w urzędach i sądach"},
     {"code": "inne", "label_pl": "Inne", "hint_pl": "tylko gdy żadna dziedzina nie pasuje; opisz w notes_pl"}
   ],
   "implementer_types": [
@@ -77,7 +81,7 @@
       "164": {"name": "Seniorzy", "target_groups": ["seniorzy"]},
       "165": {"name": "Uczniowie, studenci", "target_groups": ["dzieci-mlodziez-rodziny"]},
       "166": {"name": "Pracownicy", "target_groups": ["rynek-pracy"]},
-      "167": {"name": "Rodziny i opiekunowie osób wymagających wsparcia", "target_groups": ["dzieci-mlodziez-rodziny"]},
+      "167": {"name": "Rodziny i opiekunowie osób wymagających wsparcia", "target_groups": []},
       "168": {"name": "Osoby bezrobotne", "target_groups": ["rynek-pracy"]},
       "169": {"name": "Osoby chorujące i z zaburzeniami", "target_groups": ["zdrowie"]},
       "170": {"name": "Każda osoba", "target_groups": ["inne"]}
@@ -97,10 +101,11 @@
     "note": "Regular expressions (case-insensitive) applied to the path of every advanced 'Dla kogo?' term of an entry; each hit adds the target group. They decide the disability subtype behind the simple value 'Osoby z niepełnosprawnościami' and add groups the simple facet does not carry.",
     "patterns": [
       {"pattern": "senior|starsz|\\bemeryt", "target_group": "seniorzy"},
-      {"pattern": "dzieci|młodzie|rodzin|uczni|student|niemowl|przedszkol|nastolat|rodzic|opiekun|piecz|adopc", "target_group": "dzieci-mlodziez-rodziny"},
+      {"pattern": "dzieci|młodzie|uczni|student|niemowl|przedszkol|nastolat|rodzic|piecz|adopc", "target_group": "dzieci-mlodziez-rodziny"},
       {"pattern": "ruchow|mobilno|wózk|poruszan", "target_group": "ograniczona-mobilnosc"},
       {"pattern": "sensoryczn|niewidom|słabowidz|wzrok|głuch|niesłysz|słabosłysz|słuch", "target_group": "niepelnosprawnosc-sensoryczna"},
-      {"pattern": "intelektualn|autyz|spektrum|down", "target_group": "niepelnosprawnosc-intelektualna"},
+      {"pattern": "intelektualn|down", "target_group": "niepelnosprawnosc-intelektualna"},
+      {"pattern": "autyz|spektrum", "target_group": "spektrum-autyzmu"},
       {"pattern": "choruj|chorob|zaburze|zdrowi|psychiczn|demencj|alzheim|onkolog|niesamodzieln|pacjen|szpital", "target_group": "zdrowie"},
       {"pattern": "bezrobot|pracodawc|rynku pracy|nieaktywn|poszukując|absolwen|przedemerytaln|Przedsiębiorstwa > Pracownicy|samozatrudnien", "target_group": "rynek-pracy"},
       {"pattern": "cudzoziem|migran|uchodź|obcokrajow|mniejszoś", "target_group": "cudzoziemcy"},
@@ -120,7 +125,10 @@
       {"pattern": "wytchnieniow|odciążenia opiekunów", "domain": "opiekunowie-nieformalni"},
       {"pattern": "Rodzicielstwo i piecza", "domain": "piecza-zastepcza"},
       {"pattern": "^Opieka", "domain": "opieka-i-wsparcie-dzienne"},
-      {"pattern": "Samodzielność|rehabilitacja", "domain": "samodzielnosc"},
+      {"pattern": "Samodzielność", "domain": "samodzielnosc"},
+      {"pattern": "^Zdrowie fizyczne", "domain": "zdrowie-fizyczne"},
+      {"pattern": "^Kultura|^Sport i turystyka|Kultury, sportu i rekreacji", "domain": "kultura-sport-i-czas-wolny"},
+      {"pattern": "sprawy prawne", "domain": "prawa-i-sprawy-urzedowe"},
       {"pattern": "Aktywizacja społeczna|lokalnych sieci|Dialog społeczny|Lokalność", "domain": "aktywnosc-obywatelska"},
       {"pattern": "migrantów i mniejszości", "domain": "integracja-migrantow"},
       {"pattern": "Kryzys bezdomności|^Mieszkalnictwo", "domain": "mieszkalnictwo"},

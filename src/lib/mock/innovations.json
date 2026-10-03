@@ -1,0 +1,311 @@
+[
+ {
+  "id": "inn-nat-649",
+  "title": "Kapsuła czasu - recepta na samotność",
+  "organisation": "Gmina Zarzecze",
+  "website": "https://innoes.pl/innowacje/7",
+  "source": "baza-krajowa",
+  "sourceUrl": "https://innowacjespoleczne.pl/innowacja/649/",
+  "licence": "CC BY 4.0",
+  "retrievedAt": "2026-09-28",
+  "summary": "Model warsztatów komputerowych dla seniorów, w których rolę prowadzących pełnią uczniowie szkoły podstawowej. Dzieci uczą seniorów obsługi nowoczesnych technologii, komunikatorów internetowych i stron internetowych, pod nadzorem nauczycieli.",
+  "problem": "Osoby starsze bywają wykluczone z aktywności społecznej ze względu na wiek, ograniczoną mobilność, zdolności poznawcze lub stan zdrowia. Dotyczy to zwłaszcza osób starszych z ograniczoną mobilnością lub percepcją.",
+  "mechanism": "Uczniowie szkoły podstawowej prowadzą warsztaty dla seniorów. Uczą ich korzystania z nowoczesnych technologii i komunikatorów internetowych, pokazują gry multimedialne oraz strony internetowe i wyjaśniają, jak one działają. Warsztaty odbywają się pod nadzorem nauczycieli.",
+  "requires": [
+   "sala komputerowa lub podobna przestrzeń",
+   "materiały do warsztatów",
+   "dostęp do internetu",
+   "młodzież szkolna jako prowadzący",
+   "nadzór nauczycieli"
+  ],
+  "targetGroups": [
+   "dzieci-mlodziez-rodziny",
+   "seniorzy"
+  ],
+  "implementerTypes": [
+   "placowka",
+   "ngo",
+   "osoba"
+  ],
+  "costBand": "low",
+  "timeToImplement": "weeks",
+  "evidenceLevel": "tested",
+  "originPlace": "Żurawiczki",
+  "incubator": {
+   "name": "INNOES",
+   "years": "2019-2023",
+   "programme": "POWER 4.1"
+  },
+  "materials": [
+   {
+    "type": "doc",
+    "title": "Plan zajęć warsztatowych_opis",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/43350/Plan%20zajęć%20warsztatowych_opis.docx"
+   },
+   {
+    "type": "pdf",
+    "title": "Plan zajęć warsztatowych_opis",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/43350/Plan%20zajęć%20warsztatowych_opis.pdf"
+   },
+   {
+    "type": "doc",
+    "title": "Skrypt (poradnik)",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/43350/Skrypt%20(poradnik).docx"
+   },
+   {
+    "type": "pdf",
+    "title": "Skrypt (poradnik)",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/43350/Skrypt%20(poradnik).pdf"
+   }
+  ]
+ },
+ {
+  "id": "inn-nat-865",
+  "title": "Masz szczęście - gra towarzyska",
+  "organisation": "BLOOM Katarzyna Majewska",
+  "website": null,
+  "source": "baza-krajowa",
+  "sourceUrl": "https://innowacjespoleczne.pl/innowacja/865/",
+  "licence": "CC BY 4.0",
+  "retrievedAt": "2026-09-28",
+  "summary": "Gra karciana z zestawem zadań i instrukcją, ucząca osoby starsze asertywnego zachowania i radzenia sobie w trudnych sytuacjach społecznych. Poprzez wspólną grę seniorzy ćwiczą komunikację i mogą nawiązywać nowe kontakty.",
+  "problem": "Osoby starsze mają trudności w radzeniu sobie w sytuacjach społecznych i doświadczają samotności oraz izolacji społecznej. Brakuje im umiejętności zdrowej komunikacji, zwłaszcza z młodszymi ludźmi, towarzyszy im lęk społeczny, brak pewności siebie i ograniczony dostęp do aktywności grupowych.",
+  "mechanism": "Gra składa się z zestawu kart z różnymi zadaniami oraz instrukcji. Wykorzystuje metodę nauki zachowań asertywnych w formie gry i uczy osoby starsze radzenia sobie z trudnymi sytuacjami.",
+  "requires": [
+   "osoby z grupy docelowej",
+   "mistrz lub mistrzyni gry",
+   "wydruk gry",
+   "pionki i kostka"
+  ],
+  "targetGroups": [
+   "seniorzy"
+  ],
+  "implementerTypes": [
+   "placowka"
+  ],
+  "costBand": "low",
+  "timeToImplement": "days",
+  "evidenceLevel": "tested",
+  "originPlace": null,
+  "incubator": {
+   "name": "Generator Innowacji. Sieci Wsparcia 2",
+   "years": "2019-2023",
+   "programme": "POWER 4.1"
+  },
+  "materials": [
+   {
+    "type": "pdf",
+    "title": "Plakat",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/13052/681_00_masz_szczescie_plakat_a3.pdf"
+   },
+   {
+    "type": "pdf",
+    "title": "Przeczytaj to",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/13052/681_00_PRZECZYTAJ_TO.pdf"
+   },
+   {
+    "type": "pdf",
+    "title": "Instrukcja do gry",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/13052/681_01_instrukcja_do_gry.pdf"
+   },
+   {
+    "type": "pdf",
+    "title": "Karty dyskusji",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/13052/681_02_karty_dyskusja.pdf"
+   }
+  ]
+ },
+ {
+  "id": "inn-nat-biblioteka-senior-dla-seniora",
+  "title": "Biblioteka Senior dla Seniora",
+  "organisation": "Miejski Ośrodek Pomocy w Tarnowskich Górach",
+  "website": "https://www.mopstg.pl/p,164,biblioteka-senior-dla-seniora",
+  "source": "baza-krajowa",
+  "sourceUrl": "https://innowacjespoleczne.pl/innowacja/biblioteka-senior-dla-seniora/",
+  "licence": "CC BY 4.0",
+  "retrievedAt": "2026-09-28",
+  "summary": "Sieć bibliotek dla seniorów, w których książki wypożyczają seniorzy-wolontariusze i koordynator-senior, dostosowana do potrzeb osób starszych, samotnych, z niepełnosprawnościami lub zagrożonych wykluczeniem społecznym.",
+  "problem": "Osoby starsze doświadczają samotności i marginalizacji, spadku sprawności fizycznej ograniczającego udział w życiu społecznym oraz spadku aktywności w nawiązywaniu kontaktów z innymi z powodu chorób, wieku lub innych ograniczeń.",
+  "mechanism": "W bibliotece dla seniorów książki wypożyczają wolontariusze-seniorzy, a koordynator-senior odpowiada za wypożyczanie asortymentu. Katalog biblioteki jest dostosowany do potrzeb osób starszych, co ułatwia im dostęp do zasobów.",
+  "requires": [
+   "wolontariusze-seniorzy do wypożyczania książek",
+   "koordynator-senior",
+   "sieć wolontariuszy",
+   "katalog książek dostosowany do seniorów"
+  ],
+  "targetGroups": [
+   "seniorzy"
+  ],
+  "implementerTypes": [
+   "placowka",
+   "ngo",
+   "ops-cus-pcpr"
+  ],
+  "costBand": "low",
+  "timeToImplement": "months",
+  "evidenceLevel": "tested",
+  "originPlace": "Tarnowskie Góry",
+  "incubator": {
+   "name": "Generator Innowacji. Sieci Wsparcia 2",
+   "years": "2019-2023",
+   "programme": "POWER 4.1"
+  },
+  "materials": [
+   {
+    "type": "zip",
+    "title": "Dodatkowe materiały: zdjęcia, plakaty, ulotki",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/13016/556_Dodatkowe%20materiały_zdjęcia_plakaty_ulotki.zip"
+   },
+   {
+    "type": "zip",
+    "title": "Scenariusz spotkań z wolontariuszami",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/13016/556_Rezultat%203_Scenariusz%20spotkań%20z%20wolontariuszami.zip"
+   }
+  ]
+ },
+ {
+  "id": "inn-nat-pomosty",
+  "title": "PoMOSty",
+  "organisation": null,
+  "website": null,
+  "source": "baza-krajowa",
+  "sourceUrl": "https://innowacjespoleczne.pl/innowacja/pomosty/",
+  "licence": "CC BY 4.0",
+  "retrievedAt": "2026-09-28",
+  "summary": "Model pracy zespołowej dla młodzieży z Młodzieżowych Ośrodków Socjoterapii (MOS), oparty na budżecie partycypacyjnym. Młodzież zgłasza i wybiera pomysły na aktywności oraz zmiany w ośrodku, ucząc się współdziałania i odpowiedzialności grupowej.",
+  "problem": "Młodzież z Młodzieżowych Ośrodków Socjoterapii ma trudności w nawiązywaniu relacji, niskie poczucie własnej wartości oraz niską świadomość własnych zasobów i możliwości. Wielu z nich brakuje perspektyw i aspiracji dotyczących przyszłości po zakończeniu edukacji.",
+  "mechanism": "Model zachęca młodzież do zgłaszania pomysłów na aktywności, zajęcia lub udoskonalenia infrastruktury ośrodka w ramach budżetu partycypacyjnego.",
+  "requires": [
+   "zasoby finansowe budżetu partycypacyjnego",
+   "szkolenia z budżetowania i zarządzania projektami",
+   "współpraca z organizacjami i przedsiębiorstwami",
+   "osoby prowadzące proces budżetu partycypacyjnego"
+  ],
+  "targetGroups": [
+   "dzieci-mlodziez-rodziny"
+  ],
+  "implementerTypes": [
+   "ops-cus-pcpr",
+   "placowka"
+  ],
+  "costBand": "medium",
+  "timeToImplement": "months",
+  "evidenceLevel": "tested",
+  "originPlace": null,
+  "incubator": {
+   "name": "Inkubator pomysłów",
+   "years": "2020-23",
+   "programme": "POWER 4.1"
+  },
+  "materials": [
+   {
+    "type": "doc",
+    "title": "PoMOSTy - przewodnik dla realizatorów w formacie DOCX",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/17087/PoMOSTy%20przewodni%20dla%20realizatorów_poprawki%201.docx"
+   },
+   {
+    "type": "pdf",
+    "title": "PoMOSTy - przewodnik dla realizatorów w formacie PDF",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/17087/PoMOSTy%20przewodnik%20dla%20realizatorów_poprawki%201.pdf"
+   },
+   {
+    "type": "pdf",
+    "title": "PoMOSty - broszura",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/22912/PoMOSty%20-%20broszura%20-%20upowszechnianie.pdf"
+   },
+   {
+    "type": "pdf",
+    "title": "PoMOSty - broszura EN",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/22912/PoMOSty%20-%20broszura%20EN%20-%20upowszechnianie.pdf"
+   }
+  ]
+ },
+ {
+  "id": "inn-nat-scenariusze-przyszlosci",
+  "title": "Scenariusze Przyszłości",
+  "organisation": "Stowarzyszenie Pedagogów Teatru",
+  "website": "http://pedagodzyteatru.org/projekty_post/scenariusze-przyszlosci",
+  "source": "baza-krajowa",
+  "sourceUrl": "https://innowacjespoleczne.pl/innowacja/scenariusze-przyszlosci/",
+  "licence": "CC BY 4.0",
+  "retrievedAt": "2026-09-28",
+  "summary": "Warsztaty pedagogiczno-teatralne dla uczniów liceum, prowadzone metodami pedagogiki teatru we współpracy z pedagogami i psychologami szkolnymi. Otwierają przestrzeń do krytycznego myślenia o własnej przyszłości i wzmacniają pewność siebie młodzieży.",
+  "problem": "W szkolnej edukacji brakuje przestrzeni do krytycznego i odważnego myślenia o własnej przyszłości oraz działań, które wzmacniają pewność siebie i poczucie sprawczości u młodych ludzi.",
+  "mechanism": "Wypracowano model warsztatów opartych na metodach pedagogiki teatru, prowadzonych we współpracy ze szkolnymi pedagogami. Warsztaty mają otworzyć szkoły na alternatywne metody i bardziej przyjazną wizję rozwoju człowieka.",
+  "requires": [
+   "osoba prowadząca warsztaty teatralne",
+   "pomieszczenie w szkole",
+   "materiały papiernicze",
+   "współpraca z pedagogami i psychologami"
+  ],
+  "targetGroups": [
+   "dzieci-mlodziez-rodziny"
+  ],
+  "implementerTypes": [
+   "placowka"
+  ],
+  "costBand": "low",
+  "timeToImplement": "weeks",
+  "evidenceLevel": "tested",
+  "originPlace": null,
+  "incubator": {
+   "name": "Transfer HUB",
+   "years": "2019-2023",
+   "programme": "POWER 4.1"
+  },
+  "materials": [
+   {
+    "type": "video",
+    "title": "Film informacyjny o innowacji Scenariusze Przyszłości zrealizowany w 2023 r. w ramach działań projektu Katalizator innowacji społecznych (510 MB)",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/16943/film-Scenariusze_Przyszlosci_IS.mp4"
+   },
+   {
+    "type": "video",
+    "title": "Film informacyjny o innowacji Scenariusze Przyszłości zrealizowany w 2023 r. w ramach działań projektu Katalizator innowacji społecznych. Film z napisami (224 MB)",
+    "url": "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/24608/scenariusze-przeszlosci-film-z-napisami.mp4"
+   }
+  ]
+ },
+ {
+  "id": "inn-rops-moj-pomocny-virtual-world",
+  "title": "Mój pomocny Virtual World",
+  "organisation": "Stowarzyszenie Edukacja Praktyczna T.K.K",
+  "website": null,
+  "source": "rops-biblioteka",
+  "sourceUrl": "https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-dzieci-mlodziezy-i-rodziny,moj-pomocny-virtual-world",
+  "licence": "CC BY 4.0",
+  "retrievedAt": "2026-09-28",
+  "summary": "Aplikacja z wirtualnym, ukraińskojęzycznym towarzyszem i czatbotami z instrukcjami oraz przydatnymi zwrotami po polsku, dla dzieci ukraińskich w nowej szkole. Daje dzieciom w nowym otoczeniu edukacyjnym i rówieśniczym poczucie bezpieczeństwa i mniejszy poziom stresu.",
+  "problem": "Dzieci ukraińskie w wieku szkolnym mają trudności w adaptacji w środowisku szkolnym i rówieśniczym w Polsce.",
+  "mechanism": "Aplikacja udostępnia wirtualnego, ukraińskojęzycznego towarzysza oraz dwa czatboty: jeden z instrukcją zachowania w polskiej szkole, drugi z przydatnymi polskimi wyrażeniami szkolnymi. Dzięki temu dziecko otrzymuje podstawowe wsparcie w nowym otoczeniu edukacyjnym i rówieśniczym.",
+  "requires": [
+   "aplikacja mobilna (android)",
+   "chatbot z instrukcjami i zwrotami",
+   "urządzenie mobilne ucznia",
+   "materiał instruktażowy (film)"
+  ],
+  "targetGroups": [
+   "dzieci-mlodziez-rodziny",
+   "cudzoziemcy"
+  ],
+  "implementerTypes": [
+   "placowka"
+  ],
+  "costBand": "low",
+  "timeToImplement": "days",
+  "evidenceLevel": "tested",
+  "originPlace": null,
+  "incubator": {
+   "name": null,
+   "years": null,
+   "programme": null
+  },
+  "materials": [
+   {
+    "type": "zip",
+    "title": "Materiały do pobrania",
+    "url": "https://rops.krakow.pl/pliki/IS/bibloteka/virtualworld.zip"
+   }
+  ]
+ }
+]

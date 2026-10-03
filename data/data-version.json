@@ -1,9 +1,0 @@
-{
-  "version": "2026-10-03-e3b0c442",
-  "records": 0,
-  "merged": 34,
-  "skipped_without_valid_derived": 381,
-  "prompt_version": "extract-v1",
-  "parser_version": "parse-v1",
-  "built_at": "2026-10-03T12:02:05"
-}

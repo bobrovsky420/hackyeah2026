@@ -97,5 +97,18 @@ desktop.ini
 # Local downloads of static reference data (scripts/fetch-static-data.py)
 .local/
 
-# data/ holds only what the app serves and is pushed in full; the pipeline's
-# working files live in .local/pipeline/ (ignored with .local/ above).
+# data/ holds only what the app serves; the pipeline's working files live in
+# .local/pipeline/ (ignored with .local/ above). Git carries only what cannot
+# be recreated (hand-written reference data such as data/taxonomies.json);
+# the outputs of the parser and of derive-records.py build are rebuilt.
+data/innovations/
+data/index-cards.json
+data/data-version.json
+data/incubators.json
+data/map/
+data/indicators.json
+data/places/
+data/implementations-derived.json
+
+# Next.js generated type references (recreated by next dev and next typegen)
+next-env.d.ts

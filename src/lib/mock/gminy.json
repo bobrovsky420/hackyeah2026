@@ -1,0 +1,1100 @@
+[
+ {
+  "terc": "1203013",
+  "name": "Alwernia",
+  "powiat": "chrzanowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1218013",
+  "name": "Andrychów",
+  "powiat": "wadowicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1203022",
+  "name": "Babice",
+  "powiat": "chrzanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1217022",
+  "name": "Biały Dunajec",
+  "powiat": "tatrzański",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1205023",
+  "name": "Biecz",
+  "powiat": "gorlicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1219012",
+  "name": "Biskupice",
+  "powiat": "wielicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1205033",
+  "name": "Bobowa",
+  "powiat": "gorlicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1201011",
+  "name": "Bochnia",
+  "powiat": "bocheński",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1201022",
+  "name": "Bochnia",
+  "powiat": "bocheński",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1204012",
+  "name": "Bolesław",
+  "powiat": "dąbrowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1212032",
+  "name": "Bolesław",
+  "powiat": "olkuski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1202012",
+  "name": "Borzęcin",
+  "powiat": "brzeski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1202023",
+  "name": "Brzesko",
+  "powiat": "brzeski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1213023",
+  "name": "Brzeszcze",
+  "powiat": "oświęcimski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1218022",
+  "name": "Brzeźnica",
+  "powiat": "wadowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1215032",
+  "name": "Budzów",
+  "powiat": "suski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1217032",
+  "name": "Bukowina Tatrzańska",
+  "powiat": "tatrzański",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1212011",
+  "name": "Bukowno",
+  "powiat": "olkuski",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1215042",
+  "name": "Bystra-Sidzina",
+  "powiat": "suski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1208012",
+  "name": "Charsznica",
+  "powiat": "miechowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1213033",
+  "name": "Chełmek",
+  "powiat": "oświęcimski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1210022",
+  "name": "Chełmiec",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1203033",
+  "name": "Chrzanów",
+  "powiat": "chrzanowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1216013",
+  "name": "Ciężkowice",
+  "powiat": "tarnowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1211033",
+  "name": "Czarny Dunajec",
+  "powiat": "nowotarski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1202033",
+  "name": "Czchów",
+  "powiat": "brzeski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1206012",
+  "name": "Czernichów",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211042",
+  "name": "Czorsztyn",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1209013",
+  "name": "Dobczyce",
+  "powiat": "myślenicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1207032",
+  "name": "Dobra",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1201032",
+  "name": "Drwinia",
+  "powiat": "bocheński",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1204023",
+  "name": "Dąbrowa Tarnowska",
+  "powiat": "dąbrowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1202042",
+  "name": "Dębno",
+  "powiat": "brzeski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1219022",
+  "name": "Gdów",
+  "powiat": "wielicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1202052",
+  "name": "Gnojnik",
+  "powiat": "brzeski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1205011",
+  "name": "Gorlice",
+  "powiat": "gorlicki",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1205042",
+  "name": "Gorlice",
+  "powiat": "gorlicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1208022",
+  "name": "Gołcza",
+  "powiat": "miechowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216022",
+  "name": "Gromnik",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210011",
+  "name": "Grybów",
+  "powiat": "nowosądecki",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1210042",
+  "name": "Grybów",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210032",
+  "name": "Gródek nad Dunajcem",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1204032",
+  "name": "Gręboszów",
+  "powiat": "dąbrowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206022",
+  "name": "Igołomia-Wawrzeńczyce",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206032",
+  "name": "Iwanowice",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1202062",
+  "name": "Iwkowa",
+  "powiat": "brzeski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211052",
+  "name": "Jabłonka",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206042",
+  "name": "Jerzmanowice-Przeginia",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1207042",
+  "name": "Jodłownik",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1215011",
+  "name": "Jordanów",
+  "powiat": "suski",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1215052",
+  "name": "Jordanów",
+  "powiat": "suski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1218033",
+  "name": "Kalwaria Zebrzydowska",
+  "powiat": "wadowicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1207052",
+  "name": "Kamienica",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210052",
+  "name": "Kamionka Wielka",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1212042",
+  "name": "Klucze",
+  "powiat": "olkuski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206052",
+  "name": "Kocmyrzów-Luborzyca",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1214012",
+  "name": "Koniusza",
+  "powiat": "proszowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210062",
+  "name": "Korzenna",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1214023",
+  "name": "Koszyce",
+  "powiat": "proszowicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1208032",
+  "name": "Kozłów",
+  "powiat": "miechowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1217042",
+  "name": "Kościelisko",
+  "powiat": "tatrzański",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1261011",
+  "name": "Kraków",
+  "powiat": "Kraków",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1211062",
+  "name": "Krościenko nad Dunajcem",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210073",
+  "name": "Krynica-Zdrój",
+  "powiat": "nowosądecki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1206063",
+  "name": "Krzeszowice",
+  "powiat": "krakowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1208043",
+  "name": "Książ Wielki",
+  "powiat": "miechowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1213043",
+  "name": "Kęty",
+  "powiat": "oświęcimski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1219032",
+  "name": "Kłaj",
+  "powiat": "wielicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1218042",
+  "name": "Lanckorona",
+  "powiat": "wadowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1207062",
+  "name": "Laskowa",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1203043",
+  "name": "Libiąż",
+  "powiat": "chrzanowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1207011",
+  "name": "Limanowa",
+  "powiat": "limanowski",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1207072",
+  "name": "Limanowa",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1205052",
+  "name": "Lipinki",
+  "powiat": "gorlicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1201042",
+  "name": "Lipnica Murowana",
+  "powiat": "bocheński",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211072",
+  "name": "Lipnica Wielka",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216032",
+  "name": "Lisia Góra",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206072",
+  "name": "Liszki",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1209022",
+  "name": "Lubień",
+  "powiat": "myślenicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1215063",
+  "name": "Maków Podhalański",
+  "powiat": "suski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1206082",
+  "name": "Michałowice",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1208053",
+  "name": "Miechów",
+  "powiat": "miechowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1206092",
+  "name": "Mogilany",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1205072",
+  "name": "Moszczenica",
+  "powiat": "gorlicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1207021",
+  "name": "Mszana Dolna",
+  "powiat": "limanowski",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1207092",
+  "name": "Mszana Dolna",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1218052",
+  "name": "Mucharz",
+  "powiat": "wadowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210113",
+  "name": "Muszyna",
+  "powiat": "nowosądecki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1209033",
+  "name": "Myślenice",
+  "powiat": "myślenicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1204042",
+  "name": "Mędrzechów",
+  "powiat": "dąbrowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210122",
+  "name": "Nawojowa",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1207102",
+  "name": "Niedźwiedź",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1219043",
+  "name": "Niepołomice",
+  "powiat": "wielicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1214033",
+  "name": "Nowe Brzesko",
+  "powiat": "proszowicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1262011",
+  "name": "Nowy Sącz",
+  "powiat": "Nowy Sącz",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1211011",
+  "name": "Nowy Targ",
+  "powiat": "nowotarski",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1211092",
+  "name": "Nowy Targ",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1201063",
+  "name": "Nowy Wiśnicz",
+  "powiat": "bocheński",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1211102",
+  "name": "Ochotnica Dolna",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1204052",
+  "name": "Olesno",
+  "powiat": "dąbrowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1212053",
+  "name": "Olkusz",
+  "powiat": "olkuski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1213052",
+  "name": "Osiek",
+  "powiat": "oświęcimski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1213011",
+  "name": "Oświęcim",
+  "powiat": "oświęcimski",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1213062",
+  "name": "Oświęcim",
+  "powiat": "oświęcimski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1214042",
+  "name": "Pałecznica",
+  "powiat": "proszowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1209042",
+  "name": "Pcim",
+  "powiat": "myślenicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210133",
+  "name": "Piwniczna-Zdrój",
+  "powiat": "nowosądecki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1216042",
+  "name": "Pleśna",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210142",
+  "name": "Podegrodzie",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1213072",
+  "name": "Polanka Wielka",
+  "powiat": "oświęcimski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1217052",
+  "name": "Poronin",
+  "powiat": "tatrzański",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1214053",
+  "name": "Proszowice",
+  "powiat": "proszowicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1213082",
+  "name": "Przeciszów",
+  "powiat": "oświęcimski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211112",
+  "name": "Raba Wyżna",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211123",
+  "name": "Rabka-Zdrój",
+  "powiat": "nowotarski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1209052",
+  "name": "Raciechowice",
+  "powiat": "myślenicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1208062",
+  "name": "Racławice",
+  "powiat": "miechowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1204062",
+  "name": "Radgoszcz",
+  "powiat": "dąbrowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1214062",
+  "name": "Radziemice",
+  "powiat": "proszowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216053",
+  "name": "Radłów",
+  "powiat": "tarnowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1205082",
+  "name": "Ropa",
+  "powiat": "gorlicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216063",
+  "name": "Ryglice",
+  "powiat": "tarnowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1210152",
+  "name": "Rytro",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216072",
+  "name": "Rzepiennik Strzyżewski",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1201072",
+  "name": "Rzezawa",
+  "powiat": "bocheński",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1209062",
+  "name": "Siepraw",
+  "powiat": "myślenicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206113",
+  "name": "Skawina",
+  "powiat": "krakowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1206103",
+  "name": "Skała",
+  "powiat": "krakowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1216082",
+  "name": "Skrzyszów",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211132",
+  "name": "Spytkowice",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1218062",
+  "name": "Spytkowice",
+  "powiat": "wadowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210163",
+  "name": "Stary Sącz",
+  "powiat": "nowosądecki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1215072",
+  "name": "Stryszawa",
+  "powiat": "suski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1218072",
+  "name": "Stryszów",
+  "powiat": "wadowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1215021",
+  "name": "Sucha Beskidzka",
+  "powiat": "suski",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1209073",
+  "name": "Sułkowice",
+  "powiat": "myślenicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1206132",
+  "name": "Sułoszowa",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211142",
+  "name": "Szaflary",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1207132",
+  "name": "Szczawa",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211023",
+  "name": "Szczawnica",
+  "powiat": "nowotarski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1204073",
+  "name": "Szczucin",
+  "powiat": "dąbrowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1202072",
+  "name": "Szczurowa",
+  "powiat": "brzeski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216162",
+  "name": "Szerzyny",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1205092",
+  "name": "Sękowa",
+  "powiat": "gorlicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1208072",
+  "name": "Słaboszów",
+  "powiat": "miechowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206123",
+  "name": "Słomniki",
+  "powiat": "krakowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1207112",
+  "name": "Słopnice",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1263011",
+  "name": "Tarnów",
+  "powiat": "Tarnów",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1216092",
+  "name": "Tarnów",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1209082",
+  "name": "Tokarnia",
+  "powiat": "myślenicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1218082",
+  "name": "Tomice",
+  "powiat": "wadowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1201082",
+  "name": "Trzciana",
+  "powiat": "bocheński",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1203053",
+  "name": "Trzebinia",
+  "powiat": "chrzanowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1212062",
+  "name": "Trzyciąż",
+  "powiat": "olkuski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216103",
+  "name": "Tuchów",
+  "powiat": "tarnowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1207122",
+  "name": "Tymbark",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1205102",
+  "name": "Uście Gorlickie",
+  "powiat": "gorlicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1218093",
+  "name": "Wadowice",
+  "powiat": "wadowicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1219053",
+  "name": "Wieliczka",
+  "powiat": "wielicki",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1206152",
+  "name": "Wielka Wieś",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1218102",
+  "name": "Wieprz",
+  "powiat": "wadowicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216112",
+  "name": "Wierzchosławice",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216122",
+  "name": "Wietrzychowice",
+  "powiat": "tarnowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1209092",
+  "name": "Wiśniowa",
+  "powiat": "myślenicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216133",
+  "name": "Wojnicz",
+  "powiat": "tarnowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1212073",
+  "name": "Wolbrom",
+  "powiat": "olkuski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1206162",
+  "name": "Zabierzów",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1216143",
+  "name": "Zakliczyn",
+  "powiat": "tarnowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1217011",
+  "name": "Zakopane",
+  "powiat": "tatrzański",
+  "kind": "gmina miejska"
+ },
+ {
+  "terc": "1213093",
+  "name": "Zator",
+  "powiat": "oświęcimski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1215082",
+  "name": "Zawoja",
+  "powiat": "suski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1215092",
+  "name": "Zembrzyce",
+  "powiat": "suski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206172",
+  "name": "Zielonki",
+  "powiat": "krakowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210082",
+  "name": "Łabowa",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1201052",
+  "name": "Łapanów",
+  "powiat": "bocheński",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1211082",
+  "name": "Łapsze Niżne",
+  "powiat": "nowotarski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210102",
+  "name": "Łososina Dolna",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1207082",
+  "name": "Łukowica",
+  "powiat": "limanowski",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1205062",
+  "name": "Łużna",
+  "powiat": "gorlicki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1210092",
+  "name": "Łącko",
+  "powiat": "nowosądecki",
+  "kind": "gmina wiejska"
+ },
+ {
+  "terc": "1206143",
+  "name": "Świątniki Górne",
+  "powiat": "krakowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1216153",
+  "name": "Żabno",
+  "powiat": "tarnowski",
+  "kind": "gmina miejsko-wiejska"
+ },
+ {
+  "terc": "1201092",
+  "name": "Żegocina",
+  "powiat": "bocheński",
+  "kind": "gmina wiejska"
+ }
+]

@@ -47,12 +47,20 @@ S2_CATEGORIES = ["dla-seniorow", "dla-dzieci-mlodziezy-i-rodziny", "dla-osob-o-o
 # Some ROPS packages are tens of GB (videos inside ZIPs); larger files are
 # logged as skipped with their size instead of being downloaded.
 MAX_BYTES = int(os.environ.get("CRAWL_MAX_MB", "50")) * 1024 * 1024
-VIDEO_EXT =(".mp4", ".mov", ".avi", ".wmv", ".mkv", ".m4v", ".webm", ".mpg", ".mpeg", ".flv")
+# Polish only: attachments that are English versions or English subtitles are not downloaded.
+NON_POLISH = re.compile(r"(_en_|[ _-]ENG?[._ ]|/en/|english|guide-to-)", re.I)
+VIDEO_EXT = (".mp4", ".mov", ".avi", ".wmv", ".mkv", ".m4v", ".webm", ".mpg", ".mpeg", ".flv")
 FILE_EXT = (".pdf", ".zip", ".doc", ".docx", ".odt", ".ppt", ".pptx", ".odp", ".xls", ".xlsx", ".ods", ".rtf", ".txt", ".rar", ".7z", ".jpg", ".jpeg", ".png", ".epub", ".mp3")
 
 
 def log(msg):
     print(f"{datetime.datetime.now():%H:%M:%S} {msg}", flush=True)
+
+
+def long_path(p):
+    """Windows refuses paths over 260 characters unless they carry the \\\\?\\ prefix."""
+    p = os.path.abspath(p)
+    return "\\\\?\\" + p if os.name == "nt" and not p.startswith("\\\\?\\") else p
 
 
 def safe_name(s):
@@ -84,7 +92,7 @@ class Crawler:
         """Content of an already fetched URL, or None."""
         rec = self.done.get(url)
         if rec and rec["status"] == 200 and rec.get("path"):
-            p = os.path.join(self.dir, rec["path"])
+            p = long_path(os.path.join(self.dir, rec["path"]))
             if os.path.exists(p):
                 return open(p, "rb").read()
         return None
@@ -141,7 +149,7 @@ class Crawler:
                 log(f"  failed {url}: {e}")
                 return None
         self.failures = 0
-        path = os.path.join(self.dir, relpath)
+        path = long_path(os.path.join(self.dir, relpath))
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "wb") as f:
             f.write(body)
@@ -207,6 +215,10 @@ def crawl_s1_files():
             if url not in c.done:
                 c.record({"url": url, "status": "skipped", "reason": "video"})
             continue
+        if NON_POLISH.search(path):
+            if url not in c.done:
+                c.record({"url": url, "status": "skipped", "reason": "not-polish"})
+            continue
         body = c.fetch(url, os.path.join(*[safe_name(p) for p in path.split("/")]), skip_video=True)
         total += len(body or b"")
         if i % 50 == 0:
@@ -242,6 +254,8 @@ def crawl_s2_files():
     total = 0
     for url in urls:
         path = urllib.parse.unquote(urllib.parse.urlparse(url).path).lstrip("/")
+        if NON_POLISH.search(path):
+            continue
         body = c.fetch(url, os.path.join(*[safe_name(p) for p in path.split("/")]))
         total += len(body or b"")
     log(f"s2-files: done, {total / 1e6:.0f} MB this run")
