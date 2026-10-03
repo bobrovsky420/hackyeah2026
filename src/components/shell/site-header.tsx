@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 const navigation: { href: string; label: MessageKey }[] = [
   { href: "/", label: "shell.nav.describe" },
   { href: "/mapa", label: "shell.nav.map" },
+  { href: "/zglos-pomysl", label: "shell.nav.idea" },
   { href: "/chce-pomoc", label: "shell.nav.help" },
   { href: "/jak-to-dziala", label: "shell.nav.how" },
 ];

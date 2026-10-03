@@ -19,14 +19,14 @@ import { PlaceCombobox, type PlaceValue } from "./place-combobox";
 import { EMAIL_PATTERN } from "./use-submit-form";
 
 /** The gate's answers to a need that is not one (7.12): human help first, or a respectful no. */
-type Screened = "redirected" | "declined" | "off_topic";
+export type Screened = "redirected" | "declined" | "off_topic";
 
 /**
  * The form's POST (as useSubmitForm does it), which also reads the gate's
  * outcome: 200 with `{outcome: "redirected"}` or 422 with `declined` or
  * `off_topic` (9.2), so the form can answer each in its own way.
  */
-function useSaveNeed() {
+export function useScreenedSubmit(endpoint: string) {
   const [errors, setErrors] = useState<FormError[]>([]);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "screened" | "failed">("idle");
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
@@ -44,7 +44,7 @@ function useSaveNeed() {
     }
     setStatus("sending");
     try {
-      const response = await fetch("/api/needs", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -74,8 +74,8 @@ function useSaveNeed() {
   return { errors, status, result, screened, summaryRef, doneRef, failedRef, submit, errorFor };
 }
 
-/** The respectful no of S11 for a text the needs bank does not take; the form stays filled. */
-function ScreenedNotice({ outcome, ref }: { outcome: Exclude<Screened, "redirected">; ref?: Ref<HTMLDivElement> }) {
+/** The respectful no of S11 for a text the store does not take; the form stays filled. */
+export function ScreenedNotice({ outcome, ref }: { outcome: Exclude<Screened, "redirected">; ref?: Ref<HTMLDivElement> }) {
   return (
     <div ref={ref} tabIndex={-1}>
       {outcome === "declined" ? (
@@ -119,7 +119,7 @@ export function SaveNeedForm({
   const [consentStore, setConsentStore] = useState(false);
   const [consentPublish, setConsentPublish] = useState(false);
   const [honeypot, setHoneypot] = useState("");
-  const { errors, status, result, screened, summaryRef, doneRef, failedRef, submit, errorFor } = useSaveNeed();
+  const { errors, status, result, screened, summaryRef, doneRef, failedRef, submit, errorFor } = useScreenedSubmit("/api/needs");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

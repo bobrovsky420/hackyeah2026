@@ -288,6 +288,46 @@ export interface Readiness {
   example?: boolean;
 }
 
+/** What an idea card presents (module III of the partner's brief): a new idea, or a practice already tried in microscale. */
+export type IdeaKind = "pomysl" | "dobra-praktyka";
+
+/** "Na jakim etapie jest jego realizacji" of the idea card. */
+export type IdeaStage = "pomysl" | "prototyp" | "test" | "dziala";
+
+/** A similar catalogue innovation of an idea card, in the shape of the needs bank's nearest matches (FR-5.3). */
+export type IdeaSimilar = Need["nearest_matches"][number];
+
+/**
+ * The idea card ("fiszka pomysłu"): a short description of an idea or a
+ * good practice, what its essence is, whom it is for and how far it got.
+ * The texts went through the gate (7.12) before storage; the author's
+ * contact never enters a prompt (FR-6.6). Publication waits for ROPS.
+ */
+export interface Idea {
+  id: string;
+  created_at: string;
+  kind: IdeaKind;
+  title: string;
+  /** "Krótki opis pomysłu". */
+  description: string;
+  /** "Co jest jego istotą". */
+  essence: string;
+  /** "Komu jest dedykowany", in the author's words. */
+  for_whom: string;
+  target_groups: string[];
+  stage: IdeaStage;
+  place_terc: string | null;
+  author: { display_name: string; is_organisation: boolean; email: string };
+  consents: { store: boolean; publish: boolean } & Consent;
+  moderation: Moderation;
+  /** The similar innovations of the catalogue; null until they are computed for the card's page. */
+  similar: IdeaSimilar[] | null;
+  retention_until: string;
+  note_pl: string | null;
+  /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
+  example?: boolean;
+}
+
 export type FeedbackValue = "tak" | "czesciowo" | "nie";
 
 export interface Feedback {
@@ -564,7 +604,7 @@ export interface ScreeningResult {
 }
 
 /** Which submitted text the gate screens (7.12, first paragraph). */
-export type GateTextKind = "need" | "saved_need" | "contact" | "readiness" | "offer";
+export type GateTextKind = "need" | "saved_need" | "contact" | "readiness" | "offer" | "idea";
 
 export interface GateInput {
   text: string;

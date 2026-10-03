@@ -23,7 +23,8 @@ export default defineConfig({
     baseURL,
     locale: "pl-PL",
     // The team's machines have Edge; CI installs Playwright's Chromium instead.
-    channel: process.env.CI ? undefined : "msedge",
+    // E2E_CHANNEL picks another installed browser, such as "chrome" on a Mac without Edge.
+    channel: process.env.CI ? undefined : (process.env.E2E_CHANNEL ?? "msedge"),
     trace: "retain-on-failure",
   },
   projects: [
@@ -50,6 +51,7 @@ export default defineConfig({
           GATE_REPEAT_LIMIT: "1000",
           ABUSE_LIMIT_CONTACTS_PER_DAY: "1000",
           ABUSE_LIMIT_READINESS_PER_DAY: "1000",
+          ABUSE_LIMIT_IDEAS_PER_DAY: "1000",
         },
         url: baseURL,
         reuseExistingServer: !process.env.CI,
