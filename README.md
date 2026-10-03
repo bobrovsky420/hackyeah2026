@@ -48,51 +48,20 @@ every screen. Blind users can use it with a screen reader.
 
 ## Quick start
 
-Clone the repository first if you do not have it yet:
+Clone the repository and run the app in mock mode, on the prototype's
+fixtures, without any data or key:
 
 ```
 git clone https://github.com/bobrovsky420/hackyeah2026.git
 cd hackyeah2026
-```
-
-Then, from the repository root:
-
-```
 npx pnpm@12.6.0 install
 npx pnpm@12.6.0 dev
 ```
 
-Open http://localhost:3000. A fresh clone runs on the prototype's
-fixtures without any key.
+Open http://localhost:3000.
 
-To run on the real catalogue, get the data release with one command
-(Python 3, no packages needed), then restart `pnpm dev`:
-
-```
-python scripts/get-data.py 0.2.0
-```
-
-Check the
-[releases of this repository](https://github.com/bobrovsky420/hackyeah2026/releases)
-for a newer `data-X.Y.Z` release and use its number instead of 0.2.0.
-The script downloads `data-X.Y.Z.zip` from the release into
-`.local/bundles/`, checks every file and unpacks it into `data/`; run
-again, it does nothing when that release is already installed
-([docs/data-setup.md](docs/data-setup.md)).
-
-Routes on the real catalogue need a language model: Bielik on the
-Hugging Face router. Create a token at
-https://huggingface.co/settings/tokens with the permission to make calls
-to Inference Providers, put it into `.env.dev` at the repository root
-(git ignores it) and restart `pnpm dev`:
-
-```
-HF_TOKEN=<your Hugging Face token>
-```
-
-Without a token the app keeps answering with the prototype's example
-routes; the fallbacks and the offline replay are in
-[docs/quick-start.md](docs/quick-start.md).
+The full version, with the real catalogue, the language model and the
+embeddings, is set up in [docs/quick-start.md](docs/quick-start.md).
 
 ## How a route is made
 
@@ -222,8 +191,7 @@ flowchart TD
   same two processes from a checkout.
 
 The requirements are in the
-[functional specification](docs/functional-specification.md), the
-choices behind them in the [decision log](docs/decision-log.md).
+[functional specification](docs/functional-specification.md).
 
 ## Data, models and licences
 
@@ -266,8 +234,7 @@ The team: Alexander Bobrovský, Anton Myshelov, Dmytro Chernikov, Dmytro
 Ushakov and Krzysztof Zając. AI coding assistants (Claude Code) wrote
 code, texts and tests under the team's direction; every Polish text the
 public sees is reviewed by the team's Polish speakers, and the idea and
-the decisions are the team's own, recorded in the
-[decision log](docs/decision-log.md).
+every decision are the team's own.
 
 The code is under the Apache License 2.0 ([LICENSE](LICENSE)); copyright
 2026 the team members named above. The rules of the partner task may

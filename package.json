@@ -6,6 +6,8 @@
   "packageManager": "pnpm@12.6.0",
   "scripts": {
     "dev": "next dev",
+    "embeddings": "node scripts/embedding-service.mjs",
+    "dev:embeddings": "pnpm run \"/^(embeddings|dev)$/\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

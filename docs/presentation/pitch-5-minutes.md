@@ -26,7 +26,7 @@ them.
 ## Script
 
 **[Slide 1]**
-Laskowa, a village gmina in Małopolska. More and more seniors live alone,
+Laskowa, a rural gmina in Małopolska. More and more seniors live alone,
 and there is no day centre. *(pause)* Somewhere in Poland someone has
 already solved this. The social worker in Laskowa will never find it.
 *(pause)*
@@ -116,7 +116,7 @@ you.
   hundred", "seven to one".
 - DoBro is an invitation, not an agreement: never say "partner".
 - If the stage allows a live demo, slide 3 is the moment for it; the
-  Laskowa route is `rt-2026-10-03-57045c`. The demo replaces the slide 3
+  Laskowa route is `rt-2026-09-29-57045c`. The demo replaces the slide 3
   text, it does not add to it.
 - Numbers behind the lines, for the questions: the 45-point threshold and
   the 30 paths are on slide 4; the cost (Lightsail $24, RDS about $30,
