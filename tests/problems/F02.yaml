@@ -1,0 +1,19 @@
+id: F02
+title: Wyczerpani opiekunowie bliskich z demencją, wieś i miasto
+author: ai-assistant
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1207112"
+problem_text_pl: >
+  Coraz więcej rodzin opiekuje się w domu bliskimi z demencją. Opiekunowie,
+  najczęściej córki i żony, są wyczerpani, nie mają z kim zostawić chorego
+  nawet na kilka godzin i nikt im nie mówi, jak sobie radzić z jego
+  zachowaniem. Część z nich sama zaczyna chorować.
+expected:
+  outcome: need
+notes: >-
+  The place pair of 13.1 (b): the harness runs this text for Słopnice
+  (gmina wiejska) and for Kraków; the best fits must stay within 10 points
+  (FR-12.11). The text names no setting, so the place alone may move the
+  fit. Records that answer it include inn-nat-pakiet-opieki-wytchnieniowej-2
+  and inn-nat-klub-swiadomego-opiekuna-2.

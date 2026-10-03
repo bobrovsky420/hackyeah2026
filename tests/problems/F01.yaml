@@ -1,0 +1,19 @@
+id: F01
+title: Rachunki za ogrzewanie, ta sama potrzeba z dwóch ról
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: "1209013"
+problem_text_pl: >
+  W naszym miasteczku wielu starszych i samotnych ludzi nie radzi sobie z
+  rachunkami za ogrzewanie. Palą w piecach byle czym albo siedzą w
+  kurtkach w zimnym mieszkaniu, bo boją się kolejnej faktury. Nie wiedzą,
+  jakie dopłaty im przysługują ani gdzie zapytać, jak zmniejszyć koszty.
+expected:
+  outcome: need
+notes: >-
+  The role pair of 13.1 (a): the harness runs this text as mieszkaniec and
+  as urzad-gminy; the solutions must be the same (FR-12.11). The need has
+  one clear match in the catalogue,
+  inn-nat-opracowanie-standaryzowanego-modelu-wsparcia-doradczego-dla-osob-z-grupy-ubostwa-energetycznego,
+  so a difference would come from the role, not from a close call.

@@ -1,0 +1,31 @@
+id: P06
+title: Dzieci w spektrum autyzmu na badaniach i u dentysty
+author: ai-assistant
+written_on: 2026-10-03
+role: organizacja-spoleczna
+place_terc: "1261011"
+problem_text_pl: >
+  Nasze stowarzyszenie skupia rodziców dzieci i nastolatków w spektrum
+  autyzmu. Najtrudniejsze są dla nas zwykłe wizyty zdrowotne: pobranie
+  krwi, szczepienie, przegląd zębów. Dziecko wpada w panikę na widok
+  fartucha, krzyczy albo ucieka, a pielęgniarki i lekarze nie mają czasu ani
+  pomysłu, jak je uspokoić. Kilka rodzin od lat nie robi dzieciom żadnych
+  badań, bo każda próba kończy się płaczem i odesłaniem do domu.
+expected:
+  mode: route
+  any_of_innovations: [inn-rops-himalaje-autyzmu, inn-nat-stomatologia-bez-barier-adaptacja-i-kwalifikacja-pacjentow-z-niepelnosprawnoscia]
+  none_of_innovations: []
+  target_groups: [spektrum-autyzmu]
+  paths_any_of: [pfron-czas-na-aktywnosc, krakow-male-granty, maly-grant-19a]
+  people_roles: [advisor, implementer_nearby]
+  summary_must_mention_pl: ["wizyt"]
+notes: >-
+  Kraków, urban, an NGO. inn-rops-himalaje-autyzmu (derived.problem_pl:
+  people in the autism spectrum with difficult behaviour have poor access to
+  medical care; mechanism_pl: a four-step method that prepares the patient
+  for the visit) runs in Kraków;
+  inn-nat-stomatologia-bez-barier-adaptacja-i-kwalifikacja-pacjentow-z-niepelnosprawnoscia
+  (problem_pl: children with disabilities lack dental care; mechanism_pl:
+  adaptation to the examination at school) covers the dentist. Paths for an
+  NGO: pfron-czas-na-aktywnosc (picked by the selector), krakow-male-granty
+  and maly-grant-19a.

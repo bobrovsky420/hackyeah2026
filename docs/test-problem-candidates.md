@@ -1,13 +1,13 @@
-**Szkic pomocniczy przygotowany przez asystenta AI; nie jest zestawem testowym. Właściwe problemy pisze prawniczka lub prawnik w tests/problems/ (13.1).**
+**Szkic pomocniczy przygotowany przez asystenta AI; nie jest zestawem testowym. Zestaw w tests/problems/ napisał asystent AI nowymi słowami (decyzja P.15).**
 
 # Test problem candidates
 
-A working sheet for the lawyer, who writes the ten test problems of
-specification 13.1 in their own words. Nothing here is a test problem: an
-AI assistant wrote these texts, and the model must not be tested against
-its own writing. Use the sheet to see where the catalogue can carry a
-route, which records a need can reach, and which paths the rules of 8.7
-would pick; then write the YAML files yourself.
+The working sheet the set in `tests/problems/` was written from. Nothing
+here is a test problem: the set keeps the cases of section 2 (C01 is
+replaced by the Laskowa text of the deck as P01, C11 and C12 are not
+used) but every text is written anew, and the expectations were chosen
+again from the records (decision P.15). The checklist of section 5 was
+written for the lawyer, who does not work on the hackathon.
 
 Data: the built catalogue (381 records: 266 from the national base, 115 from
 the ROPS library), `data/curated/implementations.yaml` (24 seeded
