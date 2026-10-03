@@ -11,7 +11,8 @@ import { DECLINE_MIN_CONFIDENCE, OFF_TOPIC_MIN_CONFIDENCE, REDIRECT_MIN_CONFIDEN
  *   3. no model answer                                                   -> need, "model:unavailable"
  *   4. crisis at REDIRECT_MIN_CONFIDENCE or more, or an individual case
  *      that touches a sensitive topic at that confidence                 -> redirected
- *   5. harm at DECLINE_MIN_CONFIDENCE or more                            -> declined
+ *   5. harm at DECLINE_MIN_CONFIDENCE or more                            -> declined,
+ *      unless it touches child abuse or sexual violence                  -> redirected (E.5)
  *   6. off_topic or spam at OFF_TOPIC_MIN_CONFIDENCE or more             -> off_topic
  *   7. otherwise                                                         -> need
  *
@@ -32,6 +33,13 @@ import { DECLINE_MIN_CONFIDENCE, OFF_TOPIC_MIN_CONFIDENCE, REDIRECT_MIN_CONFIDEN
  * answer to one is screened the same way: ROPS approves every post before
  * anyone sees it, and a request to a company is not an advert.
  */
+
+/**
+ * E.5: topics where someone may need protecting. A text the model reads as
+ * harm but that touches one of them goes to human help, never to a decline:
+ * a report of a child being hit names the person who hits.
+ */
+export const PROTECTIVE_TOPICS: readonly SensitiveTopic[] = ["child_abuse", "sexual_violence"];
 
 export interface DecisionInput {
   kind: GateTextKind;
@@ -103,6 +111,11 @@ export function decide(input: DecisionInput): Decision {
       return { ...base(model), outcome: "redirected", crisis_banner: false, rules_fired: [`kind:${kind}`, `model:crisis>=${REDIRECT_MIN_CONFIDENCE}`] };
     }
     if (model?.category === "harm" && model.confidence >= DECLINE_MIN_CONFIDENCE) {
+      // E.5 holds in a conversation too.
+      const protective = unique([...model.topics, ...communityTopics]).filter((topic) => PROTECTIVE_TOPICS.includes(topic));
+      if (protective.length > 0) {
+        return { ...base(model), outcome: "redirected", crisis_banner: false, rules_fired: [`kind:${kind}`, `model:harm>=${DECLINE_MIN_CONFIDENCE}`, ...protective.map((topic) => `protective:${topic}`)] };
+      }
       return { ...base(model), outcome: "declined", crisis_banner: false, rules_fired: [`kind:${kind}`, `model:harm>=${DECLINE_MIN_CONFIDENCE}`] };
     }
     return {
@@ -147,6 +160,17 @@ export function decide(input: DecisionInput): Decision {
     return { ...base(model), outcome: "redirected", crisis_banner: false, rules_fired: [`model:${model.category}>=${REDIRECT_MIN_CONFIDENCE}`] };
   }
   if (model.category === "harm" && model.confidence >= DECLINE_MIN_CONFIDENCE) {
+    // E.5: a report of a child or a person being abused may read as an accusation; it is never turned away.
+    const protective = caseTopics.filter((topic) => PROTECTIVE_TOPICS.includes(topic));
+    if (protective.length > 0) {
+      return {
+        ...base(model),
+        sensitive_topics: caseTopics,
+        outcome: "redirected",
+        crisis_banner: false,
+        rules_fired: [`model:harm>=${DECLINE_MIN_CONFIDENCE}`, ...protective.map((topic) => `protective:${topic}`)],
+      };
+    }
     return { ...base(model), outcome: "declined", crisis_banner: false, rules_fired: [`model:harm>=${DECLINE_MIN_CONFIDENCE}`] };
   }
   const offTopic = model.category === "off_topic" || model.category === "spam";
