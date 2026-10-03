@@ -8,9 +8,7 @@
 - **Assumptions** (A-nn) and **open points** (OP-nn) are listed in
   sections 15 and 16. An assistant that meets an open point in its work
   uses the stated default and says so in its output; it never invents a
-  different answer. When the partner's brief on 3 October resolves an open
-  point, the resolution is written into section 16 first, then into the
-  affected section.
+  different answer.
 
 Conventions of this document: English for everything a developer reads;
 Polish for everything a user sees, quoted as it will appear; no en dashes
@@ -574,8 +572,6 @@ facts are:
   fetch tool with HTTP 403 but serves `curl` with a browser User-Agent, so
   a crawler with a browser User-Agent and a one-second delay works; the
   partner may instead provide an export (OP-17).
-- **S3, a partner hand-over** on 3 October (a spreadsheet of the "blisko
-  200" innovations, contacts or implementations), if it happens.
 
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
@@ -604,12 +600,12 @@ facts are:
 
 The engine uses the language model twice and validates everything it
 returns. There is no embedding infrastructure in the MUST scope: about 300
-index cards fit in one cached prompt, the model handles Polish inflection,
+index cards fit in one prompt, the model handles Polish inflection,
 and the reasons come for free.
 
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
-| FR-3.1 | MUST | Stage 1, shortlist: the model reads the cached index (every innovation as an index card of at most 80 tokens: id, title, one-line problem, one-line mechanism, target groups, implementer types) and the need, and returns up to 8 candidate ids with a preliminary fit 0-100 and a one-sentence reason each, as structured output (schema 8.3). The index block is a cached prefix with a one-hour TTL. | Cache reads are non-zero from the second call; p95 latency 5 s |
+| FR-3.1 | MUST | Stage 1, shortlist: the model reads the cached index (every innovation as an index card of at most 80 tokens: id, title, one-line problem, one-line mechanism, target groups, implementer types) and the need, and returns up to 8 candidate ids with a preliminary fit 0-100 and a one-sentence reason each, as structured output (schema 8.3). The index block is the stable prefix of the prompt: on Bielik it is sent in full on every call and must fit the context window together with the need and the answer (OP-43); on the Anthropic fallback it is a cached prefix with a one-hour TTL. | p95 latency 5 s on Bielik with the real cards; on the Anthropic fallback cache reads are non-zero from the second call |
 | FR-3.2 | MUST | Stage 2, assessment: the model receives the full derived records of the candidates, the need, the place context (indicators of the gmina, implementations nearby) and returns per candidate: `fit_score` 0-100, `fit_reasons[]` (each names a field and quotes at most 15 words from it), `gaps[]`, `adaptation_note`; and overall `mode` (route, partial, none) with the top three in order (schema 8.3). | p95 latency 8 s; every quote found in the record |
 | FR-3.3 | MUST | Thresholds: `route` when the best fit is at least 70; `partial` when the best fit is 45 to 69; `none` below 45. The values are constants in one file and are calibrated on the test problems. | The ten test problems produce the expected mode |
 | FR-3.4 | MUST | Grounding validation on the server: unknown ids are dropped and logged; a reason whose quote is not found in the record (normalised, fuzzy ratio at least 0.8) is dropped; a candidate with no remaining reason is dropped. | Unit tests with a fabricated id and a fabricated quote |
@@ -969,7 +965,7 @@ quote of at most 15 words that must be found in the named field (FR-3.4).
   "path": {"applicant_type": "jst", "cost_band": "medium", "paths": [{"path_id": "usluga-wrazliwa-b", "why_pl": "..."}]},
   "next_steps": [{"text_pl": "Zadzwoń do Działu Innowacji Społecznych ROPS ...", "link": "tel:+48124220636"}],
   "unknowns_pl": ["Nie znamy wdrożenia tej innowacji w promieniu 50 km."],
-  "engine": {"provider": "anthropic", "model": "claude-opus-5", "prompt_version": "route-v1", "data_version": "2026-10-03a", "latency_ms": 11840, "cached": false},
+  "engine": {"provider": "openai-compatible", "model": "speakleash/Bielik-11B-v3.0-Instruct:publicai", "prompt_version": "route-v1", "data_version": "2026-10-03a", "latency_ms": 6840, "cached": false},
   "label_pl": "Dopasowanie i uzasadnienia wygenerowano automatycznie ..."
 }
 ```
@@ -1253,8 +1249,10 @@ stored.
   default); design tokens fixed by Analyst 1 on Tuesday (OP-15).
 - MapLibre GL JS with the OpenFreeMap "positron" style behind a toggle,
   and the local GeoJSON as the only data source.
-- `@anthropic-ai/sdk` with Zod schemas for structured outputs; an
-  OpenAI-compatible client for a Polish model as the second provider.
+- An OpenAI-compatible client for Bielik through the Hugging Face router
+  as the online provider, with Zod validation; `@anthropic-ai/sdk` with
+  Zod structured outputs for the offline extraction batch and as the
+  online fallback.
 - Vitest for unit tests, Playwright for end-to-end tests, screenshots and
   the axe accessibility check.
 - pnpm, Node 22, Docker Compose (app, Postgres, Caddy for TLS) on one
@@ -1320,8 +1318,18 @@ interface LlmCall<T> {
 interface LlmResult<T> { parsed: T; usage: {...}; latencyMs: number; provider: string; model: string; cached: boolean }
 ```
 
-- **anthropic** (default, decided): model `claude-opus-5` for every
-  task. Structured output through `client.messages.parse` with
+Roles: **openai-compatible
+with Bielik is the primary provider of the online app** for every request
+task (screen, shortlist, assess, compose, brief, cluster). **anthropic
+runs the offline ingestion step** (extract, as a batch before the event
+and by hand for a partner hand-over on the day) **and is the online
+fallback** when Bielik fails after retries. The online order is Bielik,
+Anthropic, Llama 3.3 70B, the replay cache. A stage that Bielik fails on
+the real test problems on Thursday may be moved to Anthropic by a
+measured team decision, never by an assistant (OP-05).
+
+- **anthropic** (offline extraction and online fallback, decided): model
+  `claude-opus-5` for every task it runs. Structured output through `client.messages.parse` with
   `zodOutputFormat(schema)` in `output_config.format`; the index block and
   the system prompt carry `cache_control: {type: "ephemeral", ttl: "1h"}`
   (the cache is a prefix match, so the index block comes first and the
@@ -1335,10 +1343,10 @@ interface LlmResult<T> { parsed: T; usage: {...}; latencyMs: number; provider: s
   returns a route, and a refusal that survives the fallback becomes the
   mild `declined` outcome of FR-12.12, never an error; `max_tokens` 1 000
   for screen, 4 000 for shortlist and assess, 8 000 for brief; the SDK's
-  default retries (2) and a 40-second timeout (5 s for screen). A cheaper model for the shortlist stage is a
+  default retries (2) and a 40-second timeout (5 s for screen). Moving an online stage from Bielik to Anthropic is a
   measured team decision, not a default (OP-05).
-- **openai-compatible**: Bielik-11B-v3.0-Instruct (Apache 2.0) through
-  the Hugging Face router, which serves it from the provider "publicai":
+- **openai-compatible** (primary online provider, decided):
+  Bielik-11B-v3.0-Instruct (Apache 2.0) through the Hugging Face router, which serves it from the provider "publicai":
   base URL `https://router.huggingface.co/v1`, model
   `speakleash/Bielik-11B-v3.0-Instruct:publicai`, the team's Hugging Face
   token as the key (`HF_TOKEN` in `.env.dev`, git-ignored), price 0.40 USD
@@ -1352,9 +1360,16 @@ interface LlmResult<T> { parsed: T; usage: {...}; latencyMs: number; provider: s
   top three over ten synthetic index cards, no invented identifiers,
   median latency 2.2 s and at most 8 s on first calls. The repeated
   identical calls came back from a cache in 0.5 s, so the independent
-  sample is the seven first runs. Conclusion: a live second provider for
-  the event, not only a slide; the remaining 3.8 USD of credit covers
-  roughly nine million tokens, about 200 routes. Alternatives: CloudFerro
+  sample is the seven first runs. Conclusion: the primary provider of the online app;
+  the remaining 3.8 USD of credit covers roughly nine
+  million tokens, about 200 routes, so Analyst 2 tops the credit up to at
+  least 20 USD before the event (OP-05). The router has no prompt
+  caching, so the index block of stage 1 travels in full on every call
+  (about 25 000 tokens, one cent) and must fit the model's context window
+  with the need and the answer; the shortlist spike on Tuesday measures
+  this with the real cards (OP-43). The probe covered screening and a
+  ten-card shortlist only; the assessment stage with full records is
+  first measured on Thursday. Alternatives: CloudFerro
   Sherlock (Polish data centre; pricing not published) or a self-hosted
   vLLM. PLLuM has no official public API; it is reachable only through
   such hosts or self-hosting. Apertus (the Swiss model) was smoke-tested
@@ -1367,8 +1382,8 @@ interface LlmResult<T> { parsed: T; usage: {...}; latencyMs: number; provider: s
   fallback Llama 3.3 70B on OVHcloud through the router
   (`meta-llama/Llama-3.3-70B-Instruct:ovhcloud`:
   strict JSON, 6 of 8 screening cases, 6 of 6 shortlists, 2.4 s). The
-  fallback order at the event is therefore Anthropic, Bielik, Llama 3.3
-  70B, the replay cache; only Anthropic and Bielik may serve the gate.
+  online order at the event is therefore Bielik, Anthropic, Llama 3.3
+  70B, the replay cache; only Bielik and Anthropic may serve the gate.
   The full record of the probes (method, cases, every run, costs, raw
   answers) is [model-evaluation.md](model-evaluation.md).
 - **replay**: serves results from the replay cache only; used by the
@@ -1381,13 +1396,15 @@ known identifiers; tokens, latency and cache reads are logged; a provider
 error after retries falls back to the replay cache, then to a Polish
 error screen with "Spróbuj ponownie" and the ROPS contact.
 
-Cost estimate for the default provider at the published rates (input
-5 USD, output 25 USD, cache reads 0.50 USD per million tokens): shortlist
-about 25 000 cached tokens plus 1 000 output, assess about 12 000 input
-plus 2 000 output, compose about 6 000 plus 1 500: about 0.20 USD per
-route; the brief about 0.15 USD; extraction of 450 records through the
-Batches API at half price about 5 USD. Budget cap 150 USD in the console
-of the API account (OP-05).
+Cost estimate for the primary provider at 0.40 USD per million tokens in
+and out: shortlist about 25 000 input plus 1 000 output, assess about
+12 000 plus 2 000, compose about 6 000 plus 1 500: about 48 000 tokens,
+under 0.02 USD per route; the brief under 0.01 USD. For the Anthropic
+fallback at the published rates (input 5 USD, output 25 USD, cache reads
+0.50 USD per million tokens) the same route costs about 0.20 USD and the
+brief about 0.15 USD; extraction of 450 records through the Batches API
+at half price about 5 USD. Budget cap 150 USD in the console of the API
+account (OP-05).
 
 ### 9.4 Prompts
 
@@ -1805,8 +1822,9 @@ per-request reads of the JSON files.
 - The replay cache (FR-3.5) holds every test problem and the demo path,
   warmed by `pnpm cache:warm` after every prompt or data change and again
   at the Sunday freeze.
-- Provider chain: anthropic, then openai-compatible if configured, then
-  the replay cache, then the Polish error screen. A health endpoint
+- Provider chain: openai-compatible (Bielik), then anthropic, then Llama
+  3.3 70B through the router if configured, then the replay cache, then
+  the Polish error screen. A health endpoint
   reports the active provider and the data version.
 - The demo laptop runs the whole stack locally in Docker with the replay
   cache filled, so the demo does not depend on the venue network or on
@@ -1906,8 +1924,9 @@ from the token counts. Nothing personal in logs.
 
 ### 12.10 Cost
 
-Model calls capped at 150 USD for preparation and the event (OP-05);
-the second provider runs on the existing Hugging Face credit;
+Model calls capped at 150 USD for preparation and the event (OP-05):
+the extraction batch and the online fallback on Anthropic, the online
+requests on Bielik through the Hugging Face router;
 hosting about 20 EUR; the domain a few EUR. The console
 statistics show the cost line.
 
@@ -2247,8 +2266,8 @@ edition dates.
 
 | Component | Facts | Licence | Verdict |
 |---|---|---|---|
-| Claude Opus 5 through the Anthropic API | Structured outputs, prompt caching, the Batches API at half price, refusal fallbacks; Polish quality to be measured on the test problems against the Polish model | Commercial API; the team's key | reuse (default provider) |
-| Bielik (SpeakLeash) | Bielik-11B-v3.0-Instruct (32 European languages), Bielik-Minitron-7B-v3.0, 1.5B and 4.5B v3 models, Bielik-Guard; the 11B v3.0 model is served live on the Hugging Face router by the provider "publicai" at 0.40 USD per million tokens (the only Bielik variant with a provider; the others need a dedicated endpoint, for example a T4 at 0.50 USD an hour); also CloudFerro Sherlock (Polish data centre; pricing not verified), PCSS AI HUB, Cyfronet; demo chat.bielik.ai. 15 of 15 strict JSON, 8 of 8 screening categories, 6 of 6 shortlist hits, no invented identifiers, median 2.2 s | Apache 2.0 | reuse (live second provider through the router; "Polish-native" comparison; on-premise story) |
+| Claude Opus 5 through the Anthropic API | Structured outputs, prompt caching, the Batches API at half price, refusal fallbacks; Polish quality to be measured on the test problems against the Polish model | Commercial API; the team's key | reuse (offline extraction batch and online fallback) |
+| Bielik (SpeakLeash) | Bielik-11B-v3.0-Instruct (32 European languages), Bielik-Minitron-7B-v3.0, 1.5B and 4.5B v3 models, Bielik-Guard; the 11B v3.0 model is served live on the Hugging Face router by the provider "publicai" at 0.40 USD per million tokens (the only Bielik variant with a provider; the others need a dedicated endpoint, for example a T4 at 0.50 USD an hour); also CloudFerro Sherlock (Polish data centre; pricing not verified), PCSS AI HUB, Cyfronet; demo chat.bielik.ai. 15 of 15 strict JSON, 8 of 8 screening categories, 6 of 6 shortlist hits, no invented identifiers, median 2.2 s | Apache 2.0 | reuse (primary online provider through the router; "Polish-native" comparison; on-premise story) |
 | PLLuM (CYFRAGOVPL) | 2512 series (December 2025) 4B to 70B; 11 new models on 21 May 2026; demo pllum.clarin-pl.eu; no official public API (blog claims of a NASK developer portal unverified) | PLLuM-12B-chat-2512 Apache 2.0; Llama-PLLuM under the Llama 3.1 licence; "-nc-" variants CC BY-NC 4.0 | reuse only through a host or self-hosting; mention on the slides |
 | Polish embeddings, if FR-3.7 is switched on | BAAI/bge-m3 (1024 dimensions, 8 192 tokens, over 100 languages, MIT); intfloat/multilingual-e5-large (MIT); sdadas/mmlw-retrieval-roberta-large-v2 and OPI-PIB PolDense (September 2026) under the Gemma licence; Voyage AI `voyage-4` family (32 000 tokens, multilingual) as an API | as listed | reuse; bge-m3 has the cleanest licence |
 | Reranker sdadas/polish-reranker-roberta-v3 | Strong on public-administration sets | Gemma licence | reuse only if FR-3.7 |
@@ -2264,7 +2283,7 @@ edition dates.
 
 #### EU models and hosts
 
-Team decisions: Apertus is excluded from every
+Apertus is excluded from every
 evaluation (OP-40); the second provider is Bielik-11B v3.0 through the
 Hugging Face router (9.3). The question "which other European models
 could stand in" has two honest layers: models of European origin with
@@ -2316,8 +2335,8 @@ well but stumble on the off-topic case, and reasoning models cost
 latency the gate cannot afford. The evaluation on Thursday with the
 real test problems runs Bielik and, if Analyst 2 opens a Scaleway
 account (OP-42), Mistral Small 3.2 on Scaleway; Llama 3.3 70B on OVHcloud
-stays configured as the third fallback for the assessment and
-composition stages. Dead paths, not to be pursued again: hosted APIs for
+stays configured as the third provider, after Bielik and Anthropic, for
+the assessment and composition stages. Dead paths, not to be pursued again: hosted APIs for
 EuroLLM, Teuken, Salamandra, ALIA and PLLuM-2512; the "NASK PLLuM API";
 T-Systems and STACKIT; Nebius shared endpoints for an EU-residency
 claim; any reasoning model for the screening gate.
@@ -2557,7 +2576,7 @@ register first.
 | Mon 28 Sep | Reads this document; decides on the stack by Tuesday; writes `AGENTS.md` for the repository | Starts the national base crawler with a browser User-Agent and a one-second delay | E-mails Fundacja Stocznia about indexing and quotes (OP-09); starts the glossary | Reads this document; drafts the service model slide and the three screens as clickable drafts | Registers the BDL key; buys the domain; provisions the virtual machine |
 | Tue 29 Sep | Repository skeleton: Next.js, Drizzle, schema from section 8, the adapter interface, `pnpm eval` stub; first shortlist spike on 50 records | ROPS library crawl (curl with browser User-Agent) into JSON; national base JSON complete; duplicate report | Glossary v1; the consent texts; starts the paths YAML from 14.4 (the small grant, the open competition, the local initiative, the village fund, the CUS programme, "Usługa wrażliwa", IWS 2.0, ASY priority V) | Design tokens and the component choices written into `AGENTS.md` (OP-15); message catalogue skeleton with the S1 and S2 strings; "Ty" or "Państwo" agreed (OP-19) | Docker Compose, Caddy, GitHub Actions deploy; the skeleton is live by evening |
 | Wed 30 Sep | Extraction prompt and batch run over all records; the index cards; stage 1 and stage 2 end to end on the API; grounding validation; the screening gate with its deterministic pre-checks and the `screen` prompt | Seed command; the place picker; the map with boundaries and the three indicators; implementations seeded from 8.6 | The ten test problems drafted against the ingested catalogue (the catalogue must be complete by evening); the paths YAML continued; the crisis lexicon and the robustness and sensitive sets drafted | S1, S2, S3 built from the drafts on real routes; first screenshot review; the pitch outline | Indicators fetched; GeoJSON built; the replay cache and the offline demo stack; the accessibility checklist in Playwright |
-| Thu 1 Oct | Route composer, next steps, paths selection rules and their unit tests; first full evaluation including the robustness, sensitive and fairness sets; thresholds (OP-13); the Polish model measured if available (OP-05) | Needs bank, brief, contact request, console with CSV and the moderation tab, the report form; S4 innovation and gmina views | Reviews 20 derived records against the sources; signs off the paths YAML, the privacy text, the accessibility declaration draft, the licence decision (OP-07); writes the S10, S11 and "Zasady" texts and checks the helplines (OP-33, OP-34); reads the rules' rights clauses again | S5 to S12; the "Jak to działa", "Zasady" and sources pages; second screenshot review; the slides draft including "Bezpieczeństwo i etyka" | Full test run on the deployed stack; latency and cost measured; video storyboard |
+| Thu 1 Oct | Route composer, next steps, paths selection rules and their unit tests; first full evaluation including the robustness, sensitive and fairness sets; thresholds (OP-13); both providers measured on the ten test problems (OP-05) | Needs bank, brief, contact request, console with CSV and the moderation tab, the report form; S4 innovation and gmina views | Reviews 20 derived records against the sources; signs off the paths YAML, the privacy text, the accessibility declaration draft, the licence decision (OP-07); writes the S10, S11 and "Zasady" texts and checks the helplines (OP-33, OP-34); reads the rules' rights clauses again | S5 to S12; the "Jak to działa", "Zasady" and sources pages; second screenshot review; the slides draft including "Bezpieczeństwo i etyka" | Full test run on the deployed stack; latency and cost measured; video storyboard |
 | Fri 2 Oct | Fixes from the evaluation; the prompt versions frozen for the event; the delta procedure rehearsed | Partner-file adapter (FR-1.6); dead-link check; open-needs list if time | Final Polish pass on the message catalogue keys of the demo path; the glossary frozen | Demo path rehearsed twice with the cached routes; the description draft (500 words); the credits page | Replay cache warmed; database dump; the offline laptop tested without network; the stretch gate of the challenge selection judged |
 
 ### 17.3 During the event

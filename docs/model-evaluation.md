@@ -5,7 +5,7 @@
 Question: which language model can serve as the product's second
 provider next to the Anthropic API, so that the team does not build the
 provider for nothing and does not chase dead paths on the hackathon day.
-The second provider must handle Polish, return strict JSON for the
+The Polish provider must handle Polish, return strict JSON for the
 screening gate (specification 7.12) and the shortlist stage (7.3), answer
 within the gate's two-second budget, and be callable today without a
 contract.
@@ -13,7 +13,7 @@ contract.
 Answer, as decided by the team on 3 October 2026:
 
 - **Bielik-11B v3.0 (SpeakLeash, Poland, Apache 2.0)** through the Hugging
-  Face router, provider "publicai", is the live second provider. It
+  Face router, provider "publicai", is the primary online provider; Anthropic runs the offline extraction and is the online fallback. It
   passed every probe case.
 - **Apertus (Switzerland)** is excluded from every future evaluation. It
   failed two of four screening cases.
