@@ -1,0 +1,434 @@
+[
+ {
+  "id": "impl-uw1-01",
+  "innovation_id": "inn-rops-bez-presji-z-depresji",
+  "place_terc": "1210052",
+  "place_name": "Kamionka Wielka",
+  "centroid": [
+   20.8305,
+   49.5783
+  ],
+  "organisation": "MindLab Studio (Małopolska Agencja Rozwoju Edukacji Przedsiębiorczości i Innowacji sp. z o.o.)",
+  "year": 2026,
+  "status": "running",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf",
+  "note_pl": "Grant I naboru „Usługa wrażliwa” (93,5 pkt). Miejsce to siedziba wnioskodawcy według KRS; miejsce realizacji nie jest podane w źródle."
+ },
+ {
+  "id": "impl-uw1-02",
+  "innovation_id": "inn-rops-straznik",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": "Polski Związek Głuchych Oddział Małopolski w Krakowie",
+  "year": 2026,
+  "status": "running",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf",
+  "note_pl": "Grant I naboru „Usługa wrażliwa” (85 pkt)."
+ },
+ {
+  "id": "impl-uw1-03",
+  "innovation_id": "inn-rops-himalaje-autyzmu",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": "Chrześcijańskie Stowarzyszenie Osób Niepełnosprawnych, Ich Rodzin i Przyjaciół „Ognisko”",
+  "year": 2026,
+  "status": "running",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf",
+  "note_pl": "Grant I naboru „Usługa wrażliwa” (83,5 pkt). Siedziba stowarzyszenia w Krakowie według jego strony kontaktowej."
+ },
+ {
+  "id": "impl-uw1-04",
+  "innovation_id": "inn-rops-rodzina-adopcyjna-dorasta",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": "Towarzystwo Przyjaciół Dzieci Oddział Miejski Krakowski",
+  "year": 2026,
+  "status": "running",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf",
+  "note_pl": "Grant I naboru „Usługa wrażliwa” (63,5 pkt)."
+ },
+ {
+  "id": "impl-uw1-05",
+  "innovation_id": "inn-rops-gluchy-czytelnik-w-bibliotece",
+  "place_terc": "1207011",
+  "place_name": "Limanowa",
+  "centroid": [
+   20.4137,
+   49.7139
+  ],
+  "organisation": "Miejska Biblioteka Publiczna w Limanowej",
+  "year": 2026,
+  "status": "running",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf",
+  "note_pl": "Grant I naboru „Usługa wrażliwa” (79 pkt)."
+ },
+ {
+  "id": "impl-uw1-06",
+  "innovation_id": "inn-rops-gluchy-czytelnik-w-bibliotece",
+  "place_terc": "1211011",
+  "place_name": "Nowy Targ",
+  "centroid": [
+   20.0367,
+   49.4903
+  ],
+  "organisation": "Miejska Biblioteka Publiczna w Nowym Targu",
+  "year": 2026,
+  "status": "running",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf",
+  "note_pl": "Grant I naboru „Usługa wrażliwa” (52,5 pkt)."
+ },
+ {
+  "id": "impl-uw2-01",
+  "innovation_id": "inn-rops-przenosne-modularne-lazienki",
+  "place_terc": "1219032",
+  "place_name": "Kłaj",
+  "centroid": [
+   20.3006,
+   50.0078
+  ],
+  "organisation": "Gmina Kłaj",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (57 pkt)."
+ },
+ {
+  "id": "impl-uw2-02",
+  "innovation_id": "inn-rops-przenosne-modularne-lazienki",
+  "place_terc": "1215042",
+  "place_name": "Bystra-Sidzina",
+  "centroid": [
+   19.7205,
+   49.6188
+  ],
+  "organisation": "Gminny Ośrodek Pomocy Społecznej w Bystrej Podhalańskiej",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (56 pkt). Bystra Podhalańska leży w gminie Bystra-Sidzina (powiat suski)."
+ },
+ {
+  "id": "impl-uw2-03",
+  "innovation_id": "inn-rops-przenosne-modularne-lazienki",
+  "place_terc": "1210142",
+  "place_name": "Podegrodzie",
+  "centroid": [
+   20.5708,
+   49.5927
+  ],
+  "organisation": "Ośrodek Pomocy Społecznej w Podegrodziu",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (56 pkt)."
+ },
+ {
+  "id": "impl-uw2-04",
+  "innovation_id": "inn-rops-przenosne-modularne-lazienki",
+  "place_terc": "1206072",
+  "place_name": "Liszki",
+  "centroid": [
+   19.75,
+   50.043
+  ],
+  "organisation": "Centrum Usług Społecznych w Liszkach",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (52 pkt)."
+ },
+ {
+  "id": "impl-uw2-05",
+  "innovation_id": "inn-rops-komix-zyciowy",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": "Fundacja Rozwoju Kompetencji i Przedsiębiorczości PROAKTYWNI",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (74 pkt). Siedziba fundacji w Krakowie według spisu ngo.pl."
+ },
+ {
+  "id": "impl-uw2-06",
+  "innovation_id": "inn-rops-komix-zyciowy",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": "Centrum Administracyjne Nr 2 w Krakowie, placówka opiekuńczo-wychowawcza",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (72 pkt)."
+ },
+ {
+  "id": "impl-uw2-07",
+  "innovation_id": "inn-rops-komix-zyciowy",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": "Fundacja im. Jacka i Piotra Michalskich",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (65,5 pkt). Siedziba fundacji w Krakowie według spisu ngo.pl."
+ },
+ {
+  "id": "impl-uw2-08",
+  "innovation_id": "inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania",
+  "place_terc": "1219053",
+  "place_name": "Wieliczka",
+  "centroid": [
+   20.0641,
+   49.9728
+  ],
+  "organisation": "Gmina Wieliczka",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (94 pkt)."
+ },
+ {
+  "id": "impl-uw2-09",
+  "innovation_id": "inn-rops-terapeuta-przestrzeni",
+  "place_terc": "1218062",
+  "place_name": "Spytkowice",
+  "centroid": [
+   19.518,
+   49.9858
+  ],
+  "organisation": "Gminny Ośrodek Pomocy Społecznej w Spytkowicach",
+  "year": 2026,
+  "status": "planned",
+  "source": "usluga-wrazliwa",
+  "source_url": "https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf",
+  "note_pl": "Grant II naboru „Usługa wrażliwa” (81,5 pkt). W Małopolsce są dwie gminy Spytkowice; adres GOPS (ul. Zamkowa 12, 34-116 Spytkowice) wskazuje powiat wadowicki (ustalone 29 września 2026)."
+ },
+ {
+  "id": "impl-origin-inn-nat-649",
+  "innovation_id": "inn-nat-649",
+  "place_terc": "1814092",
+  "place_name": "Żurawiczki",
+  "centroid": [
+   22.5192,
+   49.9901
+  ],
+  "organisation": null,
+  "year": 2023,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://innowacjespoleczne.pl/innowacja/649/",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-nat-biblioteka-senior-dla-seniora",
+  "innovation_id": "inn-nat-biblioteka-senior-dla-seniora",
+  "place_terc": "2413041",
+  "place_name": "Tarnowskie Góry",
+  "centroid": [
+   18.8354,
+   50.4636
+  ],
+  "organisation": null,
+  "year": 2023,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://innowacjespoleczne.pl/innowacja/biblioteka-senior-dla-seniora/",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-nat-glucha-mama-na-rynku-pracy-2-1",
+  "innovation_id": "inn-nat-glucha-mama-na-rynku-pracy-2",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": null,
+  "year": 2019,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://innowacjespoleczne.pl/innowacja/glucha-mama-na-rynku-pracy-2/",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-nat-glucha-mama-na-rynku-pracy-2-2",
+  "innovation_id": "inn-nat-glucha-mama-na-rynku-pracy-2",
+  "place_terc": "2469011",
+  "place_name": "Katowice",
+  "centroid": [
+   19.0231,
+   50.2181
+  ],
+  "organisation": null,
+  "year": 2019,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://innowacjespoleczne.pl/innowacja/glucha-mama-na-rynku-pracy-2/",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-nat-model-mobilnego-spa-dla-seniorow-2",
+  "innovation_id": "inn-nat-model-mobilnego-spa-dla-seniorow-2",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": null,
+  "year": 2019,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://innowacjespoleczne.pl/innowacja/model-mobilnego-spa-dla-seniorow-2/",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-nat-scena-otwarta-samorzecznicy-w-teatrze",
+  "innovation_id": "inn-nat-scena-otwarta-samorzecznicy-w-teatrze",
+  "place_terc": "1261011",
+  "place_name": "Kraków",
+  "centroid": [
+   19.985,
+   50.0532
+  ],
+  "organisation": null,
+  "year": null,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://innowacjespoleczne.pl/innowacja/scena-otwarta-samorzecznicy-w-teatrze/",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-nat-senior-cuder-czyli-gra-o-sens-zycia-2",
+  "innovation_id": "inn-nat-senior-cuder-czyli-gra-o-sens-zycia-2",
+  "place_terc": "1206172",
+  "place_name": "Zielonki",
+  "centroid": [
+   19.9365,
+   50.1392
+  ],
+  "organisation": null,
+  "year": 2019,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://innowacjespoleczne.pl/innowacja/senior-cuder-czyli-gra-o-sens-zycia-2/",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-rops-centrum-antydepresyjne",
+  "innovation_id": "inn-rops-centrum-antydepresyjne",
+  "place_terc": "1208053",
+  "place_name": "Miechów",
+  "centroid": [
+   20.0557,
+   50.3497
+  ],
+  "organisation": null,
+  "year": null,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-seniorow,centrum-antydepresyjne",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-rops-mobilna-gielda-pracy",
+  "innovation_id": "inn-rops-mobilna-gielda-pracy",
+  "place_terc": "1208012",
+  "place_name": "Charsznica",
+  "centroid": [
+   19.9206,
+   50.4133
+  ],
+  "organisation": null,
+  "year": null,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-rynku-pracy,mobilna-gielda-pracy",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-rops-mobilna-pomoc-terapeutyczna",
+  "innovation_id": "inn-rops-mobilna-pomoc-terapeutyczna",
+  "place_terc": "1214053",
+  "place_name": "Proszowice",
+  "centroid": [
+   20.3428,
+   50.2004
+  ],
+  "organisation": null,
+  "year": null,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-dzieci-mlodziezy-i-rodziny,mobilna-pomoc-terapeutyczna",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-rops-mobilne-centrum-pomocy-dla-osob-starszych",
+  "innovation_id": "inn-rops-mobilne-centrum-pomocy-dla-osob-starszych",
+  "place_terc": "1214042",
+  "place_name": "Pałecznica",
+  "centroid": [
+   20.306,
+   50.2777
+  ],
+  "organisation": null,
+  "year": 2019,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-seniorow,mobilne-centrum-pomocy-dla-osob-starszych",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ },
+ {
+  "id": "impl-origin-inn-rops-zakupy-bez-barier",
+  "innovation_id": "inn-rops-zakupy-bez-barier",
+  "place_terc": "1213043",
+  "place_name": "Kęty",
+  "centroid": [
+   19.2406,
+   49.899
+  ],
+  "organisation": null,
+  "year": 2019,
+  "status": "completed",
+  "source": "catalogue-origin",
+  "source_url": "https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-osob-o-ograniczonej-mobilnosci,zakupy-bez-barier",
+  "note_pl": "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
+ }
+]

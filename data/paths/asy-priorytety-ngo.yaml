@@ -1,0 +1,28 @@
+id: asy-priorytety-ngo
+name_pl: "Aktywni Seniorzy ASY, priorytety I, II i IV dla organizacji"
+legal_basis_pl: "Rządowy program wieloletni „Aktywni Seniorzy - ASY” na lata 2026-2030, M.P. 2025 poz. 1255"
+applicant_types: [ngo]
+decides: panstwo
+purposes: [zadanie-publiczne]
+target_groups: [seniorzy]
+scope: krajowa
+amount_min_pln: 20000
+amount_max_pln: 70000
+amount_note_pl: "Priorytet II: od 20 000 do 70 000 zł. Priorytet IV: od 20 000 do 50 000 zł. Kwot dla priorytetu I źródło nie podaje."
+timing:
+  kind: closed
+  note_pl: "Nabory w 2026 r. odbyły się w kwietniu. Kolejne spodziewane są od kwietnia do lipca 2027 r."
+  calls: []
+decision_maker_pl: "Pełnomocnik Rządu do spraw Polityki Senioralnej, oferty ocenia wojewoda"
+steps_pl:
+  - "Wybierz priorytet programu, który pasuje do Twojego projektu."
+  - "Przygotuj ofertę dla seniorów z budżetem w granicach priorytetu."
+  - "Złóż ofertę w naborze, który zwykle rusza w kwietniu."
+fit:
+  cost_bands: [medium]
+  roles: [organizacja-spoleczna]
+  boost_when_implementer_types: [ngo]
+source_url: "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WMP20250001255"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Dokładne daty naborów w priorytetach I, II i IV nie zostały sprawdzone. Kwoty dla priorytetu I nie zostały sprawdzone. Termin naboru w 2027 r. nie jest potwierdzony."

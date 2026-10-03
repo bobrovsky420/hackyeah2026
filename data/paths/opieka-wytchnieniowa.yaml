@@ -1,0 +1,36 @@
+id: opieka-wytchnieniowa
+name_pl: "Opieka wytchnieniowa, Fundusz Solidarnościowy"
+legal_basis_pl: "program resortowy „Opieka wytchnieniowa” finansowany z Funduszu Solidarnościowego"
+applicant_types: [jst, ngo]
+decides: panstwo
+purposes: [usluga-opiekuncza]
+target_groups: [ograniczona-mobilnosc, niepelnosprawnosc-sensoryczna, niepelnosprawnosc-intelektualna, spektrum-autyzmu]
+scope: krajowa
+amount_min_pln: null
+amount_max_pln: 3000000
+amount_note_pl: "Edycja dla samorządów na 2026 r.: 205 166 000 zł, najwyżej 3 mln zł na jeden samorząd, finansowanie w 100 %. Kwot edycji dla organizacji źródło nie podaje."
+timing:
+  kind: closed
+  note_pl: "Nabór dla samorządów na 2026 r. trwał od 10 października do 3 listopada 2025 r. Nabór dla organizacji na 2026 r. trwał od 16 do 23 marca 2026 r. Nabór dla samorządów na 2027 r. spodziewany jest w październiku 2026 r."
+  calls:
+    - label_pl: "Edycja dla samorządów 2026"
+      applicant_types: [jst]
+      opens_on: "2025-10-10"
+      closes_on: "2025-11-03"
+    - label_pl: "Edycja dla organizacji 2026"
+      applicant_types: [ngo]
+      opens_on: "2026-03-16"
+      closes_on: "2026-03-23"
+decision_maker_pl: "Ministerstwo, za pośrednictwem wojewody"
+steps_pl:
+  - "Policz opiekunów osób z niepełnosprawnością, którzy potrzebują wytchnienia."
+  - "Wybierz edycję dla samorządów albo dla organizacji."
+  - "Złóż wniosek w terminie naboru."
+fit:
+  cost_bands: [low, medium, high]
+  roles: [pracownik-instytucji, urzad-gminy, organizacja-spoleczna]
+  boost_when_implementer_types: [jst, ops-cus-pcpr, ngo]
+source_url: "https://niepelnosprawni.gov.pl/program-fs/"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Nabór dla samorządów na 2027 r. nie został potwierdzony. Dane pochodzą częściowo ze źródła pośredniego."

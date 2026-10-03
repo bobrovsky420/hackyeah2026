@@ -1,0 +1,45 @@
+{
+  "id": "inn-rops-merkury",
+  "prompt_version": "extract-v4",
+  "generated_by": "claude-fable-5-1",
+  "generated_at": "2026-10-03",
+  "source_fingerprint": "4809b4587346112b",
+  "summary_pl": "Platforma internetowa z symulatorem czterech urządzeń samoobsługowych: bankomatu, parkomatu, paczkomatu i kasy samoobsługowej. Osoby starsze ćwiczą ich obsługę w bezpiecznych, domowych warunkach i nabierają pewności, by korzystać z tych urządzeń w przestrzeni publicznej.",
+  "problem_pl": "Osoby starsze mają niskie kompetencje w obsłudze rozwiązań technologicznych. Towarzyszy im strach i niepewność przy urządzeniach samoobsługowych, dlatego unikają paczkomatu, bankomatu czy kasy samoobsługowej.",
+  "mechanism_pl": "Symulator działa w przeglądarce internetowej. Osoba starsza wybiera urządzenie i próbuje jego obsługi tak jak w rzeczywistości, ale bez ryzyka. Ćwiczyć można samodzielnie w domu albo w grupie, na przykład w klubie seniora lub dziennym domu pomocy społecznej.",
+  "index_card_pl": "Merkury: symulator bankomatu, parkomatu, paczkomatu i kasy samoobsługowej dla seniorów; organizacje pozarządowe, dzienne domy pomocy, kluby seniora; niski koszt.",
+  "target_groups": ["seniorzy"],
+  "domains": ["kompetencje-cyfrowe", "samodzielnosc"],
+  "implementer_types": ["ngo", "placowka"],
+  "setting": "any",
+  "scale": "group",
+  "cost_band": "low",
+  "time_to_implement": "weeks",
+  "evidence_level": "selected-for-dissemination",
+  "origin_place_pl": null,
+  "requires_pl": [
+    "komputer lub tablet z internetem",
+    "dostęp do platformy z symulatorem",
+    "osoba prowadząca zajęcia w klubie lub domu pomocy"
+  ],
+  "keywords_pl": [
+    "bankomat",
+    "parkomat",
+    "paczkomat",
+    "kasa samoobsługowa",
+    "symulator",
+    "urządzenia samoobsługowe",
+    "kompetencje cyfrowe"
+  ],
+  "evidence": {
+    "problem_pl": {"basis": "quote", "quote": "niskie kompetencje seniorów związane z obsługą rozwiązań technologicznych"},
+    "mechanism_pl": {"basis": "quote", "quote": "symulatora czterech urządzeń samoobsługowych (bankomat, parkomat, paczkomat oraz kasa samoobsługowa)"},
+    "cost_band": {"basis": "inference", "quote": null},
+    "time_to_implement": {"basis": "inference", "quote": null},
+    "evidence_level": {"basis": "quote", "quote": "INNOWACJA WYBRANA DO UPOWSZECHNIANIA W RAMACH PROJEKTU"},
+    "setting": {"basis": "inference", "quote": null},
+    "scale": {"basis": "quote", "quote": "dzienne domy pomocy społecznej, kluby seniora"}
+  },
+  "confidence": "high",
+  "notes_pl": "Źródło nie podaje kosztów ani czasu wdrożenia; oszacowano je z opisu: gotowa platforma internetowa, potrzebny tylko sprzęt z internetem."
+}

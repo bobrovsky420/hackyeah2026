@@ -1,0 +1,28 @@
+id: aktywny-maluch
+name_pl: "Aktywny Maluch 2022-2029"
+legal_basis_pl: "program resortowy finansowany z Krajowego Planu Odbudowy i z programu Fundusze Europejskie dla Rozwoju Społecznego"
+applicant_types: [jst, ngo, pes]
+decides: panstwo
+purposes: [tworzenie-miejsc, usluga-opiekuncza]
+target_groups: [dzieci-mlodziez-rodziny]
+scope: krajowa
+amount_min_pln: null
+amount_max_pln: null
+amount_note_pl: "Utworzenie miejsca: 57 528 zł dla samorządu albo 12 410 zł dla podmiotu niepublicznego. Funkcjonowanie: do około 837 zł na miejsce miesięcznie."
+timing:
+  kind: rolling
+  note_pl: "Nabór jest ciągły."
+  calls: []
+decision_maker_pl: "Ministerstwo, za pośrednictwem wojewody"
+steps_pl:
+  - "Policz, ilu miejsc opieki nad małymi dziećmi brakuje w gminie."
+  - "Przygotuj wniosek na utworzenie lub funkcjonowanie miejsc opieki."
+  - "Złóż wniosek u wojewody."
+fit:
+  cost_bands: [low, medium, high, unknown]
+  roles: [pracownik-instytucji, urzad-gminy, organizacja-spoleczna]
+  boost_when_implementer_types: [jst, ops-cus-pcpr, ngo, firma-pes]
+source_url: "https://www.gov.pl/web/rodzina/maluch-2022-2029"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Oprócz gmin wnioski mogą składać podmioty niepubliczne."
