@@ -7,7 +7,7 @@ import { E2E_ROPS_TOKEN } from "./admin";
  * redaction and crisis banner, the quick exit, the clarification, the rate
  * limit, the path selection, the recompute, the content report, the MIIS
  * attribution, the accessibility statement, the register card, the map
- * table, the idea card of module III, the tester of module IV, the
+ * table, the idea card and the CANVAS application of module III, the tester of module IV, the
  * conversations and the partnership board of module V, the panel of
  * module VI and the similar cases of module I.
  */
@@ -225,6 +225,106 @@ test("module III: a crisis text in an idea card shows human help, and nothing is
   await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
   await expect(page.getByRole("link", { name: /^112/ })).toHaveAttribute("href", "tel:112");
   await expect(page.getByText("Zapisaliśmy zgłoszenie pomysłu")).toHaveCount(0);
+});
+
+test("module III: the CANVAS application goes step by step, keeps its draft and is stored as a card with its canvas", async ({ page }) => {
+  await page.goto("/zglos-pomysl");
+  await page.getByRole("link", { name: "lub wypełnij wniosek CANVAS" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Wniosek CANVAS" })).toBeFocused();
+  const next = page.getByRole("button", { name: "Dalej" });
+  const step = (name: string) => page.getByRole("heading", { level: 2, name, exact: true });
+
+  // Each step is checked before the next.
+  await next.click();
+  await expect(page.getByRole("group", { name: "Sprawdź formularz" }).getByRole("link")).toHaveCount(2);
+  await page.getByLabel("Nazwa pomysłu").fill("Sąsiedzka wypożyczalnia sprzętu");
+  await page.getByLabel("Krótki opis").fill("Mieszkańcy wypożyczają sobie sprzęt rehabilitacyjny przez świetlicę wiejską.");
+  await next.click();
+  await expect(step("Problem")).toBeFocused();
+
+  // The answers survive a reload; the step too.
+  await page.reload();
+  await expect(step("Problem")).toBeVisible();
+  await page.getByRole("radio", { name: /^Bardzo poważny problem/ }).check();
+  await page.getByRole("radio", { name: /^Często/ }).check();
+  await page.getByRole("radio", { name: /^Wąska grupa/ }).check();
+  await next.click();
+
+  await expect(step("Aktorzy zmiany")).toBeFocused();
+  await page.getByLabel("Wspierają zmianę").fill("Rada sołecka i koło gospodyń wiejskich");
+  await next.click();
+
+  await expect(step("Rozwiązanie")).toBeFocused();
+  await page.getByLabel("Na czym polega rozwiązanie i co jest jego istotą?").fill("Sprzęt krąży między sąsiadami zamiast stać w piwnicach.");
+  await page.getByRole("radio", { name: /^Rozwiązanie jest jasne/ }).check();
+  await page.getByRole("radio", { name: /^Prototyp/ }).check();
+  await page.getByRole("radio", { name: /^Korzyść jest większa niż koszt/ }).check();
+  await next.click();
+
+  await expect(step("Odbiorcy")).toBeFocused();
+  await page.getByLabel("Komu rozwiązanie ma realnie pomóc?").fill("Seniorzy po urazach i ich opiekunowie");
+  await page.getByRole("group", { name: "Główny użytkownik" }).getByRole("checkbox", { name: "Seniorzy" }).check();
+  await next.click();
+
+  // At most three values of each kind.
+  await expect(step("Propozycja wartości")).toBeFocused();
+  const emotional = page.getByRole("group", { name: /^Wartość emocjonalna/ });
+  for (const name of ["Bezpieczeństwo", "Niezależność", "Spokój", "Mniejsza samotność"]) await emotional.getByRole("checkbox", { name }).check();
+  await next.click();
+  await expect(page.getByRole("group", { name: "Sprawdź formularz" })).toContainText("Zaznacz najwyżej 3 odpowiedzi.");
+  await emotional.getByRole("checkbox", { name: "Spokój" }).uncheck();
+  await next.click();
+
+  await expect(step("Struktura kosztów")).toBeFocused();
+  await next.click();
+  await expect(step("Źródła dochodów")).toBeFocused();
+  await page.getByRole("radio", { name: /^Jest pomysł/ }).check();
+  await page.getByRole("radio", { name: /^Są szanse na dodatkowe pieniądze/ }).check();
+  await next.click();
+  await expect(step("Kanały")).toBeFocused();
+  await next.click();
+
+  await expect(step("Konstelacja partnerów")).toBeFocused();
+  await page.getByRole("button", { name: "Dodaj partnera" }).click();
+  await expect(page.getByLabel("Nazwa partnera")).toBeFocused();
+  await page.getByLabel("Nazwa partnera").fill("Gminny Ośrodek Pomocy Społecznej");
+  await page.getByRole("checkbox", { name: "Pomaga dotrzeć do odbiorców" }).check();
+  await next.click();
+
+  await expect(step("Wpływ")).toBeFocused();
+  for (const group of [/^Osoba:/, /^Społeczność:/, /^Środowisko:/]) {
+    await page.getByRole("group", { name: group }).getByRole("radio", { name: /^Możliwy wpływ/ }).check();
+  }
+  await next.click();
+
+  await expect(step("Kontakt i zgody")).toBeFocused();
+  await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Koło Gospodyń Wiejskich");
+  await page.getByLabel("E-mail", { exact: true }).fill("kgw@example.org");
+  await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
+  await next.click();
+
+  await expect(step("Sprawdź i wyślij")).toBeFocused();
+  await expect(page.getByText("Bardzo poważny problem")).toBeVisible();
+  await page.getByRole("button", { name: "Zmień: Problem" }).click();
+  await expect(step("Problem")).toBeFocused();
+  await page.getByText("Kroki wniosku").click();
+  await page.getByRole("navigation", { name: "Kroki wniosku" }).getByRole("button", { name: "Sprawdź i wyślij" }).click();
+  await page.getByRole("button", { name: "Wyślij wniosek" }).click();
+  await expect(page.getByText("Zapisaliśmy wniosek CANVAS")).toBeVisible();
+
+  await page.getByRole("link", { name: "Zobacz zgłoszenie" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Sąsiedzka wypożyczalnia sprzętu" })).toBeFocused();
+  // The card's stage comes from the canvas's readiness.
+  await expect(page.getByText("Prototyp albo pierwsza wersja")).toBeVisible();
+  const canvas = page.getByRole("region", { name: "Wniosek CANVAS" });
+  await expect(canvas.getByText("Gminny Ośrodek Pomocy Społecznej")).toBeVisible();
+  await expect(canvas.getByText("Bezpieczeństwo, Niezależność, Mniejsza samotność")).toBeVisible();
+  await expect(page.getByText("kgw@example.org")).toHaveCount(0);
+
+  // Sent, the draft is gone.
+  await page.goto("/zglos-pomysl/canvas");
+  await expect(step("O pomyśle")).toBeVisible();
+  await expect(page.getByLabel("Nazwa pomysłu")).toHaveValue("");
 });
 
 test("module IV: an evaluation with a test sign-up is stored and the innovation shows only the numbers", async ({ page }) => {

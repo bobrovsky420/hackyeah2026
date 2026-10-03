@@ -47,7 +47,8 @@ actions call `repository()`, client components never do.
   file: a file saved before it opens with the list empty instead of
   being set aside as unreadable. A field added later gets its default
   when the file opens (an idea card's status "nowy" and reply null, an
-  evaluation's `forwarded_at` null).
+  evaluation's `forwarded_at` null); an idea card's `canvas` is optional
+  and present only on a card sent as a CANVAS application.
 - Beside the file: `records.json.bak`, a copy taken every time the server
   starts (the recovery point of that start), and, after a file that could
   not be read, `records.json.unreadable-<time>`, which the server sets

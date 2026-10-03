@@ -1,3 +1,4 @@
+import type { IdeaCanvas } from "@/lib/canvas";
 import type { Dataset } from "@/lib/data/to-contracts";
 import type { Llm } from "@/lib/llm/types";
 
@@ -331,6 +332,8 @@ export interface Idea {
   retention_until: string;
   /** ROPS's internal note; never shown to the author. */
   note_pl: string | null;
+  /** The answers of a CANVAS application (src/lib/canvas.ts); absent on a card sent with the short form. */
+  canvas?: IdeaCanvas;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
   example?: boolean;
 }
