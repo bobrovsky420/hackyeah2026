@@ -12,7 +12,7 @@ const votes: { value: string; label: MessageKey }[] = [
   { value: "nie", label: "s2.feedback.no" },
 ];
 
-/** "Czy ta droga pomaga?" (FR-10.1), print and download (FR-4.7). */
+/** "Czy te rozwiązania pomagają?" (FR-10.1), print and download (FR-4.7). */
 export function RouteActions({ routeId, markdown }: { routeId: string; markdown: string }) {
   const [vote, setVote] = useState<string | null>(null);
 

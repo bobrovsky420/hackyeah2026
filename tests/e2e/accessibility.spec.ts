@@ -40,7 +40,7 @@ for (const [theme, applyTheme] of Object.entries(themes)) {
     test("s1 with the error summary", async ({ page }) => {
       await applyTheme(page);
       await page.goto("/");
-      await page.getByRole("button", { name: "Znajdź drogę" }).click();
+      await page.getByRole("button", { name: "Pokaż możliwości" }).click();
       await expect(page.getByRole("heading", { name: "Sprawdź formularz" })).toBeVisible();
       await expectAccessible(page);
     });
