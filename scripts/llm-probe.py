@@ -10,7 +10,9 @@ tokens each at most. Every repetition carries a run id in the prompt, because
 the router returns cached answers for identical requests.
 
 Usage (from the repository root, with the project venv):
-  .venv/Scripts/python scripts/llm-probe.py [--model MODEL] [--reps 2] [--out FILE]
+  .venv/Scripts/python scripts/llm-probe.py [--model MODEL] [--reps 2] [--out FILE] [--base-url URL]
+  A local Ollama server: --base-url http://127.0.0.1:11434/v1 --model hf.co/<repo>:<quant>
+  (127.0.0.1, not localhost: a Windows client tries IPv6 first, which WSL does not forward).
 Models seen live on the router:
   speakleash/Bielik-11B-v3.0-Instruct:publicai (default, 0.40 USD per million tokens in and out)
   Any other model as "<repo>:<provider>" from https://router.huggingface.co/v1/models.
@@ -20,7 +22,6 @@ The results file defaults to llm-probe-results.json in the current directory.
 Keep ad-hoc runs out of git; copy a run worth keeping into docs/model-evaluation/
 with the date, model and host in the file name and add a row to
 docs/model-evaluation.md (the record of the probes).
-
 """
 import argparse, io, json, os, re, sys, time, uuid
 
@@ -132,8 +133,9 @@ def main():
     ap.add_argument("--out", default="llm-probe-results.json")
     ap.add_argument("--max-tokens", type=int, default=0, help="completion budget for the screening and shortlist calls; 0 = 300/500 (raise to 3000 for reasoning models)")
     ap.add_argument("--reasoning-effort", default=None, help="passed as reasoning_effort in the request body (for example low), for models that reason before answering")
+    ap.add_argument("--base-url", default=BASE_URL, help="OpenAI-compatible endpoint; for a local Ollama server http://localhost:11434/v1 (no token needed)")
     a = ap.parse_args()
-    tok = hf_token()
+    tok = hf_token() if a.base_url == BASE_URL else (hf_token() or "local")
     if not tok:
         print("no HF_TOKEN in .env.dev or the environment"); sys.exit(2)
     if a.reasoning_effort:
@@ -141,9 +143,9 @@ def main():
     mt_screen = a.max_tokens or 300
     mt_short = a.max_tokens or 500
     from openai import OpenAI
-    client = OpenAI(base_url=BASE_URL, api_key=tok)
+    client = OpenAI(base_url=a.base_url, api_key=tok, timeout=600)
     run_id = uuid.uuid4().hex[:8]
-    results = {"model": a.model, "reps": a.reps, "run_id": run_id, "max_tokens": [mt_screen, mt_short], "reasoning_effort": a.reasoning_effort, "ping": None, "screen": [], "shortlist": []}
+    results = {"model": a.model, "base_url": a.base_url, "reps": a.reps, "run_id": run_id, "max_tokens": [mt_screen, mt_short], "reasoning_effort": a.reasoning_effort, "ping": None, "screen": [], "shortlist": []}
 
     r = call(client, a.model, "Odpowiadaj po polsku, jednym zdaniem.", f"Czym jest innowacja społeczna? (run {run_id})", max_tokens=max(80, a.max_tokens), use_response_format=False)
     results["ping"] = r

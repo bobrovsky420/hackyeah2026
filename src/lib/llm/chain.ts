@@ -6,12 +6,12 @@ import { LlmError, type Llm, type LlmCall, type LlmResult } from "./types";
 
 /*
  * The provider chain behind one Llm function (9.3, 12.4). Live providers
- * are tried in order; one without a key is skipped, one that excludes the
- * task is skipped (Llama never serves the gate). The first valid answer is
- * recorded for replay and returned. When every live provider failed, a
- * recorded answer for the same prompt is served with `cached: true`;
- * otherwise the call throws one LlmError:
- * - refusal: a provider refused and none answered (FR-12.12);
+ * are tried in order (Bielik, then Anthropic); one without a key is
+ * skipped. The first valid answer is recorded for replay and returned.
+ * When every live provider failed, a recorded answer for the same prompt
+ * is served with `cached: true`; otherwise the call throws one LlmError:
+ * - refusal: a provider refused and none answered (FR-12.12); Anthropic's
+ *   refusal already went through its server-side fallback, so it is final;
  * - not_configured: no live provider could take the task;
  * - otherwise the kind of the last live failure (timeout, unavailable,
  *   invalid_output); in replay mode a missing recording is unavailable.
@@ -43,7 +43,7 @@ export function createLlm(options: LlmChainOptions): Llm {
     let attempted = 0;
 
     for (const provider of providers) {
-      if (!provider.configured || provider.excludedTasks?.includes(call.task)) continue;
+      if (!provider.configured) continue;
       attempted += 1;
       lastProvider = provider;
       try {
@@ -73,10 +73,7 @@ export function createLlm(options: LlmChainOptions): Llm {
         failed.push(`${provider.id}:${failure.kind}`);
         countFailure(provider.name, provider.model);
         lastError = failure;
-        if (failure.kind === "refusal") {
-          refused = true;
-          if (provider.refusalIsFinal) break;
-        }
+        if (failure.kind === "refusal") refused = true;
       }
     }
 

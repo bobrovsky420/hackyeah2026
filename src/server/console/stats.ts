@@ -1,4 +1,3 @@
-import "server-only";
 import { getInnovation } from "@/lib/catalogue";
 import type { ContactRequest, ContactStatus, Need } from "@/lib/contracts/records";
 import type { RouteMode } from "@/lib/contracts/route";

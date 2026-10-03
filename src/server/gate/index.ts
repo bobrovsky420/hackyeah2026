@@ -1,4 +1,3 @@
-import "server-only";
 import type { Llm } from "@/lib/llm/types";
 import type { GateInput, GateOutput, RedactionType, ScreenText, ScreeningResult, StageLog } from "@/server/contracts";
 import { decide, decidesWithoutModel } from "./decide";

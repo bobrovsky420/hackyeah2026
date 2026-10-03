@@ -1,4 +1,3 @@
-import "server-only";
 import { DEFAULT_EMBEDDING_MODEL } from "@/lib/data/load";
 import { envValue } from "@/lib/env";
 import type { Embed } from "@/server/contracts";

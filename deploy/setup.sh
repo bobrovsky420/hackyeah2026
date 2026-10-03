@@ -48,21 +48,21 @@ if [ "$(pnpm --version 2>/dev/null || true)" != "$PNPM_VERSION" ]; then
   sudo npm install -g "pnpm@$PNPM_VERSION"
 fi
 
-echo "== Python 3.14 and the embedding environment"
+echo "== Python 3.14 and the Python environment"
 if ! command -v uv >/dev/null && [ ! -x "$HOME/.local/bin/uv" ]; then
   curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
 export PATH="$HOME/.local/bin:$PATH"
-[ -x .venv-embedding/bin/python ] || uv venv --python 3.14 .venv-embedding
+[ -x .venv/bin/python ] || uv venv --python 3.14 .venv
 # CPU torch first, from the PyTorch index: PyPI's Linux wheel pulls the CUDA libraries.
-uv pip install --python .venv-embedding/bin/python --index-url https://download.pytorch.org/whl/cpu \
-  "torch==$(sed -n 's/^torch==//p' requirements-embedding.txt)"
-uv pip install --python .venv-embedding/bin/python -r requirements-embedding.txt
+uv pip install --python .venv/bin/python --index-url https://download.pytorch.org/whl/cpu \
+  "torch==$(sed -n 's/^torch==//p' requirements.txt)"
+uv pip install --python .venv/bin/python -r requirements.txt
 
 echo "== the embedding model (gated on the Hub: HF_TOKEN, Gemma terms accepted once)"
 HF_TOKEN="${HF_TOKEN:?HF_TOKEN is empty in .env.server}" \
 EMBEDDING_MODEL="${EMBEDDING_MODEL:-OPI-PIB/PolDense-400M}" \
-  .venv-embedding/bin/python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['EMBEDDING_MODEL'])"
+  .venv/bin/python -c "import os; from sentence_transformers import SentenceTransformer; SentenceTransformer(os.environ['EMBEDDING_MODEL'])"
 
 echo "== systemd units and Caddy"
 for unit in embedding app; do

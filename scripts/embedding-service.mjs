@@ -1,8 +1,7 @@
 /*
  * Start the embedding service (scripts/embedding-service.py, FR-3.7) with the
- * Python of the first environment that exists: .venv-embedding (the team's
- * machines and the server), then .venv (docs/quick-start.md). Arguments are
- * passed on, the exit code is returned.
+ * Python of .venv (docs/quick-start.md). Arguments are passed on, the exit
+ * code is returned.
  *
  * Usage, from the repository root:
  *   npx pnpm@12.6.0 embeddings [--self-test] [--port 8765]
@@ -14,9 +13,9 @@ import { fileURLToPath } from "node:url";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const bin = process.platform === "win32" ? path.join("Scripts", "python.exe") : path.join("bin", "python");
-const python = [".venv-embedding", ".venv"].map((venv) => path.join(root, venv, bin)).find((file) => existsSync(file));
+const python = path.join(root, ".venv", bin);
 
-if (!python) {
+if (!existsSync(python)) {
   console.error("embeddings: no Python environment; create .venv first (docs/quick-start.md, step 2)");
   process.exit(1);
 }

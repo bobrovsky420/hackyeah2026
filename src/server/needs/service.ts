@@ -1,4 +1,3 @@
-import "server-only";
 import { randomBytes } from "node:crypto";
 import { catalogue as defaultCatalogue, type Catalogue } from "@/lib/catalogue";
 import type { Brief, StoredBrief } from "@/lib/contracts/brief";

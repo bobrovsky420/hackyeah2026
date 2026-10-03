@@ -11,7 +11,7 @@ front for TLS. The files are in [deploy/](../deploy/).
 |---|---|---|
 | `caddy` | TLS for the site address, forwards to the app | ports 80 and 443, `/etc/caddy/Caddyfile` from [deploy/Caddyfile](../deploy/Caddyfile) |
 | `app` | `next start` over the build in `.next` | 127.0.0.1:3000, [deploy/app.service](../deploy/app.service) |
-| `embedding` | `scripts/embedding-service.py` in `.venv-embedding` (FR-3.7) | 127.0.0.1:8765, the app's default `EMBEDDING_URL`, [deploy/embedding.service](../deploy/embedding.service) |
+| `embedding` | `scripts/embedding-service.py` in `.venv` (FR-3.7) | 127.0.0.1:8765, the app's default `EMBEDDING_URL`, [deploy/embedding.service](../deploy/embedding.service) |
 
 The data release is unpacked into the checkout (`data/`,
 `.local/route-cache/`, `.local/llm-replay/`) by `scripts/get-data.py`
@@ -76,8 +76,8 @@ git-ignored and readable by the owner only; the setup checks that.
 bash deploy/setup.sh <site address>
 ```
 
-It installs Node 24, pnpm, Caddy and uv; creates `.venv-embedding` with
-Python 3.14, CPU torch and `requirements-embedding.txt`; downloads the
+It installs Node 24, pnpm, Caddy and uv; creates `.venv` with
+Python 3.14, CPU torch and `requirements.txt`; downloads the
 model; installs the two services and the Caddyfile; then runs the first
 update (next section). The first run takes 10 to 15 minutes. It ends
 with the answer of `/api/health`; then open `https://<site address>`.

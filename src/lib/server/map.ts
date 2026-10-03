@@ -1,4 +1,3 @@
-import "server-only";
 import { catalogue, distanceKm, getInnovation, type Catalogue, type LocatedImplementation } from "@/lib/catalogue";
 import type { Gmina, Innovation } from "@/lib/contracts/catalogue";
 import type { IndicatorFacts, IndicatorKey, IndicatorValue } from "@/lib/contracts/map";

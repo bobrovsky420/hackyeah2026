@@ -1,4 +1,3 @@
-import "server-only";
 
 /* Small checks for the JSON bodies of the prototype's API routes. */
 

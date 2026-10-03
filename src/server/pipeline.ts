@@ -1,4 +1,3 @@
-import "server-only";
 import type { RoleCode } from "@/lib/contracts/catalogue";
 import type { Readiness } from "@/lib/contracts/records";
 import type { Route } from "@/lib/contracts/route";

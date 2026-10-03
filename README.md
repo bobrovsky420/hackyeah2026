@@ -111,7 +111,7 @@ already decide, and the composer's when nothing is shortlisted.
    nearest index cards of the 381 innovations are selected.
 3. **Rerank and reasons**: Bielik 11B v3.0 (the Polish open model, on the
    Hugging Face router) picks the two or three that fit and explains why;
-   Claude and Llama 3.3 70B are the fallbacks. Every identifier the model
+   Claude is the fallback. Every identifier the model
    returns is checked against the catalogue, every reason quotes the
    source, and generated text is labelled. The model never creates a
    solution, an organisation, a person, an amount or a deadline.
@@ -144,7 +144,7 @@ flowchart TD
     end
 
     entries[("<b>Entries store</b><br>one JSON file: needs, contacts,<br>registrations, moderation log")]
-    llm["<b>Model adapter</b><br>Bielik on the HF router, then Claude,<br>Llama 3.3 70B, the replay recording"]
+    llm["<b>Model adapter</b><br>Bielik on the HF router, then Claude,<br>then the replay recording"]
     embed["<b>Embedding service</b><br>PolDense-400M, Python"]
     catalogue[("<b>Catalogue</b><br>data/, JSON, read-only")]
 
@@ -173,8 +173,8 @@ flowchart TD
   without the network. A replay cache keeps a route stable for the same
   need.
 - **Model layer** (`src/lib/llm/`): one adapter over Bielik on the
-  Hugging Face router, then Claude, then Llama 3.3 70B, then recorded
-  answers; the prompts are versioned files in `prompts/`.
+  Hugging Face router, then Claude, then recorded answers; the prompts
+  are versioned files in `prompts/`.
 - **Retriever**: PolDense-400M in a small Python service; when it is
   down, the matcher falls back to a lexical scorer, so the app keeps
   answering.
@@ -201,7 +201,7 @@ The requirements are in the
 | 115 innovations | Biblioteka innowacji społecznych, ROPS Kraków | CC BY 4.0, or the MIIS terms of use, shown with attribution |
 | The catalogue of the app | The two merged (34 duplicates joined) into 381 records with derived fields; the contract is [data/README.md](data/README.md) | as above; the catalogues stay the systems of record |
 | Municipalities | The TERC register (GUS); indicators from the Local Data Bank (GUS BDL, 2024); boundaries from the PRG in the public-domain GeoJSON of waszkiewiczja | CC BY 4.0 (BDL, PRG) |
-| Language models | Bielik 11B v3.0 (SpeakLeash) through the Hugging Face router; Claude (Anthropic) and Llama 3.3 70B (Meta) as fallbacks | The providers' terms |
+| Language models | Bielik 11B v3.0 (SpeakLeash) through the Hugging Face router; Claude (Anthropic) as the fallback | The providers' terms |
 | Retriever | PolDense-400M by OPI PIB (Dadas et al. 2026, "Parameter-Efficient Retrievers for Polish and European Languages") | Gemma Terms of Use |
 | Software | Next.js 16, React, TypeScript, Tailwind CSS 4, MapLibre GL JS, Lucide; form patterns from the GOV.UK Design System; a Python data pipeline | Open-source licences of the packages |
 | Typeface | Atkinson Hyperlegible Next, Braille Institute | SIL Open Font License |

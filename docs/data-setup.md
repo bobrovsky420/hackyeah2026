@@ -1,7 +1,8 @@
 # Data setup on another machine
 
 For a developer who sets up the deployment machine, the offline demo laptop
-or a second development machine. Git carries only what cannot be recreated: the built data is git-ignored, and
+or a second development machine. Git carries only what cannot be recreated:
+the built data is git-ignored, and
 rebuilding it needs the 7 GB raw snapshot and a 2.5 hour extraction. So the
 data travels as a bundle, a data release `data-X.Y.Z.zip`: one zip with
 every file under `data/`, the pipeline's working files in `.local/pipeline/`
@@ -11,11 +12,10 @@ every file under `data/`, the pipeline's working files in `.local/pipeline/`
 [data/README.md](../data/README.md).
 
 Commands are for Windows (Git Bash or PowerShell) from the repository root.
-On Linux and macOS write `.venv/bin/python` for `.venv/Scripts/python`,
-`.venv-embedding/bin/python` for `.venv-embedding/Scripts/python`, and set
-environment variables as `VAR=value command`.
+On Linux and macOS write `.venv/bin/python` for `.venv/Scripts/python`, and
+set environment variables as `VAR=value command`.
 
-## 1. Clone and create the two Python environments
+## 1. Clone and create the Python environment
 
 Python 3.14 (the pins were made with it), Node.js with npx, and git.
 
@@ -24,12 +24,11 @@ git clone <repository URL> HackYeah2026
 cd HackYeah2026
 python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt
-.venv/Scripts/python -m venv .venv-embedding
-.venv-embedding/Scripts/python -m pip install -r requirements-embedding.txt
 ```
 
-`.venv` runs every data script; `.venv-embedding` (CPU torch,
-sentence-transformers) runs only the three embedding scripts.
+`.venv` runs every script, the embedding ones included; on Linux, install
+CPU torch first, as `requirements.txt` says, so that PyPI's wheel does not
+pull the CUDA libraries.
 
 ## 2. Get the bundle and unpack it
 
@@ -60,8 +59,8 @@ here but not in the bundle are listed; `--prune` deletes them.
 Download and unpack in one step: `.venv/Scripts/python scripts/get-data.py X.Y.Z`
 takes the zip from `.local/bundles/` or, when the team publishes releases on
 GitHub, from the release `data-X.Y.Z` of the repository, and runs the unpack.
-The Docker stack of [local-stack.md](local-stack.md) runs it while building
-its images, so the data goes into the images, not into a volume.
+The server's `deploy/update.sh` runs it on every deploy
+([server-deploy.md](server-deploy.md)).
 
 To make a release from your own machine (the person who built the data):
 
@@ -89,8 +88,8 @@ Download it, and the 150M fallback, into the Hugging Face cache while
 online:
 
 ```
-.venv-embedding/Scripts/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('OPI-PIB/PolDense-400M')"
-.venv-embedding/Scripts/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('OPI-PIB/PolDense-150M')"
+.venv/Scripts/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('OPI-PIB/PolDense-400M')"
+.venv/Scripts/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('OPI-PIB/PolDense-150M')"
 ```
 
 If the Hub asks for a login (PolDense is under the Gemma Terms of Use),
@@ -102,8 +101,8 @@ in PowerShell.
 ## 4. Start the embedding service and check it
 
 ```
-.venv-embedding/Scripts/python scripts/embedding-service.py --self-test
-.venv-embedding/Scripts/python scripts/embedding-service.py
+.venv/Scripts/python scripts/embedding-service.py --self-test
+.venv/Scripts/python scripts/embedding-service.py
 curl http://127.0.0.1:8765/health
 ```
 
@@ -114,7 +113,7 @@ returns the model and dims and the model and data version of
 `data/index-vectors.json`; they must match the unpack's output. The service
 refuses to start when the vectors were built with another model. For the
 fallback, `EMBEDDING_MODEL=OPI-PIB/PolDense-150M` needs vectors built with
-it (`.venv-embedding/Scripts/python scripts/build-index-vectors.py`).
+it (`.venv/Scripts/python scripts/build-index-vectors.py`).
 
 ## 5. Check the data against the types
 
@@ -145,7 +144,7 @@ next release with the build steps included:
 `--rebuild` runs steps 4 to 7 of the rebuild order in
 [data/README.md](../data/README.md) (`derive-records.py build`,
 `build-static-data.py --only origins,organisations`,
-`build-index-vectors.py` with the embedding venv, `check-links.py` and the
+`build-index-vectors.py`, `check-links.py` and the
 build again) and stops at the first failure; `--no-links` skips the link
 check on a machine without network. The extraction and the static
 downloads (`fetch-static-data.py`) never run from here: a source record

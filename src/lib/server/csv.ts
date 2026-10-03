@@ -1,4 +1,3 @@
-import "server-only";
 
 type Cell = string | number | boolean | null | undefined;
 

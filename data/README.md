@@ -64,7 +64,7 @@ below and maps the files onto the app's contracts (`docs/data-to-contracts.md`).
 
 ## Rebuild order
 
-From the repository root, with `.venv` and `.venv-embedding` as in `AGENTS.md`:
+From the repository root, with `.venv` as in `AGENTS.md`:
 
 1. `.venv/Scripts/python scripts/crawl-catalogues.py s1 s1-files s2 s2-files`:
    snapshots into `.local/raw/`.
@@ -80,7 +80,7 @@ From the repository root, with `.venv` and `.venv-embedding` as in `AGENTS.md`:
    `organisations.json` and `implementations-merged.json`
    (`--only places,map,indicators,origins,organisations`; `origins` needs
    step 4, `organisations` needs `origins`).
-6. `.venv-embedding/Scripts/python scripts/build-index-vectors.py`.
+6. `.venv/Scripts/python scripts/build-index-vectors.py`.
 7. `.venv/Scripts/python scripts/check-links.py` writes
    `.local/pipeline/link-check.json`; `derive-records.py build` again copies
    `link_status` and `link_checked_at` onto every material and link.

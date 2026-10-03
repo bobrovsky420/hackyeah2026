@@ -50,12 +50,11 @@ FIXED_TIME = (2026, 1, 1, 0, 0, 0)                                        # ever
 RELEASE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 RELEASE_ZIP = re.compile(r"^data-(\d+\.\d+\.\d+)\.zip$")
 PY = ".venv/Scripts/python" if os.name == "nt" else ".venv/bin/python"
-PY_EMBEDDING = ".venv-embedding/Scripts/python" if os.name == "nt" else ".venv-embedding/bin/python"
 # data/README.md, "Rebuild order", steps 4 to 7; the last two need the network and are skipped with --no-links.
 REBUILD = [
     ("the records, the index cards and the data version", PY, ["scripts/derive-records.py", "build"]),
     ("the origins and organisations of the static data", PY, ["scripts/build-static-data.py", "--only", "origins,organisations"]),
-    ("the index vectors", PY_EMBEDDING, ["scripts/build-index-vectors.py"]),
+    ("the index vectors", PY, ["scripts/build-index-vectors.py"]),
     ("the link check", PY, ["scripts/check-links.py"]),
     ("the build again, with the link status", PY, ["scripts/derive-records.py", "build"]),
 ]

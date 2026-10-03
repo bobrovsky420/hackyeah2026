@@ -1,4 +1,3 @@
-import "server-only";
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import type { Route } from "@/lib/contracts/route";

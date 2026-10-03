@@ -1,4 +1,3 @@
-import "server-only";
 import type { Route } from "@/lib/contracts/route";
 import type { GateTextKind } from "@/server/contracts";
 import type { Repository, StoredScreeningLogEntry } from "@/server/db";

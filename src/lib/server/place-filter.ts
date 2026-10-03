@@ -1,4 +1,3 @@
-import "server-only";
 import { gminy } from "@/lib/catalogue";
 import { placeText } from "@/lib/places";
 import { fold } from "@/lib/text";

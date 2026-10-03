@@ -17,11 +17,11 @@ set -a; . ./.env.server; set +a
 
 # The pins may have changed with the pull (torch stays, it is pinned and installed).
 export PATH="$HOME/.local/bin:$PATH"
-uv pip install --python .venv-embedding/bin/python -r requirements-embedding.txt
+uv pip install --python .venv/bin/python -r requirements.txt
 
 vectors_sum() { sha256sum data/index-vectors.json 2>/dev/null | cut -d' ' -f1; }
 before="$(vectors_sum)"
-.venv-embedding/bin/python scripts/get-data.py --prune
+.venv/bin/python scripts/get-data.py --prune
 after="$(vectors_sum)"
 
 pnpm install --frozen-lockfile

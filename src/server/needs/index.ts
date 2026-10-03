@@ -1,4 +1,3 @@
-import "server-only";
 
 /*
  * The model side of the needs bank and the incubator brief (7.5): the

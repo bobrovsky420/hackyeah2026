@@ -16,8 +16,8 @@
     "a11y": "playwright test --project=a11y",
     "screenshots": "playwright test --project=screenshots",
     "test": "vitest run",
-    "eval": "tsx --conditions=react-server scripts/eval.ts",
-    "cache:warm": "tsx --conditions=react-server scripts/cache-warm.ts"
+    "eval": "tsx scripts/eval.ts",
+    "cache:warm": "tsx scripts/cache-warm.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",
@@ -29,7 +29,6 @@
     "openai": "^7.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "server-only": "^0.0.1",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.5"
   },

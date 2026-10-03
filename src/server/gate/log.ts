@@ -1,4 +1,3 @@
-import "server-only";
 import { createHash } from "node:crypto";
 import { memory } from "@/lib/server/store";
 import type { GateTextKind } from "@/server/contracts";

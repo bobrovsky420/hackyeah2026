@@ -9,8 +9,8 @@ Output: data/index-vectors.json (git-ignored): the model id, the vector size, th
         version, the document composition, and one unit-length vector per record (5 decimals), so the
         app computes cosine as a dot product and can refuse vectors built with another model.
 
-Usage (from the repository root, with the embedding environment):
-  .venv-embedding/Scripts/python scripts/build-index-vectors.py [--model OPI-PIB/PolDense-150M] [--check]
+Usage (from the repository root):
+  .venv/Scripts/python scripts/build-index-vectors.py [--model OPI-PIB/PolDense-150M] [--check]
 --check embeds three sample needs afterwards and prints their nearest records.
 """
 import argparse, glob, json, os, sys, time
