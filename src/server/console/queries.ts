@@ -1,4 +1,3 @@
-import "server-only";
 import { contactStatuses, isOneOf, needStatuses } from "@/lib/console";
 import type { ContactRequest, ContactStatus, NeedStatus } from "@/lib/contracts/records";
 import { targetGroupCodes } from "@/lib/labels";

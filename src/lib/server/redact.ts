@@ -1,4 +1,3 @@
-import "server-only";
 import { findPatternSpans } from "@/server/gate/patterns";
 import { applySpans, REDACTED } from "@/server/gate/redaction";
 

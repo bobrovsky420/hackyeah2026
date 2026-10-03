@@ -15,11 +15,10 @@ challenge, the team and the decisions made so far are in
 
 ## Data pipeline
 
-- Every Python command runs with `.venv/Scripts/python` from the
-  repository root; packages are pinned in `requirements.txt`. The three
-  embedding scripts (`embedding-probe.py`, `build-index-vectors.py`,
-  `embedding-service.py`) run with `.venv-embedding/Scripts/python`,
-  pinned in `requirements-embedding.txt`. A script that reads variables
+- Every Python command, the embedding scripts included, runs with
+  `.venv/Scripts/python` from the repository root; packages are pinned in
+  `requirements.txt` (on Linux, CPU torch is installed first, as the file
+  says). A script that reads variables
   loads `.env.dev` with `load_dotenv` right after `ROOT`, like the app a
   variable set in the environment wins, and takes no `--env` option.
 - The catalogue data flows raw snapshot (`.local/raw/`) to
@@ -85,7 +84,7 @@ challenge, the team and the decisions made so far are in
   settings and the intake draft live in the browser under the keys of
   `src/lib/storage-keys.ts`; the inline script in `src/app/layout.tsx`
   applies the view settings before the first paint.
-- The app reads `data/` through one server-only facade,
+- The app reads `data/` through one server facade,
   `src/lib/catalogue.ts`; when `data/` is missing or fails the loader's
   checks it falls back to the committed fixtures in `src/lib/mock/`, so a
   fresh clone runs (`DATA_SOURCE=data|mock` forces one). Client components
@@ -100,8 +99,8 @@ challenge, the team and the decisions made so far are in
   meet only through the types of `src/server/contracts.ts` and receive the
   model as an `Llm` function, so their Vitest tests
   (`npx pnpm@12.6.0 test`, in `tests/unit/`) never reach the network. The
-  model adapter is `src/lib/llm/` (9.3: Bielik, then Anthropic, then Llama,
-  then the per-call recording in `.local/llm-replay/`), configured through
+  model adapter is `src/lib/llm/` (9.3: Bielik, then Anthropic, then the
+  per-call recording in `.local/llm-replay/`), configured through
   `src/lib/env.ts`, which also reads `.env.dev` outside production. The
   prompts are `prompts/<task>.md` with a `version` in the front matter.
   `/api/routes` runs the pipeline when the real data and a model are
@@ -109,8 +108,8 @@ challenge, the team and the decisions made so far are in
   (`src/lib/mock/scenarios.ts`, canned routes in `src/lib/mock/routes.ts`),
   which the Playwright journeys use. The retriever needs the embedding
   service (`npx pnpm@12.6.0 embeddings`, which runs `scripts/embedding-service.py`
-  with the Python of `.venv-embedding` or `.venv`; `dev:embeddings` starts it
-  and `next dev` together)
+  with the Python of `.venv`; `dev:embeddings` starts it and `next dev`
+  together)
   and falls back to a lexical scorer without it. `npx pnpm@12.6.0 eval`
   runs the test problems of 13.1 and writes `reports/`;
   `npx pnpm@12.6.0 cache:warm` fills the replay cache for the demo. The

@@ -504,7 +504,7 @@
   "sources.data.p2": "Wskaźniki gmin na mapie pochodzą z Banku Danych Lokalnych GUS, dane za 2024 r., licencja CC BY 4.0.",
   "sources.data.p3": "Granice gmin pochodzą z Państwowego Rejestru Granic (sierpień 2025 r., licencja CC BY 4.0), w wersji GeoJSON udostępnionej jako domena publiczna w repozytorium waszkiewiczja/GeoJSON-Polska-Wojewodztwa-Powiaty-Gminy.",
   "sources.models.title": "Modele językowe",
-  "sources.models.p1": "Drogi przygotowuje model Bielik 11B v3.0, udostępniany przez Hugging Face. Gdy nie odpowiada, zastępuje go model Claude firmy Anthropic, a po nim Llama 3.3 70B firmy Meta.",
+  "sources.models.p1": "Drogi przygotowuje model Bielik 11B v3.0, udostępniany przez Hugging Face. Gdy nie odpowiada, zastępuje go model Claude firmy Anthropic.",
   "sources.models.p2": "Innowacje podobne do opisanego problemu wyszukuje model PolDense-400M Ośrodka Przetwarzania Informacji – Państwowego Instytutu Badawczego.",
   "sources.software.title": "Oprogramowanie i krój pisma",
   "sources.software.p1": "Next.js, React, Tailwind CSS, ikony Lucide i mapa MapLibre GL JS (licencja BSD). Wzory formularzy z GOV.UK Design System.",

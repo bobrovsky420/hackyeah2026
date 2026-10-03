@@ -1,19 +1,29 @@
+# The one Python environment of the repository: .venv (AGENTS.md). Every script
+# in scripts/ runs with its python, the embedding scripts included.
+#   python -m venv .venv
+#   .venv/Scripts/python -m pip install -r requirements.txt
+# On Linux, install torch first from the CPU index, or PyPI's wheel pulls the
+# CUDA libraries (docs/quick-start.md):
+#   .venv/bin/python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.0
 annotated-types==0.8.0
 anyio==4.15.1
 attrs==26.1.0
 click==8.5.0
 colorama==0.4.6
-filelock==4.0.5
+filelock==4.0.6
 fsspec==2026.9.0
 h11==0.16.0
 hf-xet==1.6.0
+httpcore==1.0.9
 httpcore2==2.13.1
+httpx==0.28.1
 httpx2==2.13.1
-huggingface_hub==2.0.0
+huggingface_hub==1.33.0
 idna==3.20
 jiter==0.17.0
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
+numpy==2.5.3
 openai==3.19.2
 openpyxl==3.1.5
 packaging==26.3
@@ -23,8 +33,15 @@ python-dotenv==1.2.3
 PyYAML==6.0.3
 referencing==0.37.0
 rpds-py==2026.6.3
+safetensors==0.8.0
+scikit-learn==1.9.1
+scipy==1.18.1
+sentence-transformers==6.1.0
 sniffio==1.3.1
+tokenizers==0.23.2
+torch==2.14.0
 tqdm==4.70.1
+transformers==5.17.0
 truststore==0.10.4
 typing-inspection==0.4.4
 typing_extensions==4.16.0

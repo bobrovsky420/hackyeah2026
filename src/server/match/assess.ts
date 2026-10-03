@@ -1,4 +1,3 @@
-import "server-only";
 import { z } from "zod";
 import type { BuiltInnovation, IndicatorKey } from "@/lib/data/types";
 import type { Dataset } from "@/lib/data/to-contracts";

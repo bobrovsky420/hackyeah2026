@@ -1,4 +1,3 @@
-import "server-only";
 import type { Route, RouteSolution } from "@/lib/contracts/route";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { t } from "@/lib/i18n";

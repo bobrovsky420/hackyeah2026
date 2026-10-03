@@ -402,7 +402,7 @@ built yet, so the choice was made by hand.
 
 Method: each sketch above, prefixed with `[query]: `, was encoded with
 PolDense-400M (`OPI-PIB/PolDense-400M` through sentence-transformers in
-`.venv-embedding`, `normalize_embeddings=True`, `HF_HUB_OFFLINE=1`) and
+`.venv`, `normalize_embeddings=True`, `HF_HUB_OFFLINE=1`) and
 compared by dot product with the 381 unit vectors of
 `data/index-vectors.json` (data version `2026-10-03-f3d93b5c`). The rank
 is the position of the expected innovation in that list. A throwaway
@@ -493,6 +493,6 @@ Reading the numbers:
    the ten files, keep the output of `sha256sum tests/problems/*.yaml`
    (or `git log` of the commit) so that the printed hashes can be
    checked against your version.
-8. The sets R01-R12, S01-S03 and F01-F03 of 13.1 are separate from the
+8. The sets R01-R12, S01-S04 and F01-F03 of 13.1 are separate from the
    ten; they are written with Developer 1 in the same YAML shape with
    `expected.outcome`.

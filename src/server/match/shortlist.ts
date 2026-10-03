@@ -1,4 +1,3 @@
-import "server-only";
 import { z } from "zod";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { loadPrompt, toStageLog, type Llm } from "@/lib/llm";

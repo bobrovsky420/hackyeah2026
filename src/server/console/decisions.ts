@@ -1,4 +1,3 @@
-import "server-only";
 import { contactStatuses, isOneOf, needStatuses, rejectReasons, verificationStatuses } from "@/lib/console";
 import type { ContactRequest, ContentReport, ModerationLogEntry, Need, Readiness } from "@/lib/contracts/records";
 import { t, type MessageKey } from "@/lib/i18n";

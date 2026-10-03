@@ -34,7 +34,7 @@ On macOS and Windows, skip the second line.
 ```
 python3 -m venv .venv
 .venv/bin/python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.0
-.venv/bin/python -m pip install -r requirements-embedding.txt
+.venv/bin/python -m pip install -r requirements.txt
 ```
 
 ## 3. Set the keys

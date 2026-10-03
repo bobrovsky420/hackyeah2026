@@ -1,4 +1,3 @@
-import "server-only";
 import { createHash, randomInt } from "node:crypto";
 import { catalogue, getGmina, withPlaceFacts } from "@/lib/catalogue";
 import type { RoleCode } from "@/lib/contracts/catalogue";

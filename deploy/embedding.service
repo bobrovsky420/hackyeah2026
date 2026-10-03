@@ -1,5 +1,5 @@
 # The embedding service on the server (FR-3.7, docs/server-deploy.md): the
-# Python script in .venv-embedding, on 127.0.0.1:8765, which is the app's
+# Python script in .venv, on 127.0.0.1:8765, which is the app's
 # default EMBEDDING_URL. The model was downloaded by deploy/setup.sh, so it
 # starts offline. deploy/setup.sh fills in @APP_DIR@ and @APP_USER@.
 [Unit]
@@ -12,7 +12,7 @@ User=@APP_USER@
 WorkingDirectory=@APP_DIR@
 EnvironmentFile=@APP_DIR@/.env.server
 Environment=HF_HUB_OFFLINE=1 PYTHONUNBUFFERED=1
-ExecStart=@APP_DIR@/.venv-embedding/bin/python scripts/embedding-service.py --host 127.0.0.1 --port 8765
+ExecStart=@APP_DIR@/.venv/bin/python scripts/embedding-service.py --host 127.0.0.1 --port 8765
 Restart=always
 RestartSec=5
 # Loading the model takes up to a minute on a small machine.

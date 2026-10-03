@@ -1,4 +1,3 @@
-import "server-only";
 import type { Brief, BriefMatch } from "@/lib/contracts/brief";
 import type { ImplementationPath } from "@/lib/contracts/path";
 import type { Need } from "@/lib/contracts/records";

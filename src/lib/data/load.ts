@@ -1,4 +1,3 @@
-import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 import { mapDataset, type Dataset, type RawData } from "./to-contracts";
@@ -35,7 +34,7 @@ import { parseYamlSubset } from "./yaml";
 const PY = ".venv/Scripts/python";
 const DERIVE = `${PY} scripts/derive-records.py build`;
 const STATIC = (step: string) => `${PY} scripts/build-static-data.py --only ${step}`;
-const VECTORS = ".venv-embedding/Scripts/python scripts/build-index-vectors.py";
+const VECTORS = `${PY} scripts/build-index-vectors.py`;
 const HAND = (file: string) => `hand-written and committed: git checkout -- data/${file}`;
 
 /** The command that builds each file; a bundle restores all of them: `${PY} scripts/unpack-data.py <zip>`. */

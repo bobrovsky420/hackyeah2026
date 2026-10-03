@@ -103,7 +103,7 @@ builds it, ending with the bundle alternative
 (`.venv/Scripts/python scripts/unpack-data.py <zip>`). The checks:
 
 - every file present: missing, e.g. `data/index-vectors.json is missing;
-  rebuild: .venv-embedding/Scripts/python scripts/build-index-vectors.py`;
+  rebuild: .venv/Scripts/python scripts/build-index-vectors.py`;
   hand-written files point to `git checkout -- data/<file>`;
 - valid JSON, YAML inside the subset, `id` equal to the file name
   (`innovations/`, `paths/`);
@@ -119,8 +119,7 @@ builds it, ending with the bundle alternative
 - `knowledge.yaml`: `model_by_target_group` names only existing items.
 
 A stale file reads `data/<file> is stale: <what differs>; rebuild: <command>`.
-`load.ts` imports `server-only`; to run it outside Next.js, pass
-`--conditions=react-server` (e.g. `npx -y tsx@4 --conditions=react-server`).
+`load.ts` runs outside Next.js as it is, for example under `npx -y tsx@4`.
 
 ## Partner records (FR-1.6)
 

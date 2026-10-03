@@ -1,4 +1,3 @@
-import "server-only";
 import { envValue } from "@/lib/env";
 import { t } from "@/lib/i18n";
 import { memory } from "@/lib/server/store";

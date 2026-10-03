@@ -1,13 +1,4 @@
-import "server-only";
-import {
-  anthropicConfig,
-  llamaFallbackConfig,
-  llmProvider,
-  llmReplayDir,
-  llmTimeouts,
-  openAiCompatConfig,
-  type LlmProviderName,
-} from "@/lib/env";
+import { anthropicConfig, llmProvider, llmReplayDir, llmTimeouts, openAiCompatConfig, type LlmProviderName } from "@/lib/env";
 import { AnthropicProvider } from "./anthropic";
 import { createLlm } from "./chain";
 import { OpenAiCompatProvider } from "./openai-compatible";
@@ -18,8 +9,8 @@ import type { Llm } from "./types";
 /*
  * The app's entry to the language models (9.3): getLlm() builds the chain
  * from the environment once per process. The online order is Bielik,
- * Anthropic, Llama 3.3 70B, then the replay recording; LLM_PROVIDER picks
- * the head (anthropic moves Anthropic first) or replay (recording only).
+ * Anthropic, then the replay recording; LLM_PROVIDER picks the head
+ * (anthropic moves Anthropic first) or replay (recording only).
  * Modules receive the Llm function as a dependency, so tests build their
  * own with createLlm() and fake providers.
  */
@@ -36,9 +27,7 @@ function providersFor(head: LlmProviderName): LlmProvider[] {
   if (head === "replay") return [];
   const bielik = new OpenAiCompatProvider({ id: "bielik", config: openAiCompatConfig() });
   const anthropic = new AnthropicProvider({ config: anthropicConfig() });
-  const llamaConfig = llamaFallbackConfig();
-  const llama = llamaConfig ? [new OpenAiCompatProvider({ id: "llama", config: llamaConfig, excludedTasks: ["screen"] })] : [];
-  return head === "anthropic" ? [anthropic, bielik, ...llama] : [bielik, anthropic, ...llama];
+  return head === "anthropic" ? [anthropic, bielik] : [bielik, anthropic];
 }
 
 let chain: { llm: Llm; providers: LlmProvider[]; head: LlmProviderName } | undefined;

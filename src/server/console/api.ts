@@ -1,4 +1,3 @@
-import "server-only";
 import { t } from "@/lib/i18n";
 import { REVIEWER_NAME, requestAuthorized } from "@/lib/server/auth";
 import { nowIso } from "@/lib/server/store";
