@@ -2161,18 +2161,18 @@ The principles of 3.6 as measurable properties:
 
 ### 13.1 The ten test problems
 
-Written by the lawyer, with the expected innovations chosen from the
-ingested catalogue. They are the acceptance
+Written by an AI assistant (decision P.15), with the expected innovations
+chosen from the records of the ingested catalogue and the paths from the
+selector of 8.7, each named in `notes`. They are the acceptance
 test, the design content (real routes, never placeholder text) and the
-demo material. AI assistants may not edit them; the evaluation report
-prints their hashes.
+demo material; the evaluation report prints their hashes.
 
 Format, one YAML file per problem in `tests/problems/`:
 
 ```yaml
 id: P01
 title: Samotni seniorzy w gminie wiejskiej bez domu dziennego pobytu
-author: lawyer
+author: ai-assistant
 written_on: 2026-10-03
 role: pracownik-instytucji
 place_terc: "1207062"
@@ -2183,11 +2183,11 @@ problem_text_pl: >
   wolną trzy dni w tygodniu.
 expected:
   mode: route
-  any_of_innovations: [inn-rops-senior-cuder, inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania]
-  none_of_innovations: []
+  any_of_innovations: [inn-nat-649, inn-nat-teatr-przy-stole, inn-rops-senior-cuder, inn-nat-sztafeta-pokolen-2, inn-nat-aplikobus-3]
+  none_of_innovations: [inn-nat-animator-wiezi-2, inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania]
   target_groups: [seniorzy]
-  paths_any_of: [asy-priorytet-v, usluga-wrazliwa-b, cus-program-uslug]
-  people_roles: [advisor, implementer_nearby]
+  paths_any_of: [asy-priorytet-v, korpus-wsparcia-seniorow, cus-program-uslug]
+  people_roles: [advisor]
   summary_must_mention_pl: ["świetlic"]
 notes: >
   Why these expectations, which source fields justify them.
@@ -2198,8 +2198,8 @@ groups and both settings (rural, urban); one partial case; one none case
 (a need with no proven solution, ending in the brief); one clarification
 case (no place, no target group).
 
-Outside the ten, three further sets in `tests/problems/`, written by the
-lawyer with Developer 1, with the same YAML shape and an `expected.outcome`
+Outside the ten, three further sets in `tests/problems/`, written by an AI
+assistant (decision P.15), with the same YAML shape and an `expected.outcome`
 field:
 
 - **Robustness set R01-R12** (must never produce a route): R01 a suicidal

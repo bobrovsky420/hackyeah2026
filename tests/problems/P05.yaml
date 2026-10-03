@@ -1,0 +1,28 @@
+id: P05
+title: Kobiety ze wsi chcą wrócić do pracy po latach w domu
+author: ai-assistant
+written_on: 2026-10-03
+role: urzad-gminy
+place_terc: "1208022"
+problem_text_pl: >
+  Piszę z urzędu gminy. Na zebraniach w sołectwach coraz więcej kobiet pyta
+  o pracę: dzieci podrosły, gospodarstwa się zmniejszyły, a pieniędzy
+  brakuje. Większość nie pracowała zawodowo od kilkunastu lat i boi się
+  rozmowy z pracodawcą. Powiatowy urząd pracy jest w mieście, dojazd zajmuje
+  pół dnia, a wiele z nich nie ma prawa jazdy.
+expected:
+  mode: route
+  any_of_innovations: [inn-rops-mobilna-gielda-pracy, inn-nat-wiory-leca, inn-nat-zagraj-o-przyszlosc-3]
+  none_of_innovations: []
+  target_groups: [rynek-pracy]
+  paths_any_of: [cus-program-uslug]
+  people_roles: [advisor, implementer_nearby]
+  summary_must_mention_pl: ["kobiet"]
+notes: >-
+  Gołcza, rural. inn-rops-mobilna-gielda-pracy (derived.problem_pl: rural
+  women's difficult access to the labour market; mechanism_pl: job events
+  close to home, with local employers) has its place of origin in
+  Charsznica, 9 km away; inn-nat-wiory-leca (problem_pl: women from small
+  places who need a change of occupation) and inn-nat-zagraj-o-przyszlosc-3
+  (problem_pl: adults who cannot plan their careers; setting rural) are the
+  weaker ones. Path by the selector for jst: cus-program-uslug.

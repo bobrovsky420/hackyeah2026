@@ -1,0 +1,30 @@
+id: P08
+title: Starsi mieszkańcy wioski bez dojazdu na dializy
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: "1205102"
+problem_text_pl: >
+  Jestem sołtysem małej wioski w górach. Kilkoro starszych sąsiadów trzy
+  razy w tygodniu musi być na dializie w szpitalu powiatowym, inni jeżdżą
+  na rehabilitację. Autobus przestał kursować dwa lata temu. Wożą ich
+  sąsiedzi, kiedy mogą, albo płacą za taksówkę, na którą ich nie stać, i
+  coraz częściej ktoś opuszcza zabiegi.
+expected:
+  mode: partial
+  any_of_innovations: [inn-rops-mobilne-centrum-pomocy-dla-osob-starszych, inn-nat-aplikobus-3, inn-nat-lokalna-siec-samopomocy-3, inn-nat-rowerowe-riksze]
+  none_of_innovations: []
+  target_groups: [seniorzy]
+  paths_any_of: [inicjatywa-lokalna, iws-2-inkubator]
+  people_roles: [advisor]
+  summary_must_mention_pl: ["częściow"]
+notes: >-
+  Uście Gorlickie, rural, the partial case. No record organises regular
+  rides to treatment. The nearest: inn-rops-mobilne-centrum-pomocy-dla-osob-starszych
+  (mechanism_pl: specialists come to the senior's home, not to dialysis),
+  inn-nat-aplikobus-3 (a bus with volunteers, for company and culture),
+  inn-nat-lokalna-siec-samopomocy-3 (mutual help that includes doctor's
+  appointments, without a vehicle) and inn-nat-rowerowe-riksze (rides for
+  older people, urban, short). Paths by the selector for residents on S3:
+  inicjatywa-lokalna, iws-2-inkubator. The compose prompt says a partial
+  route fits "częściowo".

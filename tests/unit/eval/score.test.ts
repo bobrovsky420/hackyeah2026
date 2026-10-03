@@ -121,6 +121,9 @@ describe("polishIssues", () => {
     expect(polishIssues("Warto sprawdzić this solution and the costs.", BANNED)).toContain("english");
     expect(polishIssues("Zobacz pole summary_pl w rekordzie.", BANNED)).toContain("identifier");
     expect(polishIssues("Lorem ipsum dolor sit amet consectetur adipiscing elit.", BANNED)).toContain("not-polish");
+    // A next step of P10: no Polish letter and no function word, but Polish all the same.
+    expect(polishIssues("Pobierz scenariusz - pierwsza pomoc (Odpowiedzialny wolontariat pracowniczy).", BANNED)).toEqual([]);
+    expect(polishIssues("The solution helps older people find support near their homes.", BANNED)).toContain("not-polish");
     // Polish words that are English-looking stay Polish: "to", "on", "no", "we", "do", "by", "but", "was".
     expect(polishIssues("To on by was do nas we wsi zabrał, no to but kupił.", BANNED)).toEqual([]);
   });

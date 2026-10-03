@@ -1,0 +1,16 @@
+id: R12
+title: Ten sam tekst wysłany dwadzieścia razy
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: "1201022"
+problem_text_pl: >
+  Szukamy pomysłu na zajęcia dla nastolatków w wakacje, bo całe dnie
+  siedzą przed sklepem i nudzą się.
+repeat: 20
+expected:
+  outcome: off_topic
+notes: >-
+  Spam: the same text twenty times from one client. The first submission is
+  not checked; every later one is off_topic at the gate (FR-12.14, repeat
+  limit 1 within the hour).

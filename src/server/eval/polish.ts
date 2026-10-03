@@ -5,9 +5,11 @@ import { findBanned, type BannedWords } from "@/server/route/safety";
  * the banned words of data/curated/banned-words-pl.yaml (the composer's own
  * check, FR-12.10), no English fragments, no leaked field names or record
  * ids, and a language check. The language check is a heuristic without a
- * dependency: a text of six words or more must carry Polish function words
- * or Polish letters. It catches an English or a garbled answer, not a
- * stylistic slip; the Polish review of 13.5 stays with people.
+ * dependency: a text of six words or more must carry Polish function words,
+ * Polish letters or the digraphs rz, cz and sz (a next step such as "Pobierz
+ * scenariusz - pierwsza pomoc" has neither of the first two). It catches an
+ * English or a garbled answer, not a stylistic slip; the Polish review of
+ * 13.5 stays with people.
  */
 
 /** English function words that are not Polish words ("to", "a", "i", "on", "no", "we", "do", "by", "but", "was" are). */
@@ -24,6 +26,8 @@ const POLISH = new Set(
 );
 
 const POLISH_LETTERS = /[ąćęłńóśźż]/i;
+/** Common in Polish words, rare in English ones. */
+const POLISH_DIGRAPHS = /rz|cz|sz/i;
 
 export interface PolishIssue {
   field: string;
@@ -44,7 +48,7 @@ export function polishIssues(text: string, list?: BannedWords): string[] {
   if (words.filter((word) => ENGLISH.has(word)).length >= 2) issues.push("english");
   if (/\b[a-z]+_[a-z_]+\b/.test(text) || /\binn-(nat|rops|partner)-/.test(text)) issues.push("identifier");
   if (words.length >= 6) {
-    const polish = words.filter((word) => POLISH.has(word) || POLISH_LETTERS.test(word)).length;
+    const polish = words.filter((word) => POLISH.has(word) || POLISH_LETTERS.test(word) || POLISH_DIGRAPHS.test(word)).length;
     if (polish / words.length < 0.1) issues.push("not-polish");
   }
   return issues;

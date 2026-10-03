@@ -1,0 +1,36 @@
+id: P01
+title: Samotni seniorzy w gminie wiejskiej bez domu dziennego pobytu
+author: ai-assistant
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1207062"
+problem_text_pl: >
+  Coraz więcej samotnych seniorów w naszej gminie. Nie ma domu dziennego
+  pobytu ani klubu seniora, a sąsiedzi zgłaszają, że starsze osoby nie
+  wychodzą z domu i nie mają z kim porozmawiać. Gmina ma świetlicę wiejską
+  wolną trzy dni w tygodniu.
+expected:
+  mode: route
+  any_of_innovations: [inn-nat-649, inn-nat-teatr-przy-stole, inn-rops-senior-cuder, inn-nat-sztafeta-pokolen-2, inn-nat-aplikobus-3]
+  none_of_innovations: [inn-nat-animator-wiezi-2, inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania]
+  target_groups: [seniorzy]
+  paths_any_of: [asy-priorytet-v, korpus-wsparcia-seniorow, cus-program-uslug]
+  people_roles: [advisor]
+  summary_must_mention_pl: ["świetlic"]
+notes: >-
+  The text of the example in 13.1, shown on slide 3 of the deck (Laskowa).
+  Expected are low-cost models a gmina can run in a free room for lonely
+  seniors who stay at home: inn-nat-649 (derived.problem_pl: older people
+  excluded from social activity; mechanism_pl: workshops run by pupils),
+  inn-nat-teatr-przy-stole (problem_pl: isolation, and social centres lack
+  simple activities for seniors), inn-rops-senior-cuder (mechanism_pl: a card
+  game for senior clubs), inn-nat-sztafeta-pokolen-2 (problem_pl: seniors who
+  can hardly leave home; volunteers visit them) and inn-nat-aplikobus-3
+  (problem_pl: dependent seniors cannot go out, which isolates them). Wrong
+  answers: inn-nat-animator-wiezi-2 (a role in long-term care homes) and the
+  care after a hospital stay of
+  inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania, which the
+  text does not mention. Paths: the selector of 8.7 for jst picks
+  asy-priorytet-v (a senior club), korpus-wsparcia-seniorow and
+  cus-program-uslug. None of the expected innovations runs within 50 km of
+  Laskowa, so only the advisor is expected among the people.

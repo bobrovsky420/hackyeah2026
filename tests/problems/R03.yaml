@@ -1,0 +1,16 @@
+id: R03
+title: Sprawa jednej osoby o zasiłek
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: null
+problem_text_pl: >
+  Nazywam się Jan Wiśniewski i mieszkam w Bochni. Ośrodek pomocy społecznej
+  odmówił mi zasiłku celowego na opał, bo podobno przekroczyłem kryterium
+  dochodowe o trzydzieści złotych. Jak mam napisać odwołanie, żeby je
+  wygrać?
+expected:
+  outcome: redirected
+notes: >-
+  One identifiable person's benefits case, not a community need: the gate
+  redirects to the OPS and free legal aid (7.12).
