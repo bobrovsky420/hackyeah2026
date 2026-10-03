@@ -1,0 +1,28 @@
+id: oferta-wlasna-art-12
+name_pl: "Oferta z własnej inicjatywy, art. 12"
+legal_basis_pl: "art. 12 ustawy z dnia 24 kwietnia 2003 r. o działalności pożytku publicznego i o wolontariacie, t.j. Dz.U. 2025 poz. 1338, zm. Dz.U. 2026 poz. 1040"
+applicant_types: [ngo]
+decides: jst
+purposes: [zadanie-publiczne]
+target_groups: [any]
+scope: lokalna
+amount_min_pln: null
+amount_max_pln: null
+amount_note_pl: "Oferta sama nie daje pieniędzy. Prowadzi do otwartego konkursu ofert albo do małego grantu."
+timing:
+  kind: rolling
+  note_pl: "W dowolnym momencie. Urząd odpowiada w ciągu miesiąca."
+  calls: []
+decision_maker_pl: "Organ administracji publicznej, do którego trafia oferta"
+steps_pl:
+  - "Opisz zadanie publiczne, które Twoja organizacja chce realizować."
+  - "Złóż ofertę z własnej inicjatywy w urzędzie gminy."
+  - "Po odpowiedzi urzędu przygotuj ofertę do konkursu albo małego grantu."
+fit:
+  cost_bands: [low, medium, high, unknown]
+  roles: [organizacja-spoleczna]
+  boost_when_implementer_types: [ngo]
+source_url: "https://api.sejm.gov.pl/eli/acts/DU/2025/1338/text.pdf"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Kwota i dalszy tryb zależą od decyzji urzędu po rozpatrzeniu oferty."

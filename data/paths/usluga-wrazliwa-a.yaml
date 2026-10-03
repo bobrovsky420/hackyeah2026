@@ -1,0 +1,36 @@
+id: usluga-wrazliwa-a
+name_pl: "Usługa wrażliwa, ścieżka A: grant na wdrożenie innowacji"
+legal_basis_pl: "Fundusze Europejskie dla Małopolski 2021-2027, działanie 6.23, typ projektu C"
+applicant_types: [jst, ngo, pes]
+decides: jst
+purposes: [wdrozenie-innowacji]
+target_groups: [any]
+scope: malopolska
+amount_min_pln: null
+amount_max_pln: 600000
+amount_note_pl: "Do 600 000 zł, bez wkładu własnego, na okres do 18 miesięcy. Grant obejmuje tylko innowacje wskazane w danym naborze."
+timing:
+  kind: closed
+  note_pl: "I nabór zakończył się 20 lutego 2026 r. II nabór trwał od 27 maja do 30 czerwca 2026 r., a wyniki ogłoszono 24 sierpnia 2026 r. III nabór nie jest ogłoszony."
+  calls:
+    - label_pl: "I nabór"
+      applicant_types: [jst, ngo, pes]
+      opens_on: null
+      closes_on: "2026-02-20"
+    - label_pl: "II nabór"
+      applicant_types: [jst, ngo, pes]
+      opens_on: "2026-05-27"
+      closes_on: "2026-06-30"
+decision_maker_pl: "Regionalny Ośrodek Polityki Społecznej w Krakowie, kontakt: uw@rops.krakow.pl"
+steps_pl:
+  - "Sprawdź, czy Twoja innowacja jest na liście naboru."
+  - "Zapytaj o kolejny nabór pod adresem uw@rops.krakow.pl."
+  - "Złóż wniosek, gdy Regionalny Ośrodek Polityki Społecznej ogłosi nabór."
+fit:
+  cost_bands: [low, medium, high]
+  roles: [pracownik-instytucji, urzad-gminy, organizacja-spoleczna]
+  boost_when_implementer_types: [jst, ops-cus-pcpr, ngo, firma-pes]
+source_url: "https://rops.krakow.pl/realizowane-projekty-i-zadania/usluga-wrazliwa-upowszechnianie-innowacji-spolecznych-w-srodowiskach-lokalnych,o-projekcie"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Wniosek mogą złożyć samorządy i ich jednostki, na przykład ośrodki pomocy społecznej, centra usług społecznych i powiatowe centra pomocy rodzinie, a także organizacje pozarządowe i podmioty ekonomii społecznej z Małopolski z co najmniej 3-letnim doświadczeniem. Nie wiadomo, czy będzie III nabór."

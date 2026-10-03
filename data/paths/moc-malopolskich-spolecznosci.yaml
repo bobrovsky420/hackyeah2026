@@ -1,0 +1,32 @@
+id: moc-malopolskich-spolecznosci
+name_pl: "Moc Małopolskich Społeczności 2026"
+legal_basis_pl: "Regranting środków Narodowego Instytutu Wolności"
+applicant_types: [ngo, mieszkancy]
+decides: ngo
+purposes: [inicjatywa-mieszkancow]
+target_groups: [any]
+scope: malopolska
+amount_min_pln: null
+amount_max_pln: 7500
+amount_note_pl: "Do 7 500 zł na projekt."
+timing:
+  kind: closed
+  note_pl: "Nabór trwał od 4 do 14 września 2026 r. i jest zamknięty."
+  calls:
+    - label_pl: "Nabór 2026"
+      applicant_types: [ngo, mieszkancy]
+      opens_on: "2026-09-04"
+      closes_on: "2026-09-14"
+decision_maker_pl: "Operatorzy: Fundacja BIS, Stowarzyszenie Forum Oświatowe Klucze i Fundacja ARTS"
+steps_pl:
+  - "Sprawdź na stronie malopolskalokalnie.pl zapowiedź kolejnej edycji."
+  - "Opisz z grupą lokalny projekt do 7 500 zł."
+  - "Złóż wniosek w terminie kolejnego naboru."
+fit:
+  cost_bands: [low]
+  roles: [organizacja-spoleczna, mieszkaniec]
+  boost_when_implementer_types: [ngo, osoba]
+source_url: "https://malopolskalokalnie.pl/aktualnosci/rusza-konkurs-grantowy-moc-malopolskich-spolecznosci-2026/"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Program jest dla lokalnych organizacji i grup nieformalnych spoza Krakowa. Dane pochodzą ze źródła pośredniego. Kolejna edycja nie jest ogłoszona."

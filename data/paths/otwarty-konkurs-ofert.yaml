@@ -1,0 +1,28 @@
+id: otwarty-konkurs-ofert
+name_pl: "Otwarty konkurs ofert"
+legal_basis_pl: "art. 11 ust. 2 i art. 13-15 ustawy z dnia 24 kwietnia 2003 r. o działalności pożytku publicznego i o wolontariacie, t.j. Dz.U. 2025 poz. 1338, zm. Dz.U. 2026 poz. 1040"
+applicant_types: [ngo]
+decides: jst
+purposes: [zadanie-publiczne]
+target_groups: [any]
+scope: lokalna
+amount_min_pln: null
+amount_max_pln: null
+amount_note_pl: "Kwotę podaje ogłoszenie każdego konkursu. Zasady wkładu rzeczowego opisuje art. 5 ust. 4a i 4b ustawy."
+timing:
+  kind: per-call
+  note_pl: "Na złożenie ofert jest co najmniej 21 dni od ogłoszenia konkursu. Konkursy wynikają z rocznego programu współpracy, który samorząd uchwala do 30 listopada."
+  calls: []
+decision_maker_pl: "Wójt, burmistrz, prezydent miasta albo zarząd powiatu lub województwa, po opinii komisji konkursowej"
+steps_pl:
+  - "Sprawdź roczny program współpracy i ogłoszenia konkursów w urzędzie."
+  - "Przygotuj ofertę zgodnie z warunkami ogłoszenia konkursu."
+  - "Złóż ofertę w terminie podanym w ogłoszeniu."
+fit:
+  cost_bands: [low, medium, high, unknown]
+  roles: [organizacja-spoleczna]
+  boost_when_implementer_types: [ngo]
+source_url: "https://api.sejm.gov.pl/eli/acts/DU/2025/1338/text.pdf"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Ofertę mogą złożyć organizacje pozarządowe i podmioty wymienione w art. 3 ust. 3 ustawy. Kwoty i terminy każdego konkursu podaje jego ogłoszenie."

@@ -1,0 +1,28 @@
+id: regranting-16a
+name_pl: "Regranting, art. 16a"
+legal_basis_pl: "art. 16a ustawy z dnia 24 kwietnia 2003 r. o działalności pożytku publicznego i o wolontariacie, t.j. Dz.U. 2025 poz. 1338, zm. Dz.U. 2026 poz. 1040"
+applicant_types: [ngo]
+decides: ngo
+purposes: [zadanie-publiczne]
+target_groups: [any]
+scope: lokalna
+amount_min_pln: null
+amount_max_pln: null
+amount_note_pl: "Kwoty ustala operator w swoim naborze. Operator przekazuje środki w ciągu 14 dni od zawarcia umowy z realizatorem."
+timing:
+  kind: per-call
+  note_pl: "Terminy ustala operator w każdym naborze."
+  calls: []
+decision_maker_pl: "Operator wybrany w otwartym konkursie ofert, który sam wybiera realizatorów"
+steps_pl:
+  - "Znajdź operatora regrantingu działającego w Twoim regionie."
+  - "Przygotuj wniosek według zasad naboru operatora."
+  - "Złóż wniosek w terminie ogłoszonym przez operatora."
+fit:
+  cost_bands: [low, medium, high, unknown]
+  roles: [organizacja-spoleczna]
+  boost_when_implementer_types: [ngo]
+source_url: "https://api.sejm.gov.pl/eli/acts/DU/2025/1338/text.pdf"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Przykładem regrantingu w Małopolsce jest program Małopolska Lokalnie. Kto może zostać realizatorem, określa operator w zasadach naboru."

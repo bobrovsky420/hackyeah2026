@@ -1,0 +1,27 @@
+{
+  "note": "Pilot set of the extraction skill (.claude/skills/extract-innovations, section 1): ten source records that cover the shapes the workers meet. Run before every full run with a new prompt version or a new worker model; the ten results are read by a person before the model is chosen.",
+  "ids": [
+    "inn-nat-1032",
+    "inn-nat-867",
+    "inn-nat-1038",
+    "inn-nat-krag-lesny",
+    "inn-nat-649",
+    "inn-rops-bajkala",
+    "inn-rops-teleasystent",
+    "inn-rops-czas-na-aktywnosc",
+    "inn-rops-szlakiem-ludzi-bezdomnych",
+    "inn-rops-himalaje-autyzmu"
+  ],
+  "why": {
+    "inn-nat-1032": "national base, legal entity, numeric slug, three PDF materials, assessment comment",
+    "inn-nat-867": "national base, innovator is a natural person (name kept, contact not copied)",
+    "inn-nat-1038": "national base, informal group",
+    "inn-nat-krag-lesny": "national base, innovator type missing",
+    "inn-nat-649": "national base, no implementer facet: the worker must derive implementer types from the text",
+    "inn-rops-bajkala": "ROPS library, migrants category, authors are persons only",
+    "inn-rops-teleasystent": "ROPS library, MIIS licence, dissemination label, unusual section markup",
+    "inn-rops-czas-na-aktywnosc": "ROPS library, MIIS licence, organisation plus four persons",
+    "inn-rops-szlakiem-ludzi-bezdomnych": "ROPS library, homelessness: the dignity wording rules are tested here",
+    "inn-rops-himalaje-autyzmu": "ROPS library, dissemination label, intellectual disability category"
+  }
+}

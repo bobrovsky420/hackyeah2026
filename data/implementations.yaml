@@ -1,0 +1,292 @@
+# Seeded implementations (specification 8.6 and FR-6.3). Hand-written reference
+# data, committed to git.
+# Sources: the ROPS ranking lists of the "Usługa wrażliwa" grants (round I,
+# results 31 March 2026; round II, results 24 August 2026; copies in
+# .local/docs/rops/rops.krakow.pl/mpliki/IS/UW/) and the ROPS page
+# "Innowacje w małopolskich modelach".
+# The place of an implementation is the seat of the grantee. Where the ranking
+# list names no place, the seat comes from the public register entry given in
+# organisation.source_url. place_terc null means voivodeship-wide (a regional
+# service model) or not yet established (see note_pl).
+# Places of origin of the innovations (source catalogue-origin) are not listed
+# here; they are derived from the built records by the pipeline.
+version: "2026-10-03"
+sources:
+  usluga-wrazliwa-i:
+    url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf
+    results_on: "2026-03-31"
+  usluga-wrazliwa-ii:
+    url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    results_on: "2026-08-24"
+  regional-model:
+    url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+
+implementations:
+  # Round I of "Usługa wrażliwa"
+  - id: impl-uw1-01
+    innovation_id: inn-rops-bez-presji-z-depresji
+    place_terc: "1210052"
+    place_name: Kamionka Wielka
+    organisation:
+      name_pl: MindLab Studio (Małopolska Agencja Rozwoju Edukacji Przedsiębiorczości i Innowacji sp. z o.o.)
+      type: firma-pes
+      source_url: https://aleo.com/int/company/malopolska-agencja-rozwoju-edukacji-przedsiebiorczosci-i-innowacji-spolka-z-ograniczona-odpowiedzialnoscia
+    year: 2026
+    status: running
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf
+    project_title_pl: Systemowy model wsparcia dla dzieci i młodzieży poprzez tworzenie klubów rozwoju społeczno-kulturowego
+    note_pl: Grant I naboru „Usługa wrażliwa” (93,5 pkt). Miejsce to siedziba wnioskodawcy według KRS; miejsce realizacji nie jest podane w źródle.
+  - id: impl-uw1-02
+    innovation_id: inn-rops-straznik
+    place_terc: "1261011"
+    place_name: Kraków
+    organisation:
+      name_pl: Polski Związek Głuchych Oddział Małopolski w Krakowie
+      type: ngo
+    year: 2026
+    status: running
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf
+    project_title_pl: Alarm Ally 360° - Bezpieczeństwo w zasięgu ręki, wsparcie w każdej sytuacji
+    note_pl: Grant I naboru „Usługa wrażliwa” (85 pkt).
+  - id: impl-uw1-03
+    innovation_id: inn-rops-himalaje-autyzmu
+    place_terc: "1261011"
+    place_name: Kraków
+    organisation:
+      name_pl: Chrześcijańskie Stowarzyszenie Osób Niepełnosprawnych, Ich Rodzin i Przyjaciół „Ognisko”
+      type: ngo
+      source_url: https://ognisko.org.pl/kontakt/
+    year: 2026
+    status: running
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf
+    project_title_pl: Środowiskowy model wsparcia - Himalaje Autyzmu
+    note_pl: Grant I naboru „Usługa wrażliwa” (83,5 pkt). Siedziba stowarzyszenia w Krakowie według jego strony kontaktowej.
+  - id: impl-uw1-04
+    innovation_id: inn-rops-rodzina-adopcyjna-dorasta
+    place_terc: "1261011"
+    place_name: Kraków
+    organisation:
+      name_pl: Towarzystwo Przyjaciół Dzieci Oddział Miejski Krakowski
+      type: ngo
+    year: 2026
+    status: running
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf
+    project_title_pl: Rodzina na nowo
+    note_pl: Grant I naboru „Usługa wrażliwa” (63,5 pkt).
+  - id: impl-uw1-05
+    innovation_id: inn-rops-gluchy-czytelnik-w-bibliotece
+    place_terc: "1207011"
+    place_name: Limanowa
+    organisation:
+      name_pl: Miejska Biblioteka Publiczna w Limanowej
+      type: placowka
+    year: 2026
+    status: running
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf
+    project_title_pl: Usłyszeć Czytelnika. Głuchy Czytelnik w bibliotece
+    note_pl: Grant I naboru „Usługa wrażliwa” (79 pkt).
+  - id: impl-uw1-06
+    innovation_id: inn-rops-gluchy-czytelnik-w-bibliotece
+    place_terc: "1211011"
+    place_name: Nowy Targ
+    organisation:
+      name_pl: Miejska Biblioteka Publiczna w Nowym Targu
+      type: placowka
+    year: 2026
+    status: running
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu_w_ramach_I_naboru_w_projekcie_Usuga_Wraliwa.pdf
+    project_title_pl: Czytanie bez barier! - biblioteka przyjazna osobom g/Głuchym
+    note_pl: Grant I naboru „Usługa wrażliwa” (52,5 pkt).
+
+  # Round II of "Usługa wrażliwa"
+  - id: impl-uw2-01
+    innovation_id: inn-rops-przenosne-modularne-lazienki
+    place_terc: "1219032"
+    place_name: Kłaj
+    organisation:
+      name_pl: Gmina Kłaj
+      type: jst
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: „Bliskość i godność” - modułowa łazienka w domu
+    note_pl: Grant II naboru „Usługa wrażliwa” (57 pkt).
+  - id: impl-uw2-02
+    innovation_id: inn-rops-przenosne-modularne-lazienki
+    place_terc: "1215042"
+    place_name: Bystra-Sidzina
+    organisation:
+      name_pl: Gminny Ośrodek Pomocy Społecznej w Bystrej Podhalańskiej
+      type: ops-cus-pcpr
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: „Przestrzeń dla Godności” - kompleksowa usługa wspierania osób zagrożonych wykluczeniem mieszkaniowym i społecznym
+    note_pl: Grant II naboru „Usługa wrażliwa” (56 pkt). Bystra Podhalańska leży w gminie Bystra-Sidzina (powiat suski).
+  - id: impl-uw2-03
+    innovation_id: inn-rops-przenosne-modularne-lazienki
+    place_terc: "1210142"
+    place_name: Podegrodzie
+    organisation:
+      name_pl: Ośrodek Pomocy Społecznej w Podegrodziu
+      type: ops-cus-pcpr
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: Załatwieni
+    note_pl: Grant II naboru „Usługa wrażliwa” (56 pkt).
+  - id: impl-uw2-04
+    innovation_id: inn-rops-przenosne-modularne-lazienki
+    place_terc: "1206072"
+    place_name: Liszki
+    organisation:
+      name_pl: Centrum Usług Społecznych w Liszkach
+      type: ops-cus-pcpr
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: Asystent Samodzielności - usługa wspierająca niezależne funkcjonowanie w miejscu zamieszkania
+    note_pl: Grant II naboru „Usługa wrażliwa” (52 pkt).
+  - id: impl-uw2-05
+    innovation_id: inn-rops-komix-zyciowy
+    place_terc: "1261011"
+    place_name: Kraków
+    organisation:
+      name_pl: Fundacja Rozwoju Kompetencji i Przedsiębiorczości PROAKTYWNI
+      type: ngo
+      source_url: https://spis.ngo.pl/110462-fundacja-fundacji-rozwoju-kompetencji-i-przedsiebiorczosci-proaktywni
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: „koMIX Kluczowych Kompetencji”
+    note_pl: Grant II naboru „Usługa wrażliwa” (74 pkt). Siedziba fundacji w Krakowie według spisu ngo.pl.
+  - id: impl-uw2-06
+    innovation_id: inn-rops-komix-zyciowy
+    place_terc: "1261011"
+    place_name: Kraków
+    organisation:
+      name_pl: Centrum Administracyjne Nr 2 w Krakowie, placówka opiekuńczo-wychowawcza
+      type: placowka
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: Powiązani - rozmawiamy o emocjach, współpracy i porozumieniu
+    note_pl: Grant II naboru „Usługa wrażliwa” (72 pkt).
+  - id: impl-uw2-07
+    innovation_id: inn-rops-komix-zyciowy
+    place_terc: "1261011"
+    place_name: Kraków
+    organisation:
+      name_pl: Fundacja im. Jacka i Piotra Michalskich
+      type: ngo
+      source_url: https://spis.ngo.pl/154392-fundacja-im-jacka-i-piotra-michalskich
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: eMOCje na swoim
+    note_pl: Grant II naboru „Usługa wrażliwa” (65,5 pkt). Siedziba fundacji w Krakowie według spisu ngo.pl.
+  - id: impl-uw2-08
+    innovation_id: inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania
+    place_terc: "1219053"
+    place_name: Wieliczka
+    organisation:
+      name_pl: Gmina Wieliczka
+      type: jst
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: Organizator kompleksowej opieki w miejscu zamieszkania w Gminie Wieliczka
+    note_pl: Grant II naboru „Usługa wrażliwa” (94 pkt).
+  - id: impl-uw2-09
+    innovation_id: inn-rops-terapeuta-przestrzeni
+    place_terc: "1218062"
+    place_name: Spytkowice
+    organisation:
+      name_pl: Gminny Ośrodek Pomocy Społecznej w Spytkowicach
+      type: ops-cus-pcpr
+      source_url: https://gopsspytkowice.pl/kontakt/
+    year: 2026
+    status: planned
+    source: usluga-wrazliwa
+    source_url: https://rops.krakow.pl/mpliki/IS/UW/Lista_rankingowa_wnioskow_rekomendowanych_do_otrzymania_grantu.pdf
+    project_title_pl: Terapeuta przestrzeni - wszechstronne wsparcie seniorów, osób z niepełnosprawnością oraz osób długotrwale lub ciężko chorych z terenu Gminy Spytkowice
+    note_pl: Grant II naboru „Usługa wrażliwa” (81,5 pkt). W Małopolsce są dwie gminy Spytkowice; adres GOPS (ul. Zamkowa 12, 34-116 Spytkowice) wskazuje powiat wadowicki (ustalone 29 września 2026).
+
+  # Innovations built into the regional service models (Małopolskie Modele Usług Społecznych)
+  - id: impl-model-01
+    innovation_id: inn-rops-senior-cuder
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.
+  - id: impl-model-02
+    innovation_id: inn-rops-sciezka-motosensoryczna
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.
+  - id: impl-model-03
+    innovation_id: inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.
+  - id: impl-model-04
+    innovation_id: inn-rops-bawita
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.
+  - id: impl-model-05
+    innovation_id: inn-rops-mobilne-centrum-pomocy-dla-osob-starszych
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.
+  - id: impl-model-06
+    innovation_id: inn-rops-centrum-antydepresyjne
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.
+  - id: impl-model-07
+    innovation_id: inn-rops-terapeuta-przestrzeni
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.
+  - id: impl-model-08
+    innovation_id: inn-rops-sciezka-treningu-umyslu
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.
+  - id: impl-model-09
+    innovation_id: inn-rops-talerze-zdrowia
+    place_terc: null
+    status: running
+    source: regional-model
+    source_url: https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach
+    note_pl: Innowacja wbudowana w Małopolskie Modele Usług Społecznych; zasięg wojewódzki, bez konkretnej gminy.

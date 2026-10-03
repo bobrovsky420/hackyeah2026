@@ -1,0 +1,10 @@
+# pnpm settings for the app at the repository root; there are no workspace
+# packages. The repository lives in a OneDrive folder, which does not sync
+# symlinks and junctions reliably, so node_modules is a flat npm-style tree.
+nodeLinker: hoisted
+
+# Dependencies allowed to run install scripts. unrs-resolver (used by the
+# ESLint import rules) ships its native binding as an optional package, so its
+# postinstall fallback is not needed.
+allowBuilds:
+  unrs-resolver: false
