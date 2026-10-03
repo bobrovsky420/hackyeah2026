@@ -328,6 +328,45 @@ export interface Idea {
   example?: boolean;
 }
 
+/** How the author knows the innovation they evaluate (module IV, "Tester innowacji"). */
+export type EvaluationExperience = "korzystam" | "wdrazam" | "opis";
+
+/** How a tester wants to take part in a test: as a user, or as an organisation that runs a trial. */
+export type TesterRole = "uzytkownik" | "wdrazajacy";
+
+/**
+ * An evaluation of a catalogue innovation (module IV): a rating, feedback,
+ * an improvement proposal and a sign-up for its tests, any of them. The
+ * texts went through the gate (7.12); they reach the innovators only
+ * through ROPS, and the innovation's page shows only the counts.
+ */
+export interface Evaluation {
+  id: string;
+  created_at: string;
+  innovation_id: string;
+  /** 1 to 5; null when the author did not rate. */
+  rating: number | null;
+  experience: EvaluationExperience | null;
+  feedback: string | null;
+  improvement: string | null;
+  test_signup: { as: TesterRole; place_terc: string | null } | null;
+  /** Required for a test sign-up; otherwise the author may stay anonymous. */
+  author: { display_name: string | null; email: string | null };
+  consents: { store: boolean; contact: boolean } & Consent;
+  moderation: Moderation;
+  retention_until: string;
+  note_pl: string | null;
+}
+
+/** What the innovation's page shows of its evaluations: numbers only. */
+export interface EvaluationSummary {
+  ratings: number;
+  /** Null without a rating. */
+  average: number | null;
+  testers: number;
+  improvements: number;
+}
+
 export type FeedbackValue = "tak" | "czesciowo" | "nie";
 
 export interface Feedback {
@@ -604,7 +643,7 @@ export interface ScreeningResult {
 }
 
 /** Which submitted text the gate screens (7.12, first paragraph). */
-export type GateTextKind = "need" | "saved_need" | "contact" | "readiness" | "offer" | "idea";
+export type GateTextKind = "need" | "saved_need" | "contact" | "readiness" | "offer" | "idea" | "evaluation";
 
 export interface GateInput {
   text: string;

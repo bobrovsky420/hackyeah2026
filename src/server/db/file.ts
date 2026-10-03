@@ -1,7 +1,7 @@
 import { closeSync, copyFileSync, fsyncSync, mkdirSync, openSync, readdirSync, readFileSync, renameSync, unlinkSync, writeSync } from "node:fs";
 import { mkdir, open, rename, unlink } from "node:fs/promises";
 import path from "node:path";
-import type { NeedCluster, StoredBrief, ContactRequest, ContentReport, Feedback, Idea, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
+import type { NeedCluster, StoredBrief, ContactRequest, ContentReport, Evaluation, Feedback, Idea, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
 import { applyRetentionDefaults } from "@/server/retention";
 import { createMemoryRepository, createMemoryState, type MemoryState } from "./memory";
 import type { Repository, StoredScreeningLogEntry } from "./repository";
@@ -37,6 +37,8 @@ interface StoreFile {
     readiness: Readiness[];
     /** Absent in the files saved before the idea cards existed. */
     ideas?: Idea[];
+    /** Absent in the files saved before the evaluations existed. */
+    evaluations?: Evaluation[];
     feedback: Feedback[];
     reports: ContentReport[];
     log: ModerationLogEntry[];
@@ -72,6 +74,7 @@ function serialise(state: MemoryState): string {
       contacts: state.contacts,
       readiness: state.readiness,
       ideas: state.ideas,
+      evaluations: state.evaluations,
       feedback: state.feedback,
       reports: state.reports,
       log: state.log,
@@ -109,6 +112,7 @@ function restore(text: string): MemoryState {
     contacts: state.contacts,
     readiness: state.readiness,
     ideas: Array.isArray(state.ideas) ? state.ideas : [],
+    evaluations: Array.isArray(state.evaluations) ? state.evaluations : [],
     feedback: state.feedback,
     reports: state.reports,
     log: state.log,

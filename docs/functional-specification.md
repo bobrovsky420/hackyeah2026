@@ -145,7 +145,7 @@ modules and where this specification answers them:
 | I. Matchmaking społeczny (obligatory) | A described problem finds similar cases and ready solutions | 7.2 to 7.4 | Built |
 | II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7 | Partly built: knowledge is shown on routes and innovation pages, not as a library |
 | III. Kreator pomysłów | An idea card (short description, essence, for whom, stage) at any time; an application generator during grant calls; the innovation canvas; an assistant that develops the idea | 7.13 | The idea card is built; the generator, the canvas and the assistant are not |
-| IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | | Not built |
+| IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | 7.14 | Built |
 | V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | | Not built |
 | VI. Panel administratora | Quick editing, verification and publication of knowledge | 7.9 | ROADMAP (R.2) |
 | VII. Middleman Innowacji | An AI assistant that adapts an innovation into a service for the institution that asks | 7.4, 7.8 | Partly built: the route adapts the paths to the role and the gmina |
@@ -370,6 +370,7 @@ the app reads them yet, and the tool sends nothing to anyone.
 | 7.10 Feedback and measures | "Czy to pomogło?" and event counters | | | Measures page (R.2) |
 | 7.11 Transparency | "Jak to działa", credits, licences, privacy note, accessibility statement, "Zasady" (principles and appeal path) | | | |
 | 7.13 Idea card (module III) | Idea card form; the gate before storage; the card's page with the similar innovations; Markdown download and print | | | Application generator per call; innovation canvas; idea assistant |
+| 7.14 Tester (module IV) | Rating, feedback, improvement proposal and test sign-up per innovation; the gate before storage; the numbers on the innovation's page | | | Test campaigns run by the innovators |
 | 7.12 Safety, moderation and fairness | Screening gate with its four outcomes; redaction of personal data; crisis screen with verified helplines; report link; screening log; fairness cases in the evaluation | Polish safety classifier as a second opinion; contact opt-out for organisations; abuse limits per e-mail | Appeal form | Moderation tab (R.2); ethics review board of the hub; quarterly fairness report |
 
 Explicitly out of scope for the hackathon: public user accounts, a native
@@ -771,7 +772,8 @@ first far more often than the multilingual ones.
 
 The gate runs before matching on every text a user submits: the need
 (7.2), a saved need (7.5), a contact request message (7.6), a readiness
-registration, a "Chcemy pomóc" response (7.5) and an idea card (7.13). It combines
+registration, a "Chcemy pomóc" response (7.5), an idea card (7.13) and
+an evaluation of an innovation (7.14). It combines
 deterministic checks with one fast model call and produces one of the
 outcomes `need`, `redirected`, `declined`, `off_topic`. Principle E3 sets
 its bias: when in doubt between routing and redirecting, the tool shows
@@ -813,6 +815,20 @@ are close to it. The shape is `Idea` in `src/lib/contracts.ts`.
 | FR-13.3 | MUST | The card's page `/pomysl/{id}`: the card, its status, the similar innovations with "co jest podobne" and "czym się różni" taken from the matcher's grounded assessment (FR-5.3), each linked to its innovation; computed once on the first visit and stored; the canned engine takes the example route its keywords pick. The author's e-mail is never shown. | Similar innovations appear without a second model run on a reload |
 | FR-13.4 | MUST | The card downloads as Markdown and prints; the next steps link to a conversation with ROPS. | |
 | FR-13.5 | ROADMAP | The application generator per grant call, the innovation canvas of HackYeah and an idea assistant that develops the idea and draws it. | |
+
+### 7.14 Tester (module IV of the brief; added after the brief was published)
+
+Every innovation can be rated, commented on, improved and tested by the
+people who use or run it. The shape is `Evaluation` in
+`src/lib/contracts.ts`; the texts reach the innovators only through ROPS
+(principle E6).
+
+| Id | Priority | Requirement | Acceptance |
+|---|---|---|---|
+| FR-14.1 | MUST | Form `/innowacja/{id}/testuj`: a rating from 1 to 5 or none, how the author knows the solution (using it, implementing it, only the description), feedback, an improvement proposal, a sign-up for tests (as a user or as an organisation that runs a trial, with a gmina); at least one of the four; a sign-up needs a name and an e-mail address, an opinion may stay anonymous; consent to store. | Two errors on an empty form, four with the sign-up ticked |
+| FR-14.2 | MUST | POST `/api/innovations/{id}/evaluations` screens the feedback and the proposal together with the gate (kind `evaluation`), the name for harm only; at most five evaluations of one innovation per e-mail address and per client address a day; honeypot; 404 for an unknown innovation. | A crisis text stores nothing; a rating of 7 is refused |
+| FR-14.3 | MUST | The innovation's page shows "Opinie i testy": the average rating with the number of ratings (Polish plural and decimal comma), the test sign-ups, the improvement proposals, never a text or a contact; and the link to the form. | "5 na 5 (1 ocena)" after one rating |
+| FR-14.4 | ROADMAP | Test campaigns the innovators open, with dates and places, and the results published with consent. | |
 
 ## 8. Data model
 
@@ -1459,6 +1475,7 @@ files.
 | POST `/api/readiness` | Readiness registration (J6) | | 201 |
 | GET `/api/health` | Liveness | | `{ok, data_version, provider, model}` |
 | POST `/api/ideas` | Idea card (7.13) | `{kind, title, description, essence, for_whom, target_groups?, stage, place_terc?, display_name, is_organisation?, email, consent_store, consent_publish?}` | 201 `{id, redactions}`; the gate's outcomes as for a need |
+| POST `/api/innovations/{id}/evaluations` | Evaluation of an innovation (7.14) | `{rating?, experience?, feedback?, improvement?, test_signup?, tester_role?, place_terc?, display_name?, email?, consent_store}` | 201 `{id, redactions}`; 404 for an unknown innovation |
 | POST `/api/ideas/{id}/similar` | The card's similar innovations, computed once and stored | | 200 `{similar}`; 503 when the model failed |
 
 The ROPS console, its pages and its two endpoints (the CSV export and
@@ -1606,6 +1623,7 @@ change to a prompt.
   src/app/api/              route handlers (9.2)
   src/server/               every server module: gate/ (the screening gate, 7.12), match/ (retrieval, shortlist, assess, grounding), route/ (the composer), needs/ (needs and briefs), db/ (the store), eval/ (the evaluation harness), pipeline.ts, route-service.ts (the engines and the repeat check), route-cache.ts, map.ts (S4), rate-limit.ts, validate.ts, ephemeral.ts, retention.ts
   src/server/ideas/         the idea card of 7.13: its similar innovations and its Markdown
+  src/server/evaluations/   the tester of 7.14: the numbers an innovation's page shows
   src/lib/contracts.ts      the one file of the shapes the server and the screens share: the catalogue, the fixed contacts, the map data, the paths, the stored records, the route (8.4), the brief (8.5) and the boundaries between the pipeline modules
   src/lib/llm/              provider interface, the two providers, the chain and the replay recording
   src/lib/i18n/             message catalogue loader (Polish only)
@@ -1886,6 +1904,13 @@ tools used, the prior work and the libraries.
   and for whom; "Podobne sprawdzone rozwiązania", computed on the first
   visit; "Drukuj" and "Pobierz"; "Co dalej".
 
+### S14 Tester (`/innowacja/{id}/testuj`, and "Opinie i testy" on S5)
+
+- The form of FR-14.1 as one page, with "Wróć do opisu rozwiązania"; the
+  sign-up's role and gmina appear when the box is ticked.
+- On S5, after the people block: the numbers of FR-14.3 and "Oceń albo
+  zgłoś się do testów"; "Nikt jeszcze nie ocenił" before the first.
+
 ### Message keys
 
 Every string lives in `messages/pl.json` under keys named
@@ -2078,7 +2103,7 @@ per-request reads of the JSON files.
   people whose public data we show (art. 14 GDPR) and how to object.
 - Retention defaults: routes 30 days after the event; needs until
   ROPS decides; contact requests 90 days; readiness 12 months; idea
-  cards 12 months; logs 14 days; no IP addresses stored outside the rate
+  cards and evaluations 12 months; logs 14 days; no IP addresses stored outside the rate
   limiter's memory.
 - No cookies; a browser-local flag deduplicates feedback.
 - AI transparency: the EU AI Act's transparency duties (art. 50) apply
@@ -2325,6 +2350,9 @@ it, repetitions are not independent samples.
 - Accessibility (`pnpm a11y`): axe on every screen of
   `tests/e2e/screens.ts` in the three themes, the idea card form and an
   example card among them.
+- End-to-end for the tester: the validation with and without the
+  sign-up, a full evaluation and the numbers on the innovation's page,
+  and an anonymous rating.
 - End-to-end for the idea card: the error summary, the save, the similar
   innovations on its page, and a crisis text that stores nothing.
 

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { StoredBrief, ContactRequest, ContentReport, Idea, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
+import type { StoredBrief, ContactRequest, ContentReport, Evaluation, Idea, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
 import { exampleIdeas, exampleNeeds, exampleReadiness } from "@/server/db/examples";
 import { createFileRepository } from "@/server/db/file";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
@@ -135,6 +135,25 @@ function idea(id: string, over: Partial<Idea> = {}): Idea {
     consents: { store: true, publish: false, text_version: "v1", timestamp: at(0) },
     moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
     similar: null,
+    retention_until: "2027-10-03",
+    note_pl: null,
+    ...over,
+  };
+}
+
+function evaluation(id: string, over: Partial<Evaluation> = {}): Evaluation {
+  return {
+    id,
+    created_at: at(0),
+    innovation_id: "inn-1",
+    rating: 4,
+    experience: "wdrazam",
+    feedback: "Działa, ale instrukcja jest za długa.",
+    improvement: null,
+    test_signup: null,
+    author: { display_name: null, email: null },
+    consents: { store: true, contact: false, text_version: "v1", timestamp: at(0) },
+    moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
     retention_until: "2027-10-03",
     note_pl: null,
     ...over,
@@ -367,6 +386,17 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
   });
 
+  describe("evaluations of innovations (module IV)", () => {
+    it("round-trips newest first and filters by innovation", async () => {
+      await repo.addEvaluation(evaluation("oc-1", { created_at: at(-DAY) }));
+      await repo.addEvaluation(evaluation("oc-2", { innovation_id: "inn-2" }));
+      await repo.addEvaluation(evaluation("oc-3"));
+      expect((await repo.listEvaluations()).map((item) => item.id)).toEqual(["oc-3", "oc-2", "oc-1"]);
+      expect(await repo.listEvaluations("inn-1")).toEqual([evaluation("oc-3"), evaluation("oc-1", { created_at: at(-DAY) })]);
+      expect(await repo.listEvaluations("inn-9")).toEqual([]);
+    });
+  });
+
   describe("feedback and content reports", () => {
     it("keeps feedback per route", async () => {
       await repo.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(-DAY) });
@@ -491,6 +521,8 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
       await repo.addReadiness(registration("gt-today", { retention_until: "2026-10-03" }));
       await repo.addIdea(idea("pm-old", { retention_until: "2026-10-02" }));
       await repo.addIdea(idea("pm-today", { retention_until: "2026-10-03" }));
+      await repo.addEvaluation(evaluation("oc-old", { retention_until: "2026-10-02" }));
+      await repo.addEvaluation(evaluation("oc-today", { retention_until: "2026-10-03" }));
       // Newest first, so no write applies the log's retention to the others before the run does.
       await repo.writeScreeningLog(screening(-DAY), NOW - DAY);
       await repo.writeScreeningLog(screening(-8 * DAY), NOW - 8 * DAY);
@@ -499,7 +531,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
 
     it("counts without deleting in a dry run", async () => {
-      const expected = { routes: 1, feedback: 1, contacts: 1, readiness: 1, ideas: 1, screeningEntries: 1, screeningTexts: 1 };
+      const expected = { routes: 1, feedback: 1, contacts: 1, readiness: 1, ideas: 1, evaluations: 1, screeningEntries: 1, screeningTexts: 1 };
       expect(await repo.applyRetention(cutoffs, { dryRun: true })).toEqual(expected);
       expect(await repo.getRoute("rt-old")).toBeDefined();
       expect(await repo.listContacts()).toHaveLength(2);
@@ -514,6 +546,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
         contacts: 1,
         readiness: 1,
         ideas: 1,
+        evaluations: 1,
         screeningEntries: 1,
         screeningTexts: 1,
       });
@@ -523,6 +556,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
       expect((await repo.listContacts()).map((item) => item.id)).toEqual(["kt-new"]);
       expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-today"]);
       expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-today"]);
+      expect((await repo.listEvaluations()).map((item) => item.id)).toEqual(["oc-today"]);
       expect((await repo.listScreeningLog(NOW)).map((entry) => entry.text !== null)).toEqual([true, false]);
       // Needs stay until ROPS decides.
       expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-1"]);
@@ -532,6 +566,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
         contacts: 0,
         readiness: 0,
         ideas: 0,
+        evaluations: 0,
         screeningEntries: 0,
         screeningTexts: 0,
       });
@@ -668,6 +703,7 @@ describe("the store file", () => {
     await first.addContact(contact("kt-1"));
     await first.addReadiness(registration("gt-1"));
     await first.addIdea(idea("pm-1"));
+    await first.addEvaluation(evaluation("oc-1"));
     await first.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) });
     await first.addReport(report("zg-1"));
     await first.appendModerationLog(entry);
@@ -685,6 +721,7 @@ describe("the store file", () => {
     expect(await second.listContacts()).toEqual([contact("kt-1")]);
     expect(await second.listReadiness()).toEqual([registration("gt-1")]);
     expect(await second.listIdeas()).toEqual([idea("pm-1")]);
+    expect(await second.listEvaluations()).toEqual([evaluation("oc-1")]);
     expect(await second.listFeedback()).toEqual([{ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) }]);
     expect(await second.listReports()).toEqual([report("zg-1")]);
     expect(await second.listModerationLog(10)).toEqual([entry]);

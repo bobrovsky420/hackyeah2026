@@ -42,12 +42,14 @@ function envLimit(name: string, fallback: number): number {
 /**
  * Abuse limits of FR-6.4 and FR-12.14, per day: five contact requests per
  * e-mail address and per client address, two readiness registrations per
- * e-mail address or phone, three idea cards per e-mail address. The test
- * runs raise them like the route limit.
+ * e-mail address or phone, three idea cards per e-mail address, five
+ * evaluations per innovation per e-mail address and per client address.
+ * The test runs raise them like the route limit.
  */
 export const contactRequestsPerDay = () => envLimit("ABUSE_LIMIT_CONTACTS_PER_DAY", 5);
 export const readinessRegistrationsPerDay = () => envLimit("ABUSE_LIMIT_READINESS_PER_DAY", 2);
 export const ideaCardsPerDay = () => envLimit("ABUSE_LIMIT_IDEAS_PER_DAY", 3);
+export const evaluationsPerDay = () => envLimit("ABUSE_LIMIT_EVALUATIONS_PER_DAY", 5);
 export const LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 /** The model call of FR-12.2: effort low, about 1 000 tokens (9.3). */
