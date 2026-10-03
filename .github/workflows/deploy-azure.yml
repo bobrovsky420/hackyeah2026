@@ -147,8 +147,15 @@ jobs:
               --template-file deploy/azure/main.bicep \
               --parameters name="$VM" vmSize="$AZURE_VM_SIZE" dnsLabel="$AZURE_DNS_LABEL" \
                            adminUsername="$VM_USER" sshPublicKey="$(cat ~/.ssh/deploy.pub)"
+            az vm start -g "$RG" -n "$VM" -o none
+          else
+            az vm show -g "$RG" -n "$VM" -o tsv \
+              --query '[hardwareProfile.vmSize, storageProfile.imageReference.offer, storageProfile.imageReference.sku]'
+            az vm start -g "$RG" -n "$VM" -o none   # no-op when it runs; starts a deallocated VM
+            # A VM made before this key, or by hand: authorise the deploy key (VMAccess, no SSH needed).
+            echo "== authorising the deploy key for $VM_USER"
+            az vm user update -g "$RG" -n "$VM" -u "$VM_USER" --ssh-key-value "$(cat ~/.ssh/deploy.pub)" -o none
           fi
-          az vm start -g "$RG" -n "$VM" -o none   # no-op when it runs; starts a deallocated VM
           fqdn="$(az network public-ip show -g "$RG" -n "$VM-ip" --query dnsSettings.fqdn -o tsv)"
           host="$(az network public-ip show -g "$RG" -n "$VM-ip" --query ipAddress -o tsv)"
           echo "SITE=$fqdn" >> "$GITHUB_ENV"
@@ -157,9 +164,16 @@ jobs:
       - name: Open SSH for this runner
         run: |
           runner_ip="$(curl -fsS https://api.ipify.org)"
+          az network nsg rule delete -g "$RG" --nsg-name "$VM-nsg" -n github-actions-ssh -o none 2>/dev/null || true
+          # The lowest inbound priority no other rule holds (a rule made by hand may sit anywhere).
+          used=" $(az network nsg rule list -g "$RG" --nsg-name "$VM-nsg" --query "[?direction=='Inbound'].priority" -o tsv | tr '\n' ' ') "
+          priority=100
+          while [[ "$used" == *" $priority "* ]]; do priority=$((priority + 1)); done
           az network nsg rule create -g "$RG" --nsg-name "$VM-nsg" -n github-actions-ssh -o none \
-            --priority 100 --direction Inbound --access Allow --protocol Tcp \
+            --priority "$priority" --direction Inbound --access Allow --protocol Tcp \
             --source-address-prefixes "$runner_ip/32" --destination-port-ranges 22
+          az network nsg rule list -g "$RG" --nsg-name "$VM-nsg" -o table \
+            --query "[?direction=='Inbound'].{name:name, priority:priority, access:access, from:sourceAddressPrefix, ports:join(',', [destinationPortRange || '', join(',', destinationPortRanges)])}"
           echo "SSH_OPTS=-i $HOME/.ssh/deploy -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -o ConnectTimeout=10" >> "$GITHUB_ENV"
 
       - name: Wait for SSH
