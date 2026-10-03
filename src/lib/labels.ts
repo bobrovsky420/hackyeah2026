@@ -1,4 +1,4 @@
-import type { CostBand, EvidenceLevel, IdeaKind, IdeaStage, RoleCode, SourceName, TimeToImplement, RouteSolution, IndicatorKey } from "@/lib/contracts";
+import type { CostBand, EvaluationExperience, EvidenceLevel, IdeaKind, TesterRole, IdeaStage, RoleCode, SourceName, TimeToImplement, RouteSolution, IndicatorKey } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 
 /* Codes of the contracts (data/curated/taxonomies.json, schemas 8.4 and 8.7) mapped to interface strings. */
@@ -67,6 +67,37 @@ export function isIdeaStage(value: unknown): value is IdeaStage {
 
 export function ideaStageLabel(code: IdeaStage): string {
   return t(ideaStageKeys[code]);
+}
+
+const experienceKeys = {
+  korzystam: "tester.experience.korzystam",
+  wdrazam: "tester.experience.wdrazam",
+  opis: "tester.experience.opis",
+} as const satisfies Record<EvaluationExperience, MessageKey>;
+
+export const experienceCodes = Object.keys(experienceKeys) as EvaluationExperience[];
+
+export function isExperience(value: unknown): value is EvaluationExperience {
+  return typeof value === "string" && value in experienceKeys;
+}
+
+export function experienceLabel(code: EvaluationExperience): string {
+  return t(experienceKeys[code]);
+}
+
+const testerRoleKeys = {
+  uzytkownik: "tester.signup.uzytkownik",
+  wdrazajacy: "tester.signup.wdrazajacy",
+} as const satisfies Record<TesterRole, MessageKey>;
+
+export const testerRoleCodes = Object.keys(testerRoleKeys) as TesterRole[];
+
+export function isTesterRole(value: unknown): value is TesterRole {
+  return typeof value === "string" && value in testerRoleKeys;
+}
+
+export function testerRoleLabel(code: TesterRole): string {
+  return t(testerRoleKeys[code]);
 }
 
 const sourceKeys = {
