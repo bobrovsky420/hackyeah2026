@@ -66,6 +66,7 @@ export default async function AdminNeedsPage({ searchParams }: PageProps<"/admin
                 {need.role && ` · ${roleLabel(need.role)}`}
                 {need.target_groups.length > 0 && ` · ${need.target_groups.map(targetGroupLabel).join(", ")}`}
                 {need.example && ` · ${t("admin.example")}`}
+                {need.demo && ` · ${t("admin.demo")}`}
               </p>
               <p className="whitespace-pre-line">{need.problem_text}</p>
               <p>

@@ -1,25 +1,19 @@
 import Link from "next/link";
 import { AdminLogin, gate } from "@/components/admin/admin-gate";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { DataFilter } from "@/components/admin/data-filter";
 import { BarTable } from "@/components/admin/bar-table";
 import { getInnovation } from "@/lib/catalogue";
-import type { IdeaStage, Route } from "@/lib/contracts";
+import type { IdeaStage } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t, type MessageKey } from "@/lib/i18n";
 import { ideaStageLabel, isIdeaStage, targetGroupLabel } from "@/lib/labels";
-import { trends } from "@/server/admin/data";
+import { demoCount, NO_GROUP, REAL_ONLY, trends } from "@/server/admin/data";
+import { routeModeLabel } from "@/server/admin/labels";
 
 export const metadata = { title: t("admin.trends.title") };
 
-const groupLabel = (code: string) => (code === "bez-grupy" ? t("admin.trends.noGroup") : targetGroupLabel(code));
-const MODE_KEYS: Record<Route["mode"], MessageKey> = {
-  route: "admin.trends.mode.route",
-  partial: "admin.trends.mode.partial",
-  none: "admin.trends.mode.none",
-  redirected: "admin.trends.mode.redirected",
-  declined: "admin.trends.mode.declined",
-  off_topic: "admin.trends.mode.off_topic",
-};
+const groupLabel = (code: string) => (code === NO_GROUP ? t("admin.trends.noGroup") : targetGroupLabel(code));
 
 /** The views of the trends, a second row of tabs: one address each (?widok=), so a view can be bookmarked or sent. */
 const VIEWS = [
@@ -34,7 +28,9 @@ type View = (typeof VIEWS)[number]["key"];
  * Module II, the part only the administrator sees: the needs gathered by
  * the tool, aggregated by area, place and week, with the ideas and the
  * evaluations and the routes beside them, so ROPS can set the topics of
- * the next call. Split into three views under the "Trendy" tab.
+ * the next call. Split into three views under the "Trendy" tab. The
+ * questions by group lead to the questions themselves. While the store
+ * holds the demonstration data, the numbers can leave it out.
  */
 export default async function AdminTrendsPage({ searchParams }: PageProps<"/admin/trends">) {
   const session = await gate();
@@ -42,8 +38,10 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
   const query = await searchParams;
   const view: View = VIEWS.find((item) => item.key === query.widok)?.key ?? "potrzeby";
   const current = VIEWS.find((item) => item.key === view)!;
-  const data = await trends();
+  const realOnly = query.dane === REAL_ONLY;
+  const [data, demo] = await Promise.all([trends(undefined, { realOnly }), demoCount()]);
   const empty = t("admin.trends.empty");
+  const real = realOnly ? `dane=${REAL_ONLY}` : "";
 
   return (
     <AdminShell session={session} current="trends" title={t("admin.trends.title")} lead={t("admin.trends.lead")}>
@@ -53,7 +51,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
             <li key={item.key}>
               <Link
                 scroll={false}
-                href={`/rops/trendy?widok=${item.key}`}
+                href={`/rops/trendy?widok=${item.key}${real && `&${real}`}`}
                 aria-current={item.key === view ? "page" : undefined}
                 className="inline-flex min-h-11 items-center aria-[current=page]:font-bold aria-[current=page]:no-underline aria-[current=page]:shadow-[inset_0_-4px_0_var(--primary)]"
               >
@@ -64,9 +62,26 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
         </ul>
       </nav>
       <p>{t(current.lead)}</p>
+      {demo > 0 && <DataFilter realOnly={realOnly} keep={{ widok: view }} />}
       <div className="grid gap-5 @4xl:grid-cols-2">
         {view === "potrzeby" && (
           <>
+          <div className="grid content-start gap-2">
+            <BarTable
+              caption={t("admin.trends.questionsByGroup")}
+              keyHeader={t("admin.trends.group")}
+              rows={data.questionsByGroup.map((row) => ({
+                label: groupLabel(row.key),
+                count: row.count,
+                href: `/rops/trendy/pytania?grupa=${encodeURIComponent(row.key)}${real && `&${real}`}`,
+              }))}
+              empty={empty}
+            />
+            <p className="text-muted-foreground">
+              {t("admin.trends.questionsNote", { count: data.totals.questions })}{" "}
+              <Link href={`/rops/trendy/pytania${real && `?${real}`}`}>{t("admin.trends.allQuestions")}</Link>
+            </p>
+          </div>
           <BarTable
             caption={t("admin.trends.needsByGroup")}
             keyHeader={t("admin.trends.group")}
@@ -122,7 +137,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
           <BarTable
             caption={t("admin.trends.routesByMode")}
             keyHeader={t("admin.trends.mode")}
-            rows={data.routesByMode.map((row) => ({ label: t(MODE_KEYS[row.key as Route["mode"]] ?? "admin.trends.mode.route"), count: row.count }))}
+            rows={data.routesByMode.map((row) => ({ label: routeModeLabel(row.key), count: row.count }))}
             empty={empty}
           />
           <BarTable

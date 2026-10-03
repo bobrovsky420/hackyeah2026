@@ -43,7 +43,8 @@ function Section({ id, title, children }: { id: string; title: string; children:
 export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
   const { id } = await params;
   const idea = await repository().getIdea(id);
-  if (!idea) notFound();
+  // The panel's demonstration data has no public card.
+  if (!idea || idea.demo) notFound();
   const gmina = getGmina(idea.place_terc);
   const similar = idea.similar?.flatMap((match) => {
     const innovation = getInnovation(match.innovation_id);

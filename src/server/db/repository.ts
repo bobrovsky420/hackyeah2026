@@ -46,6 +46,10 @@ export interface RouteFacts {
   cached: boolean;
   /** The recommended innovations, in the route's order. */
   solution_ids: string[];
+  /** The target groups of the question (questionGroups); empty when none is known. */
+  target_groups: string[];
+  /** A route of the panel's demonstration data (isReal). */
+  demo?: boolean;
 }
 
 /**
@@ -129,6 +133,8 @@ export interface Repository {
   markDeclineReviewed(id: string, at: string): Promise<boolean>;
   /** The facts of every stored route for the statistics (FR-9.3), newest first. */
   listRouteFacts(): Promise<RouteFacts[]>;
+  /** Every stored route, newest first, for the questions list of the trends (module II). */
+  listRoutes(): Promise<Route[]>;
 
   // Needs (8.5).
   addNeed(need: Need): Promise<void>;
@@ -264,4 +270,15 @@ export function storableRoute(route: Route): Route {
   const copy = structuredClone(route);
   if (copy.mode === "redirected") copy.input = { ...copy.input, problem_text: null };
   return copy;
+}
+
+/**
+ * False for a record of the panel's demonstration data (demo.ts):
+ * public pages and the route leave those out; only the panel shows them.
+ */
+export const isReal = (record: { demo?: boolean }) => !record.demo;
+
+/** The target groups of a stored question: those the composer recorded, else the reader's answer (older and screened routes). */
+export function questionGroups(route: Route): string[] {
+  return route.question_groups ?? route.input.target_groups;
 }

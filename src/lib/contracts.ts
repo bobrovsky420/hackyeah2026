@@ -251,6 +251,8 @@ export interface Need {
   brief_id: string | null;
   note_pl: string | null;
   example: boolean;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 export type ContactStatus = "nowe" | "przekazane" | "zamkniete";
@@ -268,6 +270,8 @@ export interface ContactRequest {
   moderation: Moderation;
   status: ContactStatus;
   note_pl: string | null;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 export type VerificationStatus = "niezweryfikowane" | "zweryfikowane" | "odrzucone";
@@ -287,6 +291,8 @@ export interface Readiness {
   note_pl: string | null;
   /** A seed entry of the team (FR-6.5); absent on real registrations. */
   example?: boolean;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 /** What an idea card presents (module III of the partner's brief): a new idea, or a practice already tried in microscale. */
@@ -336,6 +342,8 @@ export interface Idea {
   canvas?: IdeaCanvas;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
   example?: boolean;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 /** How the author knows the innovation they evaluate (module IV, "Tester innowacji"). */
@@ -368,6 +376,8 @@ export interface Evaluation {
   forwarded_at: string | null;
   retention_until: string;
   note_pl: string | null;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 /** What the innovation's page shows of its evaluations: numbers only. */
@@ -398,6 +408,8 @@ export interface ContentReport {
   reason: ReportReason;
   comment: string | null;
   moderation: Moderation;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 /** Every moderation action is logged with the reviewer's token name (FR-12.8). */
@@ -517,6 +529,8 @@ export interface Route {
   label_pl: string;
   /** Proposed addition to 8.4: the reference code S11 shows for a declined request. */
   reference_code: string | null;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 // -------------------------------------------------------------- brief (8.5)
@@ -655,6 +669,8 @@ export interface Thread {
   retention_until: string;
   note_pl: string | null;
   example?: boolean;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 /** A mentor of the hub (module V): an expert ROPS can invite into a conversation. */
@@ -666,6 +682,8 @@ export interface Mentor {
   active: boolean;
   updated_at: string;
   example?: boolean;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 /**
@@ -689,6 +707,8 @@ export interface PartnershipPost {
   moderation: Moderation;
   retention_until: string;
   example?: boolean;
+  /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
+  demo?: boolean;
 }
 
 /** The kinds of a knowledge item; "video" only for the items ROPS adds in the panel (module II, VI). */

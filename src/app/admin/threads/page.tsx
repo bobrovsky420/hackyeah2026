@@ -56,6 +56,7 @@ export default async function AdminThreadsPage({ searchParams }: PageProps<"/adm
                 {topicLabel(thread.topic)} · {thread.author.display_name} · {formatDate(thread.updated_at)} ·{" "}
                 {t("admin.threads.count", { count: thread.messages.length })}
                 {thread.mentor && ` · ${t("admin.threads.withMentor", { name: thread.mentor.name })}`}
+                {thread.demo && ` · ${t("admin.demo")}`}
               </p>
               <p className={waitsForRops(thread) ? "font-bold" : ""}>
                 {waitsForRops(thread) ? t("admin.threads.waiting") : threadStatusLabel(thread.status)}

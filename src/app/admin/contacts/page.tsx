@@ -34,6 +34,7 @@ export default async function AdminContactsPage({ searchParams }: PageProps<"/ad
               <p className="text-muted-foreground">
                 {formatDate(item.created_at)} · {t("admin.contacts.target", { type: item.target.type, id: item.target.id })} ·{" "}
                 <a href={`mailto:${item.requester.email}`}>{item.requester.email}</a>
+                {item.demo && ` · ${t("admin.demo")}`}
               </p>
               <p className="whitespace-pre-line">{item.message}</p>
               <p>

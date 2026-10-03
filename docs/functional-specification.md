@@ -143,7 +143,7 @@ modules and where this specification answers them:
 | Module of the brief | What it asks | Where | Status |
 |---|---|---|---|
 | I. Matchmaking społeczny (obligatory) | A described problem finds similar cases and ready solutions | 7.2 to 7.4, FR-3.9 | Built: proven solutions from the catalogue and similar cases from the needs bank and the idea cards |
-| II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7, FR-9.5, FR-9.6 | Partly built: knowledge on routes and innovation pages, kept live in the panel with films; the trends for the administrator; no library to browse |
+| II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7, FR-9.5, FR-9.6 | Built (R.5): no separate catalogue, as the partner asks for a tool that is not another one; the knowledge reaches a person on the route and the innovation page with links to every attached file (handbooks, documents, films), kept live in the panel; the trends for the administrator |
 | III. Kreator pomysłów | An idea card (short description, essence, for whom, stage) at any time; an application generator during grant calls; the innovation canvas; an assistant that develops the idea | 7.13 | The idea card and the CANVAS application (the INNO AGH Social Innovation Canvas, step by step) are built; the generator and the assistant are not |
 | IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | 7.14 | Built |
 | V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | 7.15 | Built |
@@ -763,7 +763,7 @@ code is `src/app/admin/`, `src/server/admin/` and
 | FR-9.2 | MUST | Queues with decisions: idea cards (7.13), evaluations and test sign-ups (7.14), needs (filters status and category; publication, status of FR-5.7 and a note), contact requests (relay or close, status, note), readiness registrations (verify), content reports, and the declined texts. A rejection takes a reason from a fixed list and a note. | Every decision appears in the log with the reviewer's name |
 | FR-9.3 | MUST | Dashboard: per queue what waits and what is new since the reviewer's last visit ("Oznacz wszystko jako przejrzane" moves it), the key numbers, the latest decisions and the CSV exports (needs, ideas, evaluations, contacts, readiness) in UTF-8 with BOM and semicolons, a cell that starts like a formula disarmed. | The export opens in Polish Excel; it answers 401 without a session |
 | FR-9.4 | MUST | The reply path of section 6 of the brief: an idea card gets a status (nowy, w analizie, przyjęty, zamknięty) and a reply its author reads on the card's page, with the reviewer and the date; an evaluation is marked as passed on to the innovators; a rejected evaluation leaves the innovation's numbers. | The reply shows on `/pomysl/{id}` at once |
-| FR-9.5 | MUST | Trends (module II, for the administrator only): needs by target group, powiat and week, ideas by group and stage, routes by result, the most proposed innovations and the ones with evaluations and testers, as tables with bars. | |
+| FR-9.5 | MUST | Trends (module II, for the administrator only): questions by target group (a question counts in each of its groups; declined and off-topic requests are left out), each group leading to its questions with their text, place, result and proposed innovations, filtered by group and by first and last day; needs by target group, powiat and week, ideas by group and stage, routes by result, the most proposed innovations and the ones with evaluations and testers, as tables with bars. | |
 | FR-9.6 | MUST | Knowledge kept live (modules II and VI): an innovation is marked verified ("Sprawdzone przez ROPS" on its page and on routes) or hidden (gone from routes and its page), its summary corrected, a material such as a film added or removed; a knowledge item of `knowledge.yaml` edited or hidden, or a new one added for target groups or for every route. Applied when a route or an innovation is read, so it shows at once and on routes made before; the catalogue, the curated files and the stored routes stay unchanged. | A film added to an innovation shows on an existing route |
 | FR-9.8 | MUST | Conversations (7.15): the list, those waiting for ROPS first and counted on the dashboard; the conversation with the author's contact for ROPS, the answer signed with the reviewer's name, the status, the mentor's invitation and a new link for an author who lost theirs, each link shown once as a full address; the mentors (name, field, groups, active); the partnership posts with their decision and the conversations of those who answered. | A mentor invited in the panel answers through their link |
 | FR-9.7 | ROADMAP | "Zapisz wdrożenie" from a contact request creates an implementation record; clustering of needs (FR-5.4); a hidden innovation also left out of retrieval, not only of the route. | |
@@ -1099,6 +1099,7 @@ ellipsis, not dropped.
   "mode_reason_pl": "Dwa rozwiązania odpowiadają bezpośrednio na opisany problem.",
   "screening": {"category": "need", "confidence": 0.93, "sensitive_topics": [], "redactions": 0, "crisis_banner": false},
   "clarification_needed": false,
+  "question_groups": ["seniorzy"],
   "summary_pl": "...",
   "solutions": [
     {
@@ -1139,6 +1140,10 @@ the request is about; `reference_code` is the code S11 shows for a
 declined request (FR-12.6, for example `HM-2026-0417`) and is null for
 every other mode; `clarification_needed` is true when stage 1 found
 neither a target group nor a place, so S3 asks the one question of FR-2.3.
+`question_groups` holds the target groups the question is about, the
+reader's answer and the groups stage 1 detected, for the trends of FR-9.5;
+it is missing on the screened routes, which fall back to
+`input.target_groups`.
 The types are in `src/lib/contracts.ts`.
 
 ### 8.5 Need and brief
@@ -1700,6 +1705,9 @@ change to a prompt.
   data/curated/helplines.yaml  helplines of S10 and Zasady, checked against the operators (hand-written, committed)
   data/curated/lexicon-pl.yaml  the crisis lexicon of the pre-checks (FR-12.1; hand-written, committed)
   data/curated/banned-words-pl.yaml  the banned words of every model text (FR-12.10; hand-written, committed)
+  data/curated/demo-questions.yaml  the question bank of the simulated pilot behind the panel's demonstration data (module II; hand-written, committed)
+  data/curated/demo-records.yaml  the texts of the simulated pilot's other records: ideas, contacts, readiness, mentors, posts, conversations, reports, declined inputs (hand-written, committed)
+  data/built/demo-*         the demonstration data the app reads: demo-routes.json and copies of the two files above (pnpm demo:routes; git-ignored)
   data/built/map/           malopolska-gminy.geojson (build-static-data.py; git-ignored)
   data/built/indicators.json  indicators per gmina (build-static-data.py; git-ignored)
   data/built/places/        pl-register.json (build-static-data.py; git-ignored)
@@ -1737,6 +1745,7 @@ change to a prompt.
 | `pnpm eval [--provider anthropic|openai-compatible|replay]` | Runs the test problems, writes `.local/reports/eval-<timestamp>.md` |
 | `pnpm test`, `pnpm test:e2e`, `pnpm a11y`, `pnpm screenshots` | Quality gates |
 | `pnpm cache:warm` | Pre-generates and caches the routes of the test problems and the demo path |
+| `pnpm demo:routes [--concurrency 3] [--only <ids>] [--refresh]` | Runs the questions of `data/curated/demo-questions.yaml` and the declined inputs of `demo-records.yaml` once through the pipeline, keeps their routes in `data/built/demo-routes.json` and copies the two files beside it: the set the panel's demonstration data is read from; resumable |
 | `.venv/Scripts/python scripts/llm-probe.py [--model ...] [--reps 2] [--max-tokens N] [--reasoning-effort low] [--out ...]` | The bounded feasibility probe of a model on the Hugging Face router (9.3): screening and shortlist cases, JSON validity, latency, tokens; ad-hoc results stay out of git, runs worth keeping are copied into `docs/model-evaluation/` with date, model and host in the name and a row in `docs/model-evaluation.md` |
 
 ## 10. Screens and content
