@@ -1,9 +1,9 @@
 import gminyData from "./gminy.json";
 import innovationsData from "./innovations.json";
-import type { Gmina, Innovation } from "./types";
+import type { Gmina, Innovation } from "@/lib/contracts/catalogue";
 
 /*
- * Prototype fixtures, extracted from the local data
+ * Prototype fixtures, extracted on 29 September 2026 from the local data
  * build (data/places/pl-register.json and data/innovations/, CC BY 4.0
  * records only), so the prototype runs on a fresh clone without the
  * pipeline. The real app reads data/ at start instead.

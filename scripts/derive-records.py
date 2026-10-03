@@ -68,7 +68,7 @@ STIGMA = [
     (r"\bniepełnosprawn(i|ych|ym|ymi|ego|emu)\b", "osoby z niepełnosprawnościami"),
     (r"\bupośledz", "osoby z niepełnosprawnością intelektualną"),
     (r"\bkalek", "osoby z niepełnosprawnością"),
-    # the adjective names an object ("wózek inwalidzki", "renta inwalidzka") and is allowed (user decision)
+    # the adjective names an object ("wózek inwalidzki", "renta inwalidzka") and is allowed (user decision of 28 September 2026)
     (r"\binwalid(?!zk)", "osoby z niepełnosprawnością"),
     (r"\bpatologi", "opis sytuacji bez etykiety"),
     (r"\bmargines", "opis sytuacji bez etykiety"),

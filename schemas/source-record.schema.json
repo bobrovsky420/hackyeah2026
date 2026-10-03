@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "source-record.schema.json",
-  "title": "Source record of one innovation (parser parse-v1)",
+  "title": "Source record of one innovation (parser parse-v2)",
   "description": "What scripts/parse-catalogues.py writes to .local/pipeline/sources/<id>.json from the raw snapshots: source text verbatim, provenance, deterministic mappings. No model output. See docs/innovation-record.md.",
   "type": "object",
   "additionalProperties": false,

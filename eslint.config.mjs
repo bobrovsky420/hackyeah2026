@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Machine-local folders: raw downloads, tools, reports and the Python venvs.
+    ".local/**",
+    ".venv*/**",
   ]),
 ]);
 

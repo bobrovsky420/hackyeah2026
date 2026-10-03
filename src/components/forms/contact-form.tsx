@@ -7,16 +7,22 @@ import { Checkbox } from "@/components/ui/choice";
 import { ErrorSummary, type FormError } from "@/components/ui/error-summary";
 import { describedBy, Field, FieldError, Hint, Label, TextArea, TextInput } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
+import type { ContactRequest } from "@/lib/contracts/records";
 import { t } from "@/lib/i18n";
-import { EMAIL_PATTERN, useMockForm } from "./use-mock-form";
+import { FormFailed } from "./form-failed";
+import { EMAIL_PATTERN, useSubmitForm } from "./use-submit-form";
 
-/** S9a: a contact request, passed on by ROPS (never an e-mail of a private person). */
+/** S9a: a contact request, relayed by ROPS (never an e-mail of a private person). */
 export function ContactForm({
   defaultMessage,
+  target,
+  routeId,
   backHref,
   backLabel,
 }: {
   defaultMessage: string;
+  target: ContactRequest["target"];
+  routeId: string | null;
   backHref: string;
   backLabel: string;
 }) {
@@ -25,7 +31,7 @@ export function ContactForm({
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(defaultMessage);
   const [consent, setConsent] = useState(false);
-  const { errors, status, summaryRef, doneRef, submit, errorFor } = useMockForm();
+  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/kontakt");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,7 +40,15 @@ export function ContactForm({
     if (!EMAIL_PATTERN.test(email.trim())) found.push({ fieldId: "email", message: t("forms.email.error") });
     if (!message.trim()) found.push({ fieldId: "wiadomosc", message: t("s9a.message.error") });
     if (!consent) found.push({ fieldId: "zgoda", message: t("forms.consent.error") });
-    submit(found);
+    void submit(found, {
+      name: name.trim(),
+      organisation: organisation.trim() || null,
+      email: email.trim(),
+      message: message.trim(),
+      consent,
+      target,
+      route_id: routeId,
+    });
   }
 
   if (status === "sent") {
@@ -56,6 +70,7 @@ export function ContactForm({
 
   return (
     <div className="grid gap-6">
+      {status === "failed" && <FormFailed ref={failedRef} />}
       <ErrorSummary ref={summaryRef} errors={errors} />
       <form noValidate onSubmit={handleSubmit} className="grid gap-6">
         <Field invalid={Boolean(nameError)}>

@@ -13,7 +13,7 @@ import { t, type MessageKey } from "@/lib/i18n";
 import { isRoleCode, roleCodes, roleLabel } from "@/lib/labels";
 import { getGmina } from "@/lib/mock/data";
 import { DRAFT_KEY } from "@/lib/storage-keys";
-import type { RoleCode } from "@/lib/mock/types";
+import type { RoleCode } from "@/lib/contracts/catalogue";
 import { placeLabel } from "@/lib/places";
 import { groupThousands, pluralPl } from "@/lib/text";
 import { cn } from "@/lib/utils";
@@ -32,8 +32,8 @@ interface Draft {
 const steps: MessageKey[] = ["s1.waiting.step1", "s1.waiting.step2", "s1.waiting.step3"];
 
 const examples: { label: MessageKey; text: MessageKey; placeTerc?: string; role: RoleCode }[] = [
-  { label: "s1.examples.seniors.label", text: "s1.examples.seniors.text", placeTerc: "1207062", role: "instytucja" },
-  { label: "s1.examples.youth.label", text: "s1.examples.youth.text", role: "organizacja" },
+  { label: "s1.examples.seniors.label", text: "s1.examples.seniors.text", placeTerc: "1207062", role: "pracownik-instytucji" },
+  { label: "s1.examples.youth.label", text: "s1.examples.youth.text", role: "organizacja-spoleczna" },
   { label: "s1.examples.children.label", text: "s1.examples.children.text", role: "mieszkaniec" },
 ];
 
@@ -139,16 +139,14 @@ export function IntakeForm({ children }: { children: ReactNode }) {
       const response = await fetch("/api/droga", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ problem, place: draft.place.terc, role: draft.role || null }),
+        body: JSON.stringify({ problem_text: problem, place_terc: draft.place.terc, role: draft.role || null }),
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const { id } = (await response.json()) as { id: string };
       await minimumWait;
       setStep(3);
       setAnnouncement(t("s1.waiting.done"));
-      // Always explicit, so an example's own place never replaces "cała Małopolska".
-      const query = new URLSearchParams({ miejsce: draft.place.terc ?? "malopolska", rola: draft.role || "brak" });
-      router.push(`/droga/${id}?${query}`);
+      router.push(`/droga/${id}`);
     } catch {
       timers.current.forEach((timer) => window.clearTimeout(timer));
       setPhase("failed");

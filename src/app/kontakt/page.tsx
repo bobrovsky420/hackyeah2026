@@ -6,7 +6,7 @@ import { InfoPage } from "@/components/info/info-page";
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
 import { getInnovation } from "@/lib/mock/data";
-import { getMockRoute } from "@/lib/mock/routes";
+import { getRoute } from "@/lib/server/routes";
 
 export const metadata: Metadata = { title: t("s9a.meta.title") };
 
@@ -14,8 +14,8 @@ export const metadata: Metadata = { title: t("s9a.meta.title") };
 export default async function ContactPage({ searchParams }: PageProps<"/kontakt">) {
   const query = await searchParams;
   const item = typeof query.innowacja === "string" ? getInnovation(query.innowacja) : undefined;
-  const route = typeof query.droga === "string" ? getMockRoute(query.droga) : undefined;
-  const need = route?.needSummary;
+  const route = typeof query.droga === "string" ? getRoute(query.droga) : undefined;
+  const need = route?.need_summary_pl;
 
   let defaultMessage = t("s9a.message.defaultGeneral");
   if (item && need) defaultMessage = t("s9a.message.defaultInnovationNeed", { title: item.title, need });
@@ -39,7 +39,13 @@ export default async function ContactPage({ searchParams }: PageProps<"/kontakt"
       <Notice title={t("forms.prototype.title")}>
         <p>{t("forms.prototype.text")}</p>
       </Notice>
-      <ContactForm defaultMessage={defaultMessage} backHref={backHref} backLabel={backLabel} />
+      <ContactForm
+        defaultMessage={defaultMessage}
+        target={item ? { type: "innovation", id: item.id } : { type: "advisor", id: route?.people.advisor.category ?? "inne" }}
+        routeId={route?.id ?? null}
+        backHref={backHref}
+        backLabel={backLabel}
+      />
     </InfoPage>
   );
 }

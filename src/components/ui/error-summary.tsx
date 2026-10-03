@@ -15,6 +15,7 @@ export function ErrorSummary({ errors, ref }: { errors: FormError[]; ref?: Ref<H
   return (
     <div
       ref={ref}
+      role="group"
       tabIndex={-1}
       aria-labelledby="bledy-tytul"
       className="grid gap-2 rounded-md border-[3px] border-destructive bg-background p-5"

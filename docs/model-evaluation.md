@@ -167,3 +167,49 @@ ad-hoc runs out of git; copy a run worth keeping into
 `docs/model-evaluation/` with the date, model and host in the file name
 and add a row to the table above. The list of models and providers with
 their current prices is at `https://router.huggingface.co/v1/models`.
+
+## 7. Embedding retrieval probe
+
+Question: which embedding model should select the forty index cards for
+stage 1 (FR-3.7), now that the full index of 381 cards (about 34 000
+tokens) exceeds what Bielik takes and the catalogue will grow.
+
+Method: `scripts/embedding-probe.py`, a self-retrieval test on the 381
+built records. The document of a record is its title, summary, problem,
+mechanism and keywords, the text the retriever indexes. Two query sets,
+both left out of the document: the catalogue's one-line intro of the
+national base (300 queries) and the catalogue's verbatim "Problem" field
+(266 queries, first 1 500 characters). The metric is the rank of the
+record itself. Ollama models ran on the GPU through the local Ollama
+0.17.5; the PolDense models ran on the CPU through sentence-transformers
+6.1.0 with the prefix `[query]: ` on queries, as their card prescribes.
+
+| Model | Size | Intro: recall@1 / @10 / @40, MRR | Problem: recall@1 / @10 / @40, MRR | Query time per 100 |
+|---|---|---|---|---|
+| PolDense-400M (sentence-transformers, CPU) | 400M | 0.93 / 1.00 / 1.00, 0.96 | 0.92 / 0.99 / 1.00, 0.94 | 23 s short, 117 s long |
+| PolDense-150M (sentence-transformers, CPU) | 150M | 0.92 / 1.00 / 1.00, 0.95 | 0.88 / 0.98 / 1.00, 0.92 | 6 s short, 29 s long |
+| qwen3-embedding:8b (Ollama, GPU) | 8B | 0.89 / 0.99 / 1.00, 0.94 | 0.84 / 0.98 / 1.00, 0.89 | 85 s |
+| qwen3-embedding:4b (Ollama, GPU) | 4B | 0.89 / 0.99 / 1.00, 0.93 | 0.80 / 0.97 / 1.00, 0.87 | 84 s |
+| snowflake-arctic-embed2 (Ollama, GPU) | 567M | 0.90 / 0.99 / 1.00, 0.94 | 0.76 / 0.93 / 1.00, 0.82 | 78 s |
+| qwen3-embedding:0.6b (Ollama, GPU) | 0.6B | 0.80 / 0.96 / 0.99, 0.87 | 0.65 / 0.93 / 0.99, 0.75 | 81 s |
+
+Reading: every model puts the right record among the forty almost
+always, so any of them would feed stage 1; the difference is at the top
+of the ranking, which is what the model sees once it reads forty cards.
+The problem queries are the harder set, the catalogue's original wording
+against the workers' rewritten summaries, and there PolDense leads by
+fifteen to twenty points. The Ollama query times are dominated by the
+request overhead of this Ollama build (about 0.8 s per call), not by the
+models. The 8B Qwen, the largest model tried, stays below PolDense-150M
+on the problem set.
+
+Decision (the user, decision log): PolDense-400M,
+fallback PolDense-150M by environment variable. Licence: the model card
+states the Gemma Terms of Use (the model is distilled from a Gemma-based
+embedder); the citation is Dadas et al. 2026, "Parameter-Efficient
+Retrievers for Polish and European Languages". Both go on the credits
+page (12.7).
+
+How to repeat: `.venv-embedding/Scripts/python scripts/embedding-probe.py
+st:OPI-PIB/PolDense-400M st:OPI-PIB/PolDense-150M qwen3-embedding:0.6b`
+with the records built and, for Ollama models, the local Ollama running.

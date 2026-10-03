@@ -1,320 +1,401 @@
+import type { Route } from "@/lib/contracts/route";
+import { t } from "@/lib/i18n";
 import { ropsDepartment } from "./contacts";
-import type { ImplementationPath, KnowledgeItem, MockRoute, Person } from "./types";
 
 /*
- * Canned routes standing in for the matching engine and the route composer.
- * Records come from src/lib/mock/innovations.json; the fit numbers, the
- * summaries and the next steps play the part of the model's text.
+ * Canned routes in the shape of schema 8.4, standing in for the matching
+ * engine and the route composer. The records come from innovations.json;
+ * the fit numbers, summaries, reasons and next steps play the part of the
+ * model's text. "{route}" in a link is replaced by the route's own id.
  */
 
-const ACT_ON_PUBLIC_BENEFIT = "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20030960873";
+const ABC_DIAGNOZY = "https://rops.krakow.pl/mpliki/MACIUS/ABC_Diagnozy_final.pdf";
+const KAPSULA_PLAN =
+  "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/43350/Plan%20zajęć%20warsztatowych_opis.pdf";
 
-const abcDiagnozy: KnowledgeItem = {
-  about: "ROPS w Krakowie",
-  title: "ABC Diagnozy: jak rozpoznać potrzeby mieszkańców gminy",
-  format: "PDF",
-  url: "https://rops.krakow.pl/mpliki/MACIUS/ABC_Diagnozy_final.pdf",
-};
+const common = {
+  created_at: "2026-09-29T10:00:00+02:00",
+  screening: { category: "need", confidence: 0.93, sensitive_topics: [], redactions: 0, crisis_banner: false },
+  engine: {
+    provider: "replay",
+    model: "prototyp",
+    prompt_version: "prototyp-v1",
+    data_version: "2026-09-28",
+    latency_ms: 0,
+    cached: true,
+  },
+  label_pl: t("route.generated.label"),
+  reference_code: null,
+} satisfies Partial<Route>;
 
-function ropsAdvisor(role: string): Person {
-  return {
-    name: ropsDepartment.name,
-    role,
-    channels: [
-      { kind: "email", value: ropsDepartment.email, href: `mailto:${ropsDepartment.email}` },
-      { kind: "phone", value: ropsDepartment.phone, href: ropsDepartment.phoneHref },
-      { kind: "hours", value: ropsDepartment.hours },
-    ],
-  };
+function advisor(category: string): Route["people"]["advisor"] {
+  return { category, name: null, role: ropsDepartment.name, email: ropsDepartment.email, phone: ropsDepartment.phone };
 }
 
-const smallGrant: ImplementationPath = {
-  id: "maly-grant",
-  name: "Mały grant",
-  applicant: "Organizacja społeczna",
-  amount: "Do 10 000 zł, zadanie trwa do 90 dni",
-  deadline: "W dowolnym momencie, bez konkursu",
-  why: "Organizacja z gminy może szybko zacząć spotkania lub warsztaty.",
-  steps: [
-    "Znajdź organizację, która poprowadzi zajęcia.",
-    "Złóż ofertę w urzędzie gminy.",
-    "Urząd publikuje ofertę na 7 dni, potem podpisuje umowę.",
-  ],
-  source: {
-    label: "Ustawa o działalności pożytku publicznego i o wolontariacie, art. 19a",
-    url: ACT_ON_PUBLIC_BENEFIT,
-  },
+const noPeople = (category: string): Route["people"] => ({
+  innovators: [],
+  implementers_nearby: [],
+  advisor: advisor(category),
+  readiness: { count: 0, names_with_consent: [] },
+});
+
+const abcDiagnozy = {
+  title: "ABC Diagnozy: jak rozpoznać potrzeby mieszkańców gminy",
+  url: ABC_DIAGNOZY,
+  type: "guide",
+  for_innovation_id: null,
 };
 
-const localInitiative: ImplementationPath = {
-  id: "inicjatywa-lokalna",
-  name: "Inicjatywa lokalna",
-  applicant: "Mieszkańcy gminy",
-  amount: "Bez stałej kwoty. Gmina wspiera działanie, mieszkańcy dokładają pracę lub materiały.",
-  deadline: "Według uchwały rady gminy",
-  why: "Mieszkańcy mogą sami zorganizować spotkania z pomocą gminy.",
-  steps: [
-    "Sprawdź, czy rada gminy przyjęła uchwałę o inicjatywie lokalnej.",
-    "Zbierz grupę mieszkańców i opisz działanie.",
-    "Złóż wniosek w urzędzie gminy.",
-  ],
-  source: {
-    label: "Ustawa o działalności pożytku publicznego i o wolontariacie, art. 19b do 19h",
-    url: ACT_ON_PUBLIC_BENEFIT,
-  },
-};
-
-const incubatorCall: ImplementationPath = {
-  id: "inkubator",
-  name: "Nabór do inkubatora innowacji społecznych",
-  applicant: "Osoba, grupa, organizacja lub instytucja z pomysłem",
-  amount: "Grant na przetestowanie pomysłu. Kwotę podaje regulamin naboru.",
-  deadline: "Termin kolejnego naboru ogłasza ROPS.",
-  why: "Inkubator pomaga zaprojektować i przetestować nowe rozwiązanie.",
-  steps: [
-    "Zapisz potrzebę w banku potrzeb.",
-    "Przygotuj fiszkę potrzeby dla inkubatora.",
-    "Zgłoś pomysł w najbliższym naborze.",
-  ],
-  source: { label: "Innowacje społeczne w ROPS w Krakowie", url: "https://rops.krakow.pl/innowacje-spoleczne" },
-};
-
-const seniors: MockRoute = {
+const seniors: Route = {
+  ...common,
   id: "przyklad-seniorzy",
+  input: {
+    problem_text: t("s1.examples.seniors.text"),
+    place_terc: "1207062",
+    place_name: "Laskowa",
+    role: "pracownik-instytucji",
+    target_groups: ["seniorzy"],
+  },
   mode: "route",
-  needSummary: "Samotni seniorzy w gminie wiejskiej bez domu dziennego pobytu",
-  defaultPlaceTerc: "1207062",
-  defaultRole: "instytucja",
-  summary:
+  need_summary_pl: "Samotni seniorzy w gminie wiejskiej bez domu dziennego pobytu",
+  mode_reason_pl: "Trzy rozwiązania odpowiadają bezpośrednio na opisany problem.",
+  summary_pl:
     "Samotne osoby starsze potrzebują miejsca i powodu do spotkań. Dwa pierwsze rozwiązania wymagają tylko sali, osoby prowadzącej i prostych materiałów. Można je zacząć w świetlicy albo w bibliotece.",
   solutions: [
     {
-      innovationId: "inn-nat-649",
-      fit: 86,
-      reasons: [
+      innovation_id: "inn-nat-649",
+      fit_score: 86,
+      fit_label_pl: "bardzo dobre dopasowanie",
+      fit_reasons: [
         {
-          text: "wykluczenia osób starszych z aktywności społecznej ze względu na wiek, ograniczoną mobilność",
           field: "problem",
+          quote: "wykluczenia osób starszych z aktywności społecznej ze względu na wiek, ograniczoną mobilność",
+          why_pl: "Dotyczy osób starszych, które nie wychodzą z domu.",
         },
-        { text: "Dzieci uczą seniorów korzystania z nowoczesnych technologii, komunikatorów internetowych", field: "mechanism" },
+        {
+          field: "jak_dziala",
+          quote: "Dzieci uczą seniorów korzystania z nowoczesnych technologii, komunikatorów internetowych",
+          why_pl: "Daje powód do regularnych spotkań w świetlicy.",
+        },
       ],
-      gaps: [],
-      whereItWorks: "Żurawiczki w gminie Zarzecze, województwo podkarpackie",
+      gaps_pl: [],
+      adaptation_note_pl: "Zajęcia mogą prowadzić uczniowie pobliskiej szkoły.",
+      what_it_takes: {
+        implementer_types: ["placowka", "ngo", "osoba"],
+        cost_band: "low",
+        time_to_implement: "weeks",
+        evidence_level: "tested",
+      },
+      where_it_runs: { count: 1, nearest: [] },
+      materials: [{ title: "Plan zajęć warsztatowych", url: KAPSULA_PLAN, type: "pdf" }],
+      contact: { organisation: "Gmina Zarzecze", channels: [{ type: "www", value: "https://innoes.pl/innowacje/7" }] },
     },
     {
-      innovationId: "inn-nat-865",
-      fit: 78,
-      reasons: [
-        { text: "problem samotności i izolacji społecznej", field: "problem" },
-        { text: "gra składająca się z zestawu kart z różnymi zadaniami dla graczy", field: "mechanism" },
+      innovation_id: "inn-nat-865",
+      fit_score: 78,
+      fit_label_pl: "dobre dopasowanie",
+      fit_reasons: [
+        { field: "problem", quote: "problem samotności i izolacji społecznej", why_pl: "Odpowiada na samotność osób starszych." },
+        {
+          field: "jak_dziala",
+          quote: "gra składająca się z zestawu kart z różnymi zadaniami dla graczy",
+          why_pl: "Wystarczy wydruk gry i osoba, która ją poprowadzi.",
+        },
       ],
-      gaps: [],
-      whereItWorks: "Źródło nie podaje miejsc wdrożeń.",
+      gaps_pl: [],
+      adaptation_note_pl: null,
+      what_it_takes: {
+        implementer_types: ["placowka"],
+        cost_band: "low",
+        time_to_implement: "days",
+        evidence_level: "tested",
+      },
+      where_it_runs: { count: 0, nearest: [] },
+      materials: [
+        {
+          title: "Instrukcja do gry",
+          url: "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/13052/681_01_instrukcja_do_gry.pdf",
+          type: "pdf",
+        },
+      ],
+      contact: { organisation: "BLOOM Katarzyna Majewska", channels: [] },
     },
     {
-      innovationId: "inn-nat-biblioteka-senior-dla-seniora",
-      fit: 71,
-      reasons: [{ text: "Samotność i marginalizacja osób starszych", field: "problem" }],
-      gaps: [],
-      whereItWorks: "Tarnowskie Góry, województwo śląskie",
+      innovation_id: "inn-nat-biblioteka-senior-dla-seniora",
+      fit_score: 71,
+      fit_label_pl: "dobre dopasowanie",
+      fit_reasons: [
+        {
+          field: "problem",
+          quote: "Samotność i marginalizacja osób starszych",
+          why_pl: "Nazywa ten sam problem, który opisujesz.",
+        },
+      ],
+      gaps_pl: [],
+      adaptation_note_pl: null,
+      what_it_takes: {
+        implementer_types: ["placowka", "ngo", "ops-cus-pcpr"],
+        cost_band: "low",
+        time_to_implement: "months",
+        evidence_level: "tested",
+      },
+      where_it_runs: { count: 1, nearest: [] },
+      materials: [],
+      contact: {
+        organisation: "Miejski Ośrodek Pomocy w Tarnowskich Górach",
+        channels: [{ type: "www", value: "https://www.mopstg.pl/p,164,biblioteka-senior-dla-seniora" }],
+      },
     },
   ],
   knowledge: [
+    { title: "Plan zajęć warsztatowych", url: KAPSULA_PLAN, type: "pdf", for_innovation_id: "inn-nat-649" },
     {
-      about: "Kapsuła czasu - recepta na samotność",
-      title: "Plan zajęć warsztatowych",
-      format: "PDF",
-      url: "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/43350/Plan%20zajęć%20warsztatowych_opis.pdf",
-    },
-    {
-      about: "Kapsuła czasu - recepta na samotność",
       title: "Poradnik dla prowadzących",
-      format: "PDF",
       url: "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/43350/Skrypt%20(poradnik).pdf",
+      type: "pdf",
+      for_innovation_id: "inn-nat-649",
     },
     {
-      about: "Masz szczęście - gra towarzyska",
       title: "Instrukcja do gry",
-      format: "PDF",
       url: "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/13052/681_01_instrukcja_do_gry.pdf",
+      type: "pdf",
+      for_innovation_id: "inn-nat-865",
     },
     abcDiagnozy,
   ],
-  people: [
-    {
-      name: "Gmina Zarzecze",
-      role: "Autorzy rozwiązania Kapsuła czasu",
-      channels: [{ kind: "website", value: "innoes.pl", href: "https://innoes.pl/innowacje/7" }],
-      contactInnovationId: "inn-nat-649",
-    },
-    {
-      name: "BLOOM Katarzyna Majewska",
-      role: "Twórcy gry Masz szczęście",
-      channels: [],
-      contactInnovationId: "inn-nat-865",
-    },
-    ropsAdvisor("Opiekun kategorii Seniorzy"),
-  ],
-  readinessCount: 0,
-  paths: [
-    {
-      id: "asy-priorytet-v",
-      name: "Program Aktywni Seniorzy ASY, priorytet V",
-      applicant: "Gmina",
-      amount: "Do 200 000 zł na utworzenie klubu seniora, do 80 % kosztów",
-      deadline: "Nabór w kwietniu. Następny spodziewany w 2027 r.",
-      why: "Gmina może otworzyć klub seniora w świetlicy lub innym wolnym lokalu.",
-      steps: [
-        "Ustal z wójtem lub burmistrzem, kto przygotuje wniosek.",
-        "Opisz lokal i plan zajęć klubu.",
-        "Złóż wniosek w kwietniowym naborze.",
-      ],
-      source: {
-        label: "Program w Monitorze Polskim, M.P. 2025 poz. 1255",
-        url: "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WMP20250001255",
+  people: {
+    innovators: [
+      {
+        organisation: "Gmina Zarzecze",
+        channels: [{ type: "www", value: "https://innoes.pl/innowacje/7" }],
+        persons_public: [],
+        innovation_id: "inn-nat-649",
       },
-    },
-    smallGrant,
-    localInitiative,
+      { organisation: "BLOOM Katarzyna Majewska", channels: [], persons_public: [], innovation_id: "inn-nat-865" },
+    ],
+    implementers_nearby: [],
+    advisor: advisor("seniorzy"),
+    readiness: { count: 0, names_with_consent: [] },
+  },
+  path: {
+    applicant_type: "jst",
+    cost_band: "low",
+    paths: [
+      { path_id: "asy-priorytet-v", why_pl: "Gmina może otworzyć klub seniora w świetlicy lub innym wolnym lokalu." },
+      { path_id: "maly-grant-19a", why_pl: "Organizacja z gminy może szybko zacząć zajęcia z grą lub warsztaty." },
+      { path_id: "inicjatywa-lokalna", why_pl: "Mieszkańcy mogą sami zorganizować spotkania w świetlicy z pomocą gminy." },
+    ],
+  },
+  next_steps: [
+    { text_pl: "Pobierz plan zajęć Kapsuły czasu.", link: KAPSULA_PLAN },
+    { text_pl: "Poproś Gminę Zarzecze o rozmowę.", link: "/kontakt?innowacja=inn-nat-649&droga={route}" },
+    { text_pl: "Sprawdź program Aktywni Seniorzy ASY.", link: "#sciezka-asy-priorytet-v" },
   ],
-  nextSteps: [
-    {
-      text: "Pobierz plan zajęć Kapsuły czasu.",
-      href: "https://cdn.innowacjespoleczne.pl/app/public/docs/innovations/43350/Plan%20zajęć%20warsztatowych_opis.pdf",
-    },
-    { text: "Poproś Gminę Zarzecze o rozmowę.", href: "/kontakt?innowacja=inn-nat-649&droga=przyklad-seniorzy" },
-    { text: "Sprawdź program Aktywni Seniorzy ASY.", href: "#sciezka-asy-priorytet-v" },
-  ],
-  unknowns: [
-    "Nie znamy wdrożeń tych rozwiązań w Małopolsce.",
+  unknowns_pl: [
+    "Nie znamy wdrożeń tych rozwiązań w promieniu 50 km.",
     "Nie wiemy, czy lokal jest dostępny dla osób poruszających się na wózku.",
   ],
 };
 
-const youth: MockRoute = {
+const createNewPaths = (first: string): Route["path"] => ({
+  applicant_type: "ngo",
+  cost_band: "unknown",
+  paths: [
+    { path_id: "iws-inkubator", why_pl: first },
+    { path_id: "maly-grant-19a", why_pl: "Mały grant wystarczy na pilotaż nowego pomysłu." },
+    { path_id: "inicjatywa-lokalna", why_pl: "Mieszkańcy mogą zacząć sami, z pomocą gminy." },
+  ],
+});
+
+const bankSteps = (third: Route["next_steps"][number]): Route["next_steps"] => [
+  { text_pl: "Zapisz potrzebę w banku potrzeb.", link: "/zapisz-potrzebe?droga={route}" },
+  { text_pl: "Napisz do Działu Innowacji Społecznych ROPS.", link: "/kontakt?droga={route}" },
+  third,
+];
+
+const youth: Route = {
+  ...common,
   id: "przyklad-mlodziez",
+  input: {
+    problem_text: t("s1.examples.youth.text"),
+    place_terc: null,
+    place_name: null,
+    role: "organizacja-spoleczna",
+    target_groups: ["dzieci-mlodziez-rodziny"],
+  },
   mode: "partial",
-  needSummary: "Młodzież bez miejsca spotkań i picie alkoholu na przystanku",
-  defaultRole: "organizacja",
-  modeReason:
+  need_summary_pl: "Młodzież bez miejsca spotkań i picie alkoholu na przystanku",
+  mode_reason_pl:
     "Najlepsze dopasowanie to 58 na 100. Rozwiązania pomagają pracować z młodzieżą, ale nie tworzą miejsca spotkań.",
+  summary_pl: null,
   solutions: [
     {
-      innovationId: "inn-nat-pomosty",
-      fit: 58,
-      reasons: [{ text: "zachęca młodzież do zgłaszania pomysłów na aktywności", field: "mechanism" }],
-      gaps: [
+      innovation_id: "inn-nat-pomosty",
+      fit_score: 58,
+      fit_label_pl: "częściowe dopasowanie",
+      fit_reasons: [
+        {
+          field: "jak_dziala",
+          quote: "zachęca młodzież do zgłaszania pomysłów na aktywności",
+          why_pl: "Młodzież sama wybiera, co chce robić.",
+        },
+      ],
+      gaps_pl: [
         "Działa w młodzieżowych ośrodkach socjoterapii, a nie w otwartym miejscu spotkań.",
         "Nie obejmuje profilaktyki picia alkoholu.",
       ],
-      whereItWorks: "Źródło nie podaje miejsc wdrożeń.",
+      adaptation_note_pl: null,
+      what_it_takes: {
+        implementer_types: ["ops-cus-pcpr", "placowka"],
+        cost_band: "medium",
+        time_to_implement: "months",
+        evidence_level: "tested",
+      },
+      where_it_runs: { count: 0, nearest: [] },
+      materials: [],
+      contact: { organisation: null, channels: [] },
     },
     {
-      innovationId: "inn-nat-scenariusze-przyszlosci",
-      fit: 49,
-      reasons: [{ text: "wzmacniają pewność siebie młodzieży", field: "summary" }],
-      gaps: ["To warsztaty w szkole, a nie stałe miejsce spotkań.", "Nie dotyczy picia alkoholu."],
-      whereItWorks: "Źródło nie podaje miejsc wdrożeń.",
+      innovation_id: "inn-nat-scenariusze-przyszlosci",
+      fit_score: 49,
+      fit_label_pl: "częściowe dopasowanie",
+      fit_reasons: [
+        {
+          field: "problem",
+          quote: "braku w szkolnej edukacji przestrzeni do krytycznego i odważnego myślenia o własnej przyszłości",
+          why_pl: "Daje młodym ludziom przestrzeń i poczucie sprawczości.",
+        },
+      ],
+      gaps_pl: ["To warsztaty w szkole, a nie stałe miejsce spotkań.", "Nie dotyczy picia alkoholu."],
+      adaptation_note_pl: null,
+      what_it_takes: {
+        implementer_types: ["placowka"],
+        cost_band: "low",
+        time_to_implement: "weeks",
+        evidence_level: "tested",
+      },
+      where_it_runs: { count: 0, nearest: [] },
+      materials: [],
+      contact: { organisation: "Stowarzyszenie Pedagogów Teatru", channels: [] },
     },
   ],
   knowledge: [abcDiagnozy],
-  people: [ropsAdvisor("Opiekun kategorii Dzieci, młodzież i rodzina")],
-  paths: [incubatorCall, smallGrant, localInitiative],
-  nextSteps: [
-    { text: "Zapisz potrzebę w banku potrzeb.", href: "/zapisz-potrzebe?droga=przyklad-mlodziez" },
-    { text: "Napisz do Działu Innowacji Społecznych ROPS.", href: "/kontakt?droga=przyklad-mlodziez" },
-    { text: "Przeczytaj, jak rozpoznać potrzeby młodzieży w gminie.", href: abcDiagnozy.url },
-  ],
-  unknowns: [
+  people: noPeople("dzieci-mlodziez-rodziny"),
+  path: createNewPaths("Inkubator pomaga zaprojektować i przetestować miejsce spotkań dla młodzieży."),
+  next_steps: bankSteps({ text_pl: "Przeczytaj, jak rozpoznać potrzeby młodzieży w gminie.", link: ABC_DIAGNOZY }),
+  unknowns_pl: [
     "Nie znamy innowacji, które tworzą miejsca spotkań dla młodzieży.",
     "Nie wiemy, ilu młodych ludzi dotyczy problem.",
   ],
 };
 
-const childrenUkraine: MockRoute = {
+const children: Route = {
+  ...common,
   id: "przyklad-dzieci",
+  input: {
+    problem_text: t("s1.examples.children.text"),
+    place_terc: null,
+    place_name: null,
+    role: "mieszkaniec",
+    target_groups: ["dzieci-mlodziez-rodziny", "cudzoziemcy"],
+  },
   mode: "none",
-  needSummary: "Dzieci z rodzin z Ukrainy bez pomocy w odrabianiu lekcji",
-  defaultRole: "mieszkaniec",
-  modeReason:
+  need_summary_pl: "Dzieci z rodzin z Ukrainy bez pomocy w odrabianiu lekcji",
+  mode_reason_pl:
     "Najlepsze dopasowanie to 41 na 100. W bazach nie ma innowacji o pomocy w lekcjach dla dzieci z Ukrainy.",
+  summary_pl: null,
   solutions: [
     {
-      innovationId: "inn-rops-moj-pomocny-virtual-world",
-      fit: 41,
-      reasons: [{ text: "trudności w adaptacji w środowisku szkolnym dzieci ukraińskich", field: "problem" }],
-      gaps: [
+      innovation_id: "inn-rops-moj-pomocny-virtual-world",
+      fit_score: 41,
+      fit_label_pl: "niskie dopasowanie",
+      fit_reasons: [
+        {
+          field: "jakich_problemow_dotyczy",
+          quote: "trudności w adaptacji w środowisku szkolnym dzieci ukraińskich",
+          why_pl: "Dotyczy tych samych dzieci i ich szkoły.",
+        },
+      ],
+      gaps_pl: [
         "To aplikacja ze zwrotami po polsku, a nie pomoc w lekcjach.",
         "Nie ma w niej osoby, która tłumaczy zadania.",
       ],
-      whereItWorks: "Źródło nie podaje miejsc wdrożeń.",
+      adaptation_note_pl: null,
+      what_it_takes: {
+        implementer_types: ["placowka"],
+        cost_band: "low",
+        time_to_implement: "days",
+        evidence_level: "tested",
+      },
+      where_it_runs: { count: 0, nearest: [] },
+      materials: [],
+      contact: { organisation: "Stowarzyszenie Edukacja Praktyczna T.K.K", channels: [] },
     },
   ],
   knowledge: [abcDiagnozy],
-  people: [ropsAdvisor("Opiekun kategorii Cudzoziemcy")],
-  paths: [incubatorCall, localInitiative, smallGrant],
-  nextSteps: [
-    { text: "Zapisz potrzebę w banku potrzeb.", href: "/zapisz-potrzebe?droga=przyklad-dzieci" },
-    { text: "Napisz do Działu Innowacji Społecznych ROPS.", href: "/kontakt?droga=przyklad-dzieci" },
-    { text: "Sprawdź, czy gmina ma uchwałę o inicjatywie lokalnej.", href: "#sciezka-inicjatywa-lokalna" },
-  ],
-  unknowns: ["Nie wiemy, ilu dzieci dotyczy problem.", "Nie znamy szkół w okolicy, które już pomagają."],
+  people: noPeople("cudzoziemcy"),
+  path: createNewPaths("Inkubator pomaga zaprojektować i przetestować pomoc w lekcjach."),
+  next_steps: bankSteps({
+    text_pl: "Sprawdź, czy gmina ma uchwałę o inicjatywie lokalnej.",
+    link: "#sciezka-inicjatywa-lokalna",
+  }),
+  unknowns_pl: ["Nie wiemy, ilu dzieci dotyczy problem.", "Nie znamy szkół w okolicy, które już pomagają."],
 };
 
-const noMatch: MockRoute = {
+const noMatch: Route = {
+  ...common,
   id: "brak-rozwiazania",
+  input: { problem_text: null, place_terc: null, place_name: null, role: null, target_groups: [] },
   mode: "none",
-  modeReason: "W bazach nie ma innowacji, która odpowiada na ten opis.",
+  need_summary_pl: null,
+  mode_reason_pl: "W bazach nie ma innowacji, która odpowiada na ten opis.",
+  summary_pl: null,
   solutions: [],
   knowledge: [abcDiagnozy],
-  people: [ropsAdvisor("Opiekunowie wszystkich kategorii innowacji")],
-  paths: [incubatorCall, localInitiative, smallGrant],
-  nextSteps: [
-    { text: "Zapisz potrzebę w banku potrzeb.", href: "/zapisz-potrzebe?droga=brak-rozwiazania" },
-    { text: "Napisz do Działu Innowacji Społecznych ROPS.", href: "/kontakt?droga=brak-rozwiazania" },
-    { text: "Przeczytaj, jak rozpoznać potrzeby mieszkańców gminy.", href: abcDiagnozy.url },
-  ],
-  unknowns: ["Nie wiemy, czy podobną potrzebę zgłosiły inne gminy."],
+  people: noPeople("inne"),
+  path: createNewPaths("Inkubator pomaga zaprojektować i przetestować nowe rozwiązanie."),
+  next_steps: bankSteps({ text_pl: "Przeczytaj, jak rozpoznać potrzeby mieszkańców gminy.", link: ABC_DIAGNOZY }),
+  unknowns_pl: ["Nie wiemy, czy podobną potrzebę zgłosiły inne gminy."],
 };
 
-const humanHelp: MockRoute = {
-  id: "pomoc-czlowieka",
-  mode: "redirected",
+const screeningOutcome = (id: string, mode: Route["mode"], category: string): Route => ({
+  ...common,
+  id,
+  input: { problem_text: null, place_terc: null, place_name: null, role: null, target_groups: [] },
+  mode,
+  need_summary_pl: null,
+  mode_reason_pl: null,
+  screening: { ...common.screening, category },
+  summary_pl: null,
   solutions: [],
   knowledge: [],
-  people: [],
-  paths: [],
-  nextSteps: [],
-  unknowns: [],
-};
+  people: noPeople("inne"),
+  path: { applicant_type: "", cost_band: "unknown", paths: [] },
+  next_steps: [],
+  unknowns_pl: [],
+});
 
-const declined: MockRoute = {
-  id: "z-tym-nie-pomozemy",
-  mode: "declined",
-  referenceCode: "HM-2026-0417",
-  solutions: [],
-  knowledge: [],
-  people: [],
-  paths: [],
-  nextSteps: [],
-  unknowns: [],
-};
+const templates: Route[] = [
+  seniors,
+  youth,
+  children,
+  noMatch,
+  screeningOutcome("pomoc-czlowieka", "redirected", "crisis"),
+  { ...screeningOutcome("z-tym-nie-pomozemy", "declined", "harm"), reference_code: "HM-2026-0417" },
+  screeningOutcome("inny-cel", "off_topic", "off_topic"),
+];
 
-const offTopic: MockRoute = {
-  id: "inny-cel",
-  mode: "off_topic",
-  solutions: [],
-  knowledge: [],
-  people: [],
-  paths: [],
-  nextSteps: [],
-  unknowns: [],
-};
+/** Replaces the "{route}" placeholder in the links with the route's own id. */
+export function withRouteId(route: Route, id: string): Route {
+  const copy = structuredClone(route);
+  copy.id = id;
+  copy.next_steps = copy.next_steps.map((step) => ({ ...step, link: step.link.replace("{route}", id) }));
+  return copy;
+}
 
-const routes = new Map(
-  [seniors, youth, childrenUkraine, noMatch, humanHelp, declined, offTopic].map((route) => [route.id, route]),
-);
+const examples = new Map(templates.map((route) => [route.id, withRouteId(route, route.id)]));
 
-export function getMockRoute(id: string): MockRoute | undefined {
-  return routes.get(id);
+/** The example routes, reachable at /droga/{id} in every run of the prototype. */
+export function getExampleRoute(id: string): Route | undefined {
+  return examples.get(id);
 }

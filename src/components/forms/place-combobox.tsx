@@ -137,7 +137,7 @@ export function PlaceCombobox({
           role="listbox"
           aria-label={t("place.list.label")}
           hidden={!expanded}
-          className="absolute inset-x-0 z-20 mt-1 max-h-80 overflow-auto rounded-md border-2 border-input bg-background py-1 shadow-md"
+          className="absolute inset-x-0 z-20 mt-1 rounded-md border-2 border-input bg-background py-1 shadow-md"
         >
           {results.map((option, index) => (
             <li

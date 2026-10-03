@@ -1,44 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox, RadioList } from "@/components/ui/choice";
 import { ErrorSummary, type FormError } from "@/components/ui/error-summary";
 import { describedBy, Field, FieldError, Hint, Label, TextArea, TextInput } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
+import type { RoleCode } from "@/lib/contracts/catalogue";
 import { t } from "@/lib/i18n";
 import { isRoleCode, roleCodes, roleLabel } from "@/lib/labels";
-import type { RoleCode } from "@/lib/mock/types";
-import { DRAFT_KEY } from "@/lib/storage-keys";
+import { FormFailed } from "./form-failed";
 import { PlaceCombobox, type PlaceValue } from "./place-combobox";
-import { EMAIL_PATTERN, useMockForm } from "./use-mock-form";
+import { EMAIL_PATTERN, useSubmitForm } from "./use-submit-form";
 
-/** S9c: save a need in the needs bank, prefilled with the text typed on S1. */
-export function SaveNeedForm({ defaultText, backHref }: { defaultText: string; backHref: string | null }) {
-  const [text, setText] = useState(defaultText);
-  const [place, setPlace] = useState<PlaceValue>({ text: "", terc: null });
-  const [role, setRole] = useState<RoleCode | "">("");
+/** S9c: save a need in the needs bank, prefilled from the route it came from. */
+export function SaveNeedForm({
+  defaults,
+  routeId,
+  backHref,
+}: {
+  defaults: { text: string; place: PlaceValue; role: RoleCode | ""; summary: string | null; targetGroups: string[] };
+  routeId: string | null;
+  backHref: string | null;
+}) {
+  const [text, setText] = useState(defaults.text);
+  const [place, setPlace] = useState<PlaceValue>(defaults.place);
+  const [role, setRole] = useState<RoleCode | "">(defaults.role);
   const [email, setEmail] = useState("");
   const [consentStore, setConsentStore] = useState(false);
   const [consentPublish, setConsentPublish] = useState(false);
-  const { errors, status, summaryRef, doneRef, submit, errorFor } = useMockForm();
-
-  useEffect(() => {
-    let draft: { problem?: unknown; place?: { text?: unknown; terc?: unknown }; role?: unknown };
-    try {
-      draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY) ?? "{}");
-    } catch {
-      return; // No draft: the form keeps the route's summary.
-    }
-    /* eslint-disable react-hooks/set-state-in-effect -- the draft lives in the browser, readable only after mounting */
-    if (typeof draft.problem === "string" && draft.problem.trim()) setText(draft.problem);
-    if (typeof draft.place?.text === "string" && typeof draft.place.terc === "string") {
-      setPlace({ text: draft.place.text, terc: draft.place.terc });
-    }
-    if (isRoleCode(draft.role)) setRole(draft.role);
-    /* eslint-enable react-hooks/set-state-in-effect */
-  }, []);
+  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/potrzeby");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,7 +38,17 @@ export function SaveNeedForm({ defaultText, backHref }: { defaultText: string; b
     if (text.trim().length < 20) found.push({ fieldId: "opis", message: t("s1.problem.errorShort") });
     if (email.trim() && !EMAIL_PATTERN.test(email.trim())) found.push({ fieldId: "email", message: t("forms.email.error") });
     if (!consentStore) found.push({ fieldId: "zgoda-przechowywanie", message: t("forms.consent.error") });
-    submit(found);
+    void submit(found, {
+      problem_text: text.trim(),
+      summary_pl: defaults.summary,
+      place_terc: place.terc,
+      role: role || null,
+      target_groups: defaults.targetGroups,
+      email: email.trim() || null,
+      consent_store: consentStore,
+      consent_publish: consentPublish,
+      route_id: routeId,
+    });
   }
 
   if (status === "sent") {
@@ -69,6 +71,7 @@ export function SaveNeedForm({ defaultText, backHref }: { defaultText: string; b
 
   return (
     <div className="grid gap-6">
+      {status === "failed" && <FormFailed ref={failedRef} />}
       <ErrorSummary ref={summaryRef} errors={errors} />
       <form noValidate onSubmit={handleSubmit} className="grid gap-6">
         <Field invalid={Boolean(textError)}>

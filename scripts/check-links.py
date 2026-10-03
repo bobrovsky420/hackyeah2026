@@ -93,6 +93,8 @@ class Live:
         self.last[host] = time.time()
 
     def request(self, url, method):
+        # Catalogue links carry raw Polish letters in the path; percent-encode them, keep existing escapes.
+        url = urllib.parse.quote(url, safe=":/?&=%#+@;,!$'()*[]~")
         req = urllib.request.Request(url, method=method)
         if method == "GET":
             req.add_header("Range", "bytes=0-0")
@@ -117,8 +119,11 @@ class Live:
                     status, nbytes = self.request(url, "GET")
                 else:
                     raise
+            if status == 200 and nbytes == 0:       # a HEAD may report no length; confirm with a ranged GET
+                self.wait(url)
+                status, nbytes = self.request(url, "GET")
             ok = status < 400
-            if status == 200 and nbytes == 0:
+            if status in (200, 206) and nbytes == 0:
                 ok = False
             return {"ok": ok, "status": status, "bytes": nbytes, "note": "" if ok else "empty file"}
         except urllib.error.HTTPError as e:

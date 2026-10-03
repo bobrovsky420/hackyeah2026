@@ -32,8 +32,15 @@ export function RouteActions({ routeId, markdown }: { routeId: string; markdown:
     try {
       localStorage.setItem(feedbackKey(routeId), value);
     } catch {
-      // Storage blocked: the vote is not remembered.
+      // Storage blocked: the vote is not remembered in this browser.
     }
+    fetch("/api/opinie", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ route_id: routeId, value }),
+    }).catch(() => {
+      // The thanks stays: a lost vote is not worth an error for the reader.
+    });
   }
 
   function download() {

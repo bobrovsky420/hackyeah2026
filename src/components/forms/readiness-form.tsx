@@ -8,8 +8,9 @@ import { describedBy, Field, FieldError, Hint, Label, TextInput } from "@/compon
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
 import { targetGroupCodes, targetGroupLabel } from "@/lib/labels";
+import { FormFailed } from "./form-failed";
 import { PlaceCombobox, type PlaceValue } from "./place-combobox";
-import { useMockForm } from "./use-mock-form";
+import { useSubmitForm } from "./use-submit-form";
 
 /** S9b: readiness to act ("Chcę pomóc"), with separate consents to store and to show the name. */
 export function ReadinessForm() {
@@ -20,7 +21,7 @@ export function ReadinessForm() {
   const [contact, setContact] = useState("");
   const [consentStore, setConsentStore] = useState(false);
   const [consentShowName, setConsentShowName] = useState(false);
-  const { errors, status, summaryRef, doneRef, submit, errorFor } = useMockForm();
+  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/gotowosc");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -28,7 +29,15 @@ export function ReadinessForm() {
     if (!name.trim()) found.push({ fieldId: "nazwa", message: t("s9b.name.error") });
     if (!contact.trim()) found.push({ fieldId: "kontakt", message: t("s9b.contact.error") });
     if (!consentStore) found.push({ fieldId: "zgoda-przechowywanie", message: t("forms.consent.error") });
-    submit(found);
+    void submit(found, {
+      display_name: name.trim(),
+      is_organisation: isOrganisation,
+      place_terc: place.terc,
+      topics,
+      contact: contact.trim(),
+      consent_store: consentStore,
+      consent_display_name: consentShowName,
+    });
   }
 
   if (status === "sent") {
@@ -46,6 +55,7 @@ export function ReadinessForm() {
 
   return (
     <div className="grid gap-6">
+      {status === "failed" && <FormFailed ref={failedRef} />}
       <ErrorSummary ref={summaryRef} errors={errors} />
       <form noValidate onSubmit={handleSubmit} className="grid gap-6">
         <Field invalid={Boolean(nameError)}>

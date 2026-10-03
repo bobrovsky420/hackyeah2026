@@ -3,19 +3,28 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
+import type { Channel, Route } from "@/lib/contracts/route";
 import { t, type MessageKey } from "@/lib/i18n";
-import type { MockRoute, Person } from "@/lib/mock/types";
+import { knowledgeTypeLabel, roleLabel, targetGroupLabel, telHref } from "@/lib/labels";
+import { getInnovation } from "@/lib/mock/data";
+import { getPath } from "@/lib/mock/paths";
+import { placeText, placeWhere } from "@/lib/places";
 import { FocusOnMount } from "./focus-on-mount";
 import { PathCard } from "./path-card";
 import { RouteActions } from "./route-actions";
 import { SolutionCard } from "./solution-card";
 
-const channelLabels: Record<Person["channels"][number]["kind"], MessageKey> = {
+const channelLabels: Record<Channel["type"], MessageKey> = {
+  www: "people.channel.website",
   email: "people.channel.email",
   phone: "people.channel.phone",
-  hours: "people.channel.hours",
-  website: "people.channel.website",
 };
+
+function channelHref(channel: Channel): string {
+  if (channel.type === "email") return `mailto:${channel.value}`;
+  if (channel.type === "phone") return telHref(channel.value);
+  return channel.value;
+}
 
 function Block({ id, title, lead, children }: { id: string; title: string; lead: string; children: ReactNode }) {
   return (
@@ -31,63 +40,80 @@ function Block({ id, title, lead, children }: { id: string; title: string; lead:
   );
 }
 
-function PeopleList({ route, placeWhere }: { route: MockRoute; placeWhere: string }) {
+function Channels({ channels }: { channels: Channel[] }) {
+  if (channels.length === 0) return null;
   return (
-    <div className="grid gap-5">
-      {route.people.map((person) => (
-        <div key={person.name} className="grid gap-1.5 border-b border-border pb-5 last:border-b-0 last:pb-0">
-          <h3 className="text-[1.15rem] font-bold">{person.name}</h3>
-          <p>{person.role}</p>
-          {person.channels.length > 0 && (
-            <dl className="grid gap-x-3 @xl:grid-cols-[max-content_minmax(0,1fr)]">
-              {person.channels.map((channel) => (
-                <div key={channel.kind} className="contents">
-                  <dt className="text-muted-foreground">{t(channelLabels[channel.kind])}</dt>
-                  <dd>{channel.href ? <a href={channel.href}>{channel.value}</a> : channel.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-          {person.contactInnovationId && (
-            <div className="no-print pt-1">
-              <Link
-                href={`/kontakt?innowacja=${person.contactInnovationId}&droga=${route.id}`}
-                className={buttonVariants({ variant: "secondary" })}
-              >
-                {t("s2.card.contact")}
-              </Link>
-            </div>
-          )}
+    <dl className="grid gap-x-3 @xl:grid-cols-[max-content_minmax(0,1fr)]">
+      {channels.map((channel) => (
+        <div key={channel.value} className="contents">
+          <dt className="text-muted-foreground">{t(channelLabels[channel.type])}</dt>
+          <dd>
+            <a href={channelHref(channel)}>{channel.type === "www" ? new URL(channel.value).hostname : channel.value}</a>
+          </dd>
         </div>
       ))}
-      {route.readinessCount !== undefined && (
-        <p>
-          {route.readinessCount === 0
-            ? t("people.readiness.none", { where: placeWhere })
-            : t("people.readiness.count", { count: route.readinessCount, where: placeWhere })}{" "}
-          <Link href="/chce-pomoc">{t("people.readiness.cta")}</Link>
-        </p>
-      )}
+    </dl>
+  );
+}
+
+/** "Ludzie" (FR-4.4): innovators, implementers nearby, the ROPS advisor and readiness. */
+function People({ route }: { route: Route }) {
+  const { innovators, implementers_nearby: nearby, advisor, readiness } = route.people;
+  const rowClass = "grid gap-1.5 border-b border-border pb-5 last:border-b-0 last:pb-0";
+  const where = placeWhere(route.input.place_terc);
+  return (
+    <div className="grid gap-5">
+      {innovators.map((person) => (
+        <div key={person.organisation} className={rowClass}>
+          <h3 className="text-[1.15rem] font-bold">{person.organisation}</h3>
+          <p>{t("people.innovator", { title: getInnovation(person.innovation_id)?.title ?? "" })}</p>
+          <Channels channels={person.channels} />
+          <div className="no-print pt-1">
+            <Link
+              href={`/kontakt?innowacja=${person.innovation_id}&droga=${route.id}`}
+              className={buttonVariants({ variant: "secondary" })}
+            >
+              {t("s2.card.contact")}
+            </Link>
+          </div>
+        </div>
+      ))}
+      {nearby.map((implementer) => (
+        <div key={`${implementer.organisation}-${implementer.innovation_id}`} className={rowClass}>
+          <h3 className="text-[1.15rem] font-bold">{implementer.organisation}</h3>
+          <p>
+            {t("people.nearby", {
+              title: getInnovation(implementer.innovation_id)?.title ?? "",
+              place: implementer.place_name,
+              km: implementer.distance_km,
+            })}
+          </p>
+        </div>
+      ))}
+      <div className={rowClass}>
+        <h3 className="text-[1.15rem] font-bold">{advisor.name ?? advisor.role}</h3>
+        <p>{t("people.advisor", { category: targetGroupLabel(advisor.category) })}</p>
+        <Channels
+          channels={[
+            { type: "email", value: advisor.email },
+            { type: "phone", value: advisor.phone },
+          ]}
+        />
+      </div>
+      <p>
+        {readiness.count === 0
+          ? t("people.readiness.none", { where })
+          : t("people.readiness.count", { count: readiness.count, where })}{" "}
+        <Link href="/chce-pomoc">{t("people.readiness.cta")}</Link>
+      </p>
     </div>
   );
 }
 
 /** S2 (mode route) and S3 (modes partial and none) of section 10. */
-export function RouteView({
-  route,
-  placeText,
-  placeWhere,
-  roleText,
-  markdown,
-}: {
-  route: MockRoute;
-  placeText: string;
-  placeWhere: string;
-  roleText: string | null;
-  markdown: string;
-}) {
+export function RouteView({ route, markdown }: { route: Route; markdown: string }) {
   const isRoute = route.mode === "route";
-  const title = isRoute ? route.needSummary : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
+  const title = isRoute ? route.need_summary_pl : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
 
   return (
     <div className="grid gap-10 @4xl:grid-cols-[minmax(0,1fr)_18rem] @4xl:items-start @4xl:gap-12">
@@ -102,29 +128,29 @@ export function RouteView({
           <h1 id="naglowek-drogi" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
             {title}
           </h1>
-          {!isRoute && route.needSummary && (
+          {!isRoute && route.need_summary_pl && (
             <p className="text-[1.1rem]">
-              <span className="font-bold">{t("route.need")}</span> {route.needSummary}
+              <span className="font-bold">{t("route.need")}</span> {route.need_summary_pl}
             </p>
           )}
-          {!isRoute && route.modeReason && <p>{route.modeReason}</p>}
+          {!isRoute && route.mode_reason_pl && <p>{route.mode_reason_pl}</p>}
           <dl className="flex flex-wrap gap-x-6 gap-y-1">
             <div className="flex flex-wrap gap-x-2">
               <dt className="text-muted-foreground">{t("route.meta.place")}</dt>
-              <dd className="font-bold">{placeText}</dd>
+              <dd className="font-bold">{placeText(route.input.place_terc)}</dd>
             </div>
-            {roleText && (
+            {route.input.role && (
               <div className="flex flex-wrap gap-x-2">
                 <dt className="text-muted-foreground">{t("route.meta.role")}</dt>
-                <dd className="font-bold">{roleText}</dd>
+                <dd className="font-bold">{roleLabel(route.input.role)}</dd>
               </div>
             )}
           </dl>
         </header>
 
         <Notice title={t(isRoute ? "route.generated.title" : "route.generated.titlePartial")}>
-          {route.summary && <p>{route.summary}</p>}
-          <p className="text-[0.95rem] text-muted-foreground">{t("route.generated.label")}</p>
+          {route.summary_pl && <p>{route.summary_pl}</p>}
+          <p className="text-[0.95rem] text-muted-foreground">{route.label_pl}</p>
         </Notice>
 
         {route.solutions.length > 0 && (
@@ -135,7 +161,7 @@ export function RouteView({
           >
             <div className="grid gap-4">
               {route.solutions.map((solution) => (
-                <SolutionCard key={solution.innovationId} solution={solution} routeId={route.id} partial={!isRoute} />
+                <SolutionCard key={solution.innovation_id} solution={solution} routeId={route.id} partial={!isRoute} />
               ))}
             </div>
           </Block>
@@ -155,12 +181,13 @@ export function RouteView({
           </section>
         )}
 
-        {isRoute && (
+        {isRoute && route.knowledge.length > 0 && (
           <Block id="wiedza" title={t("s2.block.knowledge.title")} lead={t("s2.block.knowledge.lead")}>
             <ul className="grid list-disc gap-2 pl-6">
               {route.knowledge.map((item) => (
                 <li key={item.url}>
-                  {item.about}: <a href={item.url}>{item.title}</a>, {t("knowledge.file", { format: item.format })}
+                  {(item.for_innovation_id && getInnovation(item.for_innovation_id)?.title) || t("knowledge.general")}:{" "}
+                  <a href={item.url}>{item.title}</a>, {knowledgeTypeLabel(item.type)}
                 </li>
               ))}
             </ul>
@@ -168,7 +195,7 @@ export function RouteView({
         )}
 
         <Block id="ludzie" title={t("s2.block.people.title")} lead={t("s2.block.people.lead")}>
-          <PeopleList route={route} placeWhere={placeWhere} />
+          <People route={route} />
         </Block>
 
         <Block
@@ -177,9 +204,10 @@ export function RouteView({
           lead={t(isRoute ? "s2.block.paths.lead" : "s3.block.paths.lead")}
         >
           <div className="grid gap-4">
-            {route.paths.map((path) => (
-              <PathCard key={path.id} path={path} />
-            ))}
+            {route.path.paths.map(({ path_id, why_pl }) => {
+              const path = getPath(path_id);
+              return path ? <PathCard key={path_id} path={path} why={why_pl} /> : null;
+            })}
           </div>
         </Block>
 
@@ -194,20 +222,20 @@ export function RouteView({
             {t("s2.next.title")}
           </h2>
           <ol className="grid list-decimal gap-2 pl-6">
-            {route.nextSteps.map((step) => (
-              <li key={step.text}>
-                {step.href.startsWith("/") ? <Link href={step.href}>{step.text}</Link> : <a href={step.href}>{step.text}</a>}
+            {route.next_steps.map((step) => (
+              <li key={step.text_pl}>
+                {step.link.startsWith("/") ? <Link href={step.link}>{step.text_pl}</Link> : <a href={step.link}>{step.text_pl}</a>}
               </li>
             ))}
           </ol>
         </section>
-        {route.unknowns.length > 0 && (
+        {route.unknowns_pl.length > 0 && (
           <section aria-labelledby="czego-nie-wiemy" className="grid gap-3 rounded-lg border border-border bg-muted p-4">
             <h2 id="czego-nie-wiemy" className="text-[1.2rem] font-bold">
               {t("s2.unknowns.title")}
             </h2>
             <ul className="grid list-disc gap-2 pl-6">
-              {route.unknowns.map((item) => (
+              {route.unknowns_pl.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>

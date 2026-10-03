@@ -1,4 +1,4 @@
-/** From data/advisors.yaml (the ROPS contact page). */
+/** From data/advisors.yaml (the ROPS contact page, read on 28 September 2026). */
 export const ropsDepartment = {
   name: "Dział Innowacji Społecznych ROPS w Krakowie",
   email: "iws@rops.krakow.pl",

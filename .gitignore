@@ -26,6 +26,7 @@ pip-delete-this-directory.txt
 
 # Python virtual environments
 .venv/
+.venv-embedding/
 venv/
 env/
 ENV/
@@ -109,6 +110,7 @@ data/map/
 data/indicators.json
 data/places/
 data/implementations-derived.json
+data/index-vectors.json
 
 # Next.js generated type references (recreated by next dev and next typegen)
 next-env.d.ts

@@ -16,8 +16,8 @@ import {
   timeLabel,
 } from "@/lib/labels";
 import { getInnovation } from "@/lib/mock/data";
-import { getMockRoute } from "@/lib/mock/routes";
-import type { Material } from "@/lib/mock/types";
+import { getRoute } from "@/lib/server/routes";
+import type { Material } from "@/lib/contracts/catalogue";
 
 export async function generateMetadata({ params }: PageProps<"/innowacja/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -37,7 +37,7 @@ export default async function InnovationPage({ params, searchParams }: PageProps
   const query = await searchParams;
   const item = getInnovation(id);
   if (!item) notFound();
-  const routeId = typeof query.droga === "string" && getMockRoute(query.droga) ? query.droga : undefined;
+  const routeId = typeof query.droga === "string" && getRoute(query.droga) ? query.droga : undefined;
 
   return (
     <article aria-labelledby="naglowek-innowacji" className="grid max-w-[48rem] gap-8">
