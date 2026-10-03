@@ -14,8 +14,9 @@ export function isRating(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= MIN_RATING && value <= MAX_RATING;
 }
 
-/** The counts of a list of evaluations; the average is rounded to one decimal. */
-export function summarise(evaluations: readonly Evaluation[]): EvaluationSummary {
+/** The counts of a list of evaluations, leaving out those ROPS rejected; the average is rounded to one decimal. */
+export function summarise(all: readonly Evaluation[]): EvaluationSummary {
+  const evaluations = all.filter((item) => item.moderation.status !== "odrzucone");
   const ratings = evaluations.flatMap((item) => (item.rating === null ? [] : [item.rating]));
   const average = ratings.length > 0 ? Math.round((ratings.reduce((sum, value) => sum + value, 0) / ratings.length) * 10) / 10 : null;
   return {

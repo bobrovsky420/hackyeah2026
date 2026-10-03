@@ -23,6 +23,18 @@ export const PAGE_ROUTES: readonly { folder: string; url: string }[] = [
   { folder: "/save-need", url: "/zapisz-potrzebe" },
   { folder: "/submit-idea", url: "/zglos-pomysl" },
   { folder: "/idea/:id", url: "/pomysl/:id" },
+  { folder: "/admin", url: "/rops" },
+  { folder: "/admin/ideas", url: "/rops/pomysly" },
+  { folder: "/admin/ideas/:id", url: "/rops/pomysly/:id" },
+  { folder: "/admin/evaluations", url: "/rops/opinie" },
+  { folder: "/admin/needs", url: "/rops/potrzeby" },
+  { folder: "/admin/contacts", url: "/rops/kontakty" },
+  { folder: "/admin/readiness", url: "/rops/gotowosc" },
+  { folder: "/admin/reports", url: "/rops/zgloszenia" },
+  { folder: "/admin/trends", url: "/rops/trendy" },
+  { folder: "/admin/knowledge", url: "/rops/wiedza" },
+  { folder: "/admin/knowledge/:id", url: "/rops/wiedza/:id" },
+  { folder: "/admin/innovations/:id", url: "/rops/innowacje/:id" },
   { folder: "/report", url: "/zglos" },
 ];
 

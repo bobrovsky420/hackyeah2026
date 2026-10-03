@@ -1,4 +1,4 @@
-import type { ContactRequest, ContactStatus, ContentReport, Evaluation, Feedback, Idea, Moderation, ModerationLogEntry, ModerationStatus, Need, NeedStatus, Readiness, VerificationStatus, NeedCluster, StoredBrief, Route, GateTextKind, ScreeningCategory, ScreeningOutcome, SensitiveTopic } from "@/lib/contracts";
+import type { ContactRequest, ContactStatus, ContentReport, Evaluation, Feedback, Idea, IdeaStatus, InnovationOverride, KnowledgeEntry, Moderation, ModerationLogEntry, ModerationStatus, Need, NeedStatus, Readiness, VerificationStatus, NeedCluster, StoredBrief, Route, GateTextKind, ScreeningCategory, ScreeningOutcome, SensitiveTopic } from "@/lib/contracts";
 
 /*
  * Everything the app keeps between requests, behind one async interface:
@@ -178,11 +178,29 @@ export interface Repository {
   listIdeas(): Promise<Idea[]>;
   /** Stores the similar innovations of a card once computed; undefined when the card is unknown. */
   setIdeaSimilar(id: string, similar: NonNullable<Idea["similar"]>): Promise<Idea | undefined>;
+  /** The panel's decision on showing a card to others (module VI); it may be changed later. */
+  moderateIdea(id: string, moderation: Moderation): Promise<Idea | undefined>;
+  /** The panel's status, note and, when given, reply to the author; `reply: undefined` keeps the stored one. */
+  updateIdea(id: string, change: { status: IdeaStatus; note_pl: string | null; reply?: Idea["reply"] }): Promise<Idea | undefined>;
 
   // Evaluations of innovations (module IV, "Tester innowacji").
   addEvaluation(evaluation: Evaluation): Promise<void>;
   /** Newest first; only the evaluations of one innovation when its id is given. */
   listEvaluations(innovationId?: string): Promise<Evaluation[]>;
+  getEvaluation(id: string): Promise<Evaluation | undefined>;
+  /** The panel's decision on an evaluation (module VI); a rejected one leaves the innovation's numbers. */
+  moderateEvaluation(id: string, moderation: Moderation): Promise<Evaluation | undefined>;
+  /** Marks an evaluation as passed on to the innovators, with a note. */
+  forwardEvaluation(id: string, change: { at: string; note_pl: string | null }): Promise<Evaluation | undefined>;
+
+  // Knowledge kept in the panel (module VI): new or edited items, and the word on innovations.
+  listKnowledgeEntries(): Promise<KnowledgeEntry[]>;
+  /** Adds the entry or replaces the one with its id. */
+  saveKnowledgeEntry(entry: KnowledgeEntry): Promise<void>;
+  listInnovationOverrides(): Promise<InnovationOverride[]>;
+  getInnovationOverride(innovationId: string): Promise<InnovationOverride | undefined>;
+  /** Adds the override or replaces the one of its innovation. */
+  saveInnovationOverride(override: InnovationOverride): Promise<void>;
 
   // Feedback (FR-10.1).
   addFeedback(entry: Feedback): Promise<void>;

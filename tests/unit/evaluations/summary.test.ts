@@ -15,6 +15,7 @@ function evaluation(over: Partial<Evaluation>): Evaluation {
     author: { display_name: null, email: null },
     consents: { store: true, contact: false, text_version: "v1", timestamp: "2026-10-03T10:00:00.000Z" },
     moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
+    forwarded_at: null,
     retention_until: "2027-10-03",
     note_pl: null,
     ...over,
@@ -30,6 +31,11 @@ describe("the evaluation summary of module IV", () => {
       evaluation({ test_signup: { as: "uzytkownik", place_terc: "1261011" } }),
     ]);
     expect(summary).toEqual({ ratings: 3, average: 4.3, testers: 2, improvements: 1 });
+  });
+
+  it("leaves out the evaluations ROPS rejected in the panel", () => {
+    const rejected = { status: "odrzucone" as const, reviewer: "AT", decided_at: "2026-10-03T11:00:00.000Z", reason_pl: "Inny powód" };
+    expect(summarise([evaluation({ rating: 5 }), evaluation({ rating: 1, moderation: rejected })])).toMatchObject({ ratings: 1, average: 5 });
   });
 
   it("has no average without a rating", () => {

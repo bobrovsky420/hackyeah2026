@@ -294,6 +294,9 @@ export type IdeaKind = "pomysl" | "dobra-praktyka";
 /** "Na jakim etapie jest jego realizacji" of the idea card. */
 export type IdeaStage = "pomysl" | "prototyp" | "test" | "dziala";
 
+/** Where ROPS took an idea card (module VI): the author sees it on the card's page. */
+export type IdeaStatus = "nowy" | "w-analizie" | "przyjety" | "zamkniety";
+
 /** A similar catalogue innovation of an idea card, in the shape of the needs bank's nearest matches (FR-5.3). */
 export type IdeaSimilar = Need["nearest_matches"][number];
 
@@ -322,7 +325,11 @@ export interface Idea {
   moderation: Moderation;
   /** The similar innovations of the catalogue; null until they are computed for the card's page. */
   similar: IdeaSimilar[] | null;
+  status: IdeaStatus;
+  /** ROPS's answer to the author, shown on the card's page (module VI). */
+  reply: { text_pl: string; at: string; by: string } | null;
   retention_until: string;
+  /** ROPS's internal note; never shown to the author. */
   note_pl: string | null;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
   example?: boolean;
@@ -354,6 +361,8 @@ export interface Evaluation {
   author: { display_name: string | null; email: string | null };
   consents: { store: boolean; contact: boolean } & Consent;
   moderation: Moderation;
+  /** When ROPS passed the evaluation on to the innovators; null until then. */
+  forwarded_at: string | null;
   retention_until: string;
   note_pl: string | null;
 }
@@ -392,9 +401,9 @@ export interface ContentReport {
 export interface ModerationLogEntry {
   ts: string;
   reviewer: string;
-  target_type: "need" | "contact" | "readiness" | "declined" | "report";
+  target_type: "need" | "contact" | "readiness" | "declined" | "report" | "idea" | "evaluation" | "knowledge" | "innovation";
   target_id: string;
-  action: "zatwierdzone" | "odrzucone" | "zweryfikowane" | "przejrzane" | "status";
+  action: "zatwierdzone" | "odrzucone" | "zweryfikowane" | "przejrzane" | "status" | "odpowiedz" | "przekazane" | "edycja";
   /** The new status code of a "status" action; null for decisions. */
   status: string | null;
   reason_pl: string | null;
@@ -443,6 +452,8 @@ export interface RouteSolution {
   where_it_runs: { count: number; nearest: { terc: string; name: string; distance_km: number }[] };
   materials: { title: string; url: string; type: string }[];
   contact: { organisation: string | null; channels: Channel[] };
+  /** Set when ROPS marked the innovation verified in the panel (module VI); applied when the route is read. */
+  verified_by_rops?: boolean;
 }
 
 export interface Route {
@@ -585,6 +596,45 @@ export interface StoredBrief {
 }
 
 /** A named group of needs (FR-5.4); Need.cluster_id points to it. */
+/** The kinds of a knowledge item; "video" only for the items ROPS adds in the panel (module II, VI). */
+export type KnowledgeEntryType = "guide" | "model" | "publication" | "catalogue" | "data" | "contact" | "project" | "video";
+
+/**
+ * A knowledge item kept in the panel (module VI): a new one, or the edit of
+ * an item of data/curated/knowledge.yaml (`base_id`), which the curated
+ * file keeps unchanged. Applied when a route is read, so a change shows at
+ * once; a hidden item leaves every route.
+ */
+export interface KnowledgeEntry {
+  id: string;
+  base_id: string | null;
+  title_pl: string;
+  description_pl: string;
+  url: string;
+  type: KnowledgeEntryType;
+  /** Target-group codes, or ["any"]. */
+  target_groups: string[];
+  always_show: boolean;
+  hidden: boolean;
+  updated_at: string;
+  updated_by: string;
+}
+
+/**
+ * ROPS's word on one catalogue innovation (module VI): verified, or hidden
+ * from routes and its page; a corrected summary; extra materials such as a
+ * film. The catalogue record stays as the data release built it.
+ */
+export interface InnovationOverride {
+  innovation_id: string;
+  status: "zweryfikowane" | "ukryte" | null;
+  summary_pl: string | null;
+  extra_materials: { title: string; url: string; type: "video" | "document" }[];
+  note_pl: string | null;
+  updated_at: string;
+  updated_by: string;
+}
+
 export interface NeedCluster {
   id: string;
   name_pl: string;

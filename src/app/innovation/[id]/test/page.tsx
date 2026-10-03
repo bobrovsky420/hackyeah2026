@@ -6,6 +6,7 @@ import { EvaluationForm } from "@/components/forms/evaluation-form";
 import { InfoPage } from "@/components/info/info-page";
 import { Notice } from "@/components/ui/notice";
 import { getInnovation, helplines } from "@/lib/catalogue";
+import { repository } from "@/server/db";
 import { t } from "@/lib/i18n";
 import { localityOptions, placeOptions } from "@/lib/places";
 
@@ -19,7 +20,8 @@ export async function generateMetadata({ params }: PageProps<"/innovation/[id]/t
 export default async function InnovationTestPage({ params }: PageProps<"/innovation/[id]/test">) {
   const { id } = await params;
   const item = getInnovation(id);
-  if (!item) notFound();
+  // An innovation ROPS hid in the panel takes no evaluations (module VI).
+  if (!item || (await repository().getInnovationOverride(item.id))?.status === "ukryte") notFound();
 
   return (
     <InfoPage
