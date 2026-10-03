@@ -17,7 +17,7 @@ test("J1: the seniors example leads to a route with three solutions", async ({ p
   await expect(page.getByRole("radio", { name: "Pracuję w instytucji" })).toBeChecked();
 
   await page.getByRole("button", { name: "Pokaż możliwości" }).click();
-  await expect(page.getByRole("heading", { level: 1, name: "Szukamy drogi" })).toBeFocused();
+  await expect(page.getByText("To zwykle trwa do 15 sekund. Nie zamykaj tej strony.")).toBeFocused();
 
   const heading = page.getByRole("heading", { level: 1, name: /Samotni seniorzy/ });
   await expect(heading).toBeFocused({ timeout: 20_000 });
