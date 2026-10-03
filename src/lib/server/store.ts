@@ -20,6 +20,8 @@ export interface EphemeralMemory {
   rateHits: Map<string, number[]>;
   /** The gate's memory of repeated texts (FR-12.1): hashes only, for one hour. */
   gateRepeats: Map<string, { times: number[]; redirected: boolean }>;
+  /** Identical route requests of one client (FR-12.14): the hash of the request and the route it got, for one hour. */
+  routeRepeats: Map<string, { routeId: string; at: number }>;
   /** The abuse limits of FR-6.4 and FR-12.14: submission times per e-mail, phone or client address, for one day. */
   abuseHits: Map<string, number[]>;
 }
@@ -28,6 +30,7 @@ const holder = globalThis as typeof globalThis & { __ephemeralMemory?: Ephemeral
 export const memory: EphemeralMemory = (holder.__ephemeralMemory ??= {
   rateHits: new Map(),
   gateRepeats: new Map(),
+  routeRepeats: new Map(),
   abuseHits: new Map(),
 });
 

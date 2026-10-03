@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { bestQuoteMatch, checkQuote, levenshtein, normaliseText, similarity } from "@/server/match/grounding";
+import { bestQuoteMatch, checkQuote, cutQuote, levenshtein, normaliseText, similarity } from "@/server/match/grounding";
 import { modeFor, PARTIAL_MIN, ROUTE_MIN } from "@/server/match/thresholds";
 
 const FIELD =
@@ -23,7 +23,7 @@ describe("normalisation and distance", () => {
 describe("the quote check of FR-3.4", () => {
   test("an exact quote passes with ratio 1 and keeps the record's words", () => {
     const verdict = checkQuote("popadają w przygnębienie i apatię", FIELD);
-    expect(verdict).toEqual({ ok: true, ratio: 1, quote: "popadają w przygnębienie i apatię" });
+    expect(verdict).toEqual({ ok: true, ratio: 1, quote: "popadają w przygnębienie i apatię", cut: false });
   });
 
   test("case, quotes and punctuation do not matter", () => {
@@ -55,10 +55,26 @@ describe("the quote check of FR-3.4", () => {
     expect(checkQuote("starsi ludzie bywają smutni i samotni", FIELD).ok).toBe(false);
   });
 
-  test("more than 15 words is rejected even when verbatim", () => {
+  test("a verbatim quote of more than 15 words is cut to 15, not dropped", () => {
     const sixteen = "Osoby starsze często wycofują się z aktywnego życia, popadają w przygnębienie i apatię. Czują się osamotnione";
     expect(sixteen.split(/\s+/).length).toBe(16);
-    expect(checkQuote(sixteen, FIELD)).toMatchObject({ ok: false, reason: "too_long" });
+    expect(checkQuote(sixteen, FIELD)).toEqual({
+      ok: true,
+      ratio: 1,
+      quote: "Osoby starsze często wycofują się z aktywnego życia, popadają w przygnębienie i apatię. Czują się…",
+      cut: true,
+    });
+  });
+
+  test("the cut does not end on a short word", () => {
+    expect(cutQuote("Dzieci ukraińskie w wieku szkolnym mają trudności w adaptacji w środowisku szkolnym i rówieśniczym w Polsce.")).toBe(
+      "Dzieci ukraińskie w wieku szkolnym mają trudności w adaptacji w środowisku szkolnym i rówieśniczym…",
+    );
+  });
+
+  test("a long paraphrase is still not found", () => {
+    const verdict = checkQuote("Starsi ludzie często są smutni, samotni i niepotrzebni, a do tego mają kłopoty z załatwianiem spraw w urzędach", FIELD);
+    expect(verdict).toMatchObject({ ok: false, reason: "not_found" });
   });
 
   test("a one-word quote grounds nothing", () => {

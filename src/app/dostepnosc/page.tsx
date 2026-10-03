@@ -34,7 +34,6 @@ export default function AccessibilityStatementPage() {
           .
         </>
       }
-      draft
     >
       <ul className="grid list-disc gap-1 pl-6">
         <li>

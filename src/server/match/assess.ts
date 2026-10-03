@@ -175,7 +175,7 @@ export interface ValidatedAssessment {
 /** FR-3.3 and FR-3.4 over the model's answer. `given` maps each id to the fields the model saw. Pure, for the tests. */
 export function validateAssessment(output: AssessOutput, given: ReadonlyMap<string, Record<string, string>>): ValidatedAssessment {
   const droppedIds: string[] = [];
-  const counts = { unknownField: 0, tooLong: 0, notFound: 0, empty: 0 };
+  const counts = { unknownField: 0, notFound: 0, empty: 0, cut: 0 };
   let ungrounded = 0;
   const seen = new Set<string>();
   const assessments: Assessment[] = [];
@@ -201,11 +201,11 @@ export function validateAssessment(output: AssessOutput, given: ReadonlyMap<stri
       }
       const verdict = checkQuote(reason.quote, text);
       if (!verdict.ok) {
-        if (verdict.reason === "too_long") counts.tooLong += 1;
-        else if (verdict.reason === "empty") counts.empty += 1;
+        if (verdict.reason === "empty") counts.empty += 1;
         else counts.notFound += 1;
         continue;
       }
+      if (verdict.cut) counts.cut += 1;
       reasons.push({ field, quote: verdict.quote, why_pl: clip(reason.why_pl, MAX_WHY_CHARS) });
     }
     if (reasons.length === 0) {
@@ -236,7 +236,7 @@ export function validateAssessment(output: AssessOutput, given: ReadonlyMap<stri
   // A route or a partial route shows no candidate below the partial threshold; "none" shows the nearest (S3).
   if (mode !== "none") top = top.filter((id) => fit.get(id)! >= PARTIAL_MIN);
 
-  const droppedReasons = counts.unknownField + counts.tooLong + counts.notFound + counts.empty;
+  const droppedReasons = counts.unknownField + counts.notFound + counts.empty;
   const notes: string[] = [];
   const unknownIds = droppedIds.length - ungrounded;
   if (unknownIds > 0) notes.push(`assessments: ${unknownIds} ids not among the candidates`);
@@ -245,9 +245,10 @@ export function validateAssessment(output: AssessOutput, given: ReadonlyMap<stri
   if (missing > 0) notes.push(`assessments: ${missing} candidates not assessed by the model`);
   if (droppedReasons > 0) {
     notes.push(
-      `reasons dropped: ${counts.notFound} quote not found, ${counts.unknownField} unknown field, ${counts.tooLong} over 15 words, ${counts.empty} under 2 words`,
+      `reasons dropped: ${counts.notFound} quote not found, ${counts.unknownField} unknown field, ${counts.empty} under 2 words`,
     );
   }
+  if (counts.cut > 0) notes.push(`quotes: ${counts.cut} over 15 words cut to 15`);
   const modelMode = output.mode.trim();
   if (modelMode !== mode) notes.push(`mode: model said ${modelMode.slice(0, 20)}, thresholds say ${mode}`);
 

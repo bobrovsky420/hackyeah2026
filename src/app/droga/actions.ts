@@ -26,13 +26,13 @@ export async function clarify(_state: ClarifyState, form: FormData): Promise<Cla
 
   let next;
   try {
-    next = await createRoute({
+    ({ route: next } = await createRoute({
       problemText: route.input.problem_text,
       placeTerc: route.input.place_terc,
       role: route.input.role,
       targetGroups: [group],
       client,
-    });
+    }));
   } catch (error) {
     if (error instanceof PipelineUnavailableError) return { error: t("s3.clarify.failed") };
     throw error;

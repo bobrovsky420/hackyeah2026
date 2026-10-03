@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: t("privacy.meta.title") };
 /** S8: "Prywatność" (FR-11.2), describing what the prototype does. */
 export default function PrivacyPage() {
   return (
-    <InfoPage title={t("privacy.title")} lead={t("privacy.lead")} draft>
+    <InfoPage title={t("privacy.title")} lead={t("privacy.lead")}>
       <InfoSection id="serwer" title={t("privacy.server.title")}>
         <p>{t("privacy.server.p1")}</p>
       </InfoSection>

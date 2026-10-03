@@ -21,6 +21,7 @@ const WORKER_PATH = "/vendor/maplibre/maplibre-gl-worker.mjs";
 const INK = "#14171a";
 const PAPER = "#ffffff";
 const MARK = "#f2a900";
+const NO_DATA = "#dbe6f4";
 const NO_DATA_LINE = "#454d57";
 
 export interface MapSettings {
@@ -37,7 +38,7 @@ export interface MapSettings {
 
 function fill(settings: MapSettings): ExpressionSpecification {
   const pairs = Object.entries(settings.classes).flatMap(([terc, index]) => [terc, settings.colors[index]]);
-  return ["match", ["get", "terc"], ...pairs, PAPER] as unknown as ExpressionSpecification;
+  return ["match", ["get", "terc"], ...pairs, NO_DATA] as unknown as ExpressionSpecification;
 }
 
 function style(settings: MapSettings, source: string): StyleSpecification {

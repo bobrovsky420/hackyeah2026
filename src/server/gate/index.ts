@@ -37,6 +37,13 @@ export interface GateRequest extends GateInput {
    * declined-texts review shows a kept text next to its route (FR-12.8).
    */
   ref?: string | null;
+  /**
+   * The rest of the request a repeat must share with the text (the route's
+   * place, role and target groups), so a changed place is not a repeat.
+   */
+  repeatScope?: string;
+  /** False for "Policz ponownie" (FR-3.5), which sends the same text again on purpose. */
+  countRepeats?: boolean;
 }
 
 async function screen(input: GateRequest, deps: { llm: Llm }): Promise<GateOutput> {
@@ -44,11 +51,12 @@ async function screen(input: GateRequest, deps: { llm: Llm }): Promise<GateOutpu
   // A display name is screened for harm only: no patterns, no lexicon, no repeats (7.12).
   const nameOnly = kind === "readiness";
   // A contact message is often the form's prefilled text; its daily limit covers repeats (FR-6.4).
-  const repeatsCount = !nameOnly && kind !== "contact";
+  const repeatsCount = !nameOnly && kind !== "contact" && input.countRepeats !== false;
 
   const patternSpans = nameOnly ? [] : findPatternSpans(text);
   const lexicon = nameOnly ? { crisis: [], community: [] } : matchLexicon(text);
-  const key = repeatKey(kind, input.client, text);
+  const key = repeatKey(kind, input.client, input.repeatScope ? `${text}
+${input.repeatScope}` : text);
   const seen = repeatsCount ? seenBefore(key) : { count: 0, redirected: false };
   const spam = { repeat: isRepeat(seen.count), repeatOfRedirected: seen.redirected, links: !nameOnly && mostlyLinks(text) };
 

@@ -17,7 +17,7 @@ export async function POST(request: Request, { params }: RouteContext<"/api/rout
   if (!route?.input.problem_text) return Response.json({ error: "not_found" }, { status: 404 });
 
   try {
-    const next = await createRoute({
+    const { route: next } = await createRoute({
       problemText: route.input.problem_text,
       placeTerc: route.input.place_terc,
       role: route.input.role,

@@ -42,7 +42,7 @@ function cardEntries(): [MessageKey, ReactNode][] {
 /** S8: "Jak to działa" (FR-11.1) with the "Karta systemu" (FR-11.7). */
 export default function HowItWorksPage() {
   return (
-    <InfoPage title={t("how.title")} lead={t("how.lead")} draft>
+    <InfoPage title={t("how.title")} lead={t("how.lead")}>
       <InfoSection id="kroki" title={t("s1.how.title")}>
         <ol className="grid list-decimal gap-2 pl-6">
           {steps.map((step) => (

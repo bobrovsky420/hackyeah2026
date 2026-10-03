@@ -12,6 +12,7 @@ import { formatNumber } from "@/lib/text";
 
 const IOSS = "https://obserwator.rops.krakow.pl/";
 const MARK = "#f2a900";
+const NO_DATA = "#dbe6f4";
 
 /** A value against the Małopolska median in words (FR-7.4), never a place in a league. */
 export function medianText(ratio: number): string {
@@ -50,7 +51,7 @@ export function MapLegend({ indicator, breaks, colors }: { indicator: IndicatorK
           </li>
         ))}
         <li className="flex items-center gap-2">
-          <span aria-hidden className="inline-block size-5 shrink-0 rounded-sm border-2 border-dashed border-input bg-white" />
+          <span aria-hidden className="inline-block size-5 shrink-0 rounded-sm border-2 border-dashed border-input" style={{ backgroundColor: NO_DATA }} />
           {t("map.legend.noData")}
         </li>
         <li className="flex items-center gap-2">

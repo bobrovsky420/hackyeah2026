@@ -32,8 +32,9 @@ const steps: MessageKey[] = ["s1.waiting.step1", "s1.waiting.step2", "s1.waiting
 
 const examples: { label: MessageKey; text: MessageKey; placeTerc?: string; role: RoleCode }[] = [
   { label: "s1.examples.seniors.label", text: "s1.examples.seniors.text", placeTerc: "1207062", role: "pracownik-instytucji" },
-  { label: "s1.examples.youth.label", text: "s1.examples.youth.text", role: "organizacja-spoleczna" },
-  { label: "s1.examples.children.label", text: "s1.examples.children.text", role: "mieszkaniec" },
+  { label: "s1.examples.schoolStress.label", text: "s1.examples.schoolStress.text", role: "pracownik-instytucji" },
+  { label: "s1.examples.caregivers.label", text: "s1.examples.caregivers.text", role: "pracownik-instytucji" },
+  { label: "s1.examples.vocational.label", text: "s1.examples.vocational.text", role: "pracownik-instytucji" },
 ];
 
 function readDraft(): Draft | null {
@@ -148,8 +149,9 @@ export function IntakeForm({ children, places }: { children: ReactNode; places: 
         return;
       }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const { id } = (await response.json()) as { id: string };
-      await minimumWait;
+      const { id, repeated } = (await response.json()) as { id: string; repeated?: boolean };
+      // A repeated request opens the route it already got at once (FR-12.14).
+      if (!repeated) await minimumWait;
       setStep(3);
       setAnnouncement(t("s1.waiting.done"));
       router.push(`/droga/${id}`);

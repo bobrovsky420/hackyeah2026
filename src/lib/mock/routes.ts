@@ -221,7 +221,7 @@ const youth: Route = {
   ...common,
   id: "przyklad-mlodziez",
   input: {
-    problem_text: t("s1.examples.youth.text"),
+    problem_text: "Młodzież po 15. roku życia nie ma gdzie się spotykać, rośnie problem z alkoholem na przystanku.",
     place_terc: null,
     place_name: null,
     role: "organizacja-spoleczna",
@@ -297,7 +297,7 @@ const children: Route = {
   ...common,
   id: "przyklad-dzieci",
   input: {
-    problem_text: t("s1.examples.children.text"),
+    problem_text: "Na osiedlu jest dużo rodzin z Ukrainy, dzieci nie mają pomocy w lekcjach.",
     place_terc: null,
     place_name: null,
     role: "mieszkaniec",
