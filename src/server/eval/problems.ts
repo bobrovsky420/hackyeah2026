@@ -6,7 +6,7 @@ import { parseYaml, YamlError } from "@/lib/data/yaml";
 
 /*
  * The test problems of specification 13.1: one YAML file per problem in
- * tests/problems/, written by the lawyer, never by an AI assistant. The
+ * tests/problems/, written by an AI assistant (decision P.15). The
  * format is the one of 13.1 and of the checklist in section 5 of
  * docs/test-problem-candidates.md. Four optional fields extend it for the
  * sets outside the ten, which 13.1 describes but gives no fields for:

@@ -1,0 +1,22 @@
+id: P10
+title: Chcemy pomagać, ale nie wiemy komu
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: null
+problem_text_pl: >
+  Mam trochę wolnego czasu po pracy i kilkoro znajomych, którzy też
+  chcieliby zrobić coś dobrego dla innych w okolicy. Nie wiemy jednak,
+  czego ludzie tu najbardziej potrzebują ani od czego zacząć.
+expected:
+  mode: clarification
+  any_of_innovations: []
+  none_of_innovations: []
+  target_groups: []
+  paths_any_of: []
+  people_roles: []
+  summary_must_mention_pl: []
+notes: >-
+  The clarification case: no place and no target group in the text, so
+  FR-2.3 asks "Kogo najbardziej dotyczy ten problem?". The text avoids any
+  hint of age or group, so stage 1 has none to detect.

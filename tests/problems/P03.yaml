@@ -1,0 +1,30 @@
+id: P03
+title: Uczniowie wracający do szkoły po pobycie na oddziale psychiatrii
+author: ai-assistant
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1262011"
+problem_text_pl: >
+  Jestem pedagogiem szkolnym w technikum. Od początku roku troje uczniów
+  wróciło do klasy po pobycie na dziennym oddziale psychiatrii dla
+  młodzieży. Wychowawcy pytają mnie, co mają powiedzieć klasie, a czego
+  lepiej nie mówić. Jeden z chłopców po dwóch tygodniach znowu przestał
+  przychodzić, bo czuł, że wszyscy się na niego patrzą. Rodzice też są
+  zagubieni i nie wiedzą, jak rozmawiać ze szkołą.
+expected:
+  mode: route
+  any_of_innovations: [inn-rops-bez-presji-z-depresji, inn-nat-eduwaznosc]
+  none_of_innovations: []
+  target_groups: [dzieci-mlodziez-rodziny]
+  paths_any_of: [cus-program-uslug, usluga-wrazliwa-a]
+  people_roles: [advisor, implementer_nearby]
+  summary_must_mention_pl: ["szko"]
+notes: >-
+  Nowy Sącz, urban. inn-rops-bez-presji-z-depresji (derived.problem_pl:
+  children and young people returning after psychiatric treatment;
+  mechanism_pl: work cards for the child, the family, the teachers and the
+  class) is the core match and runs in Kamionka Wielka, 10 km away;
+  inn-nat-eduwaznosc (problem_pl: schools lack psychological support for
+  young people) is the weaker one. Paths by the selector for jst:
+  cus-program-uslug, usluga-wrazliwa-a. The gate may show the crisis banner
+  on this text; that is not checked here.

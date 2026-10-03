@@ -1,0 +1,16 @@
+id: F03b
+title: Seniorzy nie radzą sobie ze sprawami w urzędzie i przychodni
+author: ai-assistant
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1213011"
+problem_text_pl: >
+  W naszym mieście mieszka coraz więcej starszych osób, które zostały same.
+  Nie radzą sobie z załatwianiem spraw w urzędach i w przychodni: nie
+  rozumieją pism, nie wiedzą, gdzie się zgłosić, a na miejscu nikt nie ma
+  czasu im tłumaczyć. Często rezygnują i zostają bez pomocy, która im się
+  należy.
+expected:
+  outcome: need
+notes: >-
+  The seniorzy side of the target-group pair; F03a names it in pair_with.

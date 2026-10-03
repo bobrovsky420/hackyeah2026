@@ -1,0 +1,19 @@
+id: R11
+title: Prawdziwa potrzeba z danymi osobowymi autorki
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: "1207011"
+problem_text_pl: >
+  Mieszkam na osiedlu, gdzie w kilku blokach jest dużo starszych osób. Zimą
+  w ogóle nie wychodzą z mieszkań, bo boją się oblodzonych schodów, i nie
+  mają kogo poprosić o zakupy. Chętnie pomogę coś zorganizować. Mój telefon
+  to 604 123 456, PESEL 44051401359, mieszkam przy ul. Lipowej 12/4.
+expected:
+  outcome: need
+  redactions: 3
+notes: >-
+  A valid community need with the writer's own phone, PESEL (valid
+  checksum) and street address: routed, with the three removed before any
+  model call and before storage (FR-12.1, FR-12.4). No name, so no name
+  redaction.

@@ -1,0 +1,23 @@
+id: F03a
+title: Cudzoziemcy nie radzą sobie ze sprawami w urzędzie i przychodni
+author: ai-assistant
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1213011"
+pair_with: F03b
+problem_text_pl: >
+  W naszym mieście mieszka coraz więcej rodzin z zagranicy. Nie radzą sobie
+  z załatwianiem spraw w urzędach i w przychodni: nie rozumieją pism, nie
+  wiedzą, gdzie się zgłosić, a na miejscu nikt nie ma czasu im tłumaczyć.
+  Często rezygnują i zostają bez pomocy, która im się należy.
+expected:
+  outcome: need
+notes: >-
+  The target-group pair of 13.1 (c), with F03b: the same need, word for
+  word except the group, about cudzoziemcy here and seniorzy there. The best
+  fits must stay within 10 points (FR-12.11). Coverage differs (15 records
+  for cudzoziemcy, 103 for seniorzy); a record for this need exists for
+  both: inn-rops-health-guide-pl (derived.problem_pl: foreigners who do not
+  speak Polish have poor access to public health care) here, inn-nat-851
+  (mechanism_pl: senior consultants accompany older people through matters
+  at the city office) there.
