@@ -351,6 +351,7 @@ export async function saveMentor(form: FormData): Promise<void> {
     active: form.get("aktywny") === "on",
     updated_at: nowIso(),
     example: existing?.example,
+    demo: existing?.demo,
   };
   await repo.saveMentor(mentor);
   await log({ reviewer, target_type: "mentor", target_id: mentor.id, action: "edycja", status: mentor.active ? "aktywny" : "nieaktywny", reason_pl: null, note_pl: null });

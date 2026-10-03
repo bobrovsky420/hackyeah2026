@@ -2,7 +2,8 @@
 
 Build outputs are git-ignored and a rebuild needs the raw snapshot and the
 extraction run, so the data travels as a bundle instead: every file under data/ (whatever exists at pack time:
-data/built/ and the hand-written data/curated/), the pipeline's working files .local/pipeline/{sources, derived,
+data/built/ and the hand-written data/curated/; with the panel's demonstration data, data/built/demo-*, when
+pnpm demo:routes made it), the pipeline's working files .local/pipeline/{sources, derived,
 manifest.json, duplicates.json, link-check.json}, so that the extraction does not rerun on the other machine, and,
 unless --no-cache, the demo's replay files .local/route-cache/ and .local/llm-replay/ (specification 12.4).
 
@@ -28,7 +29,8 @@ timestamp. A note with the same summary, data-X.Y.Z.md, is written beside the zi
 
 Refuses to pack (exit 1) when data/built/data-version.json, data/built/index-cards.json,
 data/built/index-vectors.json and data/built/innovations/ disagree on the data version or on the record ids, when
-data/built/implementations-derived.json (if present) carries another data version, when index-vectors.json names no embedding model, or when the last build
+data/built/implementations-derived.json (if present) carries another data version, when data/built/ holds only some
+of the three files of the demonstration data, when index-vectors.json names no embedding model, or when the last build
 skipped source records without a valid derived record (--force packs without them): the app would refuse to serve
 such a set anyway (data/README.md, load-time checks).
 
@@ -45,6 +47,8 @@ BUNDLE_FORMAT = 4                                                         # 4: t
 PIPELINE_DIRS = ["sources", "derived"]                                   # required
 PIPELINE_FILES = ["manifest.json", "duplicates.json", "link-check.json"]  # manifest.json required, the others optional
 CACHE_DIRS = [".local/route-cache", ".local/llm-replay"]                 # the demo's replay files, optional
+DEMO_FILES = ["data/built/demo-questions.yaml", "data/built/demo-records.yaml",
+              "data/built/demo-routes.json"]                              # the panel's demonstration data: all or none
 SKIP_NAMES = {".DS_Store", "Thumbs.db", "desktop.ini"}
 FIXED_TIME = (2026, 1, 1, 0, 0, 0)                                        # every entry, so the order is the only variable
 RELEASE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
@@ -134,13 +138,19 @@ def check_consistency(root):
         if derived.get("data_version") != version:
             fail(f"data/built/implementations-derived.json is of data version {derived.get('data_version')}, not "
                  f"{version}: rerun build-static-data.py --only origins")
+    present = [p for p in DEMO_FILES if os.path.exists(os.path.join(root, *p.split("/")))]
+    if present and len(present) < len(DEMO_FILES):
+        fail(f"data/built/ holds only {', '.join(present)} of the panel's demonstration data: run pnpm demo:routes, "
+             f"or delete the demo-* files")
+    routes = load_json(root, DEMO_FILES[-1]) if present else None
     tax = os.path.join(root, "data", "curated", "taxonomies.json")
     taxonomy = load_json(root, "data/curated/taxonomies.json").get("version") if os.path.exists(tax) else None
     return {"data_version": version, "records": records, "merged": dv.get("merged"),
             "skipped_without_valid_derived": dv.get("skipped_without_valid_derived") or 0,
             "parser_version": dv.get("parser_version"), "prompt_version": dv.get("prompt_version"),
             "taxonomy_version": taxonomy, "built_at": dv.get("built_at"),
-            "embedding_model": vec.get("model"), "embedding_dims": vec.get("dims")}
+            "embedding_model": vec.get("model"), "embedding_dims": vec.get("dims"),
+            "demo": {"routes": len(routes.get("entries", [])), "data_version": routes.get("data_version")} if routes else None}
 
 
 def git_state(root):
@@ -341,6 +351,9 @@ def main():
         f"git {commit or '-'}{' (dirty)' if dirty else ''}",
         f"{len(entries)} files ({n_data} in data/, {n_pipe} in .local/pipeline/, {n_cache} replay files), "
         f"{human(manifest['files_bytes'])} unpacked",
+        f"demonstration data of the panel: {versions['demo']['routes']} routes (computed on data version "
+        f"{versions['demo']['data_version']})" if versions["demo"] else
+        "demonstration data of the panel: none (no data/built/demo-* files; pnpm demo:routes makes them)",
     ]
     if previous:
         lines.append(f"since {previous['zip']} (release {previous['release_version'] or '-'}, data version "
