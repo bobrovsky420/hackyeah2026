@@ -1,5 +1,5 @@
-import type { ContactRequest, ContentReport, Feedback, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
-import { exampleNeeds, exampleReadiness } from "./examples";
+import type { ContactRequest, ContentReport, Feedback, Idea, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
+import { exampleIdeas, exampleNeeds, exampleReadiness } from "./examples";
 import {
   SCREENING_LOG_RETENTION_MS,
   storableRoute,
@@ -25,6 +25,7 @@ export interface MemoryState {
   needs: Need[];
   contacts: ContactRequest[];
   readiness: Readiness[];
+  ideas: Idea[];
   feedback: Feedback[];
   reports: ContentReport[];
   log: ModerationLogEntry[];
@@ -47,6 +48,7 @@ export function createMemoryState(): MemoryState {
     needs: exampleNeeds(),
     contacts: [],
     readiness: exampleReadiness(),
+    ideas: exampleIdeas(),
     feedback: [],
     reports: [],
     log: [],
@@ -268,6 +270,25 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       return copy(found);
     },
 
+    async addIdea(idea) {
+      insertNewestFirst(state.ideas, idea, createdAt);
+      onChange();
+    },
+    async getIdea(id) {
+      const found = state.ideas.find((item) => item.id === id);
+      return found && copy(found);
+    },
+    async listIdeas() {
+      return state.ideas.map(copy);
+    },
+    async setIdeaSimilar(id, similar) {
+      const found = state.ideas.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.similar = copy(similar);
+      onChange();
+      return copy(found);
+    },
+
     async addFeedback(entry) {
       insertNewestFirst(state.feedback, entry, createdAt);
       onChange();
@@ -327,12 +348,14 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       const contactsBefore = Date.parse(cutoffs.contactsBefore);
       const oldContact = (item: ContactRequest) => Date.parse(item.created_at) < contactsBefore;
       const oldReadiness = (item: Readiness) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
+      const oldIdea = (item: Idea) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
       const now = Date.parse(cutoffs.screeningAt);
       const counts: RetentionCounts = {
         routes: oldRoutes.size,
         feedback: state.feedback.filter((item) => oldRoutes.has(item.route_id)).length,
         contacts: state.contacts.filter(oldContact).length,
         readiness: state.readiness.filter(oldReadiness).length,
+        ideas: state.ideas.filter(oldIdea).length,
         screeningEntries: state.screeningLog.filter((entry) => logExpired(entry, now)).length,
         screeningTexts: state.screeningLog.filter((entry) => !logExpired(entry, now) && textExpired(entry, now)).length,
       };
@@ -344,6 +367,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       state.feedback = state.feedback.filter((item) => !oldRoutes.has(item.route_id));
       state.contacts = state.contacts.filter((item) => !oldContact(item));
       state.readiness = state.readiness.filter((item) => !oldReadiness(item));
+      state.ideas = state.ideas.filter((item) => !oldIdea(item));
       pruneScreeningLog(state, now);
       if (Object.values(counts).some((count) => count > 0)) onChange();
       return counts;

@@ -1,4 +1,4 @@
-import type { CostBand, EvidenceLevel, RoleCode, SourceName, TimeToImplement, RouteSolution, IndicatorKey } from "@/lib/contracts";
+import type { CostBand, EvidenceLevel, IdeaKind, IdeaStage, RoleCode, SourceName, TimeToImplement, RouteSolution, IndicatorKey } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 
 /* Codes of the contracts (data/curated/taxonomies.json, schemas 8.4 and 8.7) mapped to interface strings. */
@@ -35,6 +35,38 @@ const roleNounKeys = {
 /** The role as a noun for the prompts' reader context; the form's labels speak in the first person. */
 export function roleNoun(code: RoleCode): string {
   return t(roleNounKeys[code]);
+}
+
+const ideaKindKeys = {
+  pomysl: "idea.kind.pomysl",
+  "dobra-praktyka": "idea.kind.praktyka",
+} as const satisfies Record<IdeaKind, MessageKey>;
+
+export const ideaKindCodes = Object.keys(ideaKindKeys) as IdeaKind[];
+
+export function isIdeaKind(value: unknown): value is IdeaKind {
+  return typeof value === "string" && value in ideaKindKeys;
+}
+
+export function ideaKindLabel(code: IdeaKind): string {
+  return t(ideaKindKeys[code]);
+}
+
+const ideaStageKeys = {
+  pomysl: "idea.stage.pomysl",
+  prototyp: "idea.stage.prototyp",
+  test: "idea.stage.test",
+  dziala: "idea.stage.dziala",
+} as const satisfies Record<IdeaStage, MessageKey>;
+
+export const ideaStageCodes = Object.keys(ideaStageKeys) as IdeaStage[];
+
+export function isIdeaStage(value: unknown): value is IdeaStage {
+  return typeof value === "string" && value in ideaStageKeys;
+}
+
+export function ideaStageLabel(code: IdeaStage): string {
+  return t(ideaStageKeys[code]);
 }
 
 const sourceKeys = {

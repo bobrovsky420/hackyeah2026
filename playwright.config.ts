@@ -50,6 +50,7 @@ export default defineConfig({
           GATE_REPEAT_LIMIT: "1000",
           ABUSE_LIMIT_CONTACTS_PER_DAY: "1000",
           ABUSE_LIMIT_READINESS_PER_DAY: "1000",
+          ABUSE_LIMIT_IDEAS_PER_DAY: "1000",
         },
         url: baseURL,
         reuseExistingServer: !process.env.CI,

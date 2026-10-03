@@ -3,7 +3,7 @@ import { t } from "@/lib/i18n";
 import { memory } from "@/server/ephemeral";
 import type { ScreeningOutcome } from "@/lib/contracts";
 import { HONEYPOT_FIELD } from "./honeypot-field";
-import { contactRequestsPerDay, LIMIT_WINDOW_MS, readinessRegistrationsPerDay } from "./thresholds";
+import { contactRequestsPerDay, ideaCardsPerDay, LIMIT_WINDOW_MS, readinessRegistrationsPerDay } from "./thresholds";
 
 /*
  * The guards of the public write endpoints (FR-6.4, FR-12.14): the kill
@@ -25,11 +25,12 @@ export function honeypotFilled(body: Record<string, unknown>): boolean {
   return typeof value === "string" ? value.trim() !== "" : value !== undefined && value !== null && value !== false;
 }
 
-export type LimitKind = "contact" | "readiness";
+export type LimitKind = "contact" | "readiness" | "idea";
 
 const LIMITS: Record<LimitKind, () => number> = {
   contact: contactRequestsPerDay,
   readiness: readinessRegistrationsPerDay,
+  idea: ideaCardsPerDay,
 };
 
 /** The identity keys of one submission; e-mail addresses and phone numbers are evened out first. */

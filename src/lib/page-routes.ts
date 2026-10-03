@@ -20,6 +20,8 @@ export const PAGE_ROUTES: readonly { folder: string; url: string }[] = [
   { folder: "/contact", url: "/kontakt" },
   { folder: "/offer-help", url: "/chce-pomoc" },
   { folder: "/save-need", url: "/zapisz-potrzebe" },
+  { folder: "/submit-idea", url: "/zglos-pomysl" },
+  { folder: "/idea/:id", url: "/pomysl/:id" },
   { folder: "/report", url: "/zglos" },
 ];
 
