@@ -9,7 +9,7 @@ its own writing. Use the sheet to see where the catalogue can carry a
 route, which records a need can reach, and which paths the rules of 8.7
 would pick; then write the YAML files yourself.
 
-Data: the built catalogue (data version
+Data: the built catalogue of 29 September 2026 (data version
 `2026-10-03-f3d93b5c`, 381 records: 266 from the national base, 115 from
 the ROPS library), `data/implementations.yaml` (24 seeded
 implementations) and `data/implementations-derived.json` (104 places of

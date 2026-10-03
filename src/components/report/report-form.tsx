@@ -11,7 +11,7 @@ import { ErrorSummary, type FormError } from "@/components/ui/error-summary";
 import { describedBy, Field, Hint, Label, TextArea } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
 import { reportReasons } from "@/lib/console";
-import type { ContentReport } from "@/lib/contracts/records";
+import type { ContentReport } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 
 /** The two-field form of FR-12.9: a reason from the fixed list and an optional comment. */

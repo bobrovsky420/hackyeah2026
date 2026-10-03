@@ -1,8 +1,4 @@
-import type { Gmina, Innovation, Locality } from "@/lib/contracts/catalogue";
-import type { Department, Helpline } from "@/lib/contracts/contacts";
-import type { GminaBoundaries, IndicatorSet } from "@/lib/contracts/map";
-import type { ImplementationPath } from "@/lib/contracts/path";
-import type { Route, RouteSolution } from "@/lib/contracts/route";
+import type { Gmina, Innovation, Locality, Department, Helpline, GminaBoundaries, IndicatorSet, ImplementationPath, Route, RouteSolution } from "@/lib/contracts";
 import { DataLoadError, getDataset, loadDataset } from "@/lib/data/load";
 import type { Dataset, LocatedImplementation } from "@/lib/data/to-contracts";
 import { fixtureCatalogue } from "@/lib/mock/fixtures";
@@ -11,7 +7,7 @@ import { fixtureCatalogue } from "@/lib/mock/fixtures";
  * The one door to the catalogue data for the screens and the API: the real
  * data of data/ (getDataset(), checked by the loader) when it loads, else
  * the committed fixtures of src/lib/mock/, so a fresh clone runs without
- * the pipeline. DATA_SOURCE=data|mock forces
+ * the pipeline (decided 29 September 2026). DATA_SOURCE=data|mock forces
  * one; a forced "data" that fails to load throws. Cached per process.
  */
 

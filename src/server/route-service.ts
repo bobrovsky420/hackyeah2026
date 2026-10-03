@@ -1,19 +1,17 @@
 import { createHash, randomInt } from "node:crypto";
 import { catalogue, getGmina, withPlaceFacts } from "@/lib/catalogue";
-import type { RoleCode } from "@/lib/contracts/catalogue";
-import type { Route } from "@/lib/contracts/route";
+import type { RoleCode, Route, Embed } from "@/lib/contracts";
 import { envValue, llmProvider } from "@/lib/env";
 import { describeLlm, getLlm } from "@/lib/llm";
 import { getExampleRoute, withRouteId } from "@/lib/mock/routes";
 import { pickScenario } from "@/lib/mock/scenarios";
-import type { Embed } from "@/server/contracts";
 import { createEmbedClient } from "@/server/match";
 import { runPipeline } from "@/server/pipeline";
 import { createFileRouteCache, type RouteCache } from "@/server/route-cache";
 import { repository } from "@/server/db";
 import { REPEAT_WINDOW_MS } from "@/server/gate/thresholds";
-import { REDACTED, redact } from "./redact";
-import { countEvent, memory, newId, nowIso } from "./store";
+import { REDACTED, redact } from "@/server/gate";
+import { countEvent, memory, newId, nowIso } from "@/server/ephemeral";
 
 /*
  * Creates and reads routes. Two engines: "live" runs the pipeline of

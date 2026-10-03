@@ -1,9 +1,8 @@
 import { randomInt } from "node:crypto";
-import type { Route } from "@/lib/contracts/route";
+import type { Route, GateOutput } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { t } from "@/lib/i18n";
 import { ropsDepartment } from "@/lib/catalogue";
-import type { GateOutput } from "@/server/contracts";
 import { DEFAULT_ADVISOR_CATEGORY } from "./people";
 
 /*

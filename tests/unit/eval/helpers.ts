@@ -1,4 +1,4 @@
-import type { StageLog } from "@/server/contracts";
+import type { StageLog } from "@/lib/contracts";
 import type { Problem } from "@/server/eval/problems";
 import type { Observation } from "@/server/eval/types";
 import { parseBannedWords } from "@/server/route/safety";

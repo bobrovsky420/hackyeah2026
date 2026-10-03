@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/choice";
 import { ErrorSummary, type FormError } from "@/components/ui/error-summary";
 import { describedBy, Field, FieldError, Hint, Label, TextArea, TextInput } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
-import type { ContactRequest } from "@/lib/contracts/records";
+import type { ContactRequest } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { FormFailed } from "./form-failed";
 import { HONEYPOT_FIELD, Honeypot } from "./honeypot";

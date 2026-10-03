@@ -1,6 +1,6 @@
 /*
  * The one place that maps the real data (types.ts, the files of data/) to
- * the app's contracts (src/lib/contracts/). Pure functions: no file I/O and
+ * the app's contracts (src/lib/contracts.ts). Pure functions: no file I/O and
  * no Node APIs, so server code and tests can both use them; the loader
  * (load.ts) reads the files and calls mapDataset(). The field-by-field
  * table, the gaps and the defaults are in docs/data-to-contracts.md.
@@ -17,16 +17,7 @@
  * - an indicator value BDL marks as "no information" is dropped, so the
  *   gmina shows "brak danych" like Szczawa (1207132), which has none.
  */
-import type { Gmina, Implementation, Innovation, Locality, Material } from "@/lib/contracts/catalogue";
-import type { Department, Helpline as HelplineContract } from "@/lib/contracts/contacts";
-import type {
-  GminaBoundaries as BoundariesContract,
-  IndicatorKey,
-  IndicatorSet,
-  IndicatorValue as IndicatorValueContract,
-} from "@/lib/contracts/map";
-import type { ImplementationPath } from "@/lib/contracts/path";
-import type { Channel, Route, RouteSolution } from "@/lib/contracts/route";
+import type { Gmina, Implementation, Innovation, Locality, Material, Department, Helpline as HelplineContract, GminaBoundaries as BoundariesContract, IndicatorKey, IndicatorSet, IndicatorValue as IndicatorValueContract, ImplementationPath, Channel, Route, RouteSolution } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import type {
   Advisor,

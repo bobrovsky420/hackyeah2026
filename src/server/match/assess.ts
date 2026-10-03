@@ -3,7 +3,7 @@ import type { BuiltInnovation, IndicatorKey } from "@/lib/data/types";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { indicatorLabel } from "@/lib/labels";
 import { loadPrompt, toStageLog, type Llm } from "@/lib/llm";
-import type { Assessment, MatchMode, StageLog } from "@/server/contracts";
+import type { Assessment, MatchMode, StageLog } from "@/lib/contracts";
 import { placeDescription, readerContextLine, wrapNeed, type ReaderContext } from "./context";
 import { checkQuote } from "./grounding";
 import { clampScore, cleanId, clip } from "./shortlist";

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { loadPrompt, toStageLog, type Llm } from "@/lib/llm";
-import type { ShortlistCandidate, StageLog } from "@/server/contracts";
+import type { ShortlistCandidate, StageLog } from "@/lib/contracts";
 import { findBanned } from "@/server/route/safety";
 import { readerContextLine, wrapNeed, type ReaderContext } from "./context";
 import { MAX_CANDIDATES, MAX_REASON_CHARS } from "./thresholds";

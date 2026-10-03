@@ -20,7 +20,7 @@ import type {
   PlacesRegister,
   TaxonomiesFile,
 } from "./types";
-import { parseYamlSubset } from "./yaml";
+import { parseYaml } from "./yaml";
 
 /*
  * The server-side loader of data/ (data/README.md): reads every file the
@@ -109,7 +109,7 @@ export function loadRawData(options: LoadOptions = {}): RawData {
     const text = read(rel, key);
     if (text === undefined) return undefined;
     try {
-      return parseYamlSubset(text, `data/${rel}`) as T;
+      return parseYaml(text, `data/${rel}`) as T;
     } catch (error) {
       problems.push(`${(error as Error).message}; ${rebuild(key)}`);
       return undefined;

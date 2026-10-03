@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LlmErrorKind } from "@/lib/llm/types";
-import { memory } from "@/lib/server/store";
+import { memory } from "@/server/ephemeral";
 import { setRepository } from "@/server/db";
 import { createMemoryRepository } from "@/server/db/memory";
 import type { Repository, ScreeningLogEntry } from "@/server/db/repository";

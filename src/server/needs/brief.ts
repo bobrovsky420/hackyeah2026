@@ -1,14 +1,11 @@
 import { z } from "zod";
-import type { Need } from "@/lib/contracts/records";
-import type { SensitiveTopic } from "@/lib/contracts/route";
+import type { Need, SensitiveTopic, Brief, BriefMatch, BriefProsePart, StageLog } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { t } from "@/lib/i18n";
 import { implementerLabels, indicatorLabel, targetGroupLabel } from "@/lib/labels";
 import { toStageLog } from "@/lib/llm/observability";
 import { loadPrompt } from "@/lib/llm/prompts";
 import { LlmError, type Llm } from "@/lib/llm/types";
-import type { Brief, BriefMatch, BriefProsePart } from "@/lib/contracts/brief";
-import type { StageLog } from "@/server/contracts";
 import type { BannedWords } from "@/server/route/safety";
 import { clean, knownText, needSummary, proseProblem, redactPatterns, type KnownText, type ProseLimits } from "./checks";
 
@@ -17,7 +14,7 @@ import { clean, knownText, needSummary, proseProblem, redactPatterns, type Known
  * writes only the prose: the working title, the problem, the gap and the
  * direction, which is always a hypothesis. Everything that states a fact
  * (who and how many, what exists, partners, paths, sources, the footer)
- * stays as the template of src/lib/server/brief.ts assembled it from data.
+ * stays as the template of src/server/needs/brief-template.ts assembled it from data.
  * Each prose part passes the checks of checks.ts or its template stands;
  * a model error leaves the whole template, and the stage notes say which.
  */
@@ -30,7 +27,7 @@ export const briefSchema = z.object({
 });
 export type BriefOutput = z.infer<typeof briefSchema>;
 
-export type { BriefProsePart } from "@/lib/contracts/brief";
+export type { BriefProsePart } from "@/lib/contracts";
 
 /** The brief with the model's prose: the same type, the prose fields set where the checks passed. */
 export type GeneratedBrief = Brief;
@@ -191,7 +188,7 @@ export function finishProse(output: BriefOutput, known: KnownText, needText: str
 export interface BriefDeps {
   llm: Llm;
   dataset: BriefData;
-  /** The brief assembled from data (buildBrief of src/lib/server/brief.ts): it stands wherever the model's text does not. */
+  /** The brief assembled from data (buildBrief of src/server/needs/brief-template.ts): it stands wherever the model's text does not. */
   template: Brief;
   /** The screening's topics of the route the need came from (FR-12.10); empty when unknown. */
   sensitiveTopics?: SensitiveTopic[];

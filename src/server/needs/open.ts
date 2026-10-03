@@ -1,4 +1,4 @@
-import type { Need } from "@/lib/contracts/records";
+import type { Need } from "@/lib/contracts";
 import { needSummary } from "./checks";
 
 /*

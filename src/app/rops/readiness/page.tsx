@@ -6,8 +6,8 @@ import { formatDate, formatDateTime } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { targetGroupLabel } from "@/lib/labels";
 import { placeText } from "@/lib/places";
-import { isAuthenticated } from "@/lib/server/auth";
-import { placesMatching } from "@/lib/server/place-filter";
+import { isAuthenticated } from "@/server/console/auth";
+import { placesMatching } from "@/server/console/place-filter";
 import { repository } from "@/server/db";
 
 export const metadata: Metadata = { title: t("console.readiness.title") };

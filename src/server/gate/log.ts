@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import { memory } from "@/lib/server/store";
-import type { GateTextKind } from "@/server/contracts";
+import { memory } from "@/server/ephemeral";
+import type { GateTextKind } from "@/lib/contracts";
 import { repository, type ScreeningLogEntry } from "@/server/db";
 import { LOG_TEXT_RETENTION_MS, REPEAT_WINDOW_MS, repeatLimit } from "./thresholds";
 

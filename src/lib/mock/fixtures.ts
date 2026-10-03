@@ -1,5 +1,5 @@
 import type { Catalogue } from "@/lib/catalogue";
-import type { GminaBoundaries, IndicatorKey, IndicatorSet } from "@/lib/contracts/map";
+import type { GminaBoundaries, IndicatorKey, IndicatorSet } from "@/lib/contracts";
 import type { LocatedImplementation } from "@/lib/data/to-contracts";
 import { helplines, ropsDepartment } from "./contacts";
 import { gminy, innovations, localities } from "./data";

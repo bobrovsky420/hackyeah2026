@@ -1,6 +1,6 @@
 import { briefIndicatorLine } from "@/lib/brief-markdown";
-import { BRIEF_SECTION_KEYS, type Brief, type BriefSection, type BriefSectionKey } from "@/lib/contracts/brief";
-import type { Department } from "@/lib/contracts/contacts";
+import { BRIEF_SECTION_KEYS, type Brief, type BriefSection, type BriefSectionKey } from "@/lib/contracts";
+import type { Department } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { applicantLabels, implementerLabels, targetGroupLabel } from "@/lib/labels";
@@ -16,7 +16,7 @@ import { placeText } from "@/lib/places";
  * falls back to its template.
  */
 
-export { BRIEF_SECTION_KEYS, type BriefSection, type BriefSectionKey } from "@/lib/contracts/brief";
+export { BRIEF_SECTION_KEYS, type BriefSection, type BriefSectionKey } from "@/lib/contracts";
 
 const list = (lines: string[]) => lines.map((line) => `- ${line}`).join("\n");
 /** A Markdown link; brackets in the text would end it early. */

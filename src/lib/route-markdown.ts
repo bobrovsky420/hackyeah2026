@@ -1,5 +1,5 @@
 import { attributionText } from "@/lib/attribution";
-import type { Route } from "@/lib/contracts/route";
+import type { Route } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { applicantLabels, costLabel, fitLabel, quoteFieldLabel, roleLabel, timeLabel } from "@/lib/labels";
 import { getInnovation, getPath } from "@/lib/catalogue";

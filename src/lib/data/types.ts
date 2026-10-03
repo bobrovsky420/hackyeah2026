@@ -8,7 +8,7 @@
  *
  * Checked against the real files: node scripts/build-data-types.mjs --check
  * (it also fails when a union and the taxonomies differ in either direction).
- * The screens' view model is separate, in src/lib/contracts/.
+ * The screens' view model is separate, in src/lib/contracts.ts.
  */
 import type { DerivedRecord, EvidenceItem, SourceRecord } from "./schema-types";
 

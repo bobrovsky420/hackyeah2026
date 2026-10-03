@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { foldBlockScalars, loadProblems, parseProblem, type ProblemReferences } from "@/server/eval/problems";
+import { loadProblems, parseProblem, type ProblemReferences } from "@/server/eval/problems";
 
 /*
  * The loader of the test-problem files (13.1, the checklist of
@@ -23,21 +23,6 @@ const REFS: ProblemReferences = {
 function fieldsOf(result: ReturnType<typeof parseProblem>): string[] {
   return result.issues.map((issue) => issue.field);
 }
-
-describe("block scalars", () => {
-  it("folds > into one paragraph, keeps a blank line as a line break, and keeps the line numbers", () => {
-    const source = "a: >\n  one\n  two\n\n  three\nb: x\n";
-    const folded = foldBlockScalars(source);
-    expect(folded.split("\n")).toHaveLength(source.split("\n").length);
-    expect(folded.split("\n")[0]).toBe('a: "one two\\nthree\\n"');
-    expect(folded.split("\n")[5]).toBe("b: x");
-  });
-
-  it("keeps the lines of |, and strips the final break with -", () => {
-    expect(foldBlockScalars("a: |-\n  one\n  two\n").split("\n")[0]).toBe('a: "one\\ntwo"');
-    expect(foldBlockScalars("a: |\n  one\n  two").split("\n")[0]).toBe('a: "one\\ntwo\\n"');
-  });
-});
 
 describe("parseProblem", () => {
   it("reads the example of 13.1", () => {
@@ -73,11 +58,11 @@ describe("parseProblem", () => {
     expect(sensitive).toMatchObject({ set: "S", sensitive: true, expected: { outcome: "need", crisisBanner: true, mode: "route" } });
   });
 
-  it("names the line of a construct outside the YAML subset", () => {
+  it("names the file and the line of a YAML syntax error", () => {
     const { problem, issues } = parseProblem(read("invalid/syntax.yaml"), "P03.yaml", REFS);
     expect(problem).toBeNull();
     expect(issues).toHaveLength(1);
-    expect(issues[0].message).toMatch(/P03\.yaml:4: continuation of a multi-line scalar/);
+    expect(issues[0].message).toMatch(/^P03\.yaml:4: .*unique/);
   });
 
   it("lists every missing field of one of the ten", () => {

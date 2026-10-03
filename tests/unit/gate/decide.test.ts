@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { SensitiveTopic } from "@/lib/contracts/route";
-import type { GateTextKind, ScreeningCategory } from "@/server/contracts";
+import type { SensitiveTopic, GateTextKind, ScreeningCategory } from "@/lib/contracts";
 import { decide, decidesWithoutModel, type DecisionInput } from "@/server/gate/decide";
 import type { LexiconHit } from "@/server/gate/lexicon";
 import type { ModelScreen } from "@/server/gate/model";

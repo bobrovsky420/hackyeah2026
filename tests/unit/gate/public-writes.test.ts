@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { memory } from "@/lib/server/store";
+import { memory } from "@/server/ephemeral";
 import {
   allowSubmission,
   HONEYPOT_FIELD,

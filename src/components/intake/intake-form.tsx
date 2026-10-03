@@ -13,7 +13,7 @@ import { t, type MessageKey } from "@/lib/i18n";
 import { isRoleCode, roleCodes, roleLabel } from "@/lib/labels";
 import { placeLabeller, type LocalityOption, type PlaceOption } from "@/lib/place-options";
 import { DRAFT_KEY } from "@/lib/storage-keys";
-import type { RoleCode } from "@/lib/contracts/catalogue";
+import type { RoleCode } from "@/lib/contracts";
 import { groupThousands, pluralPl } from "@/lib/text";
 import { cn } from "@/lib/utils";
 

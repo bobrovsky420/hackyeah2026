@@ -1,4 +1,4 @@
-import { isAuthenticated } from "@/lib/server/auth";
+import { isAuthenticated } from "@/server/console/auth";
 import { briefForNeed } from "@/server/needs";
 
 export const dynamic = "force-dynamic";

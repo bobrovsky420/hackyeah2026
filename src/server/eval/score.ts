@@ -1,4 +1,4 @@
-import type { StageLog } from "@/server/contracts";
+import type { StageLog } from "@/lib/contracts";
 import type { BannedWords } from "@/server/route/safety";
 import { checkPolish } from "./polish";
 import type { Outcome, Problem } from "./problems";

@@ -1,15 +1,11 @@
-import type { Brief, BriefMatch } from "@/lib/contracts/brief";
-import type { ImplementationPath } from "@/lib/contracts/path";
-import type { Need } from "@/lib/contracts/records";
-import type { Route } from "@/lib/contracts/route";
+import type { Brief, BriefMatch, ImplementationPath, Need, Route, IndicatorKey } from "@/lib/contracts";
 import { getInnovation, getPath, indicators as indicatorSet } from "@/lib/catalogue";
-import type { IndicatorKey } from "@/lib/contracts/map";
 import { repository } from "@/server/db";
-import { indicatorFacts } from "./map";
-import { getRoute } from "./routes";
-import { nowIso } from "./store";
+import { indicatorFacts } from "@/server/map";
+import { getRoute } from "@/server/route-service";
+import { nowIso } from "@/server/ephemeral";
 
-export type { Brief, BriefMatch } from "@/lib/contracts/brief";
+export type { Brief, BriefMatch } from "@/lib/contracts";
 
 /*
  * The template of the brief of FR-5.5 ("Fiszka potrzeby dla inkubatora"),
