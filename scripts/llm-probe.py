@@ -10,18 +10,24 @@ tokens each at most. Every repetition carries a run id in the prompt, because
 the router returns cached answers for identical requests.
 
 Usage (from the repository root, with the project venv):
-  .venv/Scripts/python scripts/llm-probe.py --env .env.dev [--model MODEL] [--reps 2] [--out FILE]
+  .venv/Scripts/python scripts/llm-probe.py [--model MODEL] [--reps 2] [--out FILE] [--base-url URL]
+  A local Ollama server: --base-url http://127.0.0.1:11434/v1 --model hf.co/<repo>:<quant>
+  (127.0.0.1, not localhost: a Windows client tries IPv6 first, which WSL does not forward).
 Models seen live on the router:
   speakleash/Bielik-11B-v3.0-Instruct:publicai (default, 0.40 USD per million tokens in and out)
   Any other model as "<repo>:<provider>" from https://router.huggingface.co/v1/models.
   Apertus is excluded from evaluations by team decision.
-The .env file must contain HF_TOKEN=...; the token is never printed.
+HF_TOKEN comes from .env.dev or the environment; the token is never printed.
 The results file defaults to llm-probe-results.json in the current directory.
 Keep ad-hoc runs out of git; copy a run worth keeping into docs/model-evaluation/
 with the date, model and host in the file name and add a row to
 docs/model-evaluation.md (the record of the probes).
 """
-import argparse, io, json, re, sys, time, uuid
+import argparse, io, json, os, re, sys, time, uuid
+
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env.dev"))
 
 MODEL_DEFAULT = "speakleash/Bielik-11B-v3.0-Instruct:publicai"
 BASE_URL = "https://router.huggingface.co/v1"
@@ -73,17 +79,11 @@ SHORTLIST_SYSTEM = (
 )
 
 
-def load_env(path):
-    tok = None
-    for line in io.open(path, encoding="utf-8"):
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        k = k.strip(); v = v.strip().strip('"').strip("'")
-        if k in ("HF_TOKEN", "HUGGINGFACE_HUB_TOKEN", "HUGGING_FACE_HUB_TOKEN", "HF_API_KEY", "HUGGINGFACE_TOKEN"):
-            tok = v
-    return tok
+def hf_token():
+    for k in ("HF_TOKEN", "HUGGINGFACE_HUB_TOKEN", "HUGGING_FACE_HUB_TOKEN", "HF_API_KEY", "HUGGINGFACE_TOKEN"):
+        if os.environ.get(k):
+            return os.environ[k]
+    return None
 
 
 def extract_json(text):
@@ -128,24 +128,24 @@ def call(client, model, system, user, max_tokens=600, use_response_format=True):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--env", required=True)
     ap.add_argument("--model", default=MODEL_DEFAULT)
     ap.add_argument("--reps", type=int, default=2)
     ap.add_argument("--out", default="llm-probe-results.json")
     ap.add_argument("--max-tokens", type=int, default=0, help="completion budget for the screening and shortlist calls; 0 = 300/500 (raise to 3000 for reasoning models)")
     ap.add_argument("--reasoning-effort", default=None, help="passed as reasoning_effort in the request body (for example low), for models that reason before answering")
+    ap.add_argument("--base-url", default=BASE_URL, help="OpenAI-compatible endpoint; for a local Ollama server http://localhost:11434/v1 (no token needed)")
     a = ap.parse_args()
-    tok = load_env(a.env)
+    tok = hf_token() if a.base_url == BASE_URL else (hf_token() or "local")
     if not tok:
-        print("no HF token key found in", a.env); sys.exit(2)
+        print("no HF_TOKEN in .env.dev or the environment"); sys.exit(2)
     if a.reasoning_effort:
         EXTRA_BODY["reasoning_effort"] = a.reasoning_effort
     mt_screen = a.max_tokens or 300
     mt_short = a.max_tokens or 500
     from openai import OpenAI
-    client = OpenAI(base_url=BASE_URL, api_key=tok)
+    client = OpenAI(base_url=a.base_url, api_key=tok, timeout=600)
     run_id = uuid.uuid4().hex[:8]
-    results = {"model": a.model, "reps": a.reps, "run_id": run_id, "max_tokens": [mt_screen, mt_short], "reasoning_effort": a.reasoning_effort, "ping": None, "screen": [], "shortlist": []}
+    results = {"model": a.model, "base_url": a.base_url, "reps": a.reps, "run_id": run_id, "max_tokens": [mt_screen, mt_short], "reasoning_effort": a.reasoning_effort, "ping": None, "screen": [], "shortlist": []}
 
     r = call(client, a.model, "Odpowiadaj po polsku, jednym zdaniem.", f"Czym jest innowacja społeczna? (run {run_id})", max_tokens=max(80, a.max_tokens), use_response_format=False)
     results["ping"] = r

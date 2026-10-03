@@ -1,4 +1,4 @@
-import type { MatchMode } from "@/server/contracts";
+import type { MatchMode } from "@/lib/contracts";
 
 /*
  * The mode thresholds of FR-3.3, in one place. Calibrated on the ten test

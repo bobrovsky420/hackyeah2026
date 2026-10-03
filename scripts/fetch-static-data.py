@@ -8,7 +8,7 @@ Sources (see docs/functional-specification.md, 8.8 and 8.9):
      README states public domain; PRG itself is CC BY 4.0);
   3. GUS Bank Danych Lokalnych (CC BY 4.0): Małopolska powiat and gmina
      units and the four indicator variables of 8.8. Anonymous limits are
-     1 000 calls per 12 hours; put BDL_CLIENT_ID=... in the env file to
+     1 000 calls per 12 hours; put BDL_CLIENT_ID=... in .env.dev to
      use a registered key. BDL is skipped with a message on HTTP 429.
 
 Derived: .local/derived/malopolska-gminy.csv, one row per gmina of
@@ -16,12 +16,15 @@ Małopolska from TERC (seven-digit TERC, name, kind, powiat).
 Every run rewrites .local/manifest.json with URLs, dates and licences.
 
 Usage (from the repository root, with the project venv):
-  .venv/Scripts/python scripts/fetch-static-data.py [--env .env.dev] [--only teryt,geojson,bdl] [--force]
+  .venv/Scripts/python scripts/fetch-static-data.py [--only teryt,geojson,bdl] [--force]
 Existing files are kept unless --force is given.
 """
 import argparse, csv, datetime, html, http.cookiejar, io, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request, zipfile
 
+from dotenv import load_dotenv
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 OUT = os.path.join(ROOT, ".local")
 UA = "HackYeah2026 social-innovation router (static data fetch; bobrovsky@gmx.ch)"
 
@@ -39,17 +42,6 @@ BDL_YEARS = [2022, 2023, 2024]
 
 def log(msg):
     print(msg, flush=True)
-
-
-def load_env(path):
-    env = {}
-    if path and os.path.exists(path):
-        for line in io.open(path, encoding="utf-8"):
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, v = line.split("=", 1)
-                env[k.strip()] = v.strip().strip('"').strip("'")
-    return env
 
 
 def get(url, headers=None, opener=None, data=None):
@@ -173,26 +165,24 @@ def fetch_bdl(force, manifest, client_id):
         except urllib.error.HTTPError as e:
             if e.code == 429:
                 log(f"  HTTP 429, BDL limit reached: {e.read().decode('utf-8', 'replace').strip()[:200]}")
-                log("  set BDL_CLIENT_ID in the env file (free key: https://api.stat.gov.pl/Home/BdlApi) and re-run with --only bdl")
+                log("  set BDL_CLIENT_ID in .env.dev (free key: https://api.stat.gov.pl/Home/BdlApi) and re-run with --only bdl")
                 return
             raise
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--env", default=".env.dev")
     ap.add_argument("--only", default="teryt,geojson,bdl")
     ap.add_argument("--force", action="store_true")
     a = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     only = set(a.only.split(","))
-    env = load_env(os.path.join(ROOT, a.env))
     mpath = os.path.join(OUT, "manifest.json")
     manifest = json.load(open(mpath, encoding="utf-8")) if os.path.exists(mpath) else {}
     failed = []
     for key, fn in [("teryt", lambda: fetch_teryt(a.force, manifest)),
                     ("geojson", lambda: fetch_geojson(a.force, manifest)),
-                    ("bdl", lambda: fetch_bdl(a.force, manifest, env.get("BDL_CLIENT_ID") or os.environ.get("BDL_CLIENT_ID")))]:
+                    ("bdl", lambda: fetch_bdl(a.force, manifest, os.environ.get("BDL_CLIENT_ID")))]:
         if key in only:
             try:
                 fn()

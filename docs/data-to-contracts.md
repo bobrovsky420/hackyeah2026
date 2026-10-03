@@ -1,14 +1,15 @@
 # From data/ to the app's contracts
 
-For the two developers. The app keeps its contracts in `src/lib/contracts/`;
-one module maps the real data (`data/`, types in `src/lib/data/types.ts`) into
-them: `src/lib/data/to-contracts.ts` (pure functions, no I/O). The server
-reads `data/` with `src/lib/data/load.ts` (`getDataset()`, cached per
-process; `loadDataset()`, `loadRawData()`), which checks the files and returns
-a `Dataset`. YAML is read by `src/lib/data/yaml.ts`, a parser for the subset
-our files use (same output as js-yaml on all 34 files); a construct outside
-the subset fails with file and line. A contract change and a data change both
-land in `to-contracts.ts`; nothing else converts.
+For the two developers. The app keeps its contracts in one file,
+`src/lib/contracts.ts`; one module maps the real data (`data/`, types in
+`src/lib/data/types.ts`) into them: `src/lib/data/to-contracts.ts` (pure
+functions, no I/O). The server reads `data/` with `src/lib/data/load.ts`
+(`getDataset()`, cached per process; `loadDataset()`, `loadRawData()`), which
+checks the files and returns a `Dataset`. YAML is read with the `yaml`
+package through `src/lib/data/yaml.ts` (YAML 1.2 core schema: plain dates
+stay strings, a duplicate key is an error); a syntax error names the file
+and the line. A contract change and a data change both land in
+`to-contracts.ts`; nothing else converts.
 
 Figures: build `2026-10-03-f3d93b5c` (381 records, 30 paths).
 
@@ -88,8 +89,8 @@ Defaults are in the Rule columns above; the embedding model defaults to
 - Knowledge: `description_pl`, `target_groups`, `source_url`,
   `verified_on`. Advisor: `source_url`; the `programme_contacts` of
   `advisors.yaml`.
-- Helplines, the ROPS department, indicators and boundaries have contracts (`src/lib/contracts/contacts.ts` and `map.ts`,
-  mapped in `to-contracts.ts` as `Dataset.helplines`, `department`,
+- Helplines, the ROPS department, indicators and boundaries have contracts (the fixed contacts and the map data of
+  `src/lib/contracts.ts`, mapped in `to-contracts.ts` as `Dataset.helplines`, `department`,
   `indicators`, `boundaries`); the helplines' `short` and `forWhom` come
   from a table in `to-contracts.ts`, a BDL "no information" flag drops
   the value. No contract, kept in data types under `Dataset.raw`: index
@@ -103,7 +104,7 @@ builds it, ending with the bundle alternative
 (`.venv/Scripts/python scripts/unpack-data.py <zip>`). The checks:
 
 - every file present: missing, e.g. `data/index-vectors.json is missing;
-  rebuild: .venv-embedding/Scripts/python scripts/build-index-vectors.py`;
+  rebuild: .venv/Scripts/python scripts/build-index-vectors.py`;
   hand-written files point to `git checkout -- data/<file>`;
 - valid JSON, YAML inside the subset, `id` equal to the file name
   (`innovations/`, `paths/`);
@@ -119,13 +120,12 @@ builds it, ending with the bundle alternative
 - `knowledge.yaml`: `model_by_target_group` names only existing items.
 
 A stale file reads `data/<file> is stale: <what differs>; rebuild: <command>`.
-`load.ts` imports `server-only`; to run it outside Next.js, pass
-`--conditions=react-server` (e.g. `npx -y tsx@4 --conditions=react-server`).
+`load.ts` runs outside Next.js as it is, for example under `npx -y tsx@4`.
 
 ## Partner records (FR-1.6)
 
 The schemas accept a third source, `partner-rops`, with ids `inn-partner-<slug>`
 and a `sources[].url` that may be null (a spreadsheet row has no web page).
-`SourceName` in `src/lib/contracts/catalogue.ts` has `partner-rops` with its own
+`SourceName` in `src/lib/contracts.ts` has `partner-rops` with its own
 label; an empty `sourceUrl` means no link, so the innovation page shows no
 "Pełny opis w źródle" link and `toChannels` adds no entry link.

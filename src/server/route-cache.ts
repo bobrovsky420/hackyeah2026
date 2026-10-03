@@ -1,8 +1,7 @@
-import "server-only";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import type { Route } from "@/lib/contracts/route";
+import type { Route } from "@/lib/contracts";
 
 /*
  * The replay cache of FR-3.5: a finished route by a hash of (problem text,

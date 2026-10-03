@@ -1,8 +1,7 @@
-import "server-only";
 import { envValue } from "@/lib/env";
 import { t } from "@/lib/i18n";
-import { memory } from "@/lib/server/store";
-import type { ScreeningOutcome } from "@/server/contracts";
+import { memory } from "@/server/ephemeral";
+import type { ScreeningOutcome } from "@/lib/contracts";
 import { HONEYPOT_FIELD } from "./honeypot-field";
 import { contactRequestsPerDay, LIMIT_WINDOW_MS, readinessRegistrationsPerDay } from "./thresholds";
 

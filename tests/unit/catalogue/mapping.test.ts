@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { attributionText, CC_BY_DEED, licenceOf, MIIS_TERMS } from "@/lib/attribution";
 import { loadCatalogue } from "@/lib/catalogue";
-import type { Innovation } from "@/lib/contracts/catalogue";
+import type { Innovation } from "@/lib/contracts";
 import { toBoundaries, toHelplines, toIndicatorSet } from "@/lib/data/to-contracts";
 import type { GminaBoundaries, HelplinesFile, IndicatorsFile } from "@/lib/data/types";
 import { sourceBadge, sourceName } from "@/lib/labels";

@@ -47,13 +47,6 @@ conflict, the principle wins and the conflict goes to the decision log.
 
 ## 1. The task as published
 
-Read from the HackYeah site's content bundle (the
-tasks page loads it from a server function; the same text is shown at
-https://hackyeah.pl/tasks-prizes). Section "Task Partner", entry
-"HubMI.pl", prize pool 15 000 PLN, note "Projects can be submitted in
-Polish or English." No rules, criteria, deliverables or links are attached
-to the entry yet (its "buttons" list is empty).
-
 English text, verbatim:
 
 > How can we ensure that good ideas for solving social problems do not go
@@ -72,6 +65,12 @@ Polish text, verbatim (the jury is Polish; this is the wording to match):
 > inicjatywom docierać tam, gdzie są najbardziej potrzebne, i ułatwi
 > współpracę między mieszkańcami, instytucjami oraz organizacjami
 > społecznymi.
+
+The teaser talk in the conference programme, Saturday 3 October,
+12:00-12:45, "[PL] [Task Teaser] Od empatii do technologii - zbudujmy
+HubMI.pl", speakers Anita Parszewska (head of the social innovation
+department of ROPS Kraków) and Wioletta Wilimska (director of ROPS Kraków).
+Abstract, verbatim:
 
 > Masz problem społeczny. Wiesz, że ktoś już go rozwiązał. Tylko nie wiesz,
 > gdzie tego rozwiązania szukać. Raport? Baza danych? Strona organizacji?
@@ -120,6 +119,10 @@ answers each clause:
 | "Od empatii do technologii" (the teaser's title) | Empathy before technology: a person in crisis gets human help, not a list of innovations; a harmful or discriminatory request is declined with respect; nobody is profiled or decided about; personal data is not kept | 3.6 ethics, 7.12 safety and fairness |
 
 ## 2. What the event rules fix
+
+Verified from the rules PDF at
+https://hackyeah.pl/rules?lang=en, the participant guide at
+https://hackyeah.pl/guide and the FAQ.
 
 | Item | Fact | Source |
 |---|---|---|
@@ -269,7 +272,7 @@ Whether the partner wants a different working name is OP-16.
 
 ### 3.6 Ethics first (decided)
 
-The teaser is titled "Od empatii do technologii". The people who will
+"Od empatii do technologii". The people who will
 type into this tool are often describing someone else's hardship, and
 sometimes their own. The people the tool talks about (seniors, children,
 people with disabilities, people in homelessness, migrants) are the
@@ -509,8 +512,7 @@ assistants build.
 
 ### 7.1 Catalogue ingestion (owner: Developer 2)
 
-Sources. Details, counts and licences are in section 14; the ingestion
-facts are:
+Sources. Details, counts and licences are in section 14:
 
 - **S1, the national base** innowacjespoleczne.pl ("Baza innowacji
   społecznych", run by Fundacja Stocznia with FISE under "Katalizator
@@ -572,18 +574,20 @@ facts are:
   fetch tool with HTTP 403 but serves `curl` with a browser User-Agent, so
   a crawler with a browser User-Agent and a one-second delay works; the
   partner may instead provide an export (OP-17).
+- **S3, a partner hand-over** on 3 October (a spreadsheet of the "blisko
+  200" innovations, contacts or implementations), if it happens.
 
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
-| FR-1.1 | MUST | Ingest S1 completely into `data/innovations/<id>.json`, one file per innovation, with provenance (`source`, `source_url`, `retrieved_at`, `licence`, `date_modified` from the page's JSON-LD). Enumerate the 300 entries from the five list pages, fetch each entry page and the 35 incubator profiles (about 340 requests), call the taxonomy endpoint once; keep 2 to 3 seconds between requests with a User-Agent that names the team and a contact e-mail (the Laravel side throttles bursts); keep raw HTML only in `data/raw/`, which is git-ignored. Estimated effort half a day including parsing and checks. | 100 % of list entries have a JSON file; a re-run changes nothing when the source is unchanged; every ROPS-incubated entry carries its incubator from the profile pages |
+| FR-1.1 | MUST | Ingest S1 completely: `scripts/crawl-catalogues.py` snapshots the pages into `.local/raw/` (git-ignored), `scripts/parse-catalogues.py` writes one source record per innovation into `.local/pipeline/sources/<id>.json` (machine-local; `data/` holds only what the app serves) with provenance (`sources[].name`, `url`, `retrieved_at`, `licence`, `raw_sha256`; the page's JSON-LD `dateModified` is the same for every entry and is not stored); the record contract is [innovation-record.md](innovation-record.md). Enumerate the 300 entries from the five list pages, fetch each entry page and the 35 incubator profiles (about 340 requests), call the taxonomy endpoint once; keep 2 to 3 seconds between requests with a User-Agent that names the team and a contact e-mail (the Laravel side throttles bursts); keep raw HTML only in `.local/raw/`, which is git-ignored. 300 entries, 34 incubator profiles, 415 source records with the ROPS library. | 100 % of list entries have a JSON file; a re-run changes nothing when the source is unchanged; every ROPS-incubated entry carries its incubator from the profile pages |
 | FR-1.2 | MUST | Ingest S2 from saved pages or the partner export through the same JSON shape. | Every ROPS entry has category, materials links, organisation and year |
-| FR-1.3 | MUST | Derive structured fields with the language model (schema 8.1): summaries, target groups, domains, implementer types, setting, cost band, time to implement, evidence level, place of origin, index card. Every derived field is marked generated with the model and date. Run as a batch before the event; live for S3. | Extraction validated by Zod; 20 random records checked by a person against the source |
+| FR-1.3 | MUST | Derive the structured fields of schema 8.1 (summaries, target groups, domains, implementer types, setting, scale, cost band, time to implement, evidence level, place of origin, index card, keywords) with Claude Code worker subagents run through the skill `.claude/skills/extract-innovations` against the record contract [innovation-record.md](innovation-record.md), never through API calls from the app: a coordinator session hands batches of source records to Sonnet workers at the session's default reasoning effort with prompt extract-v4 (the worker configuration was chosen on the pilot against Haiku, Bielik and maximum effort with extract-v3; v4 adds the taxonomy changes of tax-v2; tax-v3 narrows the mapping of the families target group, mapping rules only, without a rerun; the record is in [innovation-record.md](innovation-record.md) sections 4 and 6), `scripts/derive-records.py validate` checks every derived record against the JSON Schema, the closed lists, the word limits, the grounding quotes and the personal-data rules, and `build` merges source and derived records into `data/innovations/<id>.json` with the index cards and a data version. Every derived record carries model, date, prompt version and the fingerprint of its source. Run before the event; rerun on the day for a partner hand-over (S3) through the same skill. | A pilot of ten records (`.claude/skills/extract-innovations/pilot.json`) read by a person before the full run; every derived record valid in the validator; 20 random records (`derive-records.py sample`) checked by a person against the source |
 | FR-1.4 | MUST | Merge duplicates across S1, S2 and S3 by normalised title and organisation; a merged record keeps every source link. | No two records share title and organisation |
 | FR-1.5 | MUST | Fixed taxonomies (8.2): nine ROPS target-group categories plus "inne", a domain list, implementer types mapped from the national base's "Kto może wdrażać" values to the applicant types of the paths table. | Every record has at least one target group and one implementer type |
 | FR-1.6 | SHOULD | Partner-file adapter: CSV or XLSX with a column-mapping file, same pipeline, same validation. | A sample file of five rows ingests without code changes |
 | FR-1.7 | MUST | `pnpm seed` loads the JSON files into the database idempotently and stamps a data version shown on the "Jak to działa" page. | Running seed twice yields identical row counts |
-| FR-1.8 | MUST | Attribution: every displayed innovation carries "Źródło: {tytuł}, {organizacja}. {nazwa źródła}, {licencja}. Pobrano {data}." with a link to the source entry; for CC BY 4.0 items the licence links to the deed. | Rendered on S2, S3 and S5 |
-| FR-1.9 | MUST | Display from S1 follows its licence (CC BY 4.0 for texts and files, GPL-3 for software, per the regulamin): title, organisation, structured fields, our own generated summary of at most 60 words, the "Problem" and "Jak działa" passages of at most 60 words each with attribution, and links; software is never copied. Contact details of innovators who are natural persons are not copied into our records or screens; the entry is linked instead (R6). The full text is stored for matching. The lawyer confirms the reading and the attribution line (OP-09). | Reviewed by the lawyer |
+| FR-1.8 | MUST | Attribution: every displayed innovation carries "Źródło: {tytuł}, {organizacja}. {nazwa źródła}, {licencja}. Pobrano {data}." with a link to the source entry; for CC BY 4.0 items the licence links to the deed. The line is followed everywhere by the same prototype note (no legal review in the hackathon): "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem." | Rendered on S2, S3 and S5, with the note |
+| FR-1.9 | MUST | Display from S1 follows its licence (CC BY 4.0 for texts and files, GPL-3 for software, per the regulamin): title, organisation, structured fields, our own generated summary of at most 60 words, the "Problem" and "Jak działa" passages of at most 60 words each with attribution, and links; software is never copied. Contact details of innovators who are natural persons are not copied into our records or screens; the entry is linked instead (R6). The full text is stored for matching. No legal review in the hackathon : the reading is the team's own, and the prototype note of FR-1.8 says so wherever an innovation is displayed. | The note of FR-1.8 present wherever an innovation is displayed |
 
 ### 7.2 Problem intake (owner: Analyst 1 for the form, Developer 2 for the code)
 
@@ -656,19 +660,19 @@ and the reasons come for free.
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
 | FR-7.1 | MUST | Boundaries: a GeoJSON of the 182 gminas of Małopolska keyed by the seven-digit TERC code, simplified to at most 1 MB, with gmina and powiat names as properties; source and licence in 14. No basemap tiles by default (a clean choropleth with labels); OpenFreeMap tiles behind a toggle if time allows. | Loads in under 2 s on the venue Wi-Fi |
-| FR-7.2 | MUST | Three indicators per gmina from the GUS Bank Danych Lokalnych API (8.8), loaded at build time into `data/indicators.json` with variable id, dataset name and year: share of population aged 65 and over (variable 634989); beneficiaries of community social assistance per 10 000 inhabitants (1548717); registered unemployed as a share of the working-age population (79214); civic density (288095) as an optional fourth (OP-25). The ROPS observatory is linked, not scraped. | Every one of the 183 gminas has three values with a year |
+| FR-7.2 | MUST | Three indicators per gmina from the GUS Bank Danych Lokalnych API (8.8), loaded at build time into `data/indicators.json` with variable id, dataset name and year: share of population aged 65 and over (variable 634989); beneficiaries of community social assistance per 10 000 inhabitants (1548717); registered unemployed as a share of the working-age population (79214); civic density (288095) as an optional fourth (OP-25). The ROPS observatory is linked, not scraped. | 182 of the 183 gminas have three values with a year; Szczawa (TERC 1207132, created 1 January 2025) has no BDL value for 2022 to 2024 and renders as "brak danych" until GUS publishes it |
 | FR-7.3 | MUST | Layers: indicator choropleth (five classes, colour-blind safe, values printed in the tooltip and in the table view), implementations as marks, needs count as marks (SHOULD). | Reviewed with the accessibility checklist |
 | FR-7.4 | MUST | Views: explore (choose an indicator); innovation view "Gdzie jest najbardziej potrzebna" with the ranked list of ten gminas with high need and no implementation; gmina panel with indicators, innovations present, needs count and peer gminas. The map shows need, never blame (E7): the wording is "gminy, w których wskaźnik jest wysoki, a rozwiązania jeszcze nie ma"; no gmina is labelled best or worst; the limits of each indicator are stated next to the legend; no view ranks people or households. Three rules from Swiss statistics offices (14.7.2): a value based on fewer than five cases is suppressed ("za mało przypadków"), every dataset's caveats are printed next to it, and every value is shown against the Małopolska median rather than as a league position. | J4 and J5 pass; the wording reviewed by the lawyer; a synthetic gmina with three cases renders as suppressed |
 | FR-7.5 | MUST | Accessibility: a table alternative of the same data behind "Pokaż jako tabelę"; keyboard operation of the list; no information carried by colour alone. | axe passes; keyboard walk-through by hand |
 | FR-7.6 | MUST | Data served as static files with caching headers; no per-request computation heavier than sorting 182 rows. | Server logs |
 
-### 7.8 Legal and funding paths (owner: the lawyer; rules by Developer 1)
+### 7.8 Legal and funding paths (owner: Developer 1; content drafted from 14.4 with the prototype note; no legal review in the hackathon)
 
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
-| FR-8.1 | MUST | Paths live in `data/paths/*.yaml` (schema 8.7), authored in Polish by the lawyer: id, name, legal basis (act and article), applicant types, purposes, amount band, timing rule, decision maker, three steps to start, source URL, verified date, reviewer. | Every path has a source and a verified date |
+| FR-8.1 | MUST | Paths live in `data/paths/*.yaml` (schema 8.7), drafted in Polish from section 14.4 by an AI assistant for Developer 1: id, name, legal basis (act and article), applicant types, purposes, amount band, timing rule, decision maker, three steps to start, source URL, verified date, reviewer (`null`; `notes_pl` carries the prototype note of FR-1.8). | Every path has a source and a verified date |
 | FR-8.2 | MUST | Selection is deterministic: filter by applicant type (from the role, editable on the route), by cost band of the best solutions and by target group; score by specificity and by nearest deadline; return at most three. | Unit tests per rule |
-| FR-8.3 | MUST | Baseline content, to be verified by the lawyer against the acts and calls before Thursday: the small grant (art. 19a of the act on public benefit activity), the open competition (art. 11-13), the local initiative (art. 19b-19h), regranting (art. 16a), the village fund, the participatory budget, the social services programme of a CUS, the ROPS dissemination project "Usługa wrażliwa", the incubator call of Inkubator Włączenia Społecznego 2.0, the Małopolska micro-grants (FIO), the national programmes (FIO, PROO, Senior+, Aktywni+, Korpus Wsparcia Seniorów, Opieka wytchnieniowa, Asystent osobisty), PFRON programmes, the regional participatory budget. Numbers and deadlines come from section 14. | Lawyer's sign-off recorded in each file |
+| FR-8.3 | MUST | Baseline content, taken from section 14.4 and not reviewed by a lawyer in the hackathon: the small grant (art. 19a of the act on public benefit activity), the open competition (art. 11-13), the local initiative (art. 19b-19h), regranting (art. 16a), the village fund, the participatory budget, the social services programme of a CUS, the ROPS dissemination project "Usługa wrażliwa", the incubator call of Inkubator Włączenia Społecznego 2.0, the Małopolska micro-grants (FIO), the national programmes (FIO, PROO, Senior+, Aktywni+, Korpus Wsparcia Seniorów, Opieka wytchnieniowa, Asystent osobisty), PFRON programmes, the regional participatory budget. Numbers and deadlines come from section 14. | `reviewer: null` and the prototype note recorded in each file |
 | FR-8.4 | SHOULD | Deadline awareness: "najbliższy termin" computed from the timing rule relative to today, always with "sprawdź u źródła". | Shown when a rule exists |
 | FR-8.5 | MUST | The model never sees amounts or deadlines as free text to rewrite; the path block is templated. | Code review |
 
@@ -743,7 +747,14 @@ and rows can be diffed.
 One file per innovation, `data/innovations/<id>.json`. Identifier pattern
 `inn-<source>-<slug>`: `inn-rops-merkury`, `inn-nat-<slug>`. Fields marked
 "source" are copied from the entry; fields under `derived` are generated by
-the language model and carry their provenance.
+the language model and carry their provenance. The record is built by
+`scripts/derive-records.py build` from the source record
+`.local/pipeline/sources/<id>.json` (the parser: verbatim text, provenance,
+mechanical mappings) and the derived record
+`.local/pipeline/derived/<id>.json` (the extraction
+workers of FR-1.3); the contract with every field and rule is
+[innovation-record.md](innovation-record.md), which takes precedence over
+the example below where they differ.
 
 ```json
 {
@@ -789,7 +800,7 @@ the language model and carry their provenance.
     {"type": "zip", "title": "Materiały do pobrania", "url": "https://rops.krakow.pl/pliki/IS/bibloteka/merkury.zip", "licence": "CC BY 4.0", "status": "dead-2026-10-03"}
   ],
   "derived": {
-    "generated_by": "claude-opus-5",
+    "generated_by": "claude-haiku-4-5",
     "generated_at": "2026-10-03",
     "prompt_version": "extract-v1",
     "summary_pl": "Symulator internetowy czterech urządzeń samoobsługowych ...",
@@ -839,7 +850,7 @@ Rules:
 Codes are lowercase ASCII slugs; labels are Polish and live in the message
 catalogue.
 
-Target groups (the nine ROPS library categories):
+Target groups (the nine ROPS library categories, plus `spektrum-autyzmu` and `inne`; tax-v2):
 
 | Code | Polish label | ROPS category slug | Entries |
 |---|---|---|---|
@@ -852,14 +863,18 @@ Target groups (the nine ROPS library categories):
 | cudzoziemcy | Dla cudzoziemców | dla-cudzoziemcow | 6 |
 | bezdomnosc | Dla osób w kryzysie bezdomności | dla-osob-w-kryzysie-bezdomnosci | 2 |
 | niepelnosprawnosc-intelektualna | Dla osób z niepełnosprawnością intelektualną | dla-osob-z-niepelnosprawnoscia-intelektualna | 14 |
+| spektrum-autyzmu | Dla osób w spektrum autyzmu | (none; autism is not an intellectual disability, though the ROPS category holds five autism items) | |
 | inne | Inne grupy | (none) | |
 
-Domains (proposal, 16; Analyst 1 may merge or split before Thursday):
+Domains (proposal, 16; Analyst 1 may merge or split):
 opieka-i-wsparcie-dzienne, samotnosc-i-izolacja, zdrowie-psychiczne,
 uzaleznienia, przemoc, ubostwo, mieszkalnictwo, mobilnosc-i-transport,
 dostepnosc, kompetencje-cyfrowe, edukacja, praca-i-aktywizacja,
 integracja-migrantow, opiekunowie-nieformalni, piecza-zastepcza,
-aktywnosc-obywatelska.
+aktywnosc-obywatelska. Added in the record contract: samodzielnosc and
+inne (tax-v1); zdrowie-fizyczne, kultura-sport-i-czas-wolny and
+prawa-i-sprawy-urzedowe (tax-v2, see
+[innovation-record.md](innovation-record.md) section 4).
 
 Implementer types and their mapping from the national base's facet "Kto
 może wdrażać":
@@ -875,8 +890,8 @@ może wdrażać":
 
 The national base's simple "Dla kogo jest innowacja?" values map to the
 target groups as follows: Seniorzy to seniorzy; Osoby z
-niepełnosprawnościami to ograniczona-mobilnosc, niepelnosprawnosc-sensoryczna
-or niepelnosprawnosc-intelektualna by the advanced tags, else inne;
+niepełnosprawnościami to ograniczona-mobilnosc, niepelnosprawnosc-sensoryczna,
+niepelnosprawnosc-intelektualna or spektrum-autyzmu by the advanced tags, else inne;
 Uczniowie, studenci and Rodziny i opiekunowie osób wymagających wsparcia
 to dzieci-mlodziez-rodziny; Osoby bezrobotne and Pracownicy to
 rynek-pracy; Osoby chorujące i z zaburzeniami to zdrowie; Każda osoba to
@@ -996,7 +1011,7 @@ quote of at most 15 words that must be found in the named field (FR-3.4).
 The brief (`br-<id>`) stores `need_id`, `generated_at`, `sections` (keys in
 the order of FR-5.5, each a Polish string) and the rendered Markdown. The
 section order is aligned with the application form of Inkubator Włączenia
-Społecznego 2.0 (verified: tytuł, pomysłodawca, opis
+Społecznego 2.0 (tytuł, pomysłodawca, opis
 innowacji, innowacyjność with the question "Czy podobne rozwiązania są
 stosowane w Polsce albo na świecie?", diagnoza problemu, opis odbiorców,
 zmiana, wizja przyszłości, plan działania i koszty, kwota, zespół), so a
@@ -1037,7 +1052,14 @@ brief performs.
   Organizator kompleksowej opieki w miejscu zamieszkania, BaWita, Mobilne
   centrum pomocy, Centrum antydepresyjne, Terapeuta przestrzeni, Ścieżka
   treningu umysłu, Talerze zdrowia); the place of origin of each
-  innovation where the source names it.
+  innovation where the source names it. The place-of-origin
+  implementations are derived, not hand-written: `scripts/build-static-data.py`
+  (step `origins`) matches `origin_place_pl` of every built record to the
+  register (a gmina name, the town preferred among namesakes, else a
+  unique SIMC locality; a list of towns gives one implementation each)
+  and writes `data/implementations-derived.json` (git-ignored) with the
+  unmatched places listed; the hand-written seeds stay in
+  `data/implementations.yaml`.
 - **ContactRequest**: `id`, `created_at`, `route_id` or `need_id`,
   `target` (`type` in innovation, organisation, advisor, gmina; `id`),
   `requester` (`name`, `organisation`, `email`), `message`, `screening`
@@ -1058,10 +1080,10 @@ brief performs.
 
 ### 8.7 Paths
 
-One YAML file per path in `data/paths/`, written in Polish by the lawyer
-and selected by rules. The numbers below are verified against the Dziennik
+One YAML file per path in `data/paths/`, drafted in Polish from 14.4
+and selected by rules. The numbers below were read in the Dziennik
 Ustaw text of the amendment in force since 1 September 2026 (Dz.U. 2026
-poz. 1040) and are the reference for the lawyer's review.
+poz. 1040). No lawyer reviews them in the hackathon; every file says so in `notes_pl`.
 
 ```yaml
 id: maly-grant-19a
@@ -1145,19 +1167,28 @@ project fund (EUR 10 000 to 80 000).
 `data/map/malopolska-gminy.geojson`: the 183 gminas of Małopolska
 (Szczawa was split from Kamienica on 1 January 2025, TERC 1207132; sources
 older than 2025 have 182), properties `JPT_KOD_JE` (seven-digit TERC) and
-`JPT_NAZWA_`, WGS 84, simplified to about 73 KB. Source: the GeoJSON of
+`JPT_NAZWA_`, plus `kind` and `powiat` from the TERC register, WGS 84,
+simplified to 85 KB. Source: the GeoJSON of
 Polish gminas derived from the state register of boundaries (PRG, August
 2025) published in the repository waszkiewiczja/GeoJSON-Polska-Wojewodztwa-Powiaty-Gminy,
 whose README states public domain; the underlying PRG is CC BY 4.0 on
-dane.gov.pl. Build command:
+dane.gov.pl. Built by `scripts/build-static-data.py` (step `map`), which
+filters the national file and runs mapshaper 0.7.70 through npx:
 
 ```
 npx mapshaper gminy.json -filter 'JPT_KOD_JE.startsWith("12")' -simplify 10% keep-shapes -o malopolska-gminy.geojson format=geojson precision=0.0001
 ```
 
-`data/indicators.json`: one object per gmina keyed by TERC, from the GUS
-Bank Danych Lokalnych API (CC BY 4.0), fetched at build time with a
-registered key (`X-ClientId`; anonymous limits are 5 per second and 1 000
+`data/indicators.json`: one object per gmina keyed by TERC (`gminas`: name,
+kind, powiat and per indicator the value, its year and the BDL flag when
+the value is not plain), the four indicators with variable id, GUS name,
+unit, year, count of gminas with a value, Małopolska median, minimum and
+maximum (`indicators`), the need mapping below (`need_by_target_group`)
+and the gminas without a value (`missing`; Szczawa, created in 2025, has
+none for 2022 to 2024). The values come from the GUS Bank Danych
+Lokalnych API (CC BY 4.0), downloaded by `scripts/fetch-static-data.py
+--only bdl` and built by `scripts/build-static-data.py` (step
+`indicators`), with a registered key (`X-ClientId`; anonymous limits are 5 per second and 1 000
 per 12 hours; the `/units` endpoint hit the anonymous limit during
 research). Query shape:
 
@@ -1186,20 +1217,23 @@ IOSS", not scraped.
 Indicator-to-category mapping for "Gdzie jest najbardziej potrzebna":
 seniorzy and ograniczona-mobilnosc use ageing; bezdomnosc, rynek-pracy and
 dzieci-mlodziez-rodziny use social assistance and unemployment; every
-other category uses social assistance. The mapping is a constant file and
-is shown on the map ("Wskaźnik potrzeby: ...").
+other category uses social assistance. The mapping is the constant
+`NEED_BY_TARGET_GROUP` of `scripts/build-static-data.py`, copied into
+`data/indicators.json`, and is shown on the map ("Wskaźnik potrzeby: ...").
 
 ### 8.9 Places
 
-`data/places/pl-register.json` is the register of Polish places imported
-from the GUS TERC register by the Swiss TIP project
-(prior work, cited on the credits page): 2 875 places with codes like
+`data/places/pl-register.json` is the register of Polish places built by
+`scripts/build-static-data.py` (step `places`) from the GUS TERC register (state 1 January 2026): 2 875 places with codes like
 `PL-12` (voivodeship), `PL-12-07` (powiat) and `PL-12-07-132` (gmina),
 206 of them in Małopolska. The seven-digit TERC used everywhere else is
-the code without `PL-` and hyphens. The place picker offers gminas only,
-labelled "{name} (powiat {powiat name})", and resolves the 18 districts of
-Kraków to Kraków (`1261011`). Distances between gminas use centroids of
-the GeoJSON polygons.
+the code without `PL-` and hyphens. Every gmina carries its `label` for
+the picker ("{name} (powiat {powiat name})", with the kind added when a
+town and a rural gmina share a name, and "(miasto na prawach powiatu)"
+for the three cities) and its `centroid` (area-weighted, WGS 84, lon and
+lat, from the national GeoJSON of 8.8). The place picker offers gminas
+only and resolves the 18 districts of Kraków to Kraków (`1261011`).
+Distances between gminas use the centroids of the register.
 
 ### 8.10 Screening result
 
@@ -1246,7 +1280,7 @@ stored.
 - PostgreSQL 16 with Drizzle ORM; `pgvector` installed but unused unless
   FR-3.7 is switched on.
 - Tailwind CSS with shadcn/ui components (Radix primitives, accessible by
-  default); design tokens fixed by Analyst 1 on Tuesday (OP-15).
+  default); design tokens fixed by Analyst 1 (OP-15).
 - MapLibre GL JS with the OpenFreeMap "positron" style behind a toggle,
   and the local GeoJSON as the only data source.
 - An OpenAI-compatible client for Bielik through the Hugging Face router
@@ -1307,7 +1341,7 @@ One interface, three providers, chosen by the environment variable
 
 ```ts
 interface LlmCall<T> {
-  task: "screen" | "extract" | "shortlist" | "assess" | "compose" | "brief" | "cluster";
+  task: "screen" | "shortlist" | "assess" | "compose" | "brief" | "cluster"; // extraction runs outside the app (FR-1.3)
   system: string;                 // from prompts/<task>.md, Polish
   cachedBlocks?: string[];        // stable prefix, e.g. the index cards
   user: string;                   // the volatile part, user text wrapped in <potrzeba> tags
@@ -1318,23 +1352,23 @@ interface LlmCall<T> {
 interface LlmResult<T> { parsed: T; usage: {...}; latencyMs: number; provider: string; model: string; cached: boolean }
 ```
 
-Roles: **openai-compatible
+Roles (user decision): **openai-compatible
 with Bielik is the primary provider of the online app** for every request
-task (screen, shortlist, assess, compose, brief, cluster). **anthropic
-runs the offline ingestion step** (extract, as a batch before the event
-and by hand for a partner hand-over on the day) **and is the online
-fallback** when Bielik fails after retries. The online order is Bielik,
+task (screen, shortlist, assess, compose, brief, cluster). **anthropic is
+the online fallback** when Bielik fails after retries. The offline
+ingestion step (extract) is not an app task at all: it runs as Claude Code
+subagents on the team's subscription (FR-1.3). The online order is Bielik,
 Anthropic, Llama 3.3 70B, the replay cache. A stage that Bielik fails on
-the real test problems on Thursday may be moved to Anthropic by a
+the real test problems may be moved to Anthropic by a
 measured team decision, never by an assistant (OP-05).
 
-- **anthropic** (offline extraction and online fallback, decided): model
-  `claude-opus-5` for every task it runs. Structured output through `client.messages.parse` with
+- **anthropic** (online fallback, decided): model `claude-opus-5` for
+  every task it runs. Structured output through `client.messages.parse` with
   `zodOutputFormat(schema)` in `output_config.format`; the index block and
   the system prompt carry `cache_control: {type: "ephemeral", ttl: "1h"}`
   (the cache is a prefix match, so the index block comes first and the
   need last); `output_config.effort` is `low` for screen, `medium` for
-  shortlist and extract, `high` for assess, compose and brief; adaptive
+  shortlist, `high` for assess, compose and brief; adaptive
   thinking is the model's default and is not configured; streaming for
   the brief (`client.messages.stream`); the server-side refusal fallback
   (`betas: ["server-side-fallback-2026-07-01"]`, `fallbacks: "default"`)
@@ -1346,8 +1380,8 @@ measured team decision, never by an assistant (OP-05).
   default retries (2) and a 40-second timeout (5 s for screen). Moving an online stage from Bielik to Anthropic is a
   measured team decision, not a default (OP-05).
 - **openai-compatible** (primary online provider, decided):
-  Bielik-11B-v3.0-Instruct (Apache 2.0) through the Hugging Face router, which serves it from the provider "publicai":
-  base URL `https://router.huggingface.co/v1`, model
+  Bielik-11B-v3.0-Instruct (Apache 2.0) through the Hugging Face router, which serves it from the provider "publicai": base URL
+  `https://router.huggingface.co/v1`, model
   `speakleash/Bielik-11B-v3.0-Instruct:publicai`, the team's Hugging Face
   token as the key (`HF_TOKEN` in `.env.dev`, git-ignored), price 0.40 USD
   per million tokens in and out, structured output and tools supported by
@@ -1360,16 +1394,15 @@ measured team decision, never by an assistant (OP-05).
   top three over ten synthetic index cards, no invented identifiers,
   median latency 2.2 s and at most 8 s on first calls. The repeated
   identical calls came back from a cache in 0.5 s, so the independent
-  sample is the seven first runs. Conclusion: the primary provider of the online app;
-  the remaining 3.8 USD of credit covers roughly nine
+  sample is the seven first runs. Conclusion: the primary provider of the online app (user decision); the remaining 3.8 USD of credit covers roughly nine
   million tokens, about 200 routes, so Analyst 2 tops the credit up to at
   least 20 USD before the event (OP-05). The router has no prompt
   caching, so the index block of stage 1 travels in full on every call
   (about 25 000 tokens, one cent) and must fit the model's context window
-  with the need and the answer; the shortlist spike on Tuesday measures
+  with the need and the answer; the shortlist spike measures
   this with the real cards (OP-43). The probe covered screening and a
   ten-card shortlist only; the assessment stage with full records is
-  first measured on Thursday. Alternatives: CloudFerro
+  first measured. Alternatives: CloudFerro
   Sherlock (Polish data centre; pricing not published) or a self-hosted
   vLLM. PLLuM has no official public API; it is reachable only through
   such hosts or self-hosting. Apertus (the Swiss model) was smoke-tested
@@ -1402,9 +1435,9 @@ and out: shortlist about 25 000 input plus 1 000 output, assess about
 under 0.02 USD per route; the brief under 0.01 USD. For the Anthropic
 fallback at the published rates (input 5 USD, output 25 USD, cache reads
 0.50 USD per million tokens) the same route costs about 0.20 USD and the
-brief about 0.15 USD; extraction of 450 records through the Batches API
-at half price about 5 USD. Budget cap 150 USD in the console of the API
-account (OP-05).
+brief about 0.15 USD. Extraction runs as Claude Code subagents on the
+team's subscription and costs no API credit (FR-1.3). Budget cap 150 USD
+in the console of the API account (OP-05).
 
 ### 9.4 Prompts
 
@@ -1415,7 +1448,7 @@ result and into the replay cache key:
 | File | Task | Fixed rules inside the prompt |
 |---|---|---|
 | `screen.md` | The gate (7.12) | Classify, never answer; a rude community need is still a need; an identifiable person's situation is an individual case; list personal-data spans; write a neutral summary without insults; never repeat slurs |
-| `extract.md` | Derived fields for one innovation | Summaries in plain Polish; taxonomy codes only from the list; unknown stays unknown; no invention of contacts |
+| `extract.md` | Derived fields for one innovation; read by the Claude Code worker subagents of the extraction skill, not by the app, and therefore written in English with the Polish output rules inside (header `version: extract-v1`, stamped into every derived record) | Summaries in plain Polish; taxonomy codes only from the list; the mapped codes kept; unknown stays unknown; quotes verbatim; no personal data; people-first wording |
 | `shortlist.md` | Stage 1 | Choose only ids from the index; at most 8; one sentence each; detect target groups and domains |
 | `assess.md` | Stage 2 | Score the fit of each candidate to the need; quote at most 15 words from a named field; name gaps; decide the mode with the thresholds |
 | `compose.md` | Summary and next steps | Write for a social worker; three imperative steps that reference given ids; no amounts, no deadlines, no new names; the safe messaging rules of FR-12.10; people described with respect (E1) |
@@ -1431,7 +1464,7 @@ change to a prompt.
 (repository root)
   AGENTS.md                 short instructions for AI assistants (stack, commands, rules, links)
   README.md                 Polish summary for the partner, then English
-  docs/                     this specification (functional-specification.md), the decision log (decision-log.md), the model evaluation record (model-evaluation.md with its raw results folder), glossary, demo script, credits
+  docs/                     this specification (functional-specification.md), the decision log (decision-log.md), the model evaluation record (model-evaluation.md with its raw results folder), the record contract of the data pipeline (innovation-record.md), the review sample of the human check (review-sample.md, written by derive-records.py sample and committed for the reviewer), glossary, demo script, credits
   src/app/                  Next.js pages (Polish routes: /, /droga/[id], /potrzeba/[id], /mapa, /innowacja/[id], /rops, /jak-to-dziala, /zrodla, /prywatnosc, /dostepnosc)
   src/app/api/              route handlers (9.2)
   src/server/ingest/        crawlers and the partner-file adapter
@@ -1444,19 +1477,27 @@ change to a prompt.
   src/lib/llm/              provider interface and the three providers
   src/lib/i18n/             message catalogue loader (Polish only)
   src/components/           UI components (shadcn/ui based)
-  prompts/                  Polish prompts (9.4)
+  prompts/                  Polish prompts of the app (9.4); extract.md is the worker prompt of the extraction skill, extract-example.json its worked example
   messages/pl.json          every user-visible string (section 11)
-  data/innovations/         one JSON per innovation
+  data/taxonomies.json      closed lists and mapping rules of the record (8.2, tax-v3)
+  data/duplicates-decisions.json  a person's decisions on the duplicate pairs the build flags (FR-1.4; hand-written, committed)
+  data/innovations/         one built record per innovation (derive-records.py build; duplicates merged); data/ holds only what the app serves
+  data/index-cards.json     the stage 1 index, built from the derived records
+  data/incubators.json      the incubator profiles of the national base
+  data/data-version.json    the data version the app shows on "Jak to działa" (derive-records.py build)
+  schemas/                  JSON Schemas of the source and derived records (innovation-record.md)
+  .claude/skills/           Claude Code skills; extract-innovations is the extraction coordinator playbook, with the pilot set pilot.json
   data/paths/               one YAML per path
-  data/advisors.yaml        advisors per category
-  data/implementations.yaml seeded implementations with sources
-  data/map/                 malopolska-gminy.geojson
-  data/indicators.json      indicators per gmina
-  data/places/              pl-register.json
-  data/raw/                 raw downloads (git-ignored)
+  data/advisors.yaml        advisors per category (hand-written, committed)
+  data/implementations.yaml seeded implementations with sources (hand-written, committed)
+  data/implementations-derived.json  place-of-origin implementations (build-static-data.py; git-ignored)
+  data/map/                 malopolska-gminy.geojson (build-static-data.py; git-ignored)
+  data/indicators.json      indicators per gmina (build-static-data.py; git-ignored)
+  data/places/              pl-register.json (build-static-data.py; git-ignored)
+  .local/                   git-ignored, machine-local: raw downloads and reference data (crawl-catalogues.py, fetch-static-data.py, fetch-documents.py) and the pipeline's working files in .local/pipeline (source records, derived records, manifest, duplicates)
   tests/problems/           the ten test problems (humans only)
   tests/unit/  tests/e2e/   Vitest and Playwright
-  scripts/                  CLI entry points (9.6); scripts/llm-probe.py is the model feasibility probe
+  scripts/                  CLI entry points (9.6): the crawlers, the parser, the pipeline referee (derive-records.py), the static-data fetcher and builder (fetch-static-data.py, build-static-data.py), the link checker (check-links.py) and the model probe (llm-probe.py)
   .venv/  requirements.txt  the Python virtual environment for probes and data scripts (git-ignored) and its pinned packages; every Python command runs with .venv/Scripts/python
 ```
 
@@ -1466,10 +1507,14 @@ change to a prompt.
 |---|---|
 | `pnpm dev`, `pnpm build`, `pnpm start` | Next.js |
 | `pnpm db:migrate`, `pnpm seed` | Schema and data load (idempotent) |
-| `pnpm ingest:national`, `pnpm ingest:rops --from data/raw/rops/`, `pnpm ingest:partner --file x.xlsx --map map.yaml` | Crawlers and adapters |
-| `pnpm extract [--only id]` | Derived fields (batch by default) |
-| `pnpm indicators:fetch` | BDL download into `data/indicators.json` |
-| `pnpm map:build` | GeoJSON filter and simplification |
+| `.venv/Scripts/python scripts/crawl-catalogues.py s1 s1-files s2 s2-files` | Snapshots the two catalogues into `.local/raw/` (resumable, rate-limited) |
+| `.venv/Scripts/python scripts/parse-catalogues.py [s1] [s2]` | Source records `.local/pipeline/sources/<id>.json` (machine-local) and `data/incubators.json` from the snapshot; idempotent |
+| `pnpm ingest:partner --file x.xlsx --map map.yaml` | Partner-file adapter (FR-1.6): writes source records in the same shape |
+| `/extract-innovations` in Claude Code | The extraction skill: pilot, batches of worker subagents, validation, build, review sample (FR-1.3) |
+| `.venv/Scripts/python scripts/derive-records.py status|batches|validate|build|sample|show` | The pipeline referee: state per record, pending batches, validation of derived records, the built records and index cards, the review sample (docs/review-sample.md), one record on screen |
+| `.venv/Scripts/python scripts/fetch-static-data.py [--only teryt,geojson,bdl]` | Downloads the TERC register, the national GeoJSON and the BDL indicators into `.local/` (BDL needs `BDL_CLIENT_ID` in the env file) |
+| `.venv/Scripts/python scripts/build-static-data.py [--only places,map,indicators,origins]` | Builds `data/places/pl-register.json`, `data/map/malopolska-gminy.geojson` (mapshaper through npx), `data/indicators.json` and, from the built records, `data/implementations-derived.json`; idempotent |
+| `.venv/Scripts/python scripts/check-links.py [--no-live]` | Checks every material and link of the built records (12.13): the crawl logs first, then live HEAD requests at one per second per host; writes `.local/pipeline/link-check.json`, which the next `derive-records.py build` copies onto every material and link as `link_status` and `link_checked_at` |
 | `pnpm eval [--provider anthropic|openai-compatible|replay]` | Runs the test problems, writes `reports/eval-<timestamp>.md` |
 | `pnpm test`, `pnpm test:e2e`, `pnpm a11y`, `pnpm screenshots` | Quality gates |
 | `pnpm cache:warm` | Pre-generates and caches the routes of the test problems and the demo path |
@@ -1878,7 +1923,8 @@ per-request reads of the JSON files.
   decline and redirect is logged with its reason and can be appealed
   (E10).
 - Helplines shown on S10, read from the reference list at 116sos.pl and
-  the Police's announcement (OP-33): 112 (emergency, 24/7); 116 123
+  the Police's announcement, to be re-checked by the
+  lawyer (OP-33): 112 (emergency, 24/7); 116 123
   (Poradnia telefoniczna dla osób dorosłych w kryzysie emocjonalnym,
   24/7); 116 111 (Telefon Zaufania dla Dzieci i Młodzieży, 24/7);
   800 120 002 (Ogólnopolski Telefon dla Ofiar Przemocy w Rodzinie
@@ -1921,12 +1967,18 @@ from the token counts. Nothing personal in logs.
   `ANTHROPIC_API_KEY`, `OPENAI_COMPAT_BASE_URL`, `OPENAI_COMPAT_API_KEY`,
   `OPENAI_COMPAT_MODEL`, `ROPS_TOKEN`, `DATA_VERSION`, `PUBLIC_BASE_URL`,
   `RATE_LIMIT_*`, `REPLAY_ONLY` (true on the demo laptop).
+- From then on `main`
+  always deploys; a broken deploy is rolled back by redeploying the
+  previous image.
 
 ### 12.10 Cost
 
 Model calls capped at 150 USD for preparation and the event (OP-05):
-the extraction batch and the online fallback on Anthropic, the online
-requests on Bielik through the Hugging Face router;
+the online fallback on Anthropic (the extraction runs as Claude Code
+subagents on the team's subscription, FR-1.3), the online requests on
+Bielik through the Hugging Face router (the credit of 3.8 USD
+covers about 200 routes at 0.40 USD per million
+tokens; Analyst 2 tops it up to at least 20 USD before the event);
 hosting about 20 EUR; the domain a few EUR. The console
 statistics show the cost line.
 
@@ -1948,16 +2000,17 @@ Chrome or Edge on Windows.
   prompts; they never add a dependency without a licence check; they never
   put a secret in the repository.
 - Every decision that changes this specification goes to
-  `docs/decision-log.md` with date, decider and reason (this is also the
+  `docs/decision-log.md` with a sequence number, decider and reason (this is also the
   evidence of original authorship the rules ask for).
 - Commit messages follow the repository's style and never carry an AI
   attribution trailer (AGENTS.md).
 
 ### 12.13 Data quality
 
-Twenty random derived records checked by a person against the source
-before Thursday; a link checker over all materials with dead links marked
-(as `merkury.zip` already is); the data version stamp on the sources page;
+Twenty random derived records checked by a person against the source; a link checker over all materials and links
+(`scripts/check-links.py`) with dead links marked by the build as
+`link_status: dead` on the material or link, `merkury.zip` among them;
+the data version stamp on the sources page;
 duplicates report from FR-1.4 reviewed by Developer 2.
 
 ### 12.14 Ethics, safety and fairness
@@ -1981,7 +2034,7 @@ The principles of 3.6 as measurable properties:
 
 ### 13.1 The ten test problems
 
-Written by the lawyer between Tuesday and Thursday, with the expected
+Written by the lawyer, with the expected
 innovations chosen from the ingested catalogue. They are the acceptance
 test, the design content (real routes, never placeholder text) and the
 demo material. AI assistants may not edit them; the evaluation report
@@ -2200,7 +2253,7 @@ the "Atlas dobrych praktyk ekonomii społecznej" is a 2008-2011 PDF series.
 
 | Source or target | What we take | Access | Licence and terms | Status |
 |---|---|---|---|---|
-| innowacjespoleczne.pl (S1) | All 300 entries for matching; summaries, short passages and structured fields for display with attribution; links; the incubator mapping from the 35 profiles; the bilingual taxonomy | HTML crawl of about 340 pages, 2 to 3 seconds apart, a User-Agent naming the team; robots.txt allows all | CC BY 4.0 texts and files, GPL-3 software (regulamin); a courtesy e-mail to katalizator@stocznia.org.pl asking for a bulk export or panel access (OP-09) | Details in 7.1 |
+| innowacjespoleczne.pl (S1) | All 300 entries for matching; summaries, short passages and structured fields for display with attribution; links; the incubator mapping from the 35 profiles; the bilingual taxonomy | HTML crawl of about 340 pages, 2 to 3 seconds apart, a User-Agent naming the team; robots.txt allows all | CC BY 4.0 texts and files, GPL-3 software (regulamin); a courtesy e-mail to katalizator@stocznia.org.pl asking for a bulk export or panel access (OP-09) | Verified; details in 7.1 |
 | The incubators' own catalogues (COULD): Inkubator pomysłów (https://inkubatorpomyslow.org.pl/innowacje/, 55 entries, no licence stated), Generator Innowacji. Sieci Wsparcia (https://sieciwsparcia.pl/poprzednie-innowacje/, about 84 entries over two editions, CC BY 4.0 stated), TransferHUB (https://transferhub.pl/, about 13 visible, part password-protected), Popojutrze (https://popojutrze2.pl/innowacje2/?kat=innowacje, about 69 entries, CC BY-SA 4.0 with rights held by the ministry) | Entries missing from the national base (the FERS era) | HTML | As listed | Not in the MUST scope; only if the partner's list points there |
 | ROPS library (S2) | All 115 entries; CC BY items displayed with attribution; MIIS items link-only | Nine category pages and entry pages; curl with a browser User-Agent | CC BY 4.0 or MIIS agreement | Verified |
 | ROPS "Innowacje w małopolskich modelach" (https://rops.krakow.pl/innowacje-spoleczne/innowacje-w-malopolskich-modelach) | Nine innovations flagged `in_regional_model`; the four regional service models as "Wiedza" | HTML and PDFs | "Kopiowanie i rozpowszechnianie materiałów może być dokonane z podaniem źródła" | Verified |
@@ -2211,7 +2264,7 @@ the "Atlas dobrych praktyk ekonomii społecznej" is a 2008-2011 PDF series.
 | PRG-derived GeoJSON of gminas (waszkiewiczja/GeoJSON-Polska-Wojewodztwa-Powiaty-Gminy) | 183 Małopolska polygons | GitHub raw file, 11.8 MB, filtered and simplified | README: public domain; PRG itself CC BY 4.0 | Verified; alternative: GUGiK PRG download (378 MB) or the PRG WFS (183 features for `12*`) |
 | GUS TERC register through the Swiss TIP import | Place register (8.9) | Local file | Public statistics; prior work cited | Present in the sibling workspace |
 | ROPS IOSS (https://obserwator.rops.krakow.pl/) | Link from the gmina panel; 184 indicators, 2007-2024 | Browser only; XLS via form POST; blocks non-browser clients | No licence text | Link only |
-| RJPS register of social policy units (https://rjps.mrpips.gov.pl/RJPS/) | OPS, CUS, PCPR per gmina for "Zaproponuj gminie" targets | JavaScript application with XLSX or CSV export in the browser | Public information | SHOULD: one manual export on Tuesday |
+| RJPS register of social policy units (https://rjps.mrpips.gov.pl/RJPS/) | OPS, CUS, PCPR per gmina for "Zaproponuj gminie" targets | JavaScript application with XLSX or CSV export in the browser | Public information | SHOULD: one manual export |
 | Accredited OWES list (https://wykazowes.ekonomiaspoleczna.gov.pl/owes/wojewodztwo/6.html) | Three OWES with their powiat coverage as "Ludzie" for PES applicants | HTML and CSV | Public | Verified |
 | NIW list of 1.5 % organisations (https://niw.gov.pl/opp/wykaz-opp/?export=XLSX&data_scope=all&catalog=230) | 867 Małopolska organisations by gmina as "organisations nearby" | XLSX | Public information, updated monthly (15 September 2026) | SHOULD |
 | Senior+ lists of the voivode (Dzienne Domy, Kluby; XLS) | Day-care places as implementers or targets for senior innovations | XLS | Public | COULD |
@@ -2222,7 +2275,8 @@ the "Atlas dobrych praktyk ekonomii społecznej" is a 2008-2011 PDF series.
 
 "P" means read in the primary text (the
 act in Dziennik Ustaw or the announcing body's own page), "S" secondary.
-The lawyer confirms each row before it becomes a YAML file.
+No lawyer confirms the rows in the hackathon;
+each YAML file carries the prototype note and "sprawdź u źródła".
 
 | Path | Legal basis | Who applies | Amount and limits | Timing | Decides | Source | |
 |---|---|---|---|---|---|---|---|
@@ -2255,7 +2309,7 @@ The lawyer confirms each row before it becomes a YAML file.
 | ESF Social Innovation+ call ESF-SI-2026-ECG-01 | EU programme | Coordinator a public authority with at least two co-applicants from two member states; Polish gminas and NGOs as co-applicants | EUR 0.8 to 2.0 million, lump sum, at least 20 % co-financing, 18-24 months | Deadline 15 October 2026 17:00 CEST | ESFA (Lithuania) | https://socialinnovationplus.eu/call/esf-si-2026-ecg-01/ | P |
 | Interreg PL-SK small project fund | Interreg 2021-2027 | JST, NGOs, public institutions in the border powiats | EUR 10 000 to 80 000, 80 % co-financing, up to 12 months | Calls I-III done; 2026-2027 schedule on the euroregions' pages | Euroregion Beskidy, Karpacki, EUWT Tatry | https://plsk.eu/dla-wnioskodawcy/fundusz-malych-projektow/ | P, S |
 
-Not verified (the lawyer checks or the path says "sprawdź u źródła"): the
+Not verified (the path says "sprawdź u źródła"): the
 IWS 2.0 2026 round (a search snippet claims 27 April to 8 June 2026, up to
 100 000 zł); the 2027 JST edition of Opieka wytchnieniowa; the NOWEFIO
 maximum grant; the village fund refund rates; the Kraków local initiative
@@ -2266,8 +2320,8 @@ edition dates.
 
 | Component | Facts | Licence | Verdict |
 |---|---|---|---|
-| Claude Opus 5 through the Anthropic API | Structured outputs, prompt caching, the Batches API at half price, refusal fallbacks; Polish quality to be measured on the test problems against the Polish model | Commercial API; the team's key | reuse (offline extraction batch and online fallback) |
-| Bielik (SpeakLeash) | Bielik-11B-v3.0-Instruct (32 European languages), Bielik-Minitron-7B-v3.0, 1.5B and 4.5B v3 models, Bielik-Guard; the 11B v3.0 model is served live on the Hugging Face router by the provider "publicai" at 0.40 USD per million tokens (the only Bielik variant with a provider; the others need a dedicated endpoint, for example a T4 at 0.50 USD an hour); also CloudFerro Sherlock (Polish data centre; pricing not verified), PCSS AI HUB, Cyfronet; demo chat.bielik.ai. 15 of 15 strict JSON, 8 of 8 screening categories, 6 of 6 shortlist hits, no invented identifiers, median 2.2 s | Apache 2.0 | reuse (primary online provider through the router; "Polish-native" comparison; on-premise story) |
+| Claude Opus 5 through the Anthropic API | Structured outputs, prompt caching, the Batches API at half price, refusal fallbacks; Polish quality to be measured on the test problems against the Polish model | Commercial API; the team's key | reuse (online fallback) |
+| Bielik (SpeakLeash) | Bielik-11B-v3.0-Instruct (32 European languages), Bielik-Minitron-7B-v3.0, 1.5B and 4.5B v3 models, Bielik-Guard; the 11B v3.0 model is served live on the Hugging Face router by the provider "publicai" at 0.40 USD per million tokens (the only Bielik variant with a provider; the others need a dedicated endpoint, for example a T4 at 0.50 USD an hour); also CloudFerro Sherlock (Polish data centre; pricing not verified), PCSS AI HUB, Cyfronet; demo chat.bielik.ai. 15 of 15 strict JSON, 8 of 8 screening categories, 6 of 6 shortlist hits, no invented identifiers, median 2.2 s | Apache 2.0 | reuse (primary online provider through the router, user decision; "Polish-native" comparison; on-premise story) |
 | PLLuM (CYFRAGOVPL) | 2512 series (December 2025) 4B to 70B; 11 new models on 21 May 2026; demo pllum.clarin-pl.eu; no official public API (blog claims of a NASK developer portal unverified) | PLLuM-12B-chat-2512 Apache 2.0; Llama-PLLuM under the Llama 3.1 licence; "-nc-" variants CC BY-NC 4.0 | reuse only through a host or self-hosting; mention on the slides |
 | Polish embeddings, if FR-3.7 is switched on | BAAI/bge-m3 (1024 dimensions, 8 192 tokens, over 100 languages, MIT); intfloat/multilingual-e5-large (MIT); sdadas/mmlw-retrieval-roberta-large-v2 and OPI-PIB PolDense (September 2026) under the Gemma licence; Voyage AI `voyage-4` family (32 000 tokens, multilingual) as an API | as listed | reuse; bge-m3 has the cleanest licence |
 | Reranker sdadas/polish-reranker-roberta-v3 | Strong on public-administration sets | Gemma licence | reuse only if FR-3.7 |
@@ -2283,9 +2337,9 @@ edition dates.
 
 #### EU models and hosts
 
-Apertus is excluded from every
-evaluation (OP-40); the second provider is Bielik-11B v3.0 through the
-Hugging Face router (9.3). The question "which other European models
+Team decisions: Apertus is excluded from every
+evaluation (OP-40); the primary online provider is Bielik-11B v3.0
+through the Hugging Face router, with Anthropic as the fallback (9.3). The question "which other European models
 could stand in" has two honest layers: models of European origin with
 documented Polish, and models of any origin served under EU jurisdiction.
 
@@ -2294,7 +2348,7 @@ without self-hosting:
 
 | Model | Origin, licence | Polish documented | Callable today | Verdict |
 |---|---|---|---|---|
-| Mistral Small 3.2 (24B) | Mistral AI, France; Apache 2.0 | Yes, Polish is named in the Small 3.1 language list the 3.2 card refers to; JSON output and function calling documented | Scaleway Generative APIs (Paris; EUR 0.15 in, 0.35 out per million tokens; the first million tokens free; `json_schema`); IONOS AI Model Hub (Berlin; EUR 0.10 and 0.30). Deprecated on Mistral's own API (retirement 31 July 2026) | The EU-origin alternative to evaluate on Thursday next to Bielik (OP-42); risk: Scaleway may retire it too |
+| Mistral Small 3.2 (24B) | Mistral AI, France; Apache 2.0 | Yes, Polish is named in the Small 3.1 language list the 3.2 card refers to; JSON output and function calling documented | Scaleway Generative APIs (Paris; EUR 0.15 in, 0.35 out per million tokens; the first million tokens free; `json_schema`); IONOS AI Model Hub (Berlin; EUR 0.10 and 0.30). Deprecated on Mistral's own API (retirement 31 July 2026) | The EU-origin alternative to evaluate next to Bielik (OP-42); risk: Scaleway may retire it too |
 | Mistral Small 4 (119B mixture, about 6.5B active), Ministral 3 (3B, 8B, 14B), Mistral Large 3 | Mistral AI; Apache 2.0 | Not named on the cards ("dozens of languages"); no Polish benchmark found | Mistral AI Studio with the EU endpoint `api.eu.mistral.ai` (list price times 1.1; data hosted in the EU by default; zero data retention only on paid plans by request): Small 4 USD 0.15 and 0.60, Ministral 3 14B USD 0.20 flat; a free "Experiment" mode with low limits (its training-opt-out default unverified) | Second choice after Small 3.2; use the paid plan and the EU endpoint if it is evaluated |
 | EuroLLM-22B and 9B Instruct (December 2025 versions) | EU Horizon consortium (IST Lisbon, Unbabel, Edinburgh, Paris-Saclay, Amsterdam); Apache 2.0 | Yes, among 35 languages; no per-language scores | No live self-serve endpoint; on the router only as an "error" entry under publicai | Self-hosting or a dedicated endpoint only; not for the hackathon |
 | Teuken-7B (OpenGPT-X: Fraunhofer, Jülich, TU Dresden, DFKI) | Germany; v0.4 Apache 2.0, v0.6 CC BY-NC | Yes, all 24 EU languages; context 4 096 | None (the IONOS listing is gone) | Not for the hackathon |
@@ -2315,7 +2369,7 @@ structured output and a stated data-centre location:
 | Public AI Inference Utility (the router's provider `publicai`) | Bielik served "Location: Poland" per the provider's model list; a Swiss non-profit | Bielik 11B v3.0 USD 0.40 flat | USD 2 starter credit; the team's Hugging Face credit through the router | Compute partners include CSCS, Exoscale and Jülich |
 | Not usable for the hackathon | T-Systems (EUR 1 000 a month minimum), STACKIT (manual registration approval), Nebius shared endpoints (processing location "decided dynamically", no EU guarantee) | | | |
 
-The same 15
+Measured with `scripts/llm-probe.py`, the same 15
 synthetic cases for every model (4 screening cases and 3 shortlist cases,
 each run twice with a run id; the second run is an independent sample);
 the full record with method, cases, costs and raw answers is
@@ -2332,7 +2386,7 @@ the full record with method, cases, costs and raw answers is
 Reading: on this small set the Polish-trained model is the only one that
 passes the gate; the large EU-hosted generalists match solutions equally
 well but stumble on the off-topic case, and reasoning models cost
-latency the gate cannot afford. The evaluation on Thursday with the
+latency the gate cannot afford. The evaluation with the
 real test problems runs Bielik and, if Analyst 2 opens a Scaleway
 account (OP-42), Mistral Small 3.2 on Scaleway; Llama 3.3 70B on OVHcloud
 stays configured as the third provider, after Bielik and Anthropic, for
@@ -2341,7 +2395,7 @@ EuroLLM, Teuken, Salamandra, ALIA and PLLuM-2512; the "NASK PLLuM API";
 T-Systems and STACKIT; Nebius shared endpoints for an EU-residency
 claim; any reasoning model for the screening gate.
 
-### 14.6 Open questions for the partner at the teaser talk
+### 14.6 Open questions for the partner
 
 Collected from the research, to be asked by Analyst 1 and the lawyer on
 Saturday at 12:45:
@@ -2377,7 +2431,8 @@ Saturday at 12:45:
 
 ### 14.7 Swiss examples: references and inspiration
 
-Switzerland is a useful mirror for Małopolska: social policy is
+Verified from the operators' own pages unless marked
+otherwise. Switzerland is a useful mirror for Małopolska: social policy is
 delivered by cantons and communes, several public bodies fund social
 innovations and keep good-practice databases, and the public sector
 publishes its digital standards. The headline finding: Switzerland has
@@ -2399,8 +2454,7 @@ not.
 
 | Example | Operator, URL | What it is | What to reference | Verdict |
 |---|---|---|---|---|
-| Communities That Care (CTC) with "PGF wirkt!" | RADIX with the University of Zurich (Jacobs Center) for the survey; funded by the tobacco and alcohol prevention funds, Gesundheitsförderung Schweiz and cantons; https://www.radix.ch/de/gesunde-gemeinden/angebote/communities-that-care/, https://www.pgfwirkt.ch/de/projektliste/ | A municipality runs a scientific youth survey, gets a profile of risk and protective factors, analyses the gaps in its offers and selects evaluated programmes from a rated list
-(each rated on effect potential, dissemination potential and proven effect, with contacts and a PDF; filters by setting and topic). Second multiplication phase 2026-2029 | The only Swiss "needs profile to programme list" mechanism. HubMI replaces the survey with plain-language intake and the indicators of the gmina, and adds people and the funding path | reference |
+| Communities That Care (CTC) with "PGF wirkt!" | RADIX with the University of Zurich (Jacobs Center) for the survey; funded by the tobacco and alcohol prevention funds, Gesundheitsförderung Schweiz and cantons; https://www.radix.ch/de/gesunde-gemeinden/angebote/communities-that-care/, https://www.pgfwirkt.ch/de/projektliste/ | A municipality runs a scientific youth survey, gets a profile of risk and protective factors, analyses the gaps in its offers and selects evaluated programmes from a rated list (43 offers, each rated on effect potential, dissemination potential and proven effect, with contacts and a PDF; filters by setting and topic). Second multiplication phase 2026-2029 | The only Swiss "needs profile to programme list" mechanism. HubMI replaces the survey with plain-language intake and the indicators of the gmina, and adds people and the funding path | reference |
 | Orientierungsliste and the KAP funding lines | Gesundheitsförderung Schweiz; https://gesundheitsfoerderung.ch/orientierungsliste, https://gesundheitsfoerderung.ch/kantonale-aktionsprogramme/projektfoerderung | An evaluated list of interventions that cantons must draw on for their cantonal action programmes (nutrition, physical activity, mental health; children and youth, older people; base list 2022 plus 16 projects in 2024, consolidated 2024 version on the login platform Promotion Digitale, revision announced for October 2027), and three grant lines: Innovation, Multiplikation (scaling of listed projects only) and Angebotsförderung | The closest analogue to ROPS's "Usługa wrażliwa": catalogue status tied to a dedicated dissemination grant. HubMI's path block does exactly this wiring | reference |
 | good-practice.ch | Günter Ackermann and Hubert Studer (independent since January 2021, formerly part of quint-essenz); https://www.good-practice.ch/de/project_database | A meta database of projects already evaluated by other bodies (Gesundheitsförderung Schweiz, RADIX, the federal tobacco and alcohol funds, ARE model projects, BSV youth promotion, the IBK award); about 200 projects in 2022, "over 286" per a later secondary source; contacts and a document package per project; last update 29 October 2025 | The "evaluating organisation" model: the catalogue does not judge, it records whose verdict an entry carries. HubMI merges the national and the ROPS catalogues the same way (`evidence_level` plus the source badge) | reference |
 | Age-Stiftung project database | Age-Stiftung, Zurich (about CHF 3 million a year to about 20 projects); https://www.age-stiftung.ch/foerderprojekte/ | 384 funded projects filterable by three themes, six project types, canton and completion year; every completed project must publish a "Dokumentation" for replication; next application window 18 January 2027 | "A public replication dossier is a grant condition" belongs in HubMI's incubator brief and in the concept slide | reference |
@@ -2445,7 +2499,7 @@ not.
 | Federal AI guidelines (2020), the federal AI strategy (December 2025), the Federal Council's regulation decision (12 February 2025) | Federal Council, BAKOM; https://www.bakom.admin.ch/de/ki-leitlinien, https://www.bk.admin.ch/de/einsatz-von-ki-in-der-bundesverwaltung, https://www.admin.ch/de/nsb?id=104110 | Seven guidelines: people at the centre (dignity, self-determination, data protection); framework conditions; transparency, traceability, explainability, "interaction with AI systems must be clearly recognisable as such", prefer open systems; responsibility "may not be delegated to machines"; security and robustness; global governance; inclusion of all actors. Switzerland ratifies the Council of Europe AI convention and prepares a consultation draft by end 2026 on transparency, data protection, non-discrimination, risk assessment and supervision | Federal documents | Cite: E1 and E7 map to guideline 1, E8 to guideline 3, E6 and E10 to guideline 4, E2 to guideline 5; Poland is a Council of Europe member, so the convention's headings fit the "Zasady" page |
 | Canton of Zurich: revised information and data protection act (23 March 2026) and the register of algorithmic decision systems; City of Zurich AI directive (STRB 2281/2025, 20 August 2025) | Kantonsrat Zürich; https://www.zh.ch/de/politik-staat/kanton/kantonale-verwaltung/digitale-verwaltung/kuenstliche-intelligenz.html; Stadtrat Zürich, https://www.stadt-zuerich.ch/de/politik-und-verwaltung/politik-und-recht/stadtratsbeschluesse/2025/08/stzh-strb-2025-2281.html | A public register of algorithmic systems that may affect fundamental rights, a fundamental-rights impact assessment and notification duties (entry into force expected mid-2027; paragraph numbers from secondary sources); the city's binding rule that no special-category personal data (health, social services, police, tax) goes into external generative AI, that a natural person makes the final assessment and that actions stay traceable; AlgorithmWatch CH found in 2023 that only 5 of 26 cantons had complete inventories | Cantonal and municipal law and directives | Model: a one-page "karta systemu" (register card) on "Jak to działa": purpose, legal basis, logic, data, human review, contact (FR-11.7). The city's data rule is the legal form of HubMI's redaction gate (FR-12.4) |
 | Swiss Digital Trust Label | Criteria developed by the Swiss Digital Initiative, certification by CertX; https://certx.com/digital-trust-label/ | 35 criteria in four pillars: security, data protection, reliability, fair user interaction; AI criteria since 2024: transparency to users, risk management, bias, training-data ethics, human oversight, no dark patterns | Proprietary label | Cite; use the four pillars as the headings of the ethics self-assessment in the pitch |
-| Apertus (Swiss AI Initiative) | EPFL, ETH Zurich, CSCS; https://huggingface.co/swiss-ai/Apertus-70B-2509, https://huggingface.co/swiss-ai/Apertus-v1.5-70B | Fully open weights, data and recipes; 8B and 70B (September 2025), version 1.5 (24 July 2026) with images and audio, 262 144 context and 16 compact distilled models; "1 811 natively supported languages" but Polish coverage is not documented; hosted by Swisscom and the Public AI inference utility; the Canton of Ticino runs the 8B model in its own data centres for confidential translation (March 2026); the model card says outputs "may not always be factually accurate ... assistive tools rather than definitive sources" | Apache 2.0 | Smoke-tested the Hugging Face router (Apertus-8B, provider "publicai"): fluent Polish and strict JSON, 3 of 3 shortlist cases right, but 2 of 4 screening cases wrong (a crisis and an off-topic text classified as needs). Excluded from every evaluation by team decision (OP-40); it remains here only as a Swiss policy reference: reuse the model-card disclaimer wording; cite Ticino as the precedent for "a public body runs an open model on its own hardware" |
+| Apertus (Swiss AI Initiative) | EPFL, ETH Zurich, CSCS; https://huggingface.co/swiss-ai/Apertus-70B-2509, https://huggingface.co/swiss-ai/Apertus-v1.5-70B | Fully open weights, data and recipes; 8B and 70B (September 2025), version 1.5 (24 July 2026) with images and audio, 262 144 context and 16 compact distilled models; "1 811 natively supported languages" but Polish coverage is not documented; hosted by Swisscom and the Public AI inference utility; the Canton of Ticino runs the 8B model in its own data centres for confidential translation (March 2026); the model card says outputs "may not always be factually accurate ... assistive tools rather than definitive sources" | Apache 2.0 | Smoke-tested through the Hugging Face router (Apertus-8B, provider "publicai"): fluent Polish and strict JSON, 3 of 3 shortlist cases right, but 2 of 4 screening cases wrong (a crisis and an off-topic text classified as needs). Excluded from every evaluation by team decision (OP-40); it remains here only as a Swiss policy reference: reuse the model-card disclaimer wording; cite Ticino as the precedent for "a public body runs an open model on its own hardware" |
 | fr.ch AI chatbot (Canton of Fribourg, March 2026); Basel-Landschaft KI-Bot pilot | https://www.fr.ch/de/der-ki-chatbot-von-frch; baselland.ch (blocked, secondary) | Answers only from cantonal and communal sources, every answer cites its sources, a beta disclaimer ("answers may be incomplete or contain errors, no official statement"), anonymised logs, thumbs feedback; a notice not to enter names, passwords, birth dates or addresses before the input field | Public services | Inspiration for S1's notice and S2's label; the same four elements HubMI already has (grounding, sources, label, feedback) |
 | Crisis-first patterns: 143, 147, 142, "Reden kann retten", quick-exit | Die Dargebotene Hand, https://www.143.ch/; Pro Juventute, https://www.147.ch/de/; SODK victim support 142 since 1 May 2026, https://www.sodk.ch/de/themen/opferhilfe/zentrale-opferhilfe-telefonnummer/; BAG with the Canton of Zurich, https://www.reden-kann-retten.ch/; Opferhilfe Bern, https://www.opferhilfe-bern.ch/de | Numbers before any content ("Notfall 143 Erwachsene / 147 Jugendliche"); three entry paths ("I am in crisis", "I am worried about someone", "I lost someone to suicide"); safe-messaging rules (no method, place or circumstance, no sensational headlines or photos, no romanticising, avoid "Selbstmord", "Freitod"; do show alternatives, treatability, warning signs, always the contacts); a distinction between emergency numbers and help numbers; honest channel hours; a quick-exit button on every page of violence-related sites (a coloured "verlassen" button, Escape pressed twice jumps to a neutral page) | Public campaigns | Reuse on S10 (FR-12.5): numbers first, emergency and help grouped, two entry paths, quick-exit on violence-related screens; the "avoid" list joins the banned-words check (FR-12.10) |
 | Swiss Suicide Prevention Toolbox (SuiT, 2026) | National project funded through Gesundheitsförderung Schweiz; https://promotionsante.ch/prevention-dans-le-domaine-des-soins/soutien-de-projets/projets-soutenus/suit-swiss-suicide-prevention-toolbox | A planned protected platform with an AI assistant that "collects needs and proposes tailored offers" in the crisis domain | Not yet public | Cite as a parallel Swiss design; nothing to reuse yet |
@@ -2544,10 +2598,10 @@ register first.
 | A-07 | "Osoby gotowe do działania" includes innovators, implementers, ROPS staff and residents or organisations that register readiness with consent | The brief's wording; no volunteer marketplace in the partner's assets | If the partner means a volunteer marketplace: point to Korpus Solidarności and DoBro and keep the registry as a routing signal |
 | A-08 | The product, the pitch and the slides are Polish; HackTribe needs an English title and description | The task note; the jury; the platform's requirements | If the partner prefers English slides: Analyst 1 translates the ten slides on Saturday night |
 | A-09 | The teaser talk adds detail (data, users, scenarios) but does not change the direction | The abstract is specific already | The one-page delta after the talk (17.2) records every change; the assumptions above tell what to switch |
-| A-10 | The national base's texts and files are CC BY 4.0 (its regulamin) and may be indexed, displayed in part and linked with attribution; the ROPS CC BY items likewise; MIIS items link-only; innovators' personal contact details are not copied | The regulamin and the footer of every entry; CC BY 4.0 on 100 ROPS entries; the MIIS terms PDF | If Stocznia asks for a different attribution or objects to the crawl (OP-09): adjust the attribution line; keep our own summaries and index cards, link out; the router still works |
+| A-10 | The national base's texts and files are CC BY 4.0 (its regulamin) and may be indexed, displayed in part and linked with attribution; the ROPS CC BY items likewise; MIIS items link-only; innovators' personal contact details are not copied | The regulamin and the footer of every entry; CC BY 4.0 on 100 ROPS entries; the MIIS terms PDF | If Stocznia asks for a different attribution or objects to the crawl (courtesy e-mail on 29 September, OP-09): adjust the attribution line; keep our own summaries and index cards, link out; the router still works |
 | A-11 | The partner has no existing HubMI system, design or data model to integrate with | No tender, news or strategy document mentions HubMI | If a design exists: adopt its names and colours in the afternoon; the architecture does not change |
 | A-12 | Hosting on a team virtual machine in the EU is acceptable for the demo; a later requirement for Polish or on-premise hosting is met by the single container and the Polish model option | The partner is a public body | If the partner requires it for the demo: nothing changes on Sunday; the slides show the option |
-| A-13 | The final submission deadline is Sunday 12:00 (the guide), not 23:00 (the rules) |  | Confirm on site; a later deadline only adds time |
+| A-13 | The final submission deadline is Sunday 12:00 (the guide), not 23:00 (the rules) | Guide read on 27-28 September | Confirm on site; a later deadline only adds time |
 | A-14 | The full brief appears on Saturday morning around 11:00 and the teaser is at 12:00 | Guide (the extraction of the hour was ambiguous), programme | If the brief is published earlier, the delta is written earlier |
 | A-15 | About 450 innovations after ingestion fit the language model's cached index; no embedding infrastructure is needed | About 300 national, 115 ROPS, some partner rows | If the partner brings over 1 000 records: FR-3.7 |
 | A-16 | 2024 gmina-level values exist in BDL for the three indicators | Variable 1548717 verified with 282 rows for 2024; the others verified by metadata | Use 2023 and print the year |
@@ -2563,57 +2617,22 @@ register first.
 | 7.1 Ingestion, 7.5 needs and brief, 7.6 people, 7.7 map, 7.9 console | Developer 2 | Coding agents in worktrees per module | Developer 1 (integration) |
 | 7.3 matching, 7.4 route, 7.8 rules, 9.3 adapter, 9.4 prompts, 13.2 harness, 7.10 measures | Developer 1 | Coding agents | Developer 2 for the API contracts |
 | 7.2 intake copy, section 10 screens, section 11 catalogue, slides, description | Analyst 1 | Design and writing assistants; screenshot reviews | The lawyer (sign-off slots) |
-| 7.8 paths content, 13.1 test problems, glossary, consent and legal pages, partner rules | The lawyer | Drafting assistants; every claim checked against the act | Analyst 1 (fit to screens) |
+| 7.8 paths content (drafted from 14.4 with the prototype note; no legal review) | Developer 1 | Drafting assistants; every claim traced to section 14.4 | Analyst 1 (fit to screens) |
+| 13.1 test problems, glossary, consent and legal pages, partner rules | The lawyer | Drafting assistants; every claim checked against the act | Analyst 1 (fit to screens) |
 | 12.9 hosting, 12.4 fallbacks, 12.2 manual accessibility pass, video, indicators and boundaries data | Analyst 2 | Scripting assistants | Developer 2 |
 | 7.12 policy: the crisis lexicon, the decline and crisis texts, the helplines, the "Zasady" page, the robustness and sensitive sets | The lawyer | Drafting assistants; every number checked at the operator's page | Analyst 1 (screens), Developer 1 (rules) |
 | 7.12 gate: pre-checks, the `screen` prompt, redaction, decision rules, the screening log, the fairness checks in the harness | Developer 1 | Coding agents | The lawyer (fit to the policy) |
 | 7.12 console: the moderation tab, the report form | Developer 2 | Coding agents | Developer 1 |
 
-### 17.2 Before the event
+### 17.2 Next steps
 
-| Day | Developer 1 | Developer 2 | The lawyer | Analyst 1 | Analyst 2 |
+| Nr | Developer 1 | Developer 2 | The lawyer | Analyst 1 | Analyst 2 |
 |---|---|---|---|---|---|
-| Mon 28 Sep | Reads this document; decides on the stack by Tuesday; writes `AGENTS.md` for the repository | Starts the national base crawler with a browser User-Agent and a one-second delay | E-mails Fundacja Stocznia about indexing and quotes (OP-09); starts the glossary | Reads this document; drafts the service model slide and the three screens as clickable drafts | Registers the BDL key; buys the domain; provisions the virtual machine |
-| Tue 29 Sep | Repository skeleton: Next.js, Drizzle, schema from section 8, the adapter interface, `pnpm eval` stub; first shortlist spike on 50 records | ROPS library crawl (curl with browser User-Agent) into JSON; national base JSON complete; duplicate report | Glossary v1; the consent texts; starts the paths YAML from 14.4 (the small grant, the open competition, the local initiative, the village fund, the CUS programme, "Usługa wrażliwa", IWS 2.0, ASY priority V) | Design tokens and the component choices written into `AGENTS.md` (OP-15); message catalogue skeleton with the S1 and S2 strings; "Ty" or "Państwo" agreed (OP-19) | Docker Compose, Caddy, GitHub Actions deploy; the skeleton is live by evening |
-| Wed 30 Sep | Extraction prompt and batch run over all records; the index cards; stage 1 and stage 2 end to end on the API; grounding validation; the screening gate with its deterministic pre-checks and the `screen` prompt | Seed command; the place picker; the map with boundaries and the three indicators; implementations seeded from 8.6 | The ten test problems drafted against the ingested catalogue (the catalogue must be complete by evening); the paths YAML continued; the crisis lexicon and the robustness and sensitive sets drafted | S1, S2, S3 built from the drafts on real routes; first screenshot review; the pitch outline | Indicators fetched; GeoJSON built; the replay cache and the offline demo stack; the accessibility checklist in Playwright |
-| Thu 1 Oct | Route composer, next steps, paths selection rules and their unit tests; first full evaluation including the robustness, sensitive and fairness sets; thresholds (OP-13); both providers measured on the ten test problems (OP-05) | Needs bank, brief, contact request, console with CSV and the moderation tab, the report form; S4 innovation and gmina views | Reviews 20 derived records against the sources; signs off the paths YAML, the privacy text, the accessibility declaration draft, the licence decision (OP-07); writes the S10, S11 and "Zasady" texts and checks the helplines (OP-33, OP-34); reads the rules' rights clauses again | S5 to S12; the "Jak to działa", "Zasady" and sources pages; second screenshot review; the slides draft including "Bezpieczeństwo i etyka" | Full test run on the deployed stack; latency and cost measured; video storyboard |
-| Fri 2 Oct | Fixes from the evaluation; the prompt versions frozen for the event; the delta procedure rehearsed | Partner-file adapter (FR-1.6); dead-link check; open-needs list if time | Final Polish pass on the message catalogue keys of the demo path; the glossary frozen | Demo path rehearsed twice with the cached routes; the description draft (500 words); the credits page | Replay cache warmed; database dump; the offline laptop tested without network; the stretch gate of the challenge selection judged |
-
-### 17.3 During the event
-
-| Time | Action |
-|---|---|
-| Sat 08:30 | Arrive, table with power, the offline stack started as a fallback |
-| Sat, on publication of the brief (about 11:00) | Everyone reads the brief and the partner's rules; the lawyer reads the rights clause first; Analyst 1 maps criteria to the demo path; the open points OP-01, OP-02, OP-12 are resolved in this document |
-| Sat 12:00-12:45 | The teaser talk; Analyst 1 and the lawyer attend and ask the questions of 14.6; the developers keep building |
-| Sat 13:00-14:00 | The one-page delta: what the brief changed (assumptions A-01 to A-17), what is promoted or dropped, the partner data if any; written by Analyst 1 and Developer 1; the lawyer's first sign-off slot follows |
-| Sat 14:00-18:00 | Sprint 1: the delta items, partner data through the adapter, the criteria mapping on the slides, intake copy adjusted |
-| Sat 18:00 | Full evaluation on the deployed stack; screenshots; the draft description and one image ready |
-| Sat 19:00 | The lawyer's second slot: every string on the demo path |
-| Sat 20:00 | Draft submitted in HackTribe; the stretch gate of the challenge selection judged; the replay cache warmed |
-| Sat 20:00-02:00 | Sprint 2: SHOULD items in this order: streaming route, readiness registry, open-needs list, clustering, console statistics, map polish |
-| Sun 02:00-06:00 | Sprint 3: fixes only; evaluation after every merge; screenshots at three widths |
-| Sun 06:00 | Manual accessibility pass (Analyst 2), keyboard walk-through, fixes |
-| Sun 07:00 | The lawyer's last slot |
-| Sun 08:00 | Design freeze; the replay cache warmed on the frozen build; database dump; the video recorded; the ten slides finished |
-| Sun 10:30 | Final checks: the demo link from a phone, the repository public, the README, the credits, the description |
-| Sun 11:30 | Final submission; 12:00 is the deadline we plan for |
-| Sun afternoon | The pitch, one presenter, the demo path of 13.4, the offline laptop as the fallback |
-
-### 17.4 If the brief differs
-
-| The brief says | We do |
-|---|---|
-| "Zaprojektujcie portal / platformę" | Keep the router as the heart, add a browse page as a secondary entry, keep the demo path unchanged (A-01) |
-| "Dla mieszkańców" first | Promote J6 and the open-needs list to MUST; intake copy in the resident's voice (A-06) |
-| "Wolontariusze", "osoby gotowe do pomocy" | The readiness registry becomes the third block's first item; link to Korpus Solidarności (A-07) |
-| "Baza wiedzy", "wiedza ekspercka" | The "Wiedza" block gets an "Zapytaj osobę, która to zrobiła" request (a contact request typed as a question), stored for ROPS; the expert network stays ROADMAP |
-| "Mapa potrzeb", "diagnoza" | The map becomes the second screen of the demo path; the gmina panel gains the IOSS link and the "ABC Diagnozy" steps |
-| "Integracja z ..." a named system | An adapter stub with the named system's fields; the slide shows the integration point |
-| A mobile application | The web application is responsive; a home-screen icon and a manifest are added in an hour; no native app |
-| "Koncepcja" only, no code required | Build anyway; the slides carry the concept; a two-page concept PDF is added on Sunday morning (A-17) |
-| A required English submission | Analyst 1 translates the slides and the description on Saturday night; the product stays Polish (A-08) |
-| Safety, ethics or data protection are named as criteria | Already first: show 3.6, the gate with the crisis message in the demo, the moderation tab and the "Zasady" page; nothing to add (A-18) |
+| 1 | Reads this document; decides on the stack; writes `AGENTS.md` for the repository | Starts the national base crawler with a browser User-Agent and a one-second delay | E-mails Fundacja Stocznia about indexing and quotes (OP-09); starts the glossary | Reads this document; drafts the service model slide and the three screens as clickable drafts | Registers the BDL key; buys the domain; provisions the virtual machine |
+| 2 | Repository skeleton: Next.js, Drizzle, schema from section 8, the adapter interface, `pnpm eval` stub; first shortlist spike on 50 records | ROPS library crawl (curl with browser User-Agent) into JSON; national base JSON complete; duplicate report | Glossary v1; the consent texts; starts the paths YAML from 14.4 (the small grant, the open competition, the local initiative, the village fund, the CUS programme, "Usługa wrażliwa", IWS 2.0, ASY priority V) | Design tokens and the component choices written into `AGENTS.md` (OP-15); message catalogue skeleton with the S1 and S2 strings; "Ty" or "Państwo" agreed (OP-19) | Docker Compose, Caddy, GitHub Actions deploy; the skeleton is live by evening |
+| 3 | The extraction skill run over all records (the pilot of ten first, then batches of worker subagents), the review sample of 20 checked with Analyst 1; the index cards from `derive-records.py build`; stage 1 and stage 2 end to end on the API; grounding validation; the screening gate with its deterministic pre-checks and the `screen` prompt | Seed command; the place picker; the map with boundaries and the three indicators; implementations seeded from 8.6 | The ten test problems drafted against the ingested catalogue (the catalogue must be complete by evening); the paths YAML continued; the crisis lexicon and the robustness and sensitive sets drafted | S1, S2, S3 built from the drafts on real routes; first screenshot review; the pitch outline | Indicators fetched; GeoJSON built; the replay cache and the offline demo stack; the accessibility checklist in Playwright |
+| 4 | Route composer, next steps, paths selection rules and their unit tests; first full evaluation including the robustness, sensitive and fairness sets; thresholds (OP-13); both providers measured on the ten test problems (OP-05) | Needs bank, brief, contact request, console with CSV and the moderation tab, the report form; S4 innovation and gmina views | Reviews 20 derived records against the sources; signs off the paths YAML, the privacy text, the accessibility declaration draft, the licence decision (OP-07); writes the S10, S11 and "Zasady" texts and checks the helplines (OP-33, OP-34); reads the rules' rights clauses again | S5 to S12; the "Jak to działa", "Zasady" and sources pages; second screenshot review; the slides draft including "Bezpieczeństwo i etyka" | Full test run on the deployed stack; latency and cost measured; video storyboard |
+| 5 | Fixes from the evaluation; the prompt versions frozen for the event; the delta procedure rehearsed | Partner-file adapter (FR-1.6); dead-link check; open-needs list if time | Final Polish pass on the message catalogue keys of the demo path; the glossary frozen | Demo path rehearsed twice with the cached routes; the description draft (500 words); the credits page | Replay cache warmed; database dump; the offline laptop tested without network; the stretch gate of the challenge selection judged |
 
 ## 18. Sources
 
@@ -2623,7 +2642,7 @@ behind https://hackyeah.pl/tasks-prizes and the conference agenda).
 
 - HackYeah task list and conference programme: https://hackyeah.pl/tasks-prizes, https://hackyeah.pl/conference-agenda, https://hackyeah.pl/speakers
 - HackYeah rules (PDF): https://hackyeah.pl/rules?lang=en
-- HackYeah participant guide and FAQ: https://hackyeah.pl/guide, https://hackyeah.pl/faq
+- HackYeah participant guide and FAQ: https://hackyeah.pl/guide, https://hackyeah.pl/faq (answers read on 27-28 September)
 - ROPS Kraków, Biblioteka innowacji społecznych category pages, for example https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-seniorow and the entry https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-seniorow,merkury
 - ROPS MIIS terms of use: https://rops.krakow.pl/mpliki/IS/BIBLIOTEKA_INNOWACJI_SPOECZNYCH/Zasady_wykorzystania_innowacji_MIIS.pdf
 - ROPS incubators: https://rops.krakow.pl/zakonczone-projekty-i-zadania/malopolski-inkubator-innowacji-spolecznych-projekt-zakonczony-31072019, https://rops.krakow.pl/zakonczone-projekty-i-zadania/inkubator-dostepnosci-projekt-zakonczony-31122022, https://rops.krakow.pl/zakonczone-projekty-i-zadania/inkubator-wlaczenia-spolecznego-projekt-zakonczony-31122023, https://rops.krakow.pl/realizowane-projekty-i-zadania/inkubator-wlaczenia-spolecznego-20,o-projekcie

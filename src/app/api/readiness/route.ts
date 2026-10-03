@@ -1,9 +1,9 @@
-import type { Readiness } from "@/lib/contracts/records";
+import type { Readiness } from "@/lib/contracts";
 import { targetGroupCodes } from "@/lib/labels";
 import { getLlm } from "@/lib/llm";
 import { getGmina } from "@/lib/catalogue";
-import { CONSENT_VERSION, countEvent, newId, nowIso } from "@/lib/server/store";
-import { invalid, readJson, requiredText, stringList } from "@/lib/server/validate";
+import { CONSENT_VERSION, countEvent, newId, nowIso } from "@/server/ephemeral";
+import { invalid, readJson, requiredText, stringList } from "@/server/validate";
 import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
 

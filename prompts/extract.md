@@ -1,7 +1,7 @@
 ---
 version: extract-v4
 task: derived fields of one innovation, written by a Claude Code subagent (not by the app)
-changes: v2 added the anchoring quotes for problem_pl and mechanism_pl, the last pass against the source, the hard people-first rule, and the option to drop a mapped code with a note; v3 prefers an estimate of cost and time over unknown when the source describes the resources; v4 (with taxonomies tax-v2) adds the target group spektrum-autyzmu and the rule for autism, the domains zdrowie-fizyczne, kultura-sport-i-czas-wolny and prawa-i-sprawy-urzedowe, and allows "wózek inwalidzki"
+changes: v2 added the anchoring quotes for problem_pl and mechanism_pl, the last pass against the source, the hard people-first rule, and the option to drop a mapped code with a note; v3 (same day) prefers an estimate of cost and time over unknown when the source describes the resources; v4 (same day, with taxonomies tax-v2) adds the target group spektrum-autyzmu and the rule for autism, the domains zdrowie-fizyczne, kultura-sport-i-czas-wolny and prawa-i-sprawy-urzedowe, and allows "wózek inwalidzki"
 ---
 
 # Extraction worker

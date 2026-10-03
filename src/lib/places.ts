@@ -1,11 +1,12 @@
-import { getGmina, gminy } from "@/lib/catalogue";
-import type { Gmina } from "@/lib/contracts/catalogue";
+import { getGmina, gminy, localities } from "@/lib/catalogue";
+import type { Gmina } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
-import { ambiguousNames, formatPlaceLabel, type PlaceOption } from "@/lib/place-options";
+import { ambiguousNames, formatPlaceLabel, type LocalityOption, type PlaceOption } from "@/lib/place-options";
 
 /*
- * Place labels on the server. Client components get the gminas as props
- * (placeOptions) and label them with src/lib/place-options.ts.
+ * Place labels on the server. Client components get the gminas and the
+ * localities as props (placeOptions, localityOptions) and label them with
+ * src/lib/place-options.ts.
  */
 
 let ambiguous: { list: Gmina[]; names: Set<string> } | undefined;
@@ -23,6 +24,11 @@ export function placeLabel(gmina: Gmina): string {
 /** The 183 gminas of Małopolska for the picker, without the centroids. */
 export function placeOptions(): PlaceOption[] {
   return gminy().map(({ terc, name, powiat, kind }) => ({ terc, name, powiat, kind }));
+}
+
+/** The towns and villages of Małopolska for the picker; each leads to its gmina. */
+export function localityOptions(): LocalityOption[] {
+  return localities().map(({ name, terc }) => ({ name, terc }));
 }
 
 /** The place of a route or a need as a label, "cała Małopolska" when none was chosen. */

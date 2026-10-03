@@ -1,10 +1,8 @@
 import { describe, expect, test } from "vitest";
-import type { Readiness } from "@/lib/contracts/records";
-import type { Route } from "@/lib/contracts/route";
+import type { Readiness, Route, Assessment, ComposeInput, GateOutput, MatchResult, ScreeningOutcome } from "@/lib/contracts";
 import { loadDataset } from "@/lib/data/load";
 import { t } from "@/lib/i18n";
 import { LlmError, type Llm, type LlmCall } from "@/lib/llm/types";
-import type { Assessment, ComposeInput, GateOutput, MatchResult, ScreeningOutcome } from "@/server/contracts";
 import { buildScreenedRoute, composeRoute } from "@/server/route";
 import { findBanned, hasAmountOrDate, parseBannedWords } from "@/server/route/safety";
 import { contradictsReasons, type ComposeOutput } from "@/server/route/text";

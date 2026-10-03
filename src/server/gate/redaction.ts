@@ -1,5 +1,5 @@
 import { fold } from "@/lib/text";
-import type { Span } from "./patterns";
+import { findPatternSpans, type Span } from "./patterns";
 
 /*
  * Redaction of FR-12.4: the spans of the patterns and the person names the
@@ -39,4 +39,16 @@ export function applySpans(text: string, spans: Span[]): string {
     cursor = span.end;
   }
   return result + text.slice(cursor);
+}
+
+/**
+ * The deterministic redaction of FR-12.4 for texts that do not pass the full
+ * gate (a content report's comment, the canned routes): e-mail addresses,
+ * PESEL numbers with a valid checksum, phone numbers and street addresses
+ * with a house number, found by the patterns of patterns.ts. Names are left
+ * to the gate's model; organisations and officials in their public role stay.
+ */
+export function redact(text: string): { text: string; count: number } {
+  const spans = findPatternSpans(text);
+  return { text: applySpans(text, spans), count: spans.length };
 }

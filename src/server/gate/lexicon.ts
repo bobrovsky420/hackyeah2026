@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { SensitiveTopic } from "@/lib/contracts/route";
-import { parseYamlSubset, type YamlValue } from "@/lib/data/yaml";
+import type { SensitiveTopic } from "@/lib/contracts";
+import { parseYaml, type YamlValue } from "@/lib/data/yaml";
 import { fold } from "@/lib/text";
 
 /*
@@ -96,7 +96,7 @@ export function loadLexicon(): Lexicon {
   } catch {
     throw new LexiconError(`missing (looked for ${file})`);
   }
-  cached = compileLexicon(parseYamlSubset(text, "data/safety/lexicon-pl.yaml"));
+  cached = compileLexicon(parseYaml(text, "data/safety/lexicon-pl.yaml"));
   return cached;
 }
 

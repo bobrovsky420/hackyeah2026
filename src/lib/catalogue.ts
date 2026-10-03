@@ -1,9 +1,4 @@
-import "server-only";
-import type { Gmina, Innovation } from "@/lib/contracts/catalogue";
-import type { Department, Helpline } from "@/lib/contracts/contacts";
-import type { GminaBoundaries, IndicatorSet } from "@/lib/contracts/map";
-import type { ImplementationPath } from "@/lib/contracts/path";
-import type { Route, RouteSolution } from "@/lib/contracts/route";
+import type { Gmina, Innovation, Locality, Department, Helpline, GminaBoundaries, IndicatorSet, ImplementationPath, Route, RouteSolution } from "@/lib/contracts";
 import { DataLoadError, getDataset, loadDataset } from "@/lib/data/load";
 import type { Dataset, LocatedImplementation } from "@/lib/data/to-contracts";
 import { fixtureCatalogue } from "@/lib/mock/fixtures";
@@ -31,6 +26,8 @@ export interface Catalogue {
   /** The 183 gminas of Małopolska: the picker, the map and every place a reader can choose. */
   gminy: Gmina[];
   gminaByTerc: Map<string, Gmina>;
+  /** Towns and villages of Małopolska; the picker finds a gmina by them. */
+  localities: Locality[];
   /** Implementations with a gmina, in all of Poland, each with its gmina's centroid. */
   implementations: LocatedImplementation[];
   paths: ImplementationPath[];
@@ -54,6 +51,7 @@ export function fromDataset(dataset: Dataset): Catalogue {
     innovationById: dataset.innovationById,
     gminy: dataset.gminyMalopolska,
     gminaByTerc: new Map(dataset.gminyMalopolska.map((gmina) => [gmina.terc, gmina])),
+    localities: dataset.localities,
     implementations: dataset.locatedImplementations,
     paths: dataset.paths,
     pathById: dataset.pathById,
@@ -117,6 +115,10 @@ export function getGmina(terc: string | null | undefined): Gmina | undefined {
 
 export function gminy(): Gmina[] {
   return catalogue().gminy;
+}
+
+export function localities(): Locality[] {
+  return catalogue().localities;
 }
 
 export function implementations(): LocatedImplementation[] {

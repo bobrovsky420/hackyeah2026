@@ -1,7 +1,5 @@
-import "server-only";
 import { getInnovation } from "@/lib/catalogue";
-import type { ContactRequest, ContactStatus, Need } from "@/lib/contracts/records";
-import type { RouteMode } from "@/lib/contracts/route";
+import type { ContactRequest, ContactStatus, Need, RouteMode } from "@/lib/contracts";
 import { getLlmCounters, type LlmCounter } from "@/lib/llm/observability";
 import { placeText } from "@/lib/places";
 import type { Counters, Repository, RouteFacts } from "@/server/db";

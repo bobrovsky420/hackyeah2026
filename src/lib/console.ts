@@ -5,7 +5,7 @@ import type {
   NeedStatus,
   ReportReason,
   VerificationStatus,
-} from "@/lib/contracts/records";
+} from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 
 /* Shared lists of the ROPS console (S7): statuses and the fixed reasons of FR-12.8. */

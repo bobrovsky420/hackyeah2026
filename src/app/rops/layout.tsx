@@ -5,7 +5,7 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
-import { consoleLocked, isAuthenticated } from "@/lib/server/auth";
+import { consoleLocked, isAuthenticated } from "@/server/console/auth";
 import { logout } from "./actions";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };

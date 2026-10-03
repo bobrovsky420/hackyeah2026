@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Atkinson_Hyperlegible_Mono, Atkinson_Hyperlegible_Next, Source_Sans_3 } from "next/font/google";
+import { Atkinson_Hyperlegible_Mono, Atkinson_Hyperlegible_Next } from "next/font/google";
 import { SiteFooter } from "@/components/shell/site-footer";
 import { SiteHeader } from "@/components/shell/site-header";
 import { ViewSettings } from "@/components/shell/view-settings";
@@ -17,13 +17,6 @@ const atkinson = Atkinson_Hyperlegible_Next({
   adjustFontFallback: false,
 });
 
-const sourceSans = Source_Sans_3({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-ui",
-  display: "swap",
-  preload: false,
-});
-
 const atkinsonMono = Atkinson_Hyperlegible_Mono({
   subsets: ["latin", "latin-ext"],
   variable: "--font-code",
@@ -31,9 +24,6 @@ const atkinsonMono = Atkinson_Hyperlegible_Mono({
   preload: false,
   adjustFontFallback: false,
 });
-
-/* Font decision (Q1): UI_FONT=source-sans-3 switches the app. */
-const uiFont = process.env.UI_FONT === "source-sans-3" ? sourceSans : atkinson;
 
 /* Applies the saved view settings before the first paint, so the page never flashes. */
 const applyViewSettings = `try{var d=document.documentElement,s=localStorage.getItem(${JSON.stringify(TEXT_SIZE_KEY)});if(s==="2"||s==="3")d.dataset.textSize=s;if(localStorage.getItem(${JSON.stringify(CONTRAST_KEY)})==="on")d.dataset.contrast="on"}catch(e){}`;
@@ -45,7 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pl" className={cn(uiFont.variable, atkinsonMono.variable)} suppressHydrationWarning>
+    <html lang="pl" className={cn(atkinson.variable, atkinsonMono.variable)} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: applyViewSettings }} />
       </head>

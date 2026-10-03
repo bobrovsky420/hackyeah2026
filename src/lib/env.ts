@@ -1,4 +1,3 @@
-import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -70,7 +69,6 @@ export type LlmProviderName = "openai-compatible" | "anthropic" | "replay";
 /** Hugging Face router defaults, verified live on 28 September 2026 (model-evaluation.md). */
 export const HF_ROUTER_URL = "https://router.huggingface.co/v1";
 export const DEFAULT_BIELIK_MODEL = "speakleash/Bielik-11B-v3.0-Instruct:publicai";
-export const DEFAULT_LLAMA_MODEL = "meta-llama/Llama-3.3-70B-Instruct:ovhcloud";
 export const DEFAULT_ANTHROPIC_MODEL = "claude-opus-5";
 
 /**
@@ -96,22 +94,6 @@ export function openAiCompatConfig(): OpenAiCompatConfig {
     baseUrl: envValue("OPENAI_COMPAT_BASE_URL") ?? HF_ROUTER_URL,
     model: envValue("OPENAI_COMPAT_MODEL") ?? DEFAULT_BIELIK_MODEL,
     apiKey: envValue("OPENAI_COMPAT_API_KEY") ?? envValue("HF_TOKEN") ?? null,
-  };
-}
-
-/**
- * The third provider: Llama 3.3 70B on OVHcloud through the same router,
- * with the primary's URL and key unless set apart. OPENAI_COMPAT_FALLBACK_MODEL=off
- * removes it from the chain.
- */
-export function llamaFallbackConfig(): OpenAiCompatConfig | null {
-  const model = envValue("OPENAI_COMPAT_FALLBACK_MODEL") ?? DEFAULT_LLAMA_MODEL;
-  if (model === "off") return null;
-  const primary = openAiCompatConfig();
-  return {
-    baseUrl: envValue("OPENAI_COMPAT_FALLBACK_BASE_URL") ?? primary.baseUrl,
-    model,
-    apiKey: envValue("OPENAI_COMPAT_FALLBACK_API_KEY") ?? primary.apiKey,
   };
 }
 

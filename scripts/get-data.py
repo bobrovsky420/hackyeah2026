@@ -1,10 +1,10 @@
-"""Get a data release and unpack it: the seed of a fresh installation (docs/local-stack.md, docs/data-setup.md).
+"""Get a data release and unpack it: the seed of a fresh installation (docs/server-deploy.md, docs/data-setup.md).
 
 Order: find data-X.Y.Z.zip in .local/bundles/, or download it from the GitHub release data-X.Y.Z of the repository;
 check its sha256 when one is given; run unpack-data.py on it (which checks every file before it writes); write
 .local/data-release.json. A second run with the same release does nothing; --force unpacks again. --force and --prune
-are passed on to unpack-data.py (--prune deletes the record files that the release does not have). The data stage of
-docker/Dockerfile runs it on an empty tree.
+are passed on to unpack-data.py (--prune deletes the record files that the release does not have). deploy/update.sh
+runs it on every deploy.
 
 Release: the argument, else DATA_RELEASE, else the newest data-X.Y.Z.zip already in .local/bundles/.
 Download: https://github.com/<repo>/releases/download/data-X.Y.Z/data-X.Y.Z.zip with repo from --repo or DATA_REPO
@@ -12,13 +12,16 @@ Download: https://github.com/<repo>/releases/download/data-X.Y.Z/data-X.Y.Z.zip 
           which a private repository needs; the token is sent to api.github.com only, never to the storage redirect.
 Checksum: --sha256 or DATA_SHA256 pins the zip; without it the per-file sha256 of the bundle's manifest still apply.
 
-Usage (from the repository root, with the project venv; docker/Dockerfile runs it with --root /work):
+Usage (from the repository root, with the project venv):
   .venv/Scripts/python scripts/get-data.py [X.Y.Z] [--repo owner/name] [--sha256 hex] [--force] [--prune] [--root dir]
 Exit 0 when the release is installed (now or before), 1 on any failure.
 """
 import argparse, datetime, hashlib, json, os, re, subprocess, sys, urllib.error, urllib.request
 
+from dotenv import load_dotenv
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 DEFAULT_REPO = "bobrovsky420/hackyeah2026"
 RELEASE = re.compile(r"^\d+\.\d+\.\d+$")
 

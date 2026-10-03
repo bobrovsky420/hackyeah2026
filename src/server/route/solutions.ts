@@ -1,8 +1,7 @@
-import type { Route, RouteSolution } from "@/lib/contracts/route";
+import type { Route, RouteSolution, Assessment } from "@/lib/contracts";
 import { isShownMaterial, materialToKnowledgeLink, toContact, toMaterial, toWhatItTakes, type Dataset } from "@/lib/data/to-contracts";
 import type { TargetGroup } from "@/lib/data/types";
 import { fitLabel } from "@/lib/labels";
-import type { Assessment } from "@/server/contracts";
 import { distanceKm, indexesOf, originOf } from "./data";
 
 /*

@@ -1,6 +1,4 @@
-import type { RoleCode } from "@/lib/contracts/catalogue";
-import type { RouteMode } from "@/lib/contracts/route";
-import type { StageLog } from "@/server/contracts";
+import type { RoleCode, RouteMode, StageLog } from "@/lib/contracts";
 import type { GeneratedString } from "./polish";
 import type { Outcome, PeopleRole } from "./problems";
 

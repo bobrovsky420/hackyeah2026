@@ -1,6 +1,5 @@
-import "server-only";
 import type { Llm } from "@/lib/llm/types";
-import type { GateInput, GateOutput, RedactionType, ScreenText, ScreeningResult, StageLog } from "@/server/contracts";
+import type { GateInput, GateOutput, RedactionType, ScreenText, ScreeningResult, StageLog } from "@/lib/contracts";
 import { decide, decidesWithoutModel } from "./decide";
 import { matchLexicon } from "./lexicon";
 import { isRepeat, rememberText, repeatKey, seenBefore, writeScreeningLog } from "./log";
@@ -16,7 +15,7 @@ import { applySpans, locateNames } from "./redaction";
  * gate; callers store `redactedText` and only when the outcome is `need`.
  */
 
-export { REDACTED } from "./redaction";
+export { REDACTED, redact } from "./redaction";
 export { HONEYPOT_FIELD } from "./honeypot-field";
 export { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse } from "./public-writes";
 export type { ScreeningLogEntry } from "./log";
@@ -115,5 +114,5 @@ ${input.repeatScope}` : text);
   return { screening, redactedText, redactionCount: spans.length, stage };
 }
 
-/** ScreenText of src/server/contracts.ts, with the optional client address of GateRequest. */
+/** ScreenText of src/lib/contracts.ts, with the optional client address of GateRequest. */
 export const screenText = screen satisfies ScreenText;

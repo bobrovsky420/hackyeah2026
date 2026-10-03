@@ -1,8 +1,7 @@
 /*
  * `pnpm eval [--provider anthropic|openai-compatible|replay] [...]`: the
- * evaluation harness of specification 13.2 (src/server/eval/). Runs with
- * `tsx --conditions=react-server`, so the server modules load outside
- * Next.js. The provider is set in LLM_PROVIDER before the model chain is
+ * evaluation harness of specification 13.2 (src/server/eval/), run with
+ * tsx. The provider is set in LLM_PROVIDER before the model chain is
  * built, which happens on the first import of the harness.
  */
 

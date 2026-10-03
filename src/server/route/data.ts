@@ -1,7 +1,6 @@
-import type { Gmina } from "@/lib/contracts/catalogue";
+import type { Gmina, ComposeInput } from "@/lib/contracts";
 import { indexOrganisations, type Dataset, type OrganisationIndex } from "@/lib/data/to-contracts";
 import type { BuiltInnovation } from "@/lib/data/types";
-import type { ComposeInput } from "@/server/contracts";
 
 /*
  * What the composer reads from the dataset beyond its contracts: the built

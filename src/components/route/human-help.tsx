@@ -4,7 +4,7 @@ import { Phone } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { Helpline } from "@/lib/contracts/contacts";
+import type { Helpline } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { FocusOnMount } from "./focus-on-mount";
 import { QuickExit } from "./quick-exit";

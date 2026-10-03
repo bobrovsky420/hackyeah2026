@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ContactRequest, Need } from "@/lib/contracts/records";
+import type { ContactRequest, Need } from "@/lib/contracts";
 import type { LlmCounter } from "@/lib/llm/observability";
 import { computeStats, median, percentile } from "@/server/console/stats";
 import type { RouteFacts } from "@/server/db/repository";

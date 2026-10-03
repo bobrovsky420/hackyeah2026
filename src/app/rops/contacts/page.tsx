@@ -6,7 +6,7 @@ import { contactStatuses, isOneOf, moderationStatuses } from "@/lib/console";
 import { formatDateTime } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { getInnovation } from "@/lib/catalogue";
-import { isAuthenticated } from "@/lib/server/auth";
+import { isAuthenticated } from "@/server/console/auth";
 import { listContactsFiltered } from "@/server/console/queries";
 import { repository } from "@/server/db";
 

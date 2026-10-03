@@ -9,7 +9,7 @@ Subcommands (from the repository root, with the project venv):
   snapshot --label sonnet [--ids ...]
         copy the current derived records of the pilot ids into compare/<label>/
   run [--model speakleash/Bielik-11B-v3.0-Instruct:publicai] [--label bielik] [--ids ...]
-      [--env .env.dev] [--max-tokens 2500] [--temperature 0.2] [--repairs 2]
+      [--max-tokens 2500] [--temperature 0.2] [--repairs 2]
         derive the pilot ids by calling the model through the router (OpenAI-compatible,
         JSON mode, the same prompt and example the Claude Code workers read, the
         validator's errors fed back for up to --repairs repair rounds); writes
@@ -22,7 +22,10 @@ The pilot ids default to .claude/skills/extract-innovations/pilot.json.
 """
 import argparse, datetime, importlib.util, io, json, os, re, shutil, sys, time
 
+from dotenv import load_dotenv
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 BASE_URL = "https://router.huggingface.co/v1"
 DEFAULT_MODEL = "speakleash/Bielik-11B-v3.0-Instruct:publicai"
 PILOT = os.path.join(ROOT, ".claude", "skills", "extract-innovations", "pilot.json")
@@ -46,18 +49,11 @@ def pilot_ids(args):
     return referee.load_json(PILOT)["ids"]
 
 
-def token_from_env(path):
-    env = {}
-    if os.path.exists(path):
-        for line in io.open(path, encoding="utf-8"):
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, v = line.split("=", 1)
-                env[k.strip()] = v.strip().strip('"').strip("'")
+def token_from_env():
     for k in ("HF_TOKEN", "HUGGINGFACE_HUB_TOKEN", "HUGGING_FACE_HUB_TOKEN", "HF_API_KEY"):
-        if env.get(k) or os.environ.get(k):
-            return env.get(k) or os.environ.get(k)
-    sys.exit(f"no HF_TOKEN in {path} or the environment")
+        if os.environ.get(k):
+            return os.environ[k]
+    sys.exit("no HF_TOKEN in .env.dev or the environment")
 
 
 # ---------------------------------------------------------------- the prompt for an API call
@@ -146,7 +142,7 @@ def cmd_run(args):
     from openai import OpenAI
     ids = pilot_ids(args)
     sources = referee.load_sources()
-    client = OpenAI(base_url=BASE_URL, api_key=token_from_env(os.path.join(ROOT, args.env)))
+    client = OpenAI(base_url=BASE_URL, api_key=token_from_env())
     validator = referee.Validator()
     out = os.path.join(COMPARE, args.label)
     os.makedirs(out, exist_ok=True)
@@ -297,7 +293,6 @@ def main():
     r.add_argument("--model", default=DEFAULT_MODEL)
     r.add_argument("--label", default="bielik")
     r.add_argument("--ids", nargs="*")
-    r.add_argument("--env", default=".env.dev")
     r.add_argument("--max-tokens", type=int, default=2500)
     r.add_argument("--temperature", type=float, default=0.2)
     r.add_argument("--repairs", type=int, default=2)

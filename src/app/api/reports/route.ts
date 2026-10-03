@@ -1,12 +1,11 @@
 import { isOneOf, reportReasons } from "@/lib/console";
-import type { ContentReport } from "@/lib/contracts/records";
+import type { ContentReport } from "@/lib/contracts";
 import { getInnovation } from "@/lib/catalogue";
-import { redact } from "@/lib/server/redact";
-import { getRoute } from "@/lib/server/routes";
-import { countEvent, newId, nowIso } from "@/lib/server/store";
-import { invalid, optionalText, readJson, requiredText } from "@/lib/server/validate";
+import { redact, honeypotFilled, publicWritesClosed } from "@/server/gate";
+import { getRoute } from "@/server/route-service";
+import { countEvent, newId, nowIso } from "@/server/ephemeral";
+import { invalid, optionalText, readJson, requiredText } from "@/server/validate";
 import { repository } from "@/server/db";
-import { honeypotFilled, publicWritesClosed } from "@/server/gate";
 
 const targetTypes = ["route", "brief", "innovation", "need"] as const;
 

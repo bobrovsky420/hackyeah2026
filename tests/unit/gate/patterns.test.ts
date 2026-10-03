@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { REDACTED, redact } from "@/lib/server/redact";
+import { REDACTED, redact, applySpans, locateNames } from "@/server/gate/redaction";
 import { findPatternSpans, isPesel, mergeSpans, mostlyLinks } from "@/server/gate/patterns";
-import { applySpans, locateNames } from "@/server/gate/redaction";
 
 const typesOf = (text: string) => findPatternSpans(text).map((span) => [span.type, text.slice(span.start, span.end)]);
 
@@ -95,7 +94,7 @@ describe("links", () => {
   });
 });
 
-describe("redact() of src/lib/server/redact.ts", () => {
+describe("redact() of src/server/gate/redaction.ts", () => {
   it("keeps its behaviour: count and replacement", () => {
     const result = redact("Kontakt: jan@x.pl, 600 100 200, PESEL 44051401359, ul. Długa 5.");
     expect(result.count).toBe(4);

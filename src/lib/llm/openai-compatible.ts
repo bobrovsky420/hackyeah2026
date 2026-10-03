@@ -1,4 +1,3 @@
-import "server-only";
 import OpenAI, { APIConnectionTimeoutError, APIError, APIUserAbortError } from "openai";
 import type {
   ChatCompletion,
@@ -8,15 +7,14 @@ import type {
 import { z } from "zod";
 import type { OpenAiCompatConfig } from "@/lib/env";
 import { addUsage, ZERO_USAGE, type LlmProvider, type ProviderOptions, type ProviderResult } from "./provider";
-import { LlmError, type LlmCall, type LlmTask, type LlmUsage } from "./types";
+import { LlmError, type LlmCall, type LlmUsage } from "./types";
 
 /*
  * The openai-compatible provider of 9.3: Bielik-11B v3.0 on the Hugging
- * Face router (the primary), and with a second configuration Llama 3.3 70B
- * on OVHcloud through the same router (the third provider). JSON mode plus
- * Zod validation with one repair round that sends the validation error
- * back. The router has no prompt caching, so the cached blocks travel in
- * full at the head of the user message; it does cache identical requests.
+ * Face router, the primary. JSON mode plus Zod validation with one repair
+ * round that sends the validation error back. The router has no prompt
+ * caching, so the cached blocks travel in full at the head of the user
+ * message; it does cache identical requests.
  */
 
 /** The part of the OpenAI client this provider uses; tests pass a fake. */
@@ -64,10 +62,9 @@ function errorKind(error: unknown): "timeout" | "unavailable" {
 }
 
 export interface OpenAiCompatProviderOptions {
-  /** "bielik" or "llama". */
+  /** The chain position name for logs and tests: "bielik". */
   id: string;
   config: OpenAiCompatConfig;
-  excludedTasks?: readonly LlmTask[];
   /** Default: the OpenAI SDK against config.baseUrl. */
   client?: ChatClient;
 }
@@ -77,7 +74,6 @@ export class OpenAiCompatProvider implements LlmProvider {
   readonly id: string;
   readonly model: string;
   readonly configured: boolean;
-  readonly excludedTasks?: readonly LlmTask[];
   private client: ChatClient | undefined;
   private readonly config: OpenAiCompatConfig;
   /** Turned off for a host that rejects response_format, as scripts/llm-probe.py does. */
@@ -88,7 +84,6 @@ export class OpenAiCompatProvider implements LlmProvider {
     this.config = options.config;
     this.model = options.config.model;
     this.configured = Boolean(options.config.apiKey) || Boolean(options.client);
-    this.excludedTasks = options.excludedTasks;
     this.client = options.client;
   }
 

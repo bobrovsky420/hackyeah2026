@@ -1,4 +1,4 @@
-import type { StageLog } from "@/server/contracts";
+import type { StageLog } from "@/lib/contracts";
 import type { LlmResult, LlmTask, LlmUsage } from "./types";
 
 /*
@@ -33,7 +33,6 @@ export function logLlmCall(line: LlmLogLine): void {
 /** USD per million tokens (9.3, 12.10); an unknown model costs nothing in the estimate. */
 const PRICES: { match: RegExp; input: number; output: number; cacheRead: number }[] = [
   { match: /bielik/i, input: 0.4, output: 0.4, cacheRead: 0.4 },
-  { match: /llama-3\.3-70b/i, input: 0.74, output: 0.74, cacheRead: 0.74 },
   { match: /^claude-opus-5/, input: 5, output: 25, cacheRead: 0.5 },
 ];
 
@@ -94,7 +93,7 @@ export function resetLlmCounters(): void {
   counters.clear();
 }
 
-/** The StageLog of src/server/contracts.ts from one model result. */
+/** The StageLog of src/lib/contracts.ts from one model result. */
 export function toStageLog(
   stage: StageLog["stage"],
   result: LlmResult<unknown>,

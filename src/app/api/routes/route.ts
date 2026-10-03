@@ -1,8 +1,8 @@
 import { getGmina } from "@/lib/catalogue";
 import { isRoleCode, targetGroupCodes } from "@/lib/labels";
-import { allowRouteRequest, clientAddress } from "@/lib/server/rate-limit";
-import { createRoute } from "@/lib/server/routes";
-import { invalid, readJson, requiredText, stringList } from "@/lib/server/validate";
+import { allowRouteRequest, clientAddress } from "@/server/rate-limit";
+import { createRoute } from "@/server/route-service";
+import { invalid, readJson, requiredText, stringList } from "@/server/validate";
 import { PipelineUnavailableError } from "@/server/pipeline";
 
 /**
