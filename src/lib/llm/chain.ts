@@ -1,4 +1,5 @@
 import type { LlmTimeouts } from "@/lib/env";
+import { emit } from "@/lib/telemetry";
 import { countFailure, countSuccess, logLlmCall, type LlmLogLine } from "./observability";
 import { ZERO_USAGE, type LlmProvider } from "./provider";
 import type { ReplayStore } from "./replay";
@@ -61,7 +62,7 @@ export function createLlm(options: LlmChainOptions): Llm {
         log({ event: "llm_call", task: call.task, provider: result.provider, model: result.model, promptVersion: call.promptVersion, ...result.usage, latencyMs: result.latencyMs, cached: false, outcome: "ok", failed });
         if (replay) {
           await replay.write(call, result).catch((error: unknown) => {
-            console.warn(JSON.stringify({ event: "llm_replay_write_failed", task: call.task, error: error instanceof Error ? error.name : "Error" }));
+            emit("llm_replay_write_failed", { task: call.task, error: error instanceof Error ? error.name : "Error" });
           });
         }
         return result;

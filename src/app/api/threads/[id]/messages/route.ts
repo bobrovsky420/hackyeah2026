@@ -4,6 +4,7 @@ import { invalid, readJson, requiredText } from "@/server/validate";
 import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse } from "@/server/gate";
 import { message, nextRetention, roleFor, screenMessage } from "@/server/threads";
+import { traced } from "@/lib/telemetry";
 
 /**
  * POST /api/threads/{id}/messages, module V: a message of the author or of
@@ -11,7 +12,7 @@ import { message, nextRetention, roleFor, screenMessage } from "@/server/threads
  * unknown conversation and a wrong key get the same 404, so the API never
  * tells whether a conversation exists.
  */
-export async function POST(request: Request, { params }: RouteContext<"/api/threads/[id]/messages">) {
+async function post(request: Request, { params }: RouteContext<"/api/threads/[id]/messages">) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const { id } = await params;
@@ -36,3 +37,5 @@ export async function POST(request: Request, { params }: RouteContext<"/api/thre
   await countEvent(`thread_message:${role}`);
   return Response.json({ redactions: screened.redactions }, { status: 201 });
 }
+
+export const POST = traced("POST /api/threads/[id]/messages", post);

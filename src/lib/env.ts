@@ -141,3 +141,13 @@ export function storeFile(): string | null {
   const value = envValue("STORE_FILE") ?? ".local/store/records.json";
   return value === "memory" ? null : path.resolve(process.cwd(), value);
 }
+
+/**
+ * PAGE_EVENTS=on turns on the page events of src/components/shell/page-events.tsx
+ * (views, time on page, clicks) for the simulated users and local analysis.
+ * Off by default: the privacy page promises no tracking tools, so a public
+ * server keeps it off unless that page says otherwise.
+ */
+export function pageEventsEnabled(): boolean {
+  return envValue("PAGE_EVENTS")?.toLowerCase() === "on";
+}

@@ -63,7 +63,7 @@ export function RouteActions({ routeId, markdown }: { routeId: string; markdown:
         {/* No group role: the section already carries the question, and a group named the same is read twice. */}
         <div className="flex flex-wrap gap-2">
           {votes.map((item) => (
-            <Button key={item.value} variant="secondary" aria-pressed={vote === item.value} onClick={() => choose(item.value)}>
+            <Button key={item.value} variant="secondary" data-track="feedback" data-track-id={item.value} aria-pressed={vote === item.value} onClick={() => choose(item.value)}>
               {t(item.label)}
             </Button>
           ))}
@@ -73,11 +73,11 @@ export function RouteActions({ routeId, markdown }: { routeId: string; markdown:
         </p>
       </section>
       <div className="no-print flex flex-wrap gap-3">
-        <Button variant="secondary" onClick={() => window.print()}>
+        <Button variant="secondary" data-track="print" onClick={() => window.print()}>
           <Printer aria-hidden />
           {t("s2.print")}
         </Button>
-        <Button variant="secondary" onClick={download}>
+        <Button variant="secondary" data-track="download" onClick={download}>
           <Download aria-hidden />
           {t("s2.download")}
         </Button>

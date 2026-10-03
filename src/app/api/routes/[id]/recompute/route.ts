@@ -1,13 +1,14 @@
 import { allowRouteRequest, clientAddress } from "@/server/rate-limit";
 import { createRoute, getRoute } from "@/server/route-service";
 import { PipelineUnavailableError } from "@/server/pipeline";
+import { traced } from "@/lib/telemetry";
 
 /**
  * POST /api/routes/{id}/recompute (9.2, FR-3.5): "Policz ponownie" runs the
  * pipeline again on the stored input, bypassing the replay cache, and
  * returns the new route's id.
  */
-export async function POST(request: Request, { params }: RouteContext<"/api/routes/[id]/recompute">) {
+async function post(request: Request, { params }: RouteContext<"/api/routes/[id]/recompute">) {
   const client = clientAddress(request.headers);
   if (!allowRouteRequest(client)) {
     return Response.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": "60" } });
@@ -33,3 +34,5 @@ export async function POST(request: Request, { params }: RouteContext<"/api/rout
     throw error;
   }
 }
+
+export const POST = traced("POST /api/routes/[id]/recompute", post);

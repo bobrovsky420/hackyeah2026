@@ -6,9 +6,10 @@ import { CONSENT_VERSION, countEvent, newId, nowIso } from "@/server/ephemeral";
 import { invalid, readJson, requiredText, stringList } from "@/server/validate";
 import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
+import { traced } from "@/lib/telemetry";
 
 /** S9b: stores a readiness registration (8.6), kept for 12 months; a name is shown only once ROPS has verified it. */
-export async function POST(request: Request) {
+async function post(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const body = await readJson(request);
@@ -50,3 +51,5 @@ export async function POST(request: Request) {
   await countEvent("readiness_registered");
   return Response.json({ id: entry.id }, { status: 201 });
 }
+
+export const POST = traced("POST /api/readiness", post);

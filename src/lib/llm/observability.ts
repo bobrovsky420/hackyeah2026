@@ -1,9 +1,10 @@
 import type { StageLog } from "@/lib/contracts";
+import { emit } from "@/lib/telemetry";
 import type { LlmResult, LlmTask, LlmUsage } from "./types";
 
 /*
  * Observability of the model calls (12.8, 12.10): one structured log line
- * per call, in-memory counters per provider and model for the statistics
+ * per call, with the trace of its request (src/lib/telemetry.ts), in-memory counters per provider and model for the statistics
  * of the roadmap's ROPS console, the cost line from the token counts, and
  * the StageLog of the route pipeline. Nothing here ever carries user text
  * or a key.
@@ -28,7 +29,20 @@ export interface LlmLogLine {
 }
 
 export function logLlmCall(line: LlmLogLine): void {
-  console.info(JSON.stringify(line));
+  emit(line.event, {
+    task: line.task,
+    provider: line.provider,
+    model: line.model,
+    prompt_version: line.promptVersion,
+    input_tokens: line.inputTokens,
+    output_tokens: line.outputTokens,
+    cache_read_tokens: line.cacheReadTokens,
+    latency_ms: line.latencyMs,
+    cached: line.cached,
+    outcome: line.outcome,
+    failed: line.failed,
+    cost_usd: line.model ? Math.round(estimateCostUsd(line.model, line) * 1e6) / 1e6 : 0,
+  });
 }
 
 /** USD per million tokens (9.3, 12.10); an unknown model costs nothing in the estimate. */

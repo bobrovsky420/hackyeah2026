@@ -1,5 +1,6 @@
 import { LlmError } from "@/lib/llm/types";
 import { similarForIdea } from "@/server/ideas";
+import { traced } from "@/lib/telemetry";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
  * computed and stored on the first call and returned as stored on every
  * later one; a new run costs model calls. 503 when the model failed.
  */
-export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+async function post(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const headers = { "Cache-Control": "no-store" };
   const { id } = await params;
   try {
@@ -20,3 +21,5 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
     return Response.json({ error: "model_unavailable" }, { status: 503, headers });
   }
 }
+
+export const POST = traced("POST /api/ideas/[id]/similar", post);

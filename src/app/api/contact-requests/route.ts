@@ -6,11 +6,12 @@ import { CONSENT_VERSION, countEvent, newId, nowIso } from "@/server/ephemeral";
 import { EMAIL, invalid, optionalText, readJson, requiredText } from "@/server/validate";
 import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
+import { traced } from "@/lib/telemetry";
 
 const targetTypes = ["innovation", "organisation", "advisor", "gmina"] as const;
 
 /** S9a: stores a contact request (8.6) for ROPS to relay; nothing is sent by the tool. */
-export async function POST(request: Request) {
+async function post(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const body = await readJson(request);
@@ -59,3 +60,5 @@ export async function POST(request: Request) {
   await countEvent("contact_requested");
   return Response.json({ id: contact.id }, { status: 201 });
 }
+
+export const POST = traced("POST /api/contact-requests", post);

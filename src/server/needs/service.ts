@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import { emit } from "@/lib/telemetry";
 import { catalogue as defaultCatalogue, type Catalogue } from "@/lib/catalogue";
 import type { Brief, StoredBrief, Need, Route, Embed, MatchNeed, StageLog } from "@/lib/contracts";
 import { getLlm } from "@/lib/llm";
@@ -49,14 +50,20 @@ function briefId(now: Date): string {
   return `br-${now.toISOString().slice(0, 10)}-${randomBytes(3).toString("hex")}`;
 }
 
-/** One line per brief for the request log (FR-3.6): stages, tokens, notes. Never the need's text. */
+/** One line per brief for the request log (FR-3.6, 12.8): stages, tokens, notes. Never the need's text. */
 function logStages(kind: string, id: string, stages: StageLog[]) {
-  const parts = stages.map(
-    (stage) =>
-      `${stage.stage}:${stage.provider}/${stage.latencyMs}ms/${stage.inputTokens}+${stage.outputTokens}` +
-      (stage.notes.length ? `/${stage.notes.join(",")}` : ""),
-  );
-  console.info(`[${kind}] ${id} ${parts.join(" ") || "no model call"}`);
+  emit(`${kind}_completed`, {
+    need_id: id,
+    stages: stages.map((stage) => ({
+      stage: stage.stage,
+      provider: stage.provider,
+      model: stage.model,
+      latency_ms: stage.latencyMs,
+      input_tokens: stage.inputTokens,
+      output_tokens: stage.outputTokens,
+      notes: stage.notes,
+    })),
+  });
 }
 
 /** The nearest matches a new need stores at once: its route's, with no model call; none without a route (FR-5.3). */

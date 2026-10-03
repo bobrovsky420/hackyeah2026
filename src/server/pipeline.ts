@@ -1,7 +1,9 @@
 import type { RoleCode, Readiness, Route, Embed, StageLog } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { LlmError, loadPrompt } from "@/lib/llm";
+import { estimateCostUsd } from "@/lib/llm/observability";
 import type { Llm } from "@/lib/llm/types";
+import { emit, setTraceRoute } from "@/lib/telemetry";
 import { screenText } from "@/server/gate";
 import { matchNeed } from "@/server/match";
 import { buildScreenedRoute, composeRoute } from "@/server/route";
@@ -71,6 +73,7 @@ export async function runPipeline(input: PipelineInput, deps: PipelineDeps): Pro
   const createdAt = now.toISOString();
   const today = createdAt.slice(0, 10);
   const id = deps.newId();
+  setTraceRoute(id);
   const gmina = input.placeTerc ? deps.dataset.gminaByTerc.get(input.placeTerc) : undefined;
   const placeTerc = gmina?.terc ?? null;
 
@@ -96,7 +99,12 @@ export async function runPipeline(input: PipelineInput, deps: PipelineDeps): Pro
   };
   const finish = (route: Route, cacheHit: boolean): PipelineResult => {
     route.engine = { ...route.engine, latency_ms: Date.now() - started, cached: cacheHit || route.engine.cached };
-    logRequest(route, stages, cacheHit);
+    try {
+      logRequest(route, stages, cacheHit, input);
+    } catch (error) {
+      // A log line never fails the request.
+      emit("route_log_failed", { error: error instanceof Error ? error.name : "Error" });
+    }
     return { route, stages, cacheHit, keepsText: route.mode !== "redirected" };
   };
 
@@ -147,16 +155,54 @@ export async function runPipeline(input: PipelineInput, deps: PipelineDeps): Pro
   }
 }
 
-/** One line per route for the request log (FR-3.6): stages, tokens, drops. Never the reader's text. */
-function logRequest(route: Route, stages: StageLog[], cacheHit: boolean) {
-  const parts = stages.map(
-    (stage) =>
-      `${stage.stage}:${stage.provider}/${stage.latencyMs}ms/${stage.inputTokens}+${stage.outputTokens}` +
-      (stage.cacheReadTokens ? `/cache${stage.cacheReadTokens}` : "") +
-      (stage.droppedIds.length || stage.droppedReasons ? `/drop${stage.droppedIds.length}+${stage.droppedReasons}` : "") +
-      (stage.notes.length ? `/${stage.notes.join(",")}` : ""),
-  );
-  console.info(
-    `[route] ${route.id} mode=${route.mode} cache=${cacheHit ? "hit" : "miss"} total=${route.engine.latency_ms}ms ${parts.join(" ")}`,
-  );
+/**
+ * One `route_completed` line per route for the request log (FR-3.6, 12.8):
+ * the input's codes, the stages with tokens, drops and cost, and what the
+ * route shows. Never the reader's text.
+ */
+function logRequest(route: Route, stages: StageLog[], cacheHit: boolean, input: PipelineInput) {
+  emit("route_completed", {
+    engine: "live",
+    mode: route.mode,
+    cache_hit: cacheHit,
+    bypass_cache: input.bypassCache ?? false,
+    latency_ms: route.engine.latency_ms,
+    place_terc: route.input.place_terc,
+    powiat_terc: route.input.place_terc?.slice(0, 4) ?? null,
+    role: route.input.role,
+    target_groups_given: route.input.target_groups,
+    text_length: input.problemText.length,
+    screening_category: route.screening.category,
+    sensitive_topics: route.screening.sensitive_topics,
+    redactions: route.screening.redactions,
+    crisis_banner: route.screening.crisis_banner,
+    clarification_needed: route.clarification_needed,
+    solution_ids: route.solutions.map((solution) => solution.innovation_id),
+    fit_scores: route.solutions.map((solution) => solution.fit_score),
+    path_ids: route.path.paths.map((entry) => entry.path_id),
+    innovators: route.people.innovators.length,
+    implementers_nearby: route.people.implementers_nearby.length,
+    knowledge: route.knowledge.length,
+    input_tokens: sum(stages, (stage) => stage.inputTokens),
+    output_tokens: sum(stages, (stage) => stage.outputTokens),
+    cost_usd: Math.round(sum(stages, (stage) => estimateCostUsd(stage.model, stage)) * 1e6) / 1e6,
+    stages: stages.map((stage) => ({
+      stage: stage.stage,
+      provider: stage.provider,
+      model: stage.model,
+      prompt_version: stage.promptVersion,
+      latency_ms: stage.latencyMs,
+      input_tokens: stage.inputTokens,
+      output_tokens: stage.outputTokens,
+      cache_read_tokens: stage.cacheReadTokens,
+      cached: stage.cached,
+      dropped_ids: stage.droppedIds,
+      dropped_reasons: stage.droppedReasons,
+      notes: stage.notes,
+    })),
+  });
+}
+
+function sum<T>(items: T[], value: (item: T) => number): number {
+  return items.reduce((total, item) => total + value(item), 0);
 }

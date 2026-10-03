@@ -4,6 +4,7 @@ import { allowRouteRequest, clientAddress } from "@/server/rate-limit";
 import { createRoute } from "@/server/route-service";
 import { invalid, readJson, requiredText, stringList } from "@/server/validate";
 import { PipelineUnavailableError } from "@/server/pipeline";
+import { traced } from "@/lib/telemetry";
 
 /**
  * POST /api/routes (9.2): the rate limit of FR-2.4, the intake validation
@@ -13,7 +14,7 @@ import { PipelineUnavailableError } from "@/server/pipeline";
  * with `{fallback: "cache"}` when the model failed at every provider and no
  * cached route exists.
  */
-export async function POST(request: Request) {
+async function post(request: Request) {
   const client = clientAddress(request.headers);
   if (!allowRouteRequest(client)) {
     return Response.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": "60" } });
@@ -36,3 +37,5 @@ export async function POST(request: Request) {
     throw error;
   }
 }
+
+export const POST = traced("POST /api/routes", post);

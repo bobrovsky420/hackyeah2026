@@ -81,7 +81,7 @@ function lexicalIndex(dataset: Dataset): LexicalIndex {
   return index;
 }
 
-function rankByVector(index: VectorIndex, query: number[]): string[] {
+function rankByVector(index: VectorIndex, query: number[]): Ranked[] {
   const scores = index.ids.map((id, row) => {
     let dot = 0;
     const offset = row * index.dims;
@@ -89,7 +89,12 @@ function rankByVector(index: VectorIndex, query: number[]): string[] {
     return { id, dot, row };
   });
   scores.sort((a, b) => b.dot - a.dot || a.row - b.row);
-  return scores.map((score) => score.id);
+  return scores.map((score) => ({ id: score.id, score: score.dot }));
+}
+
+interface Ranked {
+  id: string;
+  score: number;
 }
 
 // ------------------------------------------------------------------ stage
@@ -97,6 +102,8 @@ function rankByVector(index: VectorIndex, query: number[]): string[] {
 export interface Retrieval {
   /** Nearest first, at most forty. */
   ids: string[];
+  /** The score of each id, in the same order: cosine, or BM25 on the lexical fallback. For the request log. */
+  scores: number[];
   stage: StageLog;
 }
 
@@ -109,7 +116,7 @@ export async function retrieve(
   const started = now();
   const notes: string[] = [];
   const file = dataset.raw.vectors;
-  let ranking: string[] | null = null;
+  let ranking: Ranked[] | null = null;
   let provider = "embedding-service";
   let model = file.model;
 
@@ -131,7 +138,7 @@ export async function retrieve(
     // Cards that share no word with the need are noise, not candidates.
     ranking = rankLexical(lexicalIndex(dataset), query.needText)
       .filter((entry) => entry.score > 0)
-      .map((entry) => entry.id);
+      .map((entry) => ({ id: entry.id, score: entry.score }));
     provider = "lexical";
     model = "bm25-prefix5";
   }
@@ -139,16 +146,21 @@ export async function retrieve(
   const cardGroups = new Map(dataset.raw.indexCards.map((card) => [card.id, card.target_groups as string[]]));
   const dropped: string[] = [];
   const ids: string[] = [];
-  for (const id of ranking) {
+  const scores: number[] = [];
+  for (const { id, score } of ranking) {
     if (ids.length >= RETRIEVE_K) break;
     if (contradictsReader(cardGroups.get(id) ?? [], query.targetGroups)) dropped.push(id);
-    else ids.push(id);
+    else {
+      ids.push(id);
+      scores.push(Math.round(score * 1000) / 1000);
+    }
   }
   if (provider === "lexical") notes.push(`lexical: ${ranking.length} cards share a word with the need`);
   if (dropped.length > 0) notes.push(`guard: ${dropped.length} cards dropped, target groups contradict the reader's`);
 
   return {
     ids,
+    scores,
     stage: {
       stage: "retrieve",
       provider,

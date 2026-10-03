@@ -9,6 +9,7 @@ import { EMAIL, invalid, optionalText, readJson, requiredText, stringList } from
 import { repository } from "@/server/db";
 import { honeypotFilled, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
 import { nearestForNewNeed, savedNeedSummary } from "@/server/needs";
+import { traced } from "@/lib/telemetry";
 
 /**
  * S9c: stores a need in the needs bank (8.5); publication waits for
@@ -16,7 +17,7 @@ import { nearestForNewNeed, savedNeedSummary } from "@/server/needs";
  * from a route keeps that route's nearest matches (FR-5.3), and a need
  * typed straight into the bank gets them with its first brief.
  */
-export async function POST(request: Request) {
+async function post(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const body = await readJson(request);
@@ -72,3 +73,5 @@ export async function POST(request: Request) {
   await countEvent("need_saved");
   return Response.json({ id: need.id, redactions }, { status: 201 });
 }
+
+export const POST = traced("POST /api/needs", post);

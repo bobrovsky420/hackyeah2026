@@ -13,6 +13,7 @@ import { REPEAT_WINDOW_MS } from "@/server/gate/thresholds";
 import { REDACTED, redact } from "@/server/gate";
 import { countEvent, memory, newId, nowIso } from "@/server/ephemeral";
 import { loadOverlay, overlayRoute } from "@/server/knowledge/overlay";
+import { emit, setTraceRoute } from "@/lib/telemetry";
 
 /*
  * Creates and reads routes. Two engines: "live" runs the pipeline of
@@ -90,6 +91,7 @@ export async function createRoute(input: RouteInput): Promise<{ route: Route; re
   if (!input.bypassCache) {
     const previous = await previousRoute(key);
     if (previous) {
+      setTraceRoute(previous.id);
       await countEvent("route_repeated");
       return { route: previous, repeated: true };
     }
@@ -145,6 +147,7 @@ async function createCannedRoute(input: RouteInput): Promise<Route> {
   if (!template) throw new Error("No example route for the scenario");
 
   const id = await newRouteId();
+  setTraceRoute(id);
   const route = withRouteId(template, id);
   const gmina = getGmina(input.placeTerc);
   const redirected = route.mode === "redirected";
@@ -171,6 +174,17 @@ async function createCannedRoute(input: RouteInput): Promise<Route> {
   if (route.mode === "declined") route.reference_code = `HM-${new Date().getFullYear()}-${randomInt(1000, 10000)}`;
 
   const stored = withPlaceFacts(route);
+  emit("route_completed", {
+    engine: "canned",
+    mode: stored.mode,
+    place_terc: stored.input.place_terc,
+    powiat_terc: stored.input.place_terc?.slice(0, 4) ?? null,
+    role: stored.input.role,
+    target_groups_given: input.targetGroups,
+    text_length: input.problemText.length,
+    solution_ids: stored.solutions.map((solution) => solution.innovation_id),
+    path_ids: stored.path.paths.map((entry) => entry.path_id),
+  });
   await repository().saveRoute(stored);
   await countEvent(`route_created:${stored.mode}`);
   return stored;

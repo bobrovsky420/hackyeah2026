@@ -8,6 +8,7 @@ import { EMAIL, invalid, optionalText, readJson } from "@/server/validate";
 import { repository } from "@/server/db";
 import { isRating } from "@/server/evaluations";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
+import { traced } from "@/lib/telemetry";
 
 /**
  * POST /api/innovations/{id}/evaluations, module IV ("Tester innowacji"):
@@ -17,7 +18,7 @@ import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesC
  * a name only for harm. A sign-up needs a name and an e-mail address,
  * because ROPS has to reach the tester.
  */
-export async function POST(request: Request, { params }: RouteContext<"/api/innovations/[id]/evaluations">) {
+async function post(request: Request, { params }: RouteContext<"/api/innovations/[id]/evaluations">) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const { id } = await params;
@@ -98,3 +99,5 @@ export async function POST(request: Request, { params }: RouteContext<"/api/inno
   if (evaluation.test_signup) await countEvent(`test_signup:${evaluation.test_signup.as}`);
   return Response.json({ id: evaluation.id, redactions }, { status: 201 });
 }
+
+export const POST = traced("POST /api/innovations/[id]/evaluations", post);

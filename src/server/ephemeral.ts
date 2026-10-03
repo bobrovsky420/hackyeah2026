@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import { emit } from "@/lib/telemetry";
 import { repository } from "@/server/db";
 
 export { CONSENT_VERSION } from "@/server/db/examples";
@@ -39,8 +40,9 @@ export function newId(prefix: "rt" | "nd" | "kt" | "gt" | "zg" | "pm" | "oc" | "
   return `${prefix}-${date}-${randomBytes(3).toString("hex")}`;
 }
 
-/** Event counters of FR-10.2, without cookies or personal data. */
+/** Event counters of FR-10.2, without cookies or personal data; each count is also a line of the request log. */
 export async function countEvent(name: string): Promise<void> {
+  emit("count", { name });
   await repository().countEvent(name);
 }
 

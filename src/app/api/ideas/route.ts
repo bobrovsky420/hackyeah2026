@@ -7,6 +7,7 @@ import { CONSENT_VERSION, countEvent, newId, nowIso } from "@/server/ephemeral";
 import { EMAIL, invalid, readJson, requiredText, stringList } from "@/server/validate";
 import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
+import { traced } from "@/lib/telemetry";
 
 /**
  * Module III ("Kreator pomysłów"): stores an idea card, kept for 12 months;
@@ -15,7 +16,7 @@ import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesC
  * crisis or a harmful text is answered like a need; the author's name only
  * for harm, like a readiness registration.
  */
-export async function POST(request: Request) {
+async function post(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const body = await readJson(request);
@@ -85,3 +86,5 @@ export async function POST(request: Request) {
   await countEvent(`idea_submitted:${idea.kind}`);
   return Response.json({ id: idea.id, redactions: gate.redactionCount }, { status: 201 });
 }
+
+export const POST = traced("POST /api/ideas", post);

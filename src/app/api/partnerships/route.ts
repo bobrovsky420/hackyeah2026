@@ -8,13 +8,14 @@ import { EMAIL, invalid, optionalText, readJson, requiredText, stringList } from
 import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
 import { hashKey, message, newKey, nextRetention, screenMessage, threadPath } from "@/server/threads";
+import { traced } from "@/lib/telemetry";
 
 /**
  * POST /api/partnerships, module V: a post for the partnership board, shown
  * after ROPS approves it, with the author's private conversation with ROPS
  * where the answers to the post are relayed. No contact is ever public.
  */
-export async function POST(request: Request) {
+async function post(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const body = await readJson(request);
@@ -89,3 +90,5 @@ export async function POST(request: Request) {
   await countEvent("partnership_posted");
   return Response.json({ id: post.id, path: threadPath(thread.id, key), redactions: screened.redactions }, { status: 201 });
 }
+
+export const POST = traced("POST /api/partnerships", post);

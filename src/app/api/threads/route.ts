@@ -8,6 +8,7 @@ import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
 import { getLlm } from "@/lib/llm";
 import { hashKey, message, newKey, nextRetention, screenMessage, threadPath } from "@/server/threads";
+import { traced } from "@/lib/telemetry";
 
 /**
  * POST /api/threads, module V: starts a conversation with ROPS, about a
@@ -15,7 +16,7 @@ import { hashKey, message, newKey, nextRetention, screenMessage, threadPath } fr
  * private link. The text goes through the gate (7.12); the name for harm
  * only. Nothing is sent: ROPS sees the conversation in its panel.
  */
-export async function POST(request: Request) {
+async function post(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const body = await readJson(request);
@@ -77,3 +78,5 @@ export async function POST(request: Request) {
   await countEvent(`thread_started:${thread.topic}`);
   return Response.json({ id: thread.id, key, path: threadPath(thread.id, key), redactions: screened.redactions }, { status: 201 });
 }
+
+export const POST = traced("POST /api/threads", post);

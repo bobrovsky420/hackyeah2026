@@ -17,7 +17,8 @@
     "screenshots": "playwright test --project=screenshots",
     "test": "vitest run",
     "eval": "tsx scripts/eval.ts",
-    "cache:warm": "tsx scripts/cache-warm.ts"
+    "cache:warm": "tsx scripts/cache-warm.ts",
+    "simulate": "tsx scripts/simulate-users.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",

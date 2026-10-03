@@ -6,6 +6,7 @@ import { getRoute } from "@/server/route-service";
 import { countEvent, newId, nowIso } from "@/server/ephemeral";
 import { invalid, optionalText, readJson, requiredText } from "@/server/validate";
 import { repository } from "@/server/db";
+import { traced } from "@/lib/telemetry";
 
 const targetTypes = ["route", "brief", "innovation", "need"] as const;
 
@@ -20,7 +21,7 @@ async function targetExists(type: ContentReport["target"]["type"], id: string): 
  * queue (8.11). No identity of the reporter is stored; the comment loses
  * any personal data like every stored text.
  */
-export async function POST(request: Request) {
+async function post(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;
   const body = await readJson(request);
@@ -48,3 +49,5 @@ export async function POST(request: Request) {
   await countEvent("content_reported");
   return Response.json({ id: report.id }, { status: 201 });
 }
+
+export const POST = traced("POST /api/reports", post);

@@ -19,11 +19,11 @@ function download(markdown: string, filename: string) {
 export function DocumentActions({ markdown, filename }: { markdown: string; filename: string }) {
   return (
     <div className="no-print flex flex-wrap gap-3">
-      <Button variant="secondary" onClick={() => window.print()}>
+      <Button variant="secondary" data-track="print" onClick={() => window.print()}>
         <Printer aria-hidden />
         {t("s2.print")}
       </Button>
-      <Button variant="secondary" onClick={() => download(markdown, filename)}>
+      <Button variant="secondary" data-track="download" onClick={() => download(markdown, filename)}>
         <Download aria-hidden />
         {t("s2.download")}
       </Button>

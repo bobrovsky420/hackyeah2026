@@ -1,4 +1,5 @@
 import type { Llm } from "@/lib/llm/types";
+import { emit } from "@/lib/telemetry";
 import type { GateInput, GateOutput, RedactionType, ScreenText, ScreeningResult, StageLog } from "@/lib/contracts";
 import { decide, decidesWithoutModel } from "./decide";
 import { matchLexicon } from "./lexicon";
@@ -112,6 +113,20 @@ ${input.repeatScope}` : text);
     text,
     redactedText,
   );
+
+  emit("gate_screened", {
+    kind,
+    category: screening.category,
+    confidence: screening.confidence,
+    outcome: screening.outcome,
+    individual_case: screening.individual_case,
+    sensitive_topics: screening.sensitive_topics,
+    crisis_banner: screening.crisis_banner,
+    redaction_count: spans.length,
+    rules_fired: screening.rules_fired,
+    repeats_seen: seen.count,
+    model_ms: stage?.latencyMs ?? null,
+  });
 
   return { screening, redactedText, redactionCount: spans.length, stage };
 }

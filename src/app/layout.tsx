@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Atkinson_Hyperlegible_Mono, Atkinson_Hyperlegible_Next } from "next/font/google";
+import { PageEvents } from "@/components/shell/page-events";
 import { SiteFooter } from "@/components/shell/site-footer";
 import { SiteHeader } from "@/components/shell/site-header";
 import { ViewSettings } from "@/components/shell/view-settings";
+import { pageEventsEnabled } from "@/lib/env";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { CONTRAST_KEY, TEXT_SIZE_KEY } from "@/lib/storage-keys";
@@ -54,6 +56,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </main>
           <SiteFooter />
         </div>
+        {/* Read when the layout renders: a production build takes PAGE_EVENTS from its build. */}
+        {pageEventsEnabled() && <PageEvents />}
       </body>
     </html>
   );
