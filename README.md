@@ -27,6 +27,11 @@ needs bank and drafts the brief for the next incubator call, with a
 duplicate check against the existing innovations. Needs become the
 demand signal the incubators lack today.
 
+A person with an idea, or with a practice already tried in microscale,
+fills in an idea card: what it is, its essence, whom it is for and how
+far it got. The card's own page shows the proven solutions closest to
+it, with what is similar and what differs, quoted from the catalogue.
+
 It is not a web search: it never looks at the open internet, only at a
 closed catalogue of 381 described and attributed innovations. And it is
 not just RAG, a chatbot writing an answer over retrieved text: retrieval

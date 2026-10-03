@@ -2,8 +2,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { StoredBrief, ContactRequest, ContentReport, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
-import { exampleNeeds, exampleReadiness } from "@/server/db/examples";
+import type { StoredBrief, ContactRequest, ContentReport, Idea, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
+import { exampleIdeas, exampleNeeds, exampleReadiness } from "@/server/db/examples";
 import { createFileRepository } from "@/server/db/file";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
 import type { Repository, ScreeningLogEntry } from "@/server/db/repository";
@@ -28,7 +28,7 @@ interface Target {
 }
 
 /** A store without the example entries. */
-const empty = () => ({ ...createMemoryState(), needs: [], readiness: [] });
+const empty = () => ({ ...createMemoryState(), needs: [], readiness: [], ideas: [] });
 /** The retention runs of the file store see the tests' clock, never the real day. */
 const clock = () => new Date(NOW);
 
@@ -113,6 +113,28 @@ function registration(id: string, over: Partial<Readiness> = {}): Readiness {
     consent_display_name: true,
     consent: { text_version: "v1", timestamp: at(0) },
     verification: { status: "niezweryfikowane", reviewer: null, decided_at: null },
+    retention_until: "2027-10-03",
+    note_pl: null,
+    ...over,
+  };
+}
+
+function idea(id: string, over: Partial<Idea> = {}): Idea {
+  return {
+    id,
+    created_at: at(0),
+    kind: "pomysl",
+    title: "Sąsiedzka wypożyczalnia sprzętu rehabilitacyjnego",
+    description: "Mieszkańcy oddają nieużywany sprzęt, a świetlica go wypożycza sąsiadom.",
+    essence: "Sprzęt krąży między sąsiadami zamiast leżeć w piwnicach.",
+    for_whom: "Seniorzy po pobycie w szpitalu i ich opiekunowie.",
+    target_groups: ["seniorzy"],
+    stage: "test",
+    place_terc: "1261011",
+    author: { display_name: "Stowarzyszenie Razem", is_organisation: true, email: "razem@example.org" },
+    consents: { store: true, publish: false, text_version: "v1", timestamp: at(0) },
+    moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
+    similar: null,
     retention_until: "2027-10-03",
     note_pl: null,
     ...over,
@@ -331,6 +353,20 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
   });
 
+  describe("idea cards (module III)", () => {
+    it("round-trips newest first and stores the similar innovations once computed", async () => {
+      await repo.addIdea(idea("pm-1", { created_at: at(-DAY) }));
+      await repo.addIdea(idea("pm-2"));
+      expect(await repo.getIdea("pm-2")).toEqual(idea("pm-2"));
+      expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-2", "pm-1"]);
+
+      const similar = [{ innovation_id: "inn-1", fit_score: 72, what_fits_pl: "a", what_lacks_pl: "b" }];
+      expect((await repo.setIdeaSimilar("pm-1", similar))?.similar).toEqual(similar);
+      expect((await repo.getIdea("pm-1"))?.similar).toEqual(similar);
+      expect(await repo.setIdeaSimilar("pm-9", similar)).toBeUndefined();
+    });
+  });
+
   describe("feedback and content reports", () => {
     it("keeps feedback per route", async () => {
       await repo.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(-DAY) });
@@ -453,6 +489,8 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
       await repo.addContact(contact("kt-new", { created_at: at(-89 * DAY) }));
       await repo.addReadiness(registration("gt-old", { retention_until: "2026-10-02" }));
       await repo.addReadiness(registration("gt-today", { retention_until: "2026-10-03" }));
+      await repo.addIdea(idea("pm-old", { retention_until: "2026-10-02" }));
+      await repo.addIdea(idea("pm-today", { retention_until: "2026-10-03" }));
       // Newest first, so no write applies the log's retention to the others before the run does.
       await repo.writeScreeningLog(screening(-DAY), NOW - DAY);
       await repo.writeScreeningLog(screening(-8 * DAY), NOW - 8 * DAY);
@@ -461,7 +499,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
 
     it("counts without deleting in a dry run", async () => {
-      const expected = { routes: 1, feedback: 1, contacts: 1, readiness: 1, screeningEntries: 1, screeningTexts: 1 };
+      const expected = { routes: 1, feedback: 1, contacts: 1, readiness: 1, ideas: 1, screeningEntries: 1, screeningTexts: 1 };
       expect(await repo.applyRetention(cutoffs, { dryRun: true })).toEqual(expected);
       expect(await repo.getRoute("rt-old")).toBeDefined();
       expect(await repo.listContacts()).toHaveLength(2);
@@ -475,6 +513,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
         feedback: 1,
         contacts: 1,
         readiness: 1,
+        ideas: 1,
         screeningEntries: 1,
         screeningTexts: 1,
       });
@@ -483,6 +522,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
       expect((await repo.listFeedback()).map((item) => item.route_id)).toEqual(["rt-new"]);
       expect((await repo.listContacts()).map((item) => item.id)).toEqual(["kt-new"]);
       expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-today"]);
+      expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-today"]);
       expect((await repo.listScreeningLog(NOW)).map((entry) => entry.text !== null)).toEqual([true, false]);
       // Needs stay until ROPS decides.
       expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-1"]);
@@ -491,6 +531,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
         feedback: 0,
         contacts: 0,
         readiness: 0,
+        ideas: 0,
         screeningEntries: 0,
         screeningTexts: 0,
       });
@@ -575,10 +616,18 @@ ${title}
 });
 
 describe("the example entries", () => {
-  it("a fresh store starts with the three example needs and the two team entries", async () => {
+  it("a fresh store starts with the three example needs, the two team entries and the example idea card", async () => {
     const repo = createMemoryRepository();
     expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-przyklad-1", "nd-przyklad-2", "nd-przyklad-3"]);
     expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-przyklad-1", "gt-przyklad-2"]);
+    expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-przyklad-1"]);
+  });
+
+  it("the example idea card is marked and already holds its similar innovations (module III)", () => {
+    const [card] = exampleIdeas();
+    expect(card).toMatchObject({ example: true, consents: { store: true } });
+    expect(card.author.email).toMatch(/@example\.org$/);
+    expect(card.similar?.length).toBeGreaterThan(0);
   });
 
   it("the seed holds two consented and verified team organisations, marked as examples (FR-6.5)", () => {
@@ -618,6 +667,7 @@ describe("the store file", () => {
     await first.addNeed(need("nd-1"));
     await first.addContact(contact("kt-1"));
     await first.addReadiness(registration("gt-1"));
+    await first.addIdea(idea("pm-1"));
     await first.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) });
     await first.addReport(report("zg-1"));
     await first.appendModerationLog(entry);
@@ -634,6 +684,7 @@ describe("the store file", () => {
     expect(await second.listNeeds()).toEqual([need("nd-1")]);
     expect(await second.listContacts()).toEqual([contact("kt-1")]);
     expect(await second.listReadiness()).toEqual([registration("gt-1")]);
+    expect(await second.listIdeas()).toEqual([idea("pm-1")]);
     expect(await second.listFeedback()).toEqual([{ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) }]);
     expect(await second.listReports()).toEqual([report("zg-1")]);
     expect(await second.listModerationLog(10)).toEqual([entry]);

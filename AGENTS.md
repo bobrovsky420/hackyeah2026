@@ -73,7 +73,9 @@ decisions made so far are in [docs/decision-log.md](docs/decision-log.md).
   `npx pnpm@12.6.0 screenshots` writes every screen at 360 px, 1280 px and
   the projector size to `.local/screenshots/`. Each run builds the app and
   serves it on port 3100 unless a server already listens there (then it is
-  reused, so stop an old one first). Locally the browser is Edge. After a
+  reused, so stop an old one first). Locally the browser is Edge;
+  `E2E_CHANNEL=chrome` (or another installed channel) picks another one,
+  for a Mac without Edge. After a
   change to a screen, `test:e2e` and `a11y` pass too.
 - Every user-visible string lives in `messages/pl.json` under
   `<screen>.<element>` keys and is read with `t()` from `src/lib/i18n.ts`;
