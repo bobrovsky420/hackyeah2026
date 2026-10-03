@@ -84,6 +84,14 @@ resource group only; the Key Vault (RBAC: the app may read secrets, the
 person running the script may write them); and the SSH deploy key,
 which it keeps only in the vault as `vm-ssh-private-key`.
 
+GitHub presents this repository to Azure as
+`repo:bobrovsky420@69811297/hackyeah2026@1402817179:ref:refs/heads/main`
+(the newer form with numeric ids); the script registers it next to the
+plain `repo:bobrovsky420/hackyeah2026:ref:refs/heads/main` when `gh` is
+logged in. A login error `AADSTS700213: No matching federated identity
+record` names the subject GitHub sent: run the script again with
+`GITHUB_OIDC_SUBJECT='<that subject>'`.
+
 At the end it prints the `AZURE_` lines: put them in
 [deploy/azure/settings.env](../deploy/azure/settings.env) and commit to
 `main` (anyone with write access; the values are ids, not secrets).
