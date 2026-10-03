@@ -1,5 +1,4 @@
-import type { RoleCode } from "@/lib/contracts/catalogue";
-import type { Need, Readiness } from "@/lib/contracts/records";
+import type { RoleCode, Need, Readiness } from "@/lib/contracts";
 
 /*
  * The example entries every fresh store starts with (memory.ts): three

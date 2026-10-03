@@ -1,13 +1,4 @@
-import type {
-  ContactRequest,
-  ContentReport,
-  Feedback,
-  ModerationLogEntry,
-  Need,
-  Readiness,
-} from "@/lib/contracts/records";
-import type { NeedCluster, StoredBrief } from "@/lib/contracts/brief";
-import type { Route } from "@/lib/contracts/route";
+import type { ContactRequest, ContentReport, Feedback, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
 import { exampleNeeds, exampleReadiness } from "./examples";
 import {
   SCREENING_LOG_RETENTION_MS,

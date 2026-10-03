@@ -1,4 +1,4 @@
-import type { Innovation } from "@/lib/contracts/catalogue";
+import type { Innovation } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { sourceName } from "@/lib/labels";

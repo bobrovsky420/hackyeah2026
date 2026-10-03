@@ -1,6 +1,6 @@
 import { t } from "@/lib/i18n";
 import { indicatorLabel } from "@/lib/labels";
-import type { IndicatorKey } from "@/lib/contracts/map";
+import type { IndicatorKey } from "@/lib/contracts";
 import { formatNumber } from "@/lib/text";
 
 /*

@@ -1,6 +1,6 @@
 import { getGmina } from "@/lib/catalogue";
 import { t } from "@/lib/i18n";
-import { toCsv } from "@/lib/server/csv";
+import { toCsv } from "@/server/console/csv";
 import { apiError, withConsole } from "@/server/console/api";
 import { repository } from "@/server/db";
 

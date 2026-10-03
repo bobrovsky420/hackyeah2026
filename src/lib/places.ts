@@ -1,5 +1,5 @@
 import { getGmina, gminy, localities } from "@/lib/catalogue";
-import type { Gmina } from "@/lib/contracts/catalogue";
+import type { Gmina } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { ambiguousNames, formatPlaceLabel, type LocalityOption, type PlaceOption } from "@/lib/place-options";
 

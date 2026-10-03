@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { ReportLink } from "@/components/report/report-link";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
-import type { Channel, Route, SensitiveTopic } from "@/lib/contracts/route";
+import type { Channel, Route, SensitiveTopic } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { knowledgeTypeLabel, roleLabel, targetGroupLabel, telHref } from "@/lib/labels";
 import { allPaths, getInnovation } from "@/lib/catalogue";

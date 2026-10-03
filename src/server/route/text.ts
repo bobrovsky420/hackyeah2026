@@ -1,12 +1,11 @@
 import { z } from "zod";
-import type { Route, RouteMode, RouteSolution } from "@/lib/contracts/route";
+import type { Route, RouteMode, RouteSolution, StageLog } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { t } from "@/lib/i18n";
 import { applicantLabel, implementerLabels, targetGroupLabel, timeLabel } from "@/lib/labels";
 import { toStageLog } from "@/lib/llm/observability";
 import { loadPrompt } from "@/lib/llm/prompts";
 import { LlmError, type Llm } from "@/lib/llm/types";
-import type { StageLog } from "@/server/contracts";
 import type { PathReasons, PathSelection, SelectedPath } from "./paths";
 import { rejectReason, type BannedWords } from "./safety";
 

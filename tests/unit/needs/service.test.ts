@@ -1,9 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { fromDataset, type Catalogue } from "@/lib/catalogue";
-import type { Need } from "@/lib/contracts/records";
-import type { Route } from "@/lib/contracts/route";
+import type { Need, Route, Embed, MatchNeed } from "@/lib/contracts";
 import { LlmError, type LlmCall } from "@/lib/llm/types";
-import type { Embed, MatchNeed } from "@/server/contracts";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
 import type { Repository } from "@/server/db/repository";
 import { briefForNeed, clusterOpenNeeds, openNeedsView, type NeedsDeps } from "@/server/needs/service";

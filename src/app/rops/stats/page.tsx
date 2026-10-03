@@ -3,11 +3,11 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ConsolePage, DataTable, Empty, Td, Th } from "@/components/console/console-parts";
 import { contactStatuses } from "@/lib/console";
-import type { RouteMode } from "@/lib/contracts/route";
+import type { RouteMode } from "@/lib/contracts";
 import { formatDateTime } from "@/lib/dates";
 import { t, type MessageKey } from "@/lib/i18n";
 import { targetGroupLabel } from "@/lib/labels";
-import { isAuthenticated } from "@/lib/server/auth";
+import { isAuthenticated } from "@/server/console/auth";
 import { loadStats, type ConsoleStats } from "@/server/console/stats";
 import { repository } from "@/server/db";
 

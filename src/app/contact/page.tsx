@@ -4,10 +4,10 @@ import Link from "next/link";
 import { ContactForm } from "@/components/forms/contact-form";
 import { InfoPage } from "@/components/info/info-page";
 import { Notice } from "@/components/ui/notice";
-import type { ContactRequest } from "@/lib/contracts/records";
+import type { ContactRequest } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { getGmina, getInnovation } from "@/lib/catalogue";
-import { getRoute } from "@/lib/server/routes";
+import { getRoute } from "@/server/route-service";
 
 export const metadata: Metadata = { title: t("s9a.meta.title") };
 

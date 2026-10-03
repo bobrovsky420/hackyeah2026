@@ -17,9 +17,8 @@
  * string to string, so an import cannot test the code unions, and an assigned variable
  * escapes the excess-property check that finds fields the types do not know. The
  * elements of a long array are checked one by one (is<Element>({...})), because tsc
- * gives up on the union type of 2 875 places. The YAML files are read with js-yaml
- * (pinned, npx), all files in one run; index-vectors.json is checked with its first
- * three vectors. The check lives in .local/ (git-ignored) because the root tsconfig
+ * gives up on the union type of 2 875 places. The YAML files are read with the yaml
+ * package of the app; index-vectors.json is checked with its first three vectors. The check lives in .local/ (git-ignored) because the root tsconfig
  * includes every .ts file and the built data is not in git: a committed check would
  * break the typecheck of a fresh clone.
  */
@@ -27,10 +26,10 @@ import { execFileSync, execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import YAML from "yaml";
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const JSON2TS = "json-schema-to-typescript@15.0.4";
-const JS_YAML = "js-yaml@4.1.0";
 const OUT = path.join(ROOT, "src", "lib", "data", "schema-types.ts");
 const CHECK_DIR = path.join(ROOT, ".local", "type-check");
 const SCHEMAS = [
@@ -130,15 +129,9 @@ function check() {
       );
     }
   }
-  // All YAML files in one js-yaml run (one npx start, not one per path): each file indented under its own key.
   const pathsDir = file("paths");
   const paths = fs.existsSync(pathsDir) ? fs.readdirSync(pathsDir).filter((f) => f.endsWith(".yaml")).sort() : [];
-  const yamlFiles = ["advisors.yaml", "implementations.yaml", "knowledge.yaml", "helplines.yaml", ...paths.map((f) => `paths/${f}`)]
-    .filter((rel) => fs.existsSync(file(rel)));
-  const indent = (text) => text.replace(/\r\n/g, "\n").replace(/^(?=.)/gm, "  ");
-  const combined = yamlFiles.map((rel) => `${JSON.stringify(rel)}:\n${indent(fs.readFileSync(file(rel), "utf8"))}`).join("\n");
-  const parsed = yamlFiles.length ? JSON.parse(npx(JS_YAML, "js-yaml", "-", combined)) : {};
-  const yaml = (rel) => parsed[rel];
+  const yaml = (rel) => YAML.parse(fs.readFileSync(file(rel), "utf8"));
   checkFile("duplicates-decisions.json", "DuplicateDecisionsFile");
   checkFile("advisors.yaml", "AdvisorsFile", yaml);
   checkFile("implementations.yaml", "ImplementationsFile", yaml);

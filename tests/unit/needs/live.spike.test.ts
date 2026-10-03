@@ -1,11 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
-import type { IndicatorKey } from "@/lib/contracts/map";
+import type { IndicatorKey, Brief, Embed } from "@/lib/contracts";
 import { loadDataset } from "@/lib/data/load";
 import { getLlm } from "@/lib/llm";
-import type { Brief } from "@/lib/contracts/brief";
-import type { Embed } from "@/server/contracts";
 import { fromDataset } from "@/lib/catalogue";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
 import { briefForNeed, clusterNeeds, generateBrief, nearestMatches } from "@/server/needs";

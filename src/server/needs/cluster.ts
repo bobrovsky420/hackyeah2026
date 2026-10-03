@@ -1,12 +1,11 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
-import type { Need } from "@/lib/contracts/records";
+import type { Need, StageLog } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { targetGroupLabel } from "@/lib/labels";
 import { toStageLog } from "@/lib/llm/observability";
 import { loadPrompt } from "@/lib/llm/prompts";
 import { LlmError, type Llm, type LlmErrorKind } from "@/lib/llm/types";
-import type { StageLog } from "@/server/contracts";
 import type { BannedWords } from "@/server/route/safety";
 import { clean, knownText, needSummary, proseProblem } from "./checks";
 

@@ -1,4 +1,4 @@
-import type { RoleCode } from "@/lib/contracts/catalogue";
+import type { RoleCode } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { roleNoun } from "@/lib/labels";
 

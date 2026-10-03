@@ -1,7 +1,7 @@
 import gminyData from "./gminy.json";
 import innovationsData from "./innovations.json";
 import localitiesData from "./localities.json";
-import type { Gmina, Innovation, Locality } from "@/lib/contracts/catalogue";
+import type { Gmina, Innovation, Locality } from "@/lib/contracts";
 
 /*
  * Prototype fixtures, extracted on 29 September 2026 from the local data

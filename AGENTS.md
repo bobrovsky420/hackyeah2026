@@ -92,12 +92,17 @@ challenge, the team and the decisions made so far are in
   always shown with the attribution line and the prototype note of FR-1.8;
   the MIIS items like every ROPS item (decided 29 September 2026), their
   licence named by its terms.
-- The backend lives in `src/server/`: the gate (`gate/`, 7.12), the
-  matcher (`match/`, 7.3), the composer (`route/`, 7.4), the needs bank
-  (`needs/`, 7.5) and `pipeline.ts`, which runs them with the replay cache
-  of FR-3.5 (`route-cache.ts`, files in `.local/route-cache/`). The modules
-  meet only through the types of `src/server/contracts.ts` and receive the
-  model as an `Llm` function, so their Vitest tests
+- Every server module lives in `src/server/`; `src/lib/` holds only what a
+  client component may import too. The route pipeline: the gate (`gate/`,
+  7.12), the matcher (`match/`, 7.3), the composer (`route/`, 7.4), the
+  needs bank (`needs/`, 7.5) and `pipeline.ts`, which runs them with the
+  replay cache of FR-3.5 (`route-cache.ts`, files in `.local/route-cache/`).
+  Around it: `route-service.ts` (the engines and the repeat check),
+  `map.ts` (S4), `console/` (the ROPS console), `db/` (the store), `eval/`
+  (the harness) and the request helpers `rate-limit.ts`, `validate.ts` and
+  `ephemeral.ts`. The modules meet only through the types of
+  `src/lib/contracts.ts`, the one file of the shapes the server and the
+  screens share, and receive the model as an `Llm` function, so their Vitest tests
   (`npx pnpm@12.6.0 test`, in `tests/unit/`) never reach the network. The
   model adapter is `src/lib/llm/` (9.3: Bielik, then Anthropic, then the
   per-call recording in `.local/llm-replay/`), configured through
@@ -128,12 +133,16 @@ challenge, the team and the decisions made so far are in
   There is no database (decided 29 September 2026), and one process per
   file. Only server code calls it; the composer gets the readiness
   registry as a dependency. The rate limiter's and the gate's short-lived
-  memory stay in `src/lib/server/store.ts`, never in the file. Retention
+  memory stay in `src/server/ephemeral.ts`, never in the file. Retention
   runs inside the server. Details, reset and deployment are in
   [docs/storage.md](docs/storage.md).
 - The ROPS console (`/rops`, S7) asks for the access code in `ROPS_TOKEN`.
   Without it, `next dev` accepts the prototype's code `rops-prototyp` and a
-  production server keeps the console locked. The Playwright config starts
+  production server keeps the console locked. The console's lists, status
+  changes and moderation decisions are server actions of its pages
+  (`src/app/rops/actions.ts`); its only HTTP endpoints are the CSV export
+  and the statistics (`/api/rops/export.csv`, `/api/rops/stats`, decided
+  1 October 2026). The Playwright config starts
   its server with that code, the canned route engine, an empty replay
   recording for the gate (no model calls), the store in memory and high
   limits; a server it reuses needs the same variables, listed in

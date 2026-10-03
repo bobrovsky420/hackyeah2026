@@ -1,4 +1,4 @@
-import type { ImplementationPath } from "@/lib/contracts/path";
+import type { ImplementationPath } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 
 /*

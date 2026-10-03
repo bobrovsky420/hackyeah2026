@@ -1,9 +1,8 @@
 import { z } from "zod";
-import type { SensitiveTopic } from "@/lib/contracts/route";
+import type { SensitiveTopic, GateTextKind, ScreeningCategory, StageLog } from "@/lib/contracts";
 import { toStageLog } from "@/lib/llm/observability";
 import { loadPrompt } from "@/lib/llm/prompts";
 import { LlmError, type Llm } from "@/lib/llm/types";
-import type { GateTextKind, ScreeningCategory, StageLog } from "@/server/contracts";
 import { findBanned } from "@/server/route/safety";
 import { TOPICS } from "./lexicon";
 import { SCREEN_MAX_TOKENS } from "./thresholds";

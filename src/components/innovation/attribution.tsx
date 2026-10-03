@@ -1,7 +1,7 @@
 import { licenceOf, retrievedDate } from "@/lib/attribution";
 import { t } from "@/lib/i18n";
 import { sourceName } from "@/lib/labels";
-import type { Innovation } from "@/lib/contracts/catalogue";
+import type { Innovation } from "@/lib/contracts";
 
 /**
  * The attribution line of FR-1.8, with the source entry and the licence

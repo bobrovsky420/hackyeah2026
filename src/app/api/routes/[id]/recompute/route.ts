@@ -1,5 +1,5 @@
-import { allowRouteRequest, clientAddress } from "@/lib/server/rate-limit";
-import { createRoute, getRoute } from "@/lib/server/routes";
+import { allowRouteRequest, clientAddress } from "@/server/rate-limit";
+import { createRoute, getRoute } from "@/server/route-service";
 import { PipelineUnavailableError } from "@/server/pipeline";
 
 /**

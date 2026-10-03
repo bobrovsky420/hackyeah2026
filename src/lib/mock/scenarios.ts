@@ -1,4 +1,4 @@
-import type { SensitiveTopic } from "@/lib/contracts/route";
+import type { SensitiveTopic } from "@/lib/contracts";
 import { fold } from "@/lib/text";
 
 /*

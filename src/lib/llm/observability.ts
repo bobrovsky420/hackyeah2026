@@ -1,4 +1,4 @@
-import type { StageLog } from "@/server/contracts";
+import type { StageLog } from "@/lib/contracts";
 import type { LlmResult, LlmTask, LlmUsage } from "./types";
 
 /*
@@ -93,7 +93,7 @@ export function resetLlmCounters(): void {
   counters.clear();
 }
 
-/** The StageLog of src/server/contracts.ts from one model result. */
+/** The StageLog of src/lib/contracts.ts from one model result. */
 export function toStageLog(
   stage: StageLog["stage"],
   result: LlmResult<unknown>,

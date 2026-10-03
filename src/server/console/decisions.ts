@@ -1,15 +1,14 @@
 import { contactStatuses, isOneOf, needStatuses, rejectReasons, verificationStatuses } from "@/lib/console";
-import type { ContactRequest, ContentReport, ModerationLogEntry, Need, Readiness } from "@/lib/contracts/records";
+import type { ContactRequest, ContentReport, ModerationLogEntry, Need, Readiness } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import type { Repository } from "@/server/db";
 import { markDeclinedReviewed, type DeclinedReviewItem } from "./review";
 
 /*
- * The console's two kinds of change, shared by the server actions of
- * src/app/rops/actions.ts and the JSON API of /api/rops/*: the moderation
- * decisions of FR-12.8 and the status and note of every console table
- * (FR-9.2). Both log each change with the reviewer's name. The callers
- * check the access code first.
+ * The console's two kinds of change, called by the server actions of
+ * src/app/rops/actions.ts: the moderation decisions of FR-12.8 and the
+ * status and note of every console table (FR-9.2). Both log each change
+ * with the reviewer's name. The callers check the access code first.
  */
 
 export type DecisionKind = ModerationLogEntry["target_type"];
@@ -92,34 +91,6 @@ export async function decide(input: DecisionInput, ctx: ConsoleContext): Promise
   }
   if (!item) return gone();
   return { ok: true, item, message: approved ? t(approvedKeys[kind]) : t("console.done.rejected", { reason: reason ?? "" }) };
-}
-
-/** The actions of PATCH /api/rops/moderation/{type}/{id} (9.2), and the types each one fits. */
-const apiActions = {
-  approve: ["need", "contact", "report"],
-  verify: ["readiness"],
-  reject: ["need", "contact", "readiness", "report"],
-  review: ["declined"],
-} as const satisfies Record<string, readonly DecisionKind[]>;
-
-/** The queue names of GET /api/rops/moderation work as types too. */
-const typeAliases: Record<string, DecisionKind> = { needs: "need", contacts: "contact", reports: "report" };
-
-/**
- * The API's `{type}` and `action` as a decision: approve for need, contact
- * and report; verify for readiness; reject for all four; review for a
- * declined text.
- */
-export function apiDecision(
-  type: string,
-  action: unknown,
-): { ok: true; kind: DecisionKind; approve: boolean } | { ok: false; error: "unknown_type" | "action_not_allowed" } {
-  const kind = typeAliases[type] ?? decisionKinds.find((item) => item === type);
-  if (!kind) return { ok: false, error: "unknown_type" };
-  if (typeof action !== "string" || !Object.hasOwn(apiActions, action)) return { ok: false, error: "action_not_allowed" };
-  const fits: readonly DecisionKind[] = apiActions[action as keyof typeof apiActions];
-  if (!fits.includes(kind)) return { ok: false, error: "action_not_allowed" };
-  return { ok: true, kind, approve: action !== "reject" };
 }
 
 export type RecordKind = "need" | "contact" | "readiness";

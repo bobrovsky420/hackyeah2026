@@ -1,4 +1,4 @@
-import type { RedactionType } from "@/server/contracts";
+import type { RedactionType } from "@/lib/contracts";
 import { LINK_SHARE_SPAM } from "./thresholds";
 
 /*

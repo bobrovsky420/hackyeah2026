@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { parseYamlSubset, type YamlValue } from "@/lib/data/yaml";
+import { parseYaml, type YamlValue } from "@/lib/data/yaml";
 
 /*
  * The output checks on the model's text (FR-12.10, 9.4 compose.md, 11 rule
@@ -19,7 +19,7 @@ export interface BannedWords {
 }
 
 export function parseBannedWords(source: string, file = BANNED_WORDS_FILE): BannedWords {
-  const root = parseYamlSubset(source, file) as { categories?: Record<string, YamlValue> } | null;
+  const root = parseYaml(source, file) as { categories?: Record<string, YamlValue> } | null;
   const categories = new Map<string, Entry[]>();
   for (const [name, list] of Object.entries(root?.categories ?? {})) {
     if (!Array.isArray(list)) throw new Error(`${file}: categories.${name} must be a list`);

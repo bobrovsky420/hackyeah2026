@@ -1,4 +1,4 @@
-import type { Route } from "@/lib/contracts/route";
+import type { Route } from "@/lib/contracts";
 import { redactPatterns } from "./checks";
 
 /*

@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
-import type { Route } from "@/lib/contracts/route";
+import type { Route, Embed, MatchNeed, MatchInput } from "@/lib/contracts";
 import { LlmError, type Llm } from "@/lib/llm/types";
-import type { Embed, MatchNeed, MatchInput } from "@/server/contracts";
 import { MAX_NEAREST, nearestMatches, toNearestMatches } from "@/server/needs/nearest";
 import { assessment, BATHROOMS, dataset, matchResult, need, SENIORS } from "./fixtures";
 

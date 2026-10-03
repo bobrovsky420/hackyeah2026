@@ -1,7 +1,7 @@
-import type { FeedbackValue } from "@/lib/contracts/records";
-import { getRoute } from "@/lib/server/routes";
-import { countEvent, nowIso } from "@/lib/server/store";
-import { invalid, optionalText, readJson } from "@/lib/server/validate";
+import type { FeedbackValue } from "@/lib/contracts";
+import { getRoute } from "@/server/route-service";
+import { countEvent, nowIso } from "@/server/ephemeral";
+import { invalid, optionalText, readJson } from "@/server/validate";
 import { repository } from "@/server/db";
 
 const values: FeedbackValue[] = ["tak", "czesciowo", "nie"];

@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { loadDataset } from "@/lib/data/load";
 import type { Dataset } from "@/lib/data/to-contracts";
 import type { Llm, LlmCall, LlmResult, LlmTask } from "@/lib/llm/types";
-import type { Embed, MatchInput } from "@/server/contracts";
+import type { Embed, MatchInput } from "@/lib/contracts";
 import { assessSchema, quotableFields, QUOTE_FIELDS, validateAssessment, type AssessOutput } from "@/server/match/assess";
 import { wrapNeed } from "@/server/match/context";
 import { createEmbedClient, matchNeed } from "@/server/match/index";

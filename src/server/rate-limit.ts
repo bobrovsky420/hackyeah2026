@@ -1,4 +1,4 @@
-import { memory } from "./store";
+import { memory } from "@/server/ephemeral";
 
 /*
  * The route limit of FR-2.4 and 12.5: 10 route requests per minute per

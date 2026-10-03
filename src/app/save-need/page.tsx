@@ -7,7 +7,7 @@ import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
 import { getGmina, helplines } from "@/lib/catalogue";
 import { localityOptions, placeLabel, placeOptions } from "@/lib/places";
-import { getRoute } from "@/lib/server/routes";
+import { getRoute } from "@/server/route-service";
 
 export const metadata: Metadata = { title: t("s9c.meta.title") };
 

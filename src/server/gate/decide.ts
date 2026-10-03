@@ -1,5 +1,4 @@
-import type { SensitiveTopic } from "@/lib/contracts/route";
-import type { GateTextKind, ScreeningCategory, ScreeningOutcome } from "@/server/contracts";
+import type { SensitiveTopic, GateTextKind, ScreeningCategory, ScreeningOutcome } from "@/lib/contracts";
 import type { LexiconHit } from "./lexicon";
 import type { ModelScreen } from "./model";
 import { DECLINE_MIN_CONFIDENCE, OFF_TOPIC_MIN_CONFIDENCE, REDIRECT_MIN_CONFIDENCE } from "./thresholds";

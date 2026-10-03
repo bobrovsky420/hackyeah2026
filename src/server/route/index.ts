@@ -1,8 +1,7 @@
-import type { Route, RouteSolution } from "@/lib/contracts/route";
+import type { Route, RouteSolution, ComposeInput, ComposeRoute, StageLog } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { t } from "@/lib/i18n";
 import { applicantLabel } from "@/lib/labels";
-import type { ComposeInput, ComposeRoute, StageLog } from "@/server/contracts";
 import { indexesOf, originOf, routeTargetGroups, solutionIds } from "./data";
 import { buildAdvisor, buildImplementersNearby, buildInnovators, buildReadiness } from "./people";
 import { selectPaths, type PathSelection } from "./paths";

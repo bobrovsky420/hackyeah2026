@@ -1,4 +1,4 @@
-import type { RoleCode } from "@/lib/contracts/catalogue";
+import type { RoleCode } from "@/lib/contracts";
 import { mean } from "./stats";
 import type { PairKind, Problem } from "./problems";
 import type { Observation, ProblemResult } from "./types";

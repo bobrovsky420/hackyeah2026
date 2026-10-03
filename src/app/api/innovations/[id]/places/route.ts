@@ -1,6 +1,6 @@
 import { getInnovation } from "@/lib/catalogue";
 import { t } from "@/lib/i18n";
-import { needPlaces } from "@/lib/server/map";
+import { needPlaces } from "@/server/map";
 
 const NO_STORE = { "Cache-Control": "no-store" };
 

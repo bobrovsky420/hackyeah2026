@@ -1,12 +1,9 @@
 import { randomBytes } from "node:crypto";
 import { catalogue as defaultCatalogue, type Catalogue } from "@/lib/catalogue";
-import type { Brief, StoredBrief } from "@/lib/contracts/brief";
-import type { Need } from "@/lib/contracts/records";
-import type { Route } from "@/lib/contracts/route";
+import type { Brief, StoredBrief, Need, Route, Embed, MatchNeed, StageLog } from "@/lib/contracts";
 import { getLlm } from "@/lib/llm";
 import type { Llm } from "@/lib/llm/types";
-import { buildBrief } from "@/lib/server/brief";
-import type { Embed, MatchNeed, StageLog } from "@/server/contracts";
+import { buildBrief } from "@/server/needs/brief-template";
 import { repository, type Repository } from "@/server/db";
 import { createEmbedClient } from "@/server/match";
 import { generateBrief } from "./brief";
@@ -32,7 +29,7 @@ export interface NeedsDeps {
   embed: Embed;
   /** The matcher of src/server/match unless given. */
   matchNeed?: MatchNeed;
-  /** The template brief (buildBrief of src/lib/server/brief.ts). */
+  /** The template brief (buildBrief of src/server/needs/brief-template.ts). */
   template: (need: Need, route: Route | null) => Promise<Brief>;
   now: () => Date;
 }

@@ -3,8 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { controlClass } from "@/components/ui/field";
-import type { ImplementationPath } from "@/lib/contracts/path";
-import type { Route } from "@/lib/contracts/route";
+import type { ImplementationPath, Route } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { applicantCodes, applicantLabel } from "@/lib/labels";
 import { PathCard } from "./path-card";

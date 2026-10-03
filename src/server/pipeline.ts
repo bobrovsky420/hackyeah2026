@@ -1,10 +1,7 @@
-import type { RoleCode } from "@/lib/contracts/catalogue";
-import type { Readiness } from "@/lib/contracts/records";
-import type { Route } from "@/lib/contracts/route";
+import type { RoleCode, Readiness, Route, Embed, StageLog } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { LlmError, loadPrompt } from "@/lib/llm";
 import type { Llm } from "@/lib/llm/types";
-import type { Embed, StageLog } from "@/server/contracts";
 import { screenText } from "@/server/gate";
 import { matchNeed } from "@/server/match";
 import { buildScreenedRoute, composeRoute } from "@/server/route";

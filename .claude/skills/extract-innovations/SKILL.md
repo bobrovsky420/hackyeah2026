@@ -1,6 +1,6 @@
 ---
 name: extract-innovations
-description: Run the extraction of derived fields for the innovation catalogue (.local/pipeline/sources to .local/pipeline/derived) with cheap worker subagents, validate every record with scripts/derive-records.py, build data/innovations and prepare the human check. Use when the user asks to run, resume, pilot or rebuild the ingestion or extraction pipeline, or to derive fields for new source records.
+description: Run the extraction of derived fields for the innovation catalogue (.local/pipeline/sources to .local/pipeline/derived) with cheap worker subagents, validate every record with scripts/derive-records.py, build data/innovations and prepare the human check. Use when the user asks to run, resume, pilot or rebuild the ingestion or extraction pipeline, or to derive fields for new source records (including a partner hand-over on 3 October 2026).
 ---
 
 # Extract innovations: the coordinator playbook

@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, test } from "vitest";
 import { loadDataset } from "@/lib/data/load";
 import { getLlm } from "@/lib/llm";
-import type { MatchInput } from "@/server/contracts";
+import type { MatchInput } from "@/lib/contracts";
 import { createEmbedClient, matchNeed } from "@/server/match/index";
 
 /*

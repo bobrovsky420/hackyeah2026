@@ -123,8 +123,8 @@ node scripts/build-data-types.mjs --check
 
 It type-checks every file present in `data/` against
 `src/lib/data/types.ts` with the project's tsc (install the app first:
-`npx pnpm@12.6.0 install`; json-schema-to-typescript and js-yaml come
-through npx, so the first run needs the network). Then start the app as in
+`npx pnpm@12.6.0 install`; json-schema-to-typescript comes through npx, so
+the first run needs the network). Then start the app as in
 `AGENTS.md`.
 
 ## Rebuild instead of unpack (partner hand-over)

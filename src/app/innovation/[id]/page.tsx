@@ -8,7 +8,7 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { getInnovation } from "@/lib/catalogue";
-import type { Innovation, Material } from "@/lib/contracts/catalogue";
+import type { Innovation, Material } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import {
   costLabel,
@@ -18,7 +18,7 @@ import {
   targetGroupLabel,
   timeLabel,
 } from "@/lib/labels";
-import { getRoute } from "@/lib/server/routes";
+import { getRoute } from "@/server/route-service";
 
 export async function generateMetadata({ params }: PageProps<"/innovation/[id]">): Promise<Metadata> {
   const { id } = await params;

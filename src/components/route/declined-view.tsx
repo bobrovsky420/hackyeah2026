@@ -2,7 +2,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { ropsDepartment } from "@/lib/catalogue";
-import type { Route } from "@/lib/contracts/route";
+import type { Route } from "@/lib/contracts";
 import { FocusOnMount } from "./focus-on-mount";
 
 const headingClass = "text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]";

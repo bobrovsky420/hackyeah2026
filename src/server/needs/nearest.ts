@@ -1,9 +1,7 @@
-import type { Need } from "@/lib/contracts/records";
-import type { Route } from "@/lib/contracts/route";
+import type { Need, Route, Assessment, Embed, MatchNeed, MatchResult, StageLog } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { t } from "@/lib/i18n";
 import { LlmError, type Llm, type LlmErrorKind } from "@/lib/llm/types";
-import type { Assessment, Embed, MatchNeed, MatchResult, StageLog } from "@/server/contracts";
 import { matchNeed } from "@/server/match";
 import { clean } from "./checks";
 

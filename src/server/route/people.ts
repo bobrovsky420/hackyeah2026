@@ -1,5 +1,4 @@
-import type { Readiness } from "@/lib/contracts/records";
-import type { Route } from "@/lib/contracts/route";
+import type { Readiness, Route } from "@/lib/contracts";
 import type { Dataset } from "@/lib/data/to-contracts";
 import type { TargetGroup } from "@/lib/data/types";
 import { MAX_NEAREST, implementationsNear } from "./solutions";

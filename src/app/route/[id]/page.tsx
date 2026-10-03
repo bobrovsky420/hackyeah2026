@@ -4,10 +4,10 @@ import { DeclinedView, OffTopicView } from "@/components/route/declined-view";
 import { HumanHelp } from "@/components/route/human-help";
 import { RouteView } from "@/components/route/route-view";
 import { helplines } from "@/lib/catalogue";
-import type { RouteMode } from "@/lib/contracts/route";
+import type { RouteMode } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { routeToMarkdown } from "@/lib/route-markdown";
-import { getRoute } from "@/lib/server/routes";
+import { getRoute } from "@/server/route-service";
 
 const titles: Record<RouteMode, MessageKey> = {
   route: "s2.meta.title",
