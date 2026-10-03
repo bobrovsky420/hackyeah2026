@@ -142,7 +142,7 @@ modules and where this specification answers them:
 
 | Module of the brief | What it asks | Where | Status |
 |---|---|---|---|
-| I. Matchmaking społeczny (obligatory) | A described problem finds similar cases and ready solutions | 7.2 to 7.4 | Built |
+| I. Matchmaking społeczny (obligatory) | A described problem finds similar cases and ready solutions | 7.2 to 7.4, FR-3.9 | Built: proven solutions from the catalogue and similar cases from the needs bank and the idea cards |
 | II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7, FR-9.5, FR-9.6 | Partly built: knowledge on routes and innovation pages, kept live in the panel with films; the trends for the administrator; no library to browse |
 | III. Kreator pomysłów | An idea card (short description, essence, for whom, stage) at any time; an application generator during grant calls; the innovation canvas; an assistant that develops the idea | 7.13 | The idea card is built; the generator, the canvas and the assistant are not |
 | IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | 7.14 | Built |
@@ -681,6 +681,13 @@ first far more often than the multilingual ones.
 | FR-3.6 | MUST | Observability: per stage, tokens in and out, cache reads, latency, provider, dropped ids and reasons, written to the request log and to the counters (7.10). | Written to the request log; the panel's dashboard shows the counters |
 | FR-3.7 | MUST | Embedding retrieval (decided): `scripts/build-index-vectors.py` embeds every built record (title, summary, problem, mechanism, keywords) with PolDense-400M into `data/built/index-vectors.json` (git-ignored, stamped with the model id and the data version); at request time the embedding service (`scripts/embedding-service.py`, sentence-transformers in `.venv`) embeds the need with the prefix `[query]: ` and the forty nearest cards by cosine go to stage 1; a deterministic guard may drop cards whose target group contradicts the intake. `EMBEDDING_MODEL` selects PolDense-150M as the fallback; the model that built the vectors must serve the requests. | On the ten test problems the expected innovation is among the forty; on the self-retrieval probe the right record ranks first for 93 % of the catalogue intros and 92 % of the original problem texts (model-evaluation.md section 7) |
 | FR-3.8 | COULD | Feedback-aware re-ranking: a solution marked "nie pomaga" three times for the same target group loses 10 points. | |
+
+Similar cases (module I of the brief, "wyszukuje podobne przypadki"),
+added after the brief was published:
+
+| Id | Priority | Requirement | Acceptance |
+|---|---|---|---|
+| FR-3.9 | MUST | Every route of mode route, partial or none shows "Podobne przypadki": the needs of the bank and the idea cards (7.13) close to the route's need, by the retriever's word matching (FR-3.7 fallback) with at least two shared words and a quarter of the need's words, a shared target group ranking higher; at most three. A need shows the gate's neutral summary, never the author's words, with its gmina, date, status (FR-5.7) and the innovations it was matched with; an idea its name, description and stage, with "Poproś ROPS o kontakt z autorem pomysłu" (7.15). Shown only when the author consented to publication and ROPS approved it (E6); the others are only counted. The need saved from the same route is left out. Computed when the route is read, so newer cases reach older routes; no model call. | A need approved in the panel appears on a matching route at once; an unapproved one only in the count |
 
 ### 7.4 Route composer (owner: Developer 1; text rules by Analyst 1)
 
@@ -1942,6 +1949,13 @@ tools used, the prior work and the libraries.
   removed; how to report content and how to appeal; who at ROPS reviews
   what and how often; the date of the last review of this page.
 
+### S2 addition: "Podobne przypadki" (FR-3.9)
+
+- After the solutions, before the needs bank: the heading, one line on
+  what the cases are, the cases as cards (kind, gmina, date; the
+  summary or the idea's name; the status or the stage; the matched
+  innovations), and the count of the cases not shown.
+
 ### S13 Idea card (`/zglos-pomysl`, `/pomysl/{id}`)
 
 - The form of FR-13.1 as one page, prototype notice on top; after the
@@ -2429,6 +2443,9 @@ it, repetitions are not independent samples.
 - Accessibility (`pnpm a11y`): axe on every screen of
   `tests/e2e/screens.ts` in the three themes, the idea card form and an
   example card among them.
+- End-to-end for module I's similar cases: the seeded need approved
+  with consent shows on the route about lonely seniors with its status
+  and its matched innovation.
 - End-to-end for module V: a question with its private link, a wrong
   key, ROPS's answer and a mentor invited, the mentor's answer from their
   own link, the author's reply and "Moje rozmowy"; a partnership post

@@ -18,6 +18,8 @@ import { PathChooser } from "./path-chooser";
 import { QuickExit } from "./quick-exit";
 import { RecomputeButton } from "./recompute-button";
 import { RouteActions } from "./route-actions";
+import type { SimilarCases } from "@/server/match/similar-cases";
+import { SimilarCasesBlock } from "./similar-cases";
 import { SolutionCard } from "./solution-card";
 
 /** Topics whose routes get the quick exit of FR-12.5. */
@@ -123,7 +125,7 @@ function People({ route }: { route: Route }) {
 }
 
 /** S2 (mode route) and S3 (modes partial and none) of section 10. */
-export function RouteView({ route, markdown }: { route: Route; markdown: string }) {
+export function RouteView({ route, markdown, similar }: { route: Route; markdown: string; similar?: SimilarCases }) {
   const isRoute = route.mode === "route";
   const title = isRoute ? (route.need_summary_pl ?? t("s2.title.fallback")) : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
   const { sensitive_topics: topics, redactions } = route.screening;
@@ -215,6 +217,8 @@ export function RouteView({ route, markdown }: { route: Route; markdown: string 
             </div>
           </Block>
         )}
+
+        {similar && <SimilarCasesBlock cases={similar} routeId={route.id} />}
 
         {!isRoute && (
           <section aria-labelledby="bank-potrzeb" className="grid gap-3 rounded-lg border-2 border-primary bg-accent p-5">
