@@ -15,6 +15,8 @@ export const PARTIAL_MIN = 45;
 export const RETRIEVE_K = 40;
 /** Stage 1 returns at most this many candidates (8.3). */
 export const MAX_CANDIDATES = 8;
+/** The nearest retrieved cards always reach stage 2, picked by the model or not (M.9). */
+export const RETRIEVAL_FLOOR = 3;
 /** Per assessment (8.3). */
 export const MAX_REASONS = 3;
 export const MAX_GAPS = 3;

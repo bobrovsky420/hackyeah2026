@@ -1,14 +1,15 @@
 import { beforeAll, describe, expect, test } from "vitest";
 import { loadDataset } from "@/lib/data/load";
 import type { Dataset } from "@/lib/data/to-contracts";
-import type { Llm, LlmCall, LlmResult, LlmTask } from "@/lib/llm/types";
+import { LlmError, type Llm, type LlmCall, type LlmResult, type LlmTask } from "@/lib/llm/types";
 import type { Embed, MatchInput } from "@/lib/contracts";
-import { assessSchema, quotableFields, QUOTE_FIELDS, validateAssessment, type AssessOutput } from "@/server/match/assess";
+import { assessSchema, mergeAnswers, quotableFields, QUOTE_FIELDS, runAssess, validateAssessment, type AssessOutput } from "@/server/match/assess";
 import { wrapNeed } from "@/server/match/context";
 import { createEmbedClient, matchNeed } from "@/server/match/index";
 import { lexicalTerms } from "@/server/match/lexical";
 import { contradictsReader, retrieve } from "@/server/match/retrieve";
-import { shortlistSchema, type ShortlistOutput } from "@/server/match/shortlist";
+import { shortlistSchema, validateShortlist, type ShortlistOutput } from "@/server/match/shortlist";
+import { MAX_CANDIDATES, RETRIEVAL_FLOOR } from "@/server/match/thresholds";
 import { quoteFieldLabel } from "@/lib/labels";
 
 /*
@@ -113,6 +114,30 @@ function assessAnswer(overrides: Partial<AssessOutput> = {}): AssessOutput {
   };
 }
 
+/** The candidate of a stage 2 call, which carries one record (M.9). */
+function candidateOf(call: LlmCall<unknown>): string {
+  return (JSON.parse(call.cachedBlocks![0].split("\n")[1]) as { id: string }).id;
+}
+
+/** A stage 2 model that answers each call with the scripted assessments of its candidate, plus `extra` ones; none for an unscripted candidate. */
+function assessPer(answer: AssessOutput, extra: Record<string, AssessOutput["assessments"]> = {}) {
+  return (call: LlmCall<unknown>) => {
+    const id = candidateOf(call);
+    return { ...answer, assessments: [...answer.assessments.filter((item) => item.id === id), ...(extra[id] ?? [])] };
+  };
+}
+
+/** The nearest cards for the default input, which the floor adds to stage 1 (M.9). */
+async function nearest(): Promise<string[]> {
+  const retrieval = await retrieve({ needText: C01, targetGroups: [] }, dataset, embedLike(MOBILE));
+  return retrieval.ids.slice(0, RETRIEVAL_FLOOR);
+}
+
+/** The model's picks, then the nearest cards it left out. */
+async function withFloor(picks: string[]): Promise<string[]> {
+  return [...picks, ...(await nearest()).filter((id) => !picks.includes(id))];
+}
+
 // ------------------------------------------------------------------ retrieval
 
 describe("retrieval (FR-3.7)", () => {
@@ -199,23 +224,50 @@ describe("lexical terms", () => {
 
 describe("matchNeed", () => {
   test("a route end to end, with the stage logs", async () => {
-    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: assessAnswer() });
+    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: assessPer(assessAnswer()) });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
     expect(result.mode).toBe("route");
     expect(result.mode_reason_pl).toBe("Dwa rozwiązania odpowiadają wprost na potrzebę.");
     expect(result.top_ids).toEqual([MOBILE, DEPRESSION]);
     expect(result.retrieved_ids).toHaveLength(40);
     expect(result.clarification_needed).toBe(false);
+    expect(result.candidates.map((c) => c.id)).toEqual(await withFloor([MOBILE, DEPRESSION]));
     expect(result.stages.map((stage) => stage.stage)).toEqual(["retrieve", "shortlist", "assess"]);
-    expect(result.stages[1]).toMatchObject({ provider: "fake", promptVersion: "shortlist-v1", inputTokens: 100 });
-    expect(result.stages[2]).toMatchObject({ promptVersion: "assess-v1", droppedIds: [], droppedReasons: 0 });
+    expect(result.stages[1]).toMatchObject({ provider: "fake", promptVersion: "shortlist-v2", inputTokens: 100 });
+    // One stage 2 call per candidate (M.9), one stage log with the tokens summed.
+    const assessCalls = fake.calls.filter((call) => call.task === "assess");
+    expect(assessCalls.map(candidateOf)).toEqual(result.candidates.map((c) => c.id));
+    expect(assessCalls.every((call) => call.cachedBlocks![0].startsWith("Kandydaci: 1\n"))).toBe(true);
+    expect(result.stages[2]).toMatchObject({ promptVersion: "assess-v2", provider: "fake", inputTokens: 100 * assessCalls.length, droppedIds: [], droppedReasons: 0 });
+    // Selection runs at temperature 0, so the same need gives the same candidates and scores (M.9).
+    expect(fake.calls.map((call) => call.temperature)).toEqual(fake.calls.map(() => 0));
     // The stage 2 prompt carries the thresholds, not the placeholders.
-    expect(fake.calls[1].system).toContain("70");
-    expect(fake.calls[1].system).not.toContain("{{");
+    expect(assessCalls[0].system).toContain("70");
+    expect(assessCalls[0].system).not.toContain("{{");
+  });
+
+  test("the cards carry labels; a label maps to its card, one beyond the index is dropped", async () => {
+    const retrieved = (await retrieve({ needText: C01, targetGroups: [] }, dataset, embedLike(MOBILE))).ids;
+    const fake = fakeLlm({
+      shortlist: shortlistAnswer({
+        candidates: [
+          { id: "K05", prelim_fit: 80, reason_pl: "Pasuje." },
+          { id: "k4", prelim_fit: 70, reason_pl: "Mała litera, bez zera." },
+          { id: "K41", prelim_fit: 90, reason_pl: "Poza indeksem." },
+        ],
+      }),
+      assess: assessPer(assessAnswer()),
+    });
+    const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
+    const cards = fake.calls[0].cachedBlocks![1].split("\n");
+    expect(cards[1].startsWith(`K01: `)).toBe(true);
+    expect(cards.slice(1).some((line) => line.includes(MOBILE))).toBe(false);
+    expect(result.candidates.map((c) => c.id)).toEqual(await withFloor([retrieved[4], retrieved[3]]));
+    expect(result.stages[1].droppedIds).toEqual(["K41"]);
   });
 
   test("a stage 1 summary with a banned word gives way to the gate's summary (E1)", async () => {
-    const fake = fakeLlm({ shortlist: shortlistAnswer({ need_summary_pl: "Pijacy pod sklepem i samotni seniorzy." }), assess: assessAnswer() });
+    const fake = fakeLlm({ shortlist: shortlistAnswer({ need_summary_pl: "Pijacy pod sklepem i samotni seniorzy." }), assess: assessPer(assessAnswer()) });
     const gate = "Samotni seniorzy i picie alkoholu pod sklepem.";
     const result = await matchNeed(input({ needSummary: gate }), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
     expect(result.need_summary_pl).toBe(gate);
@@ -223,6 +275,7 @@ describe("matchNeed", () => {
   });
 
   test("a fabricated id is dropped in stage 1 and in stage 2", async () => {
+    const fabricated = { id: "inn-nat-nieistniejace", fit_score: 99, fit_reasons: [], gaps_pl: [], adaptation_note_pl: null };
     const fake = fakeLlm({
       shortlist: shortlistAnswer({
         candidates: [
@@ -230,16 +283,10 @@ describe("matchNeed", () => {
           { id: "inn-rops-wymyslone", prelim_fit: 99, reason_pl: "Nie istnieje." },
         ],
       }),
-      assess: assessAnswer({
-        assessments: [
-          ...assessAnswer().assessments.slice(0, 1),
-          { id: "inn-nat-nieistniejace", fit_score: 99, fit_reasons: [], gaps_pl: [], adaptation_note_pl: null },
-        ],
-        top_ids: ["inn-nat-nieistniejace", MOBILE],
-      }),
+      assess: assessPer(assessAnswer({ assessments: assessAnswer().assessments.slice(0, 1) }), { [MOBILE]: [fabricated] }),
     });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
-    expect(result.candidates.map((c) => c.id)).toEqual([MOBILE]);
+    expect(result.candidates.map((c) => c.id)).toEqual(await withFloor([MOBILE]));
     expect(result.stages[1].droppedIds).toEqual(["inn-rops-wymyslone"]);
     expect(result.assessments.map((a) => a.id)).toEqual([MOBILE]);
     expect(result.top_ids).toEqual([MOBILE]);
@@ -254,32 +301,33 @@ describe("matchNeed", () => {
           { id: `${DEPRESSION}-2`, prelim_fit: 80, reason_pl: "Zmieniony identyfikator." },
         ],
       }),
-      assess: assessAnswer({ assessments: assessAnswer().assessments.slice(0, 1) }),
+      assess: assessPer(assessAnswer()),
     });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
-    expect(result.candidates.map((c) => c.id)).toEqual([MOBILE]);
+    expect(result.candidates.map((c) => c.id)).toEqual(await withFloor([MOBILE]));
     expect(result.stages[1].droppedIds).toEqual([`${DEPRESSION}-2`]);
   });
 
-  test("an id that exists in the catalogue but was not retrieved is dropped too", async () => {
+  test("an id outside the retrieved cards is dropped, and the nearest cards still reach stage 2", async () => {
     const retrieval = await retrieve({ needText: C01, targetGroups: [] }, dataset, embedLike(MOBILE));
     const outside = dataset.raw.indexCards.map((card) => card.id).find((id) => !retrieval.ids.includes(id))!;
     const fake = fakeLlm({
       shortlist: shortlistAnswer({ candidates: [{ id: outside, prelim_fit: 90, reason_pl: "Spoza indeksu." }] }),
+      assess: assessPer(assessAnswer({ mode: "none", assessments: [] })),
     });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
-    expect(result.candidates).toEqual([]);
+    expect(result.candidates).toEqual((await nearest()).map((id) => ({ id, prelim_fit: 0, reason_pl: "" })));
     expect(result.stages[1].droppedIds).toEqual([outside]);
-    // No candidate left: no stage 2 call, mode none.
-    expect(fake.calls.map((call) => call.task)).toEqual(["shortlist"]);
+    expect(result.stages[1].notes).toContain(`floor: ${RETRIEVAL_FLOOR} of the nearest ${RETRIEVAL_FLOOR} cards added`);
     expect(result.mode).toBe("none");
+    expect(result.stages[2].notes).toContain(`assessments: ${RETRIEVAL_FLOOR} candidates not assessed by the model`);
   });
 
   test("a fabricated quote is dropped, and a candidate without reasons with it", async () => {
     const answer = assessAnswer();
     answer.assessments[0].fit_reasons.push({ field: "problem_pl", quote: "gmina zapewnia codzienny dowóz obiadów do domu", why_pl: "Zmyślone." });
     answer.assessments[1].fit_reasons = [{ field: "problem_pl", quote: "seniorzy grają w szachy z wolontariuszami w parku", why_pl: "Zmyślone." }];
-    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: answer });
+    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: assessPer(answer) });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
     expect(result.assessments.map((a) => a.id)).toEqual([MOBILE]);
     expect(result.assessments[0].fit_reasons).toHaveLength(1);
@@ -294,7 +342,7 @@ describe("matchNeed", () => {
       { field: "autorzy", quote: "Stowarzyszenie na Rzecz Zrównoważonego Rozwoju", why_pl: "Autorzy." },
       { field: "problem_pl", quote: quoteOf(MOBILE), why_pl: "Ci sami ludzie." },
     ];
-    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: answer });
+    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: assessPer(answer) });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
     expect(result.assessments[0].fit_reasons.map((r) => r.field)).toEqual(["problem_pl"]);
     expect(result.stages[2].droppedReasons).toBe(1);
@@ -306,7 +354,7 @@ describe("matchNeed", () => {
     expect(typo).not.toBe(exact);
     const answer = assessAnswer();
     answer.assessments[0].fit_reasons = [{ field: "problem_pl", quote: typo, why_pl: "Ci sami ludzie." }];
-    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: answer });
+    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: assessPer(answer) });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
     expect(result.assessments[0].fit_reasons[0].quote).toBe(exact);
   });
@@ -315,7 +363,7 @@ describe("matchNeed", () => {
     const answer = assessAnswer({ mode: "route" });
     answer.assessments[0].fit_score = 69;
     answer.assessments[1].fit_score = 40;
-    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: answer });
+    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: assessPer(answer) });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
     expect(result.mode).toBe("partial");
     expect(result.mode_reason_pl).toBeNull();
@@ -327,7 +375,7 @@ describe("matchNeed", () => {
     const answer = assessAnswer({ mode: "none", mode_reason_pl: "Nic nie pasuje.", top_ids: [] });
     answer.assessments[0].fit_score = 30;
     answer.assessments[1].fit_score = 44;
-    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: answer });
+    const fake = fakeLlm({ shortlist: shortlistAnswer(), assess: assessPer(answer) });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
     expect(result.mode).toBe("none");
     expect(result.mode_reason_pl).toBe("Nic nie pasuje.");
@@ -337,7 +385,7 @@ describe("matchNeed", () => {
   test("codes outside the taxonomy are dropped", async () => {
     const fake = fakeLlm({
       shortlist: shortlistAnswer({ detected_target_groups: ["seniorzy", "emeryci"], detected_domains: ["samotnosc-i-izolacja", "hazard"] }),
-      assess: assessAnswer(),
+      assess: assessPer(assessAnswer()),
     });
     const result = await matchNeed(input(), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
     expect(result.detected_target_groups).toEqual(["seniorzy"]);
@@ -349,7 +397,7 @@ describe("clarification (FR-2.3)", () => {
   const vague = "Chciałbym zrobić coś dobrego dla ludzi w swojej okolicy. Od czego zacząć?";
 
   async function run(overrides: Partial<MatchInput>, groups: string[]) {
-    const fake = fakeLlm({ shortlist: shortlistAnswer({ detected_target_groups: groups }), assess: assessAnswer() });
+    const fake = fakeLlm({ shortlist: shortlistAnswer({ detected_target_groups: groups }), assess: assessPer(assessAnswer()) });
     return matchNeed(input({ needText: vague, ...overrides }), { llm: fake.llm, dataset, embed: embedLike(MOBILE) });
   }
 
@@ -397,7 +445,7 @@ describe("prompt injection (FR-2.4)", () => {
       expect(call.user.match(/<potrzeba>/g)).toHaveLength(1);
       expect(call.system).toContain("dane od użytkownika");
     }
-    expect(result.candidates.map((c) => c.id)).toEqual([MOBILE]);
+    expect(result.candidates.map((c) => c.id)).toEqual(await withFloor([MOBILE]));
     expect(result.assessments).toEqual([]);
     expect(result.mode).toBe("none");
     expect(result.top_ids).toEqual([]);
@@ -455,5 +503,49 @@ describe("the fields given to stage 2", () => {
     expect(out.assessments[0].fit_score).toBe(100);
     expect(out.assessments[0].adaptation_note_pl).toBeNull();
     expect(out.topIds).toEqual([MOBILE]);
+  });
+});
+
+describe("selection (M.9)", () => {
+  const reader = { placeTerc: "1214062", role: "pracownik-instytucji" as const, targetGroups: [] };
+
+  test("the floor keeps its room: eight picks beyond the nearest cards leave five", async () => {
+    const retrieved = (await retrieve({ needText: C01, targetGroups: [] }, dataset, embedLike(MOBILE))).ids;
+    const picks = retrieved.slice(RETRIEVAL_FLOOR, RETRIEVAL_FLOOR + 8).map((id, i) => ({ id, prelim_fit: 90 - i, reason_pl: "Pasuje." }));
+    const out = validateShortlist(shortlistAnswer({ candidates: picks }), retrieved, dataset);
+    expect(out.candidates).toHaveLength(MAX_CANDIDATES);
+    expect(out.candidates.map((c) => c.id)).toEqual([...picks.slice(0, MAX_CANDIDATES - RETRIEVAL_FLOOR).map((p) => p.id), ...retrieved.slice(0, RETRIEVAL_FLOOR)]);
+    expect(out.notes).toContain(`candidates: ${RETRIEVAL_FLOOR} beyond ${MAX_CANDIDATES} cut`);
+  });
+
+  test("merging: a lone assessment under another id is the call's own, extra ones are dropped, the best call gives the mode", () => {
+    const [mobile, depression] = assessAnswer().assessments;
+    const merged = mergeAnswers([
+      { id: MOBILE, parsed: assessAnswer({ mode: "route", mode_reason_pl: "Najlepsze.", assessments: [mobile, { ...depression, id: "inn-obce" }] }) },
+      { id: DEPRESSION, parsed: assessAnswer({ mode: "partial", mode_reason_pl: "Słabsze.", assessments: [{ ...depression, id: "inn-rops-centrum" }] }) },
+    ]);
+    expect(merged.output.assessments.map((a) => a.id)).toEqual([MOBILE, DEPRESSION]);
+    expect(merged.foreign).toEqual(["inn-obce"]);
+    expect(merged.repaired).toBe(1);
+    expect(merged.output).toMatchObject({ mode: "route", mode_reason_pl: "Najlepsze.", top_ids: [] });
+  });
+
+  test("a failed call leaves the other candidates; when every call fails, a refusal wins", async () => {
+    const partly = fakeLlm({
+      assess: (call: LlmCall<unknown>) => {
+        if (candidateOf(call) === DEPRESSION) throw new LlmError("timeout", "assess", "slow", "openai-compatible");
+        return assessPer(assessAnswer())(call);
+      },
+    });
+    const stage = await runAssess(partly.llm, dataset, reader, C01, [MOBILE, DEPRESSION]);
+    expect(stage.assessments.map((a) => a.id)).toEqual([MOBILE]);
+    expect(stage.stage.notes).toContain("assess: 1 of 2 calls failed (timeout)");
+
+    const refused = fakeLlm({
+      assess: (call: LlmCall<unknown>) => {
+        throw new LlmError(candidateOf(call) === MOBILE ? "refusal" : "timeout", "assess", "no", "openai-compatible");
+      },
+    });
+    await expect(runAssess(refused.llm, dataset, reader, C01, [MOBILE, DEPRESSION])).rejects.toMatchObject({ kind: "refusal" });
   });
 });

@@ -1,7 +1,7 @@
 ---
-version: assess-v1
+version: assess-v2
 task: stage 2 of the matching engine (FR-3.2), read by the app; the model scores the shortlisted candidates and quotes the fields that show the fit
-changes: v1 first version; the placeholders ROUTE_MIN, PARTIAL_MIN and PARTIAL_MAX in double braces are filled by the app from src/server/match/thresholds.ts
+changes: v2 one candidate per call, the app sends the calls at once and merges the answers (given several, the model assessed only the first; decision M.9); v1 first version; the placeholders ROUTE_MIN, PARTIAL_MIN and PARTIAL_MAX in double braces are filled by the app from src/server/match/thresholds.ts
 ---
 
 # Etap 2: ocena dopasowania
@@ -15,7 +15,7 @@ rozmawiasz z nikim: zwracasz jeden obiekt JSON.
 
 Dostajesz, w tej kolejności:
 
-- kandydatów, każdy jako obiekt JSON w osobnym wierszu:
+- kandydatów (zwykle jednego), każdy jako obiekt JSON w osobnym wierszu:
   - `id` i `tytul`;
   - `kody`: grupy docelowe, dziedziny, typy wdrażających, koszt, czas
     wdrożenia, poziom dowodów, teren i skala; to tło do oceny, nie do

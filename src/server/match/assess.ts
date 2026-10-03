@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { BuiltInnovation, IndicatorKey } from "@/lib/data/types";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { indicatorLabel } from "@/lib/labels";
-import { loadPrompt, toStageLog, type Llm } from "@/lib/llm";
+import { LlmError, loadPrompt, toStageLog, type Llm, type LlmResult } from "@/lib/llm";
 import type { Assessment, MatchMode, StageLog } from "@/lib/contracts";
 import { placeDescription, readerContextLine, wrapNeed, type ReaderContext } from "./context";
 import { checkQuote } from "./grounding";
@@ -15,6 +15,8 @@ import { MAX_GAPS, MAX_REASONS, MAX_TOP_IDS, PARTIAL_MIN, ROUTE_MIN, modeFor } f
  * reasons that quote a named field (schema 8.3). The validation of FR-3.4
  * keeps a reason only when its field was given to the model and its quote
  * is found there; the mode comes from the best validated fit (FR-3.3).
+ * Each candidate gets a call of its own, all sent at once (M.9): given
+ * several records in one call, Bielik assessed only the first in most runs.
  *
  * The quotable fields (docs/innovation-record.md sections 3, 4 and 8):
  * - our derived text (summary, problem, mechanism, requirements): written
@@ -276,6 +278,53 @@ function assessSystem(body: string): string {
     .replaceAll("{{PARTIAL_MAX}}", String(ROUTE_MIN - 1));
 }
 
+/**
+ * The answers of the per-candidate calls as one answer for validateAssessment:
+ * each call contributes the assessment of its own candidate, and the mode and
+ * its reason come from the call that scored highest. A call saw one record,
+ * so a single assessment under another id is about that record and takes its
+ * id (`repaired`); any further assessment is a dropped id (`foreign`). Pure.
+ */
+export function mergeAnswers(answers: readonly { id: string; parsed: AssessOutput }[]): { output: AssessOutput; foreign: string[]; repaired: number } {
+  const assessments: AssessOutput["assessments"] = [];
+  const foreign: string[] = [];
+  let repaired = 0;
+  let lead: AssessOutput | null = null;
+  let leadFit = -1;
+  for (const { id, parsed } of answers) {
+    let own = parsed.assessments.filter((item) => cleanId(item.id) === id);
+    let others = parsed.assessments.filter((item) => cleanId(item.id) !== id);
+    if (own.length === 0 && others.length === 1) {
+      own = [{ ...others[0], id }];
+      others = [];
+      repaired += 1;
+    }
+    foreign.push(...others.map((item) => cleanId(item.id)));
+    if (own.length === 0) continue;
+    assessments.push(own[0]);
+    if (own[0].fit_score > leadFit) {
+      leadFit = own[0].fit_score;
+      lead = parsed;
+    }
+  }
+  return { output: { mode: lead?.mode ?? "none", mode_reason_pl: lead?.mode_reason_pl ?? null, top_ids: [], assessments }, foreign, repaired };
+}
+
+/** The stage log's result for the parallel calls: tokens summed, the wall-clock time, every provider and model that answered. */
+function combinedResult(results: readonly LlmResult<AssessOutput>[], promptVersion: string, latencyMs: number): LlmResult<null> {
+  const distinct = (values: string[]) => [...new Set(values)].join("+") || "none";
+  const sum = (key: "inputTokens" | "outputTokens" | "cacheReadTokens") => results.reduce((total, result) => total + result.usage[key], 0);
+  return {
+    parsed: null,
+    usage: { inputTokens: sum("inputTokens"), outputTokens: sum("outputTokens"), cacheReadTokens: sum("cacheReadTokens") },
+    latencyMs,
+    provider: distinct(results.map((result) => result.provider)),
+    model: distinct(results.map((result) => result.model)),
+    promptVersion,
+    cached: results.length > 0 && results.every((result) => result.cached),
+  };
+}
+
 export async function runAssess(
   llm: Llm,
   dataset: Dataset,
@@ -285,25 +334,54 @@ export async function runAssess(
 ): Promise<AssessStage> {
   const records = new Map(dataset.raw.records.map((record) => [record.id, record]));
   const given = new Map<string, Record<string, string>>();
-  const blocks: string[] = [];
+  const blocks = new Map<string, string>();
   for (const id of candidateIds) {
     const record = records.get(id);
     if (!record) continue;
     const fields = quotableFields(record);
     given.set(id, fields);
-    blocks.push(recordBlock(dataset, record, fields, reader.placeTerc));
+    blocks.set(id, recordBlock(dataset, record, fields, reader.placeTerc));
   }
   const prompt = loadPrompt("assess");
-  const result = await llm({
-    task: "assess",
-    system: assessSystem(prompt.body),
-    promptVersion: prompt.version,
-    cachedBlocks: [`Kandydaci: ${blocks.length}\n${blocks.join("\n")}`],
-    user: assessUser(dataset, reader, needText),
-    schema: assessSchema,
-    effort: "high",
-    maxTokens: 4_000,
-  });
-  const { droppedIds, droppedReasons, notes, ...validated } = validateAssessment(result.parsed, given);
-  return { ...validated, stage: toStageLog("assess", result, { droppedIds, droppedReasons, notes }) };
+  const system = assessSystem(prompt.body);
+  const user = assessUser(dataset, reader, needText);
+  const started = Date.now();
+  const settled = await Promise.allSettled(
+    [...blocks].map(([id, block]) =>
+      llm({
+        task: "assess",
+        system,
+        promptVersion: prompt.version,
+        cachedBlocks: [`Kandydaci: 1\n${block}`],
+        user,
+        schema: assessSchema,
+        effort: "high",
+        maxTokens: 4_000,
+        // The same need and record give the same score (M.9).
+        temperature: 0,
+      }).then((result) => ({ id, result })),
+    ),
+  );
+  const answers = settled.flatMap((entry) => (entry.status === "fulfilled" ? [entry.value] : []));
+  const failures = settled.flatMap((entry) => (entry.status === "rejected" ? [entry.reason as unknown] : []));
+  const unexpected = failures.find((failure) => !(failure instanceof LlmError));
+  if (unexpected) throw unexpected;
+  // Only when every call failed does the stage fail; a refusal then wins (FR-12.12).
+  if (answers.length === 0 && failures.length > 0) {
+    throw (failures as LlmError[]).find((failure) => failure.kind === "refusal") ?? failures[0];
+  }
+
+  const merged = mergeAnswers(answers.map(({ id, result }) => ({ id, parsed: result.parsed })));
+  const { droppedIds, droppedReasons, notes, ...validated } = validateAssessment(merged.output, given);
+  if (merged.foreign.length > 0) notes.push(`assessments: ${merged.foreign.length} ids beyond the call's own candidate`);
+  if (merged.repaired > 0) notes.push(`assessments: ${merged.repaired} ids taken from the call's candidate`);
+  if (failures.length > 0) {
+    notes.push(`assess: ${failures.length} of ${settled.length} calls failed (${(failures as LlmError[]).map((failure) => failure.kind).join(", ")})`);
+  }
+  const result = combinedResult(
+    answers.map((answer) => answer.result),
+    prompt.version,
+    Date.now() - started,
+  );
+  return { ...validated, stage: toStageLog("assess", result, { droppedIds: [...merged.foreign, ...droppedIds], droppedReasons, notes }) };
 }

@@ -5,7 +5,7 @@ import { t } from "@/lib/i18n";
 import { LlmError, type Llm, type LlmCall } from "@/lib/llm/types";
 import { buildScreenedRoute, composeRoute } from "@/server/route";
 import { findBanned, hasAmountOrDate, parseBannedWords } from "@/server/route/safety";
-import { contradictsReasons, type ComposeOutput } from "@/server/route/text";
+import { contradictsReasons, pluralForOne, type ComposeOutput } from "@/server/route/text";
 
 /* The composer end to end on a small real slice: model output checks, the templates, the screened outcomes. */
 
@@ -163,6 +163,32 @@ describe("model text blanked (FR-4.1)", () => {
 });
 
 describe("model output checks", () => {
+  test("a summary in the plural for one solution is dropped", async () => {
+    const one = input({ match: match({ assessments: [assessment(BATHROOMS, 86)], top_ids: [BATHROOMS] }) });
+    const plural = await composeRoute(one, {
+      llm: fakeLlm({ summary_pl: "Oba rozwiązania pomagają osobom starszym. Zacznij od rozmowy z autorami.", next_steps: [], paths: [] }),
+      dataset,
+      today: TODAY,
+      readiness: [],
+    });
+    expect(plural.route.solutions).toHaveLength(1);
+    expect(plural.route.summary_pl).toBeNull();
+    expect(plural.stage?.notes).toContain("summary dropped: plural-for-one-solution");
+
+    const singular = "To rozwiązanie pomaga osobom starszym. Zacznij od rozmowy z autorami rozwiązania.";
+    const kept = await composeRoute(one, { llm: fakeLlm({ summary_pl: singular, next_steps: [], paths: [] }), dataset, today: TODAY, readiness: [] });
+    expect(kept.route.summary_pl).toBe(singular);
+  });
+
+  test("the plural check: plural words, a sentence opening with Rozwiązania, never the genitive", () => {
+    expect(pluralForOne("Oba rozwiązania skupiają się na wsparciu.", 1)).toBe(true);
+    expect(pluralForOne("Wsparcie jest ważne. Rozwiązania pasują częściowo.", 1)).toBe(true);
+    expect(pluralForOne("Te rozwiązania wymagają sali.", 1)).toBe(true);
+    expect(pluralForOne("Poproś autorów rozwiązania o rozmowę.", 1)).toBe(false);
+    expect(pluralForOne("Rozwiązanie wymaga sali.", 1)).toBe(false);
+    expect(pluralForOne("Oba rozwiązania skupiają się na wsparciu.", 2)).toBe(false);
+  });
+
   test("a step with an unknown id is dropped and a template fills in", async () => {
     const { route, stage } = await composeRoute(input(), {
       llm: fakeLlm({
@@ -250,7 +276,8 @@ describe("model output checks", () => {
     expect(prompt).not.toContain("example.org");
     expect(calls[0].user).not.toMatch(/\d\s?\d{3}\s?zł/);
     expect(calls[0].user).toContain("<potrzeba>");
-    expect(calls[0].promptVersion).toBe("compose-v1");
+    expect(calls[0].user).toContain('"solution_count": 2');
+    expect(calls[0].promptVersion).toBe("compose-v2");
   });
 });
 

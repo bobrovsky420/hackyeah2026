@@ -71,10 +71,17 @@ describe("OpenAiCompatProvider", () => {
     expect(result.usage).toEqual({ inputTokens: 100, outputTokens: 20, cacheReadTokens: 0 });
     expect(result.model).toBe("bielik-test");
     expect(bodies[0].response_format).toEqual({ type: "json_object" });
+    expect(bodies[0].temperature).toBe(0.2);
     expect(bodies[0].messages).toEqual([
       { role: "system", content: "SYSTEM" },
       { role: "user", content: "CARDS\n\n<potrzeba>tekst</potrzeba>" },
     ]);
+  });
+
+  it("sends the call's temperature when it names one", async () => {
+    const { client, bodies } = fakeClient([completion('{"category":"need","confidence":0.9}')]);
+    await provider(client).call({ ...call, temperature: 0 }, OPTIONS);
+    expect(bodies[0].temperature).toBe(0);
   });
 
   it("repairs once by sending the validation error back", async () => {

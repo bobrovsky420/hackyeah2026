@@ -12,7 +12,7 @@ problem_text_pl: >
   Gmina ma świetlicę wiejską wolną trzy dni w tygodniu.
 expected:
   mode: route
-  any_of_innovations: [inn-rops-senior-cuder, inn-rops-organizator-kompleksowej-opieki]
+  any_of_innovations: [inn-rops-senior-cuder, inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania]
   none_of_innovations: []
   target_groups: [seniorzy]
   paths_any_of: [asy-priorytet-v, usluga-wrazliwa-b, cus-program-uslug]

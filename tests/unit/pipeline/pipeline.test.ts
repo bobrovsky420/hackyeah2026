@@ -148,9 +148,11 @@ describe("the readiness registry (FR-6.5)", () => {
   it("is read through the loader when a route is composed, and reaches the route only as a count and a name", async () => {
     let loads = 0;
     const loader = async () => (loads++, [entry]);
-    // No candidate: the matcher answers "none" without an assessment, and the composer writes no model text for it.
+    // No pick: the nearest cards still reach stage 2 (M.9), which assesses none of them; the matcher answers "none"
+    // and the composer writes no model text for it.
     const llm = llmFailingAfterGate("unavailable", [], {
       shortlist: { need_summary_pl: "Samotni seniorzy.", detected_target_groups: ["seniorzy"], detected_domains: [], candidates: [] },
+      assess: { mode: "none", mode_reason_pl: null, top_ids: [], assessments: [] },
     });
     const result = await runPipeline(input, deps(llm, createMemoryRouteCache(), loader));
     expect(result.route.mode).toBe("none");

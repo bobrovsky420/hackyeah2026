@@ -26,6 +26,8 @@ export interface LlmCall<T> {
   schema: z.ZodType<T>;
   effort: LlmEffort;
   maxTokens: number;
+  /** Sampling temperature of the openai-compatible provider, default 0.2; Anthropic's adaptive thinking takes none. */
+  temperature?: number;
 }
 
 export interface LlmUsage {

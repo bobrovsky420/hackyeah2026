@@ -1,6 +1,6 @@
 ---
 name: extract-worker-max
-description: Extraction worker for the innovation catalogue pinned to Sonnet at maximum reasoning effort. Launched only by the extract-innovations coordinator, for the initial effort measurement and, if it wins, for the full run. Do not use for anything else.
+description: Extraction worker for the innovation catalogue pinned to Sonnet at maximum reasoning effort. Launched only by the extract-innovations coordinator, for the effort measurement and, if it wins, for the full run. Do not use for anything else.
 model: sonnet
 effort: max
 ---

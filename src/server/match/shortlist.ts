@@ -4,7 +4,7 @@ import { loadPrompt, toStageLog, type Llm } from "@/lib/llm";
 import type { ShortlistCandidate, StageLog } from "@/lib/contracts";
 import { findBanned } from "@/server/route/safety";
 import { readerContextLine, wrapNeed, type ReaderContext } from "./context";
-import { MAX_CANDIDATES, MAX_REASON_CHARS } from "./thresholds";
+import { MAX_CANDIDATES, MAX_REASON_CHARS, RETRIEVAL_FLOOR } from "./thresholds";
 
 /*
  * Stage 1 of FR-3.1: the model reads the retrieved index cards and the need
@@ -12,6 +12,11 @@ import { MAX_CANDIDATES, MAX_REASON_CHARS } from "./thresholds";
  * purpose (a longer list or a long reason is trimmed here, not rejected by
  * the provider); the validation below keeps only ids among the cards the
  * model was given and codes of data/curated/taxonomies.json.
+ *
+ * M.9: the cards carry short labels (K01 to K40) instead of their ids, which
+ * the validation maps back, because Bielik rebuilt long ids from the titles;
+ * and the nearest RETRIEVAL_FLOOR cards join the candidates whether the model
+ * picked them or not, because it left out cards the retriever ranked first.
  */
 
 export const shortlistSchema = z.object({
@@ -74,11 +79,23 @@ function taxonomyBlock(dataset: Dataset): string {
   ].join("\n");
 }
 
+/** The label of the card at `index` (0-based) of the retrieved ids: K01 to K40. */
+export function cardLabel(index: number): string {
+  return `K${String(index + 1).padStart(2, "0")}`;
+}
+
+/** A label (K07, k7) as the id of the card it stands for; anything else as the model wrote it. */
+function resolveId(raw: string, allowedIds: readonly string[]): string {
+  const id = cleanId(raw);
+  const label = /^k0*(\d{1,2})$/i.exec(id);
+  return label ? (allowedIds[Number(label[1]) - 1] ?? id) : id;
+}
+
 function cardsBlock(dataset: Dataset, ids: string[]): string {
   const cards = new Map(dataset.raw.indexCards.map((card) => [card.id, card]));
-  const lines = ids.flatMap((id) => {
+  const lines = ids.flatMap((id, index) => {
     const card = cards.get(id);
-    return card ? [`${card.id}: ${card.card} Grupy: ${card.target_groups.join(", ")}.`] : [];
+    return card ? [`${cardLabel(index)}: ${card.card} Grupy: ${card.target_groups.join(", ")}.`] : [];
   });
   return [`Indeks: ${lines.length} kart`, ...lines].join("\n");
 }
@@ -87,7 +104,11 @@ export function shortlistUser(dataset: Dataset, reader: ReaderContext, needText:
   return `Kontekst: ${readerContextLine(dataset, reader)}\n\n${wrapNeed(needText)}`;
 }
 
-/** Server validation of stage 1 (FR-3.4 applied to ids and codes). Pure, for the tests. */
+/**
+ * Server validation of stage 1 (FR-3.4 applied to ids and codes). `allowedIds`
+ * are the retrieved ids in the order of the cards, so a label maps to its id
+ * and the first RETRIEVAL_FLOOR are the nearest cards. Pure, for the tests.
+ */
 export function validateShortlist(
   output: ShortlistOutput,
   allowedIds: readonly string[],
@@ -110,7 +131,7 @@ export function validateShortlist(
   const seen = new Set<string>();
   const valid: ShortlistCandidate[] = [];
   for (const candidate of output.candidates) {
-    const id = cleanId(candidate.id);
+    const id = resolveId(candidate.id, allowedIds);
     if (!allowed.has(id)) {
       droppedIds.push(id);
       continue;
@@ -122,7 +143,11 @@ export function validateShortlist(
   if (droppedIds.length > 0) notes.push(`candidates: ${droppedIds.length} ids not among the retrieved cards`);
   // Best first; the sort is stable, so the model's order breaks ties.
   valid.sort((a, b) => b.prelim_fit - a.prelim_fit);
-  if (valid.length > MAX_CANDIDATES) notes.push(`candidates: ${valid.length - MAX_CANDIDATES} beyond ${MAX_CANDIDATES} cut`);
+  // The nearest cards the model left out come last, with no fit and no reason; stage 2 judges them (M.9).
+  const floor = allowedIds.slice(0, RETRIEVAL_FLOOR).filter((id) => !seen.has(id));
+  const room = MAX_CANDIDATES - floor.length;
+  if (valid.length > room) notes.push(`candidates: ${valid.length - room} beyond ${MAX_CANDIDATES} cut`);
+  if (floor.length > 0) notes.push(`floor: ${floor.length} of the nearest ${RETRIEVAL_FLOOR} cards added`);
 
   // The summary is the route's title: a label the user wrote may stay in the need, never in our words (E1).
   let summary: string | null = clip(output.need_summary_pl, MAX_SUMMARY_CHARS) || null;
@@ -135,7 +160,7 @@ export function validateShortlist(
     needSummary: summary,
     targetGroups: codes(output.detected_target_groups, groupCodes, "target groups"),
     domains: codes(output.detected_domains, domainCodes, "domains"),
-    candidates: valid.slice(0, MAX_CANDIDATES),
+    candidates: [...valid.slice(0, room), ...floor.map((id) => ({ id, prelim_fit: 0, reason_pl: "" }))],
     droppedIds,
     notes,
   };
@@ -158,6 +183,8 @@ export async function runShortlist(
     schema: shortlistSchema,
     effort: "medium",
     maxTokens: 4_000,
+    // The same need and cards give the same candidates (M.9).
+    temperature: 0,
   });
   const { droppedIds, notes, ...shortlist } = validateShortlist(result.parsed, retrievedIds, dataset);
   return { ...shortlist, stage: toStageLog("shortlist", result, { droppedIds, notes }) };

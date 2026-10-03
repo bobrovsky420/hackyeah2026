@@ -280,12 +280,11 @@ export async function runOne(run: PlannedRun, client: string, deps: RunnerDeps, 
       stage1Ids = [];
       detected = [];
     }
-    const assess = [...captured].reverse().find((entry) => entry.task === "assess");
-    const assessments = (assess?.parsed as { assessments?: { fit_reasons?: unknown[] }[] } | undefined)?.assessments;
-    // No stage 2 answer (skipped, or failed into templates): no reason was given.
-    reasonsGiven = Array.isArray(assessments)
-      ? assessments.reduce((sum, item) => sum + (Array.isArray(item.fit_reasons) ? item.fit_reasons.length : 0), 0)
-      : 0;
+    // Stage 2 makes one call per candidate (M.9); no answer (skipped, or failed into templates): no reason was given.
+    const assessments = captured
+      .filter((entry) => entry.task === "assess")
+      .flatMap((entry) => (entry.parsed as { assessments?: { fit_reasons?: unknown[] }[] } | undefined)?.assessments ?? []);
+    reasonsGiven = assessments.reduce((sum, item) => sum + (Array.isArray(item.fit_reasons) ? item.fit_reasons.length : 0), 0);
     if (seen.stored && hash && retrievedIds) {
       writeRecord(recordDir, hash, {
         version: 1,

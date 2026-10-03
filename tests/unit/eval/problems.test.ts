@@ -14,7 +14,7 @@ const FIXTURES = path.join(__dirname, "fixtures");
 const read = (name: string) => readFileSync(path.join(FIXTURES, name), "utf8");
 
 const REFS: ProblemReferences = {
-  innovationIds: new Set(["inn-rops-senior-cuder", "inn-rops-organizator-kompleksowej-opieki"]),
+  innovationIds: new Set(["inn-rops-senior-cuder", "inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania"]),
   targetGroups: new Set(["seniorzy", "cudzoziemcy"]),
   pathIds: new Set(["asy-priorytet-v", "usluga-wrazliwa-b", "cus-program-uslug"]),
   tercs: new Set(["1207062", "1262011"]),
@@ -41,7 +41,7 @@ describe("parseProblem", () => {
         mode: "route",
         outcome: "need",
         crisisBanner: null,
-        anyOf: ["inn-rops-senior-cuder", "inn-rops-organizator-kompleksowej-opieki"],
+        anyOf: ["inn-rops-senior-cuder", "inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania"],
         targetGroups: ["seniorzy"],
         peopleRoles: ["advisor", "implementer_nearby"],
         summaryMustMention: ["świetlic"],
