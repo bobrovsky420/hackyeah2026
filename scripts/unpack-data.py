@@ -39,6 +39,8 @@ BUNDLE_FORMATS = (1, 2, 3, 4)   # 1: data/ and .local/pipeline/ only; 2 adds the
                                 # data/curated/safety/ up to data/curated/
 CURATED = ("taxonomies.json", "duplicates-decisions.json", "advisors.yaml", "implementations.yaml", "knowledge.yaml",
            "helplines.yaml")   # the hand-written entries of data/; README.md stays at the top
+DEMO_FILES = ("data/built/demo-questions.yaml", "data/built/demo-records.yaml",
+              "data/built/demo-routes.json")   # the panel's demonstration data, in a bundle all or none
 FLAT_BUILT = ("data-version.json", "innovations", "index-cards.json", "index-vectors.json", "incubators.json", "places",
               "map", "indicators.json", "implementations-derived.json", "organisations.json",
               "implementations-merged.json")   # the build outputs of the flat data/ of formats 1 and 2
@@ -234,6 +236,11 @@ def main():
           f"{' (dirty)' if manifest.get('git_dirty') else ''}")
     if local and local.get("version") != manifest["data_version"]:
         print(f"replaced data version {local.get('version')}")
+    if all(p in blobs for p in DEMO_FILES):
+        print("demonstration data of the panel: in data/built/demo-*; a fresh store file starts with it (stop the "
+              "server, move .local/store/records.json aside, start; docs/storage.md)")
+    else:
+        print("demonstration data of the panel: not in this bundle")
 
 
 if __name__ == "__main__":

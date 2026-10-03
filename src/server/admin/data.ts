@@ -194,7 +194,7 @@ export async function questions(filter: QuestionFilter = {}, repo: Repository = 
   });
 }
 
-/** How many records of the demonstration data the store holds (DEMO_DATA, src/server/db/demo.ts): the panel's banner. */
+/** How many records of the demonstration data the store holds (src/server/db/demo.ts): the panel's banner. */
 export async function demoCount(repo: Repository = repository()): Promise<number> {
   const lists: { demo?: boolean }[][] = await Promise.all([
     repo.listRouteFacts(),

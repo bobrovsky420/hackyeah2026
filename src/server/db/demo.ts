@@ -32,25 +32,28 @@ import type { MemoryState } from "./memory";
 import { storableRoute } from "./repository";
 
 /*
- * The demonstration data of the ROPS panel (DEMO_DATA=true, docs/storage.md):
- * a simulated twelve-week pilot in Małopolska, so the trends of module II
- * and the queues of module VI show what the panel looks like in operation.
- * A fresh store gets it beside the examples of examples.ts; a store that
- * exists keeps what it has. Every record carries `demo: true`: the panel
- * marks it and its trends can leave it out, and the public pages and the
- * route skip it (decision of the jury demo: panel only).
+ * The demonstration data of the ROPS panel (docs/storage.md): a simulated
+ * twelve-week pilot in Małopolska, so the trends of module II and the
+ * queues of module VI show what the panel looks like in operation. A fresh
+ * store file gets it beside the examples of examples.ts when data/built/
+ * holds its three files; a store that exists keeps what it has. Every
+ * record carries `demo: true`: the panel marks it and its trends can leave
+ * it out, and the public pages and the route skip it (decision of the
+ * jury demo: panel only).
  *
  * The material is real where it can be: the questions of
- * data/curated/demo-questions.yaml with the routes the pipeline computed
- * for them (data/built/demo-routes.json, `pnpm demo:routes`), and the
- * hand-written texts of data/curated/demo-records.yaml. Only the
- * timeline is simulated: when each record came, and what ROPS decided. A
- * seeded generator draws it, so every reset gives the same data, with the
- * dates counted back from the moment the store starts.
+ * demo-questions.yaml with the routes the pipeline computed for them
+ * (demo-routes.json), and the hand-written texts of demo-records.yaml.
+ * The two texts are edited in data/curated/; `pnpm demo:routes` computes
+ * the routes and copies the texts beside them, so the app reads one
+ * consistent set from data/built/. Only the timeline is simulated: when
+ * each record came, and what ROPS decided. A seeded generator draws it,
+ * so every reset gives the same data, with the dates counted back from the
+ * moment the store starts.
  */
 
-const QUESTIONS_FILE = path.join("data", "curated", "demo-questions.yaml");
-const RECORDS_FILE = path.join("data", "curated", "demo-records.yaml");
+const QUESTIONS_FILE = path.join("data", "built", "demo-questions.yaml");
+const RECORDS_FILE = path.join("data", "built", "demo-records.yaml");
 const RUNS_FILE = path.join("data", "built", "demo-routes.json");
 
 const SEED = "demo-pilot";
@@ -149,13 +152,15 @@ export interface DemoSources {
   records: DemoRecords;
 }
 
-/** The three files, or null with a log line naming what is missing. */
+/** The three files, or null: silently when none is there (no demonstration data), with a log line when only some are. */
 export function readDemoSources(root = process.cwd()): DemoSources | null {
   // Read at run time from the checkout, like the rest of data/: the build traces none of it.
   const at = (file: string) => path.join(/*turbopackIgnore: true*/ root, file);
-  const missing = [QUESTIONS_FILE, RECORDS_FILE, RUNS_FILE].filter((file) => !existsSync(/*turbopackIgnore: true*/ at(file)));
+  const files = [QUESTIONS_FILE, RECORDS_FILE, RUNS_FILE];
+  const missing = files.filter((file) => !existsSync(/*turbopackIgnore: true*/ at(file)));
+  if (missing.length === files.length) return null;
   if (missing.length > 0) {
-    console.warn(`[store] DEMO_DATA is set, but ${missing.join(", ")} is missing (pnpm demo:routes builds the routes); no demonstration data`);
+    console.warn(`[store] ${missing.join(", ")} is missing (pnpm demo:routes builds the demonstration data); no demonstration data`);
     return null;
   }
   const read = (file: string) => readFileSync(/*turbopackIgnore: true*/ at(file), "utf8");

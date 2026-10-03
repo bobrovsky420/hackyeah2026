@@ -29,6 +29,7 @@ every build output of the scripts below. Paths in the table are relative to
 | `curated/demo-questions.yaml` | The 230 questions of the simulated pilot behind the panel's demonstration data (module II), with role, place and the expected ROPS items | hand | - |
 | `curated/demo-records.yaml` | The texts of the simulated pilot's other records (idea cards, contact requests, readiness, mentors, partnership posts, conversations, reports, declined inputs) | hand | - |
 | `built/demo-routes.json` | The route of each question of `curated/demo-questions.yaml`, computed once by the real pipeline, for the panel's demonstration data | `pnpm demo:routes` | - |
+| `built/demo-questions.yaml`, `built/demo-records.yaml` | Copies of the two curated files beside their routes: the set the app reads; when the three `built/demo-*` files are there, a fresh store gets the demonstration data | `pnpm demo:routes` | - |
 | `built/incubators.json` | The 34 incubator profiles of the national base | `parse-catalogues.py` | `IncubatorsFile` |
 | `built/innovations/<id>.json` | One built record per innovation (381) | `derive-records.py build` | `BuiltInnovation` |
 | `built/index-cards.json` | One line per record for stage 1 (FR-3.1) | `derive-records.py build` | `IndexCard[]` |
