@@ -4,7 +4,7 @@
 nodeLinker: hoisted
 
 # Dependencies allowed to run install scripts. unrs-resolver (used by the
-# ESLint import rules) and esbuild (used by drizzle-kit) ship their native
+# ESLint import rules) and esbuild (used by tsx and Vite) ship their native
 # binaries as optional packages, so their postinstall fallbacks are not needed.
 allowBuilds:
   esbuild: false

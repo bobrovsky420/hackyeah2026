@@ -2,12 +2,12 @@ import type { RoleCode } from "@/lib/contracts/catalogue";
 import type { Need, Readiness } from "@/lib/contracts/records";
 
 /*
- * The example entries every fresh store starts with: three needs for the
- * console and the map (the prototype's store had them from the start), and
- * for PostgreSQL also the two consented and verified team entries of the
- * readiness registry (FR-6.5). All are marked `example`. The memory store
- * keeps only the needs, so the Playwright journeys see the counts they
- * always saw; `pnpm seed` writes both sets, idempotently.
+ * The example entries every fresh store starts with (memory.ts): three
+ * needs for the console and the map (the prototype's store had them from
+ * the start), and the two consented and verified team entries of the
+ * readiness registry (FR-6.5). All are marked `example`. A store that
+ * exists already keeps what it has; deleting its file starts again from
+ * these.
  */
 
 /** The version of the consent texts the forms record (12.6). */

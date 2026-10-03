@@ -8,9 +8,9 @@ import { CONTRAST_KEY, TEXT_SIZE_KEY } from "@/lib/storage-keys";
 type TextSize = "1" | "2" | "3";
 
 const sizes: { value: TextSize; glyph: string; className: string; spoken: "shell.textSize.1" | "shell.textSize.2" | "shell.textSize.3" }[] = [
-  { value: "1", glyph: "A", className: "text-[0.9rem]", spoken: "shell.textSize.1" },
-  { value: "2", glyph: "A+", className: "text-[1.125rem]", spoken: "shell.textSize.2" },
-  { value: "3", glyph: "A++", className: "text-[1.35rem]", spoken: "shell.textSize.3" },
+  { value: "1", glyph: "A", className: "text-[0.875rem]", spoken: "shell.textSize.1" },
+  { value: "2", glyph: "A", className: "text-[1.375rem]", spoken: "shell.textSize.2" },
+  { value: "3", glyph: "A", className: "text-[2rem]", spoken: "shell.textSize.3" },
 ];
 
 function subscribe(onChange: () => void) {

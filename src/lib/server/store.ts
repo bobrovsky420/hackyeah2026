@@ -6,9 +6,9 @@ export { CONSENT_VERSION } from "@/server/db/examples";
 
 /*
  * What the server remembers between requests. Everything that must last is
- * in the repository of src/server/db/ (PostgreSQL, or memory without
- * DATABASE_URL). Only the short-lived guards stay here, in the server's
- * memory, in both cases: the rate limiter's request times per client
+ * in the store of src/server/db/ (docs/storage.md). Only the short-lived
+ * guards stay here, in the server's memory and never in the store file:
+ * the rate limiter's request times per client
  * address, which 12.5 and FR-10.2 allow nowhere else, and the gate's
  * hashed repeat and abuse keys (FR-12.1, FR-6.4, FR-12.14), which live for
  * an hour or a day and must not outlive a restart as identities. They sit

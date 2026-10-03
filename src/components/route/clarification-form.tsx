@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { clarify, type ClarifyState } from "@/app/droga/actions";
+import { clarify, type ClarifyState } from "@/app/route/actions";
 import { submitTo } from "@/components/forms/submit";
 import { Button } from "@/components/ui/button";
 import { RadioList } from "@/components/ui/choice";

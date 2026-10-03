@@ -47,11 +47,19 @@ challenge, the team and the decisions made so far are in
   versions: read the guide in `node_modules/next/dist/docs/` before changing
   framework code. `next.config.ts` sets `agentRules: false`, so `next dev`
   never writes into this file.
+- Folders and files have English names everywhere, `src/app/` included
+  ("gmina" counts as the English term, as in the specification).
+  Only the URL a reader sees is Polish: `src/lib/page-routes.ts` maps each
+  page folder to its Polish URL, and `next.config.ts` rewrites the Polish
+  URL to the folder and redirects the folder's path to the Polish URL.
+  Links and tests use the Polish URLs; a new page gets a row there. The
+  API is English on disk and in the URL (specification 9.2).
 - Commands, from the repository root with the pnpm version pinned in
   `package.json`: `npx pnpm@12.6.0 install`, `npx pnpm@12.6.0 dev`
   (http://localhost:3000), `npx pnpm@12.6.0 lint`,
   `npx pnpm@12.6.0 typecheck` and `npx pnpm@12.6.0 build`. Lint and
-  typecheck pass before a commit is proposed.
+  typecheck pass before a commit is proposed. A fresh clone follows
+  [docs/quick-start.md](docs/quick-start.md).
 - Tests (Playwright, in `tests/e2e/`): `npx pnpm@12.6.0 test:e2e` runs the
   journeys, `npx pnpm@12.6.0 a11y` runs axe on every screen in the three
   themes (zero critical or serious findings, and 7:1 text), and
@@ -110,19 +118,23 @@ challenge, the team and the decisions made so far are in
   the legend and the table carry the same values.
 - The forms post to route handlers under `src/app/api/`, which keep the
   entries through the async repository of `src/server/db/`
-  (`repository()`): PostgreSQL 16 through Drizzle when `DATABASE_URL` is
-  set, the server's memory otherwise (a restart empties it; the Playwright
-  journeys and a fresh clone run so). Only server code calls it; the
-  composer gets the readiness registry as a dependency. The rate limiter's
-  and the gate's short-lived memory stay in `src/lib/server/store.ts` in
-  both cases. Schema changes go through `pnpm db:generate`; start,
-  migrate, seed and reset are in [docs/database.md](docs/database.md).
+  (`repository()`): the server's memory, saved to one JSON file
+  (`.local/store/records.json`, or `STORE_FILE`) after every change and
+  loaded at start, so a restart keeps them; `STORE_FILE=memory` keeps
+  them in memory only (the Playwright server, the pipeline scripts).
+  There is no database (decided 29 September 2026), and one process per
+  file. Only server code calls it; the composer gets the readiness
+  registry as a dependency. The rate limiter's and the gate's short-lived
+  memory stay in `src/lib/server/store.ts`, never in the file. Retention
+  runs inside the server. Details, reset and deployment are in
+  [docs/storage.md](docs/storage.md).
 - The ROPS console (`/rops`, S7) asks for the access code in `ROPS_TOKEN`.
   Without it, `next dev` accepts the prototype's code `rops-prototyp` and a
   production server keeps the console locked. The Playwright config starts
   its server with that code, the canned route engine, an empty replay
-  recording for the gate (no model calls) and high limits; a server it
-  reuses needs the same variables, listed in `playwright.config.ts`.
+  recording for the gate (no model calls), the store in memory and high
+  limits; a server it reuses needs the same variables, listed in
+  `playwright.config.ts`.
   `ROPS_REVIEWER` names the reviewer in the action log.
 - Console forms submit through `submitTo` in
   `src/components/forms/submit.ts`, not `<form action>`: React resets a

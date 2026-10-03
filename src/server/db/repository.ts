@@ -17,12 +17,11 @@ import type { GateTextKind, ScreeningCategory, ScreeningOutcome } from "@/server
 import type { SensitiveTopic } from "@/lib/contracts/route";
 
 /*
- * Everything the app keeps between requests, behind one async interface
- * with two implementations: PostgreSQL (postgres.ts) when DATABASE_URL is
- * set, the server's memory (memory.ts) otherwise, so a fresh clone and the
- * Playwright journeys run without a database. src/server/db/index.ts picks
- * one. Lists come newest first. Every record handed out is a copy: changing
- * it changes nothing stored.
+ * Everything the app keeps between requests, behind one async interface:
+ * the memory store (memory.ts), which file.ts loads from and saves to one
+ * JSON file (docs/storage.md); src/server/db/index.ts opens it. Lists come
+ * newest first. Every record handed out is a copy: changing it changes
+ * nothing stored.
  */
 
 /** One entry of the screening log (FR-12.7); see src/server/gate/log.ts. */
@@ -124,13 +123,13 @@ export interface ReportFilter {
 }
 
 export interface Counters {
-  /** Since when the counters count: the server's start in memory, the first event in PostgreSQL. */
+  /** Since when the counters count: the store's first start. */
   since: string;
   counts: Record<string, number>;
 }
 
 export interface Repository {
-  readonly kind: "memory" | "postgres";
+  readonly kind: "memory" | "file";
 
   // Routes (8.4), kept for the permalink.
   /** Stores a new route; a `redirected` route loses the reader's text first (FR-2.5). */
@@ -218,7 +217,7 @@ export interface Repository {
   countEvent(name: string): Promise<void>;
   counters(): Promise<Counters>;
 
-  /** Closes the connection, for scripts and tests. */
+  /** Saves what is pending and stops the store's timer; for scripts and tests. */
   close(): Promise<void>;
 }
 

@@ -8,7 +8,7 @@ import type {
 } from "@/lib/contracts/records";
 import type { NeedCluster, StoredBrief } from "@/lib/contracts/brief";
 import type { Route } from "@/lib/contracts/route";
-import { exampleNeeds } from "./examples";
+import { exampleNeeds, exampleReadiness } from "./examples";
 import {
   SCREENING_LOG_RETENTION_MS,
   storableRoute,
@@ -21,9 +21,11 @@ import {
 } from "./repository";
 
 /*
- * The repository in the server's memory: the prototype's store, gone after
- * a restart. Used when DATABASE_URL is unset (a fresh clone, the Playwright
- * journeys). Lists are kept newest first, like the console shows them.
+ * The repository in the server's memory: the whole store, calling
+ * `onChange` after every change so that file.ts can save it. On its own it
+ * is gone after a restart (STORE_FILE=memory: the Playwright journeys, the
+ * pipeline scripts). Lists are kept newest first, like the console shows
+ * them.
  */
 
 export interface MemoryState {
@@ -37,7 +39,7 @@ export interface MemoryState {
   reports: ContentReport[];
   log: ModerationLogEntry[];
   screeningLog: StoredScreeningLogEntry[];
-  /** The last sequence number given to a screening-log entry, like PostgreSQL's bigserial. */
+  /** The last sequence number given to a screening-log entry. */
   screeningSeq: number;
   briefs: Set<string>;
   counters: Map<string, number>;
@@ -54,7 +56,7 @@ export function createMemoryState(): MemoryState {
     reviewedDeclines: new Set(),
     needs: exampleNeeds(),
     contacts: [],
-    readiness: [],
+    readiness: exampleReadiness(),
     feedback: [],
     reports: [],
     log: [],
@@ -69,7 +71,7 @@ export function createMemoryState(): MemoryState {
 
 const copy = <T>(value: T): T => structuredClone(value);
 
-/** Keeps a list newest first by its time, as PostgreSQL sorts it; a tie goes before the older entries. */
+/** Keeps a list newest first by its time; a tie goes before the older entries. */
 function insertNewestFirst<T>(list: T[], item: T, time: (entry: T) => string) {
   const when = Date.parse(time(item));
   const index = list.findIndex((entry) => Date.parse(time(entry)) <= when);
@@ -108,7 +110,7 @@ function routeFacts(route: Route): RouteFacts {
   };
 }
 
-export function createMemoryRepository(state: MemoryState = createMemoryState()): Repository {
+export function createMemoryRepository(state: MemoryState = createMemoryState(), onChange: () => void = () => {}): Repository {
   const need = (id: string) => state.needs.find((item) => item.id === id);
   const contact = (id: string) => state.contacts.find((item) => item.id === id);
   const registration = (id: string) => state.readiness.find((item) => item.id === id);
@@ -118,6 +120,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
 
     async saveRoute(route) {
       state.routes.set(route.id, storableRoute(route));
+      onChange();
     },
     async getRoute(id) {
       const route = state.routes.get(id);
@@ -132,6 +135,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
     async markDeclineReviewed(id) {
       if (state.routes.get(id)?.mode !== "declined" || state.reviewedDeclines.has(id)) return false;
       state.reviewedDeclines.add(id);
+      onChange();
       return true;
     },
     async listRouteFacts() {
@@ -140,6 +144,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
 
     async addNeed(entry) {
       insertNewestFirst(state.needs, entry, createdAt);
+      onChange();
     },
     async getNeed(id) {
       const found = need(id);
@@ -168,6 +173,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       const found = need(id);
       if (!found || found.moderation.status !== "do-weryfikacji") return undefined;
       found.moderation = { ...moderation };
+      onChange();
       return copy(found);
     },
     async updateNeed(id, change) {
@@ -175,12 +181,14 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       if (!found) return undefined;
       found.status = change.status;
       found.note_pl = change.note_pl;
+      onChange();
       return copy(found);
     },
     async setNearestMatches(id, matches) {
       const found = need(id);
       if (!found) return undefined;
       found.nearest_matches = copy(matches);
+      onChange();
       return copy(found);
     },
 
@@ -189,6 +197,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       if (!found) return false;
       state.storedBriefs.set(brief.need_id, copy(brief));
       found.brief_id = brief.id;
+      onChange();
       return true;
     },
     async getBrief(needId) {
@@ -204,6 +213,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
         const found = need(id);
         if (found) found.cluster_id = byNeed.get(id) ?? null;
       }
+      onChange();
     },
     async listClusters() {
       return [...state.clusters.values()].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).map(copy);
@@ -211,6 +221,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
 
     async addContact(entry) {
       insertNewestFirst(state.contacts, entry, createdAt);
+      onChange();
     },
     async listContacts(filter = {}) {
       return state.contacts
@@ -226,6 +237,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       if (!found || found.moderation.status !== "do-weryfikacji") return undefined;
       found.moderation = { ...moderation };
       found.status = status;
+      onChange();
       return copy(found);
     },
     async updateContact(id, change) {
@@ -233,11 +245,13 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       if (!found) return undefined;
       found.status = change.status;
       found.note_pl = change.note_pl;
+      onChange();
       return copy(found);
     },
 
     async addReadiness(entry) {
       insertNewestFirst(state.readiness, entry, createdAt);
+      onChange();
     },
     async getReadiness(id) {
       const found = registration(id);
@@ -252,6 +266,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       const found = registration(id);
       if (!found || found.verification.status !== "niezweryfikowane") return undefined;
       found.verification = { ...verification };
+      onChange();
       return copy(found);
     },
     async updateReadiness(id, change) {
@@ -259,11 +274,13 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       if (!found) return undefined;
       found.verification = { ...change.verification };
       found.note_pl = change.note_pl;
+      onChange();
       return copy(found);
     },
 
     async addFeedback(entry) {
       insertNewestFirst(state.feedback, entry, createdAt);
+      onChange();
     },
     async listFeedback(routeId) {
       return state.feedback.filter((item) => !routeId || item.route_id === routeId).map(copy);
@@ -271,6 +288,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
 
     async addReport(report) {
       insertNewestFirst(state.reports, report, createdAt);
+      onChange();
     },
     async listReports(filter = {}) {
       return state.reports.filter((item) => !filter.moderation || item.moderation.status === filter.moderation).map(copy);
@@ -279,11 +297,13 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       const found = state.reports.find((item) => item.id === id);
       if (!found || found.moderation.status !== "do-weryfikacji") return undefined;
       found.moderation = { ...moderation };
+      onChange();
       return copy(found);
     },
 
     async appendModerationLog(entry) {
       insertNewestFirst(state.log, entry, (item) => item.ts);
+      onChange();
     },
     async listModerationLog(limit) {
       return state.log.slice(0, limit).map(copy);
@@ -293,6 +313,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       pruneScreeningLog(state, now);
       state.screeningSeq += 1;
       insertNewestFirst(state.screeningLog, { ...entry, id: `sl-${state.screeningSeq}`, reviewed_at: null }, (item) => item.at);
+      onChange();
     },
     async listScreeningLog(now) {
       pruneScreeningLog(state, now);
@@ -302,6 +323,7 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       const found = state.screeningLog.find((entry) => entry.id === id);
       if (!found || found.text === null || found.reviewed_at !== null) return false;
       found.reviewed_at = at;
+      onChange();
       return true;
     },
 
@@ -333,16 +355,19 @@ export function createMemoryRepository(state: MemoryState = createMemoryState())
       state.contacts = state.contacts.filter((item) => !oldContact(item));
       state.readiness = state.readiness.filter((item) => !oldReadiness(item));
       pruneScreeningLog(state, now);
+      if (Object.values(counts).some((count) => count > 0)) onChange();
       return counts;
     },
 
     async markBriefGenerated(needId) {
       if (state.briefs.has(needId)) return false;
       state.briefs.add(needId);
+      onChange();
       return true;
     },
     async countEvent(name) {
       state.counters.set(name, (state.counters.get(name) ?? 0) + 1);
+      onChange();
     },
     async counters(): Promise<Counters> {
       return { since: state.startedAt, counts: Object.fromEntries(state.counters) };

@@ -6,13 +6,14 @@ import { login, type LoginState } from "@/app/rops/actions";
 import { Button } from "@/components/ui/button";
 import { describedBy, Field, FieldError, Hint, Label, TextInput } from "@/components/ui/field";
 import { t } from "@/lib/i18n";
+import { publicPath } from "@/lib/page-routes";
 
 /**
  * "Wpisz kod dostępu" (S7). A password field that accepts paste and password
  * managers, so the login needs no memory test (WCAG 3.3.8).
  */
 export function LoginForm() {
-  const pathname = usePathname();
+  const pathname = publicPath(usePathname());
   const [state, action, pending] = useActionState<LoginState, FormData>(login, { error: null });
 
   return (

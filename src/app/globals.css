@@ -186,6 +186,13 @@
   line-height: 1;
 }
 
+/* Square, whatever the glyph size: the big "A" eats the padding, not the box. */
+.view-size {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+}
+
 :root:not([data-text-size]) .view-size[data-size="1"],
 :root[data-text-size="2"] .view-size[data-size="2"],
 :root[data-text-size="3"] .view-size[data-size="3"],
