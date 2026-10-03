@@ -48,6 +48,8 @@ export interface RouteFacts {
   solution_ids: string[];
   /** The target groups of the question (questionGroups); empty when none is known. */
   target_groups: string[];
+  /** A route of the panel's demonstration data (isReal). */
+  demo?: boolean;
 }
 
 /**
@@ -269,6 +271,12 @@ export function storableRoute(route: Route): Route {
   if (copy.mode === "redirected") copy.input = { ...copy.input, problem_text: null };
   return copy;
 }
+
+/**
+ * False for a record of the panel's demonstration data (DEMO_DATA, demo.ts):
+ * public pages and the route leave those out; only the panel shows them.
+ */
+export const isReal = (record: { demo?: boolean }) => !record.demo;
 
 /** The target groups of a stored question: those the composer recorded, else the reader's answer (older and screened routes). */
 export function questionGroups(route: Route): string[] {

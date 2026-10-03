@@ -29,6 +29,7 @@ export default async function AdminReadinessPage({ searchParams }: PageProps<"/a
                 {formatDate(item.created_at)} · {getGmina(item.place_terc)?.name ?? t("admin.none")}
                 {item.topics.length > 0 && ` · ${item.topics.map(targetGroupLabel).join(", ")}`}
                 {item.example && ` · ${t("admin.example")}`}
+                {item.demo && ` · ${t("admin.demo")}`}
               </p>
               <p>
                 {item.channel.value} · {t(item.consent_display_name ? "admin.readiness.nameConsent" : "admin.readiness.noNameConsent")}

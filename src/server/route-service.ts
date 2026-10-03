@@ -9,6 +9,7 @@ import { createEmbedClient } from "@/server/match";
 import { runPipeline } from "@/server/pipeline";
 import { createFileRouteCache, type RouteCache } from "@/server/route-cache";
 import { repository } from "@/server/db";
+import { isReal } from "@/server/db/repository";
 import { REPEAT_WINDOW_MS } from "@/server/gate/thresholds";
 import { REDACTED, redact } from "@/server/gate";
 import { countEvent, memory, newId, nowIso } from "@/server/ephemeral";
@@ -119,7 +120,8 @@ async function runEngine(input: RouteInput): Promise<Route> {
       embed: live.embed,
       cache: live.cache,
       newId: () => id,
-      readiness: () => repository().listReadiness(),
+      // The route counts real registrations only; the panel's demonstration data stays in the panel.
+      readiness: async () => (await repository().listReadiness()).filter(isReal),
     },
   );
   const route = withPlaceFacts(result.route);

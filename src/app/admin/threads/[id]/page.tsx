@@ -57,6 +57,7 @@ export default async function AdminThreadPage({ params, searchParams }: PageProp
           {thread.author.display_name}
           {thread.author.organisation && `, ${thread.author.organisation}`}
           {thread.author.sector && ` (${sectorLabel(thread.author.sector)})`}
+          {thread.demo && ` · ${t("admin.demo")}`}
           {thread.author.email && (
             <>
               , <a href={`mailto:${thread.author.email}`}>{thread.author.email}</a>

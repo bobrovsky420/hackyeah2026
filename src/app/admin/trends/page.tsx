@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { AdminLogin, gate } from "@/components/admin/admin-gate";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { DataFilter } from "@/components/admin/data-filter";
 import { BarTable } from "@/components/admin/bar-table";
 import { getInnovation } from "@/lib/catalogue";
 import type { IdeaStage } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { ideaStageLabel, isIdeaStage, targetGroupLabel } from "@/lib/labels";
-import { NO_GROUP, trends } from "@/server/admin/data";
+import { demoCount, NO_GROUP, REAL_ONLY, trends } from "@/server/admin/data";
 import { routeModeLabel } from "@/server/admin/labels";
 
 export const metadata = { title: t("admin.trends.title") };
@@ -18,16 +19,20 @@ const groupLabel = (code: string) => (code === NO_GROUP ? t("admin.trends.noGrou
  * Module II, the part only the administrator sees: the needs gathered by
  * the tool, aggregated by area, place and week, with the ideas and the
  * evaluations beside them, so ROPS can set the topics of the next call.
- * The questions by group lead to the questions themselves.
+ * The questions by group lead to the questions themselves. While the store
+ * holds the demonstration data, the numbers can leave it out.
  */
-export default async function AdminTrendsPage() {
+export default async function AdminTrendsPage({ searchParams }: PageProps<"/admin/trends">) {
   const session = await gate();
   if (!session) return <AdminLogin />;
-  const data = await trends();
+  const realOnly = (await searchParams).dane === REAL_ONLY;
+  const [data, demo] = await Promise.all([trends(undefined, { realOnly }), demoCount()]);
   const empty = t("admin.trends.empty");
+  const real = realOnly ? `dane=${REAL_ONLY}` : "";
 
   return (
     <AdminShell session={session} current="trends" title={t("admin.trends.title")} lead={t("admin.trends.lead")}>
+      {demo > 0 && <DataFilter realOnly={realOnly} />}
       <div className="grid gap-10 @4xl:grid-cols-2">
         <div className="grid content-start gap-2">
           <BarTable
@@ -36,13 +41,13 @@ export default async function AdminTrendsPage() {
             rows={data.questionsByGroup.map((row) => ({
               label: groupLabel(row.key),
               count: row.count,
-              href: `/rops/trendy/pytania?grupa=${encodeURIComponent(row.key)}`,
+              href: `/rops/trendy/pytania?grupa=${encodeURIComponent(row.key)}${real && `&${real}`}`,
             }))}
             empty={empty}
           />
           <p className="text-muted-foreground">
             {t("admin.trends.questionsNote", { count: data.totals.questions })}{" "}
-            <Link href="/rops/trendy/pytania">{t("admin.trends.allQuestions")}</Link>
+            <Link href={`/rops/trendy/pytania${real && `?${real}`}`}>{t("admin.trends.allQuestions")}</Link>
           </p>
         </div>
         <BarTable
