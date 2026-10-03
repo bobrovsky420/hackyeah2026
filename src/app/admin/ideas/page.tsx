@@ -24,13 +24,14 @@ export default async function AdminIdeasPage({ searchParams }: PageProps<"/admin
       <nav aria-label={t("admin.filter.label")}>
         <ul className="flex flex-wrap gap-x-5 gap-y-1">
           <li>
-            <Link href="/rops/pomysly" aria-current={!status ? "page" : undefined} className="inline-flex min-h-11 items-center aria-[current=page]:font-bold">
+            <Link scroll={false} href="/rops/pomysly" aria-current={!status ? "page" : undefined} className="inline-flex min-h-11 items-center aria-[current=page]:font-bold">
               {t("admin.filter.all")}
             </Link>
           </li>
           {ideaStatusCodes.map((code) => (
             <li key={code}>
               <Link
+                scroll={false}
                 href={`/rops/pomysly?status=${code}`}
                 aria-current={status === code ? "page" : undefined}
                 className="inline-flex min-h-11 items-center aria-[current=page]:font-bold"

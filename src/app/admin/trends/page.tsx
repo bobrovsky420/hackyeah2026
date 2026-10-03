@@ -52,6 +52,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
           {VIEWS.map((item) => (
             <li key={item.key}>
               <Link
+                scroll={false}
                 href={`/rops/trendy?widok=${item.key}`}
                 aria-current={item.key === view ? "page" : undefined}
                 className="inline-flex min-h-11 items-center aria-[current=page]:font-bold aria-[current=page]:no-underline aria-[current=page]:shadow-[inset_0_-4px_0_var(--primary)]"
