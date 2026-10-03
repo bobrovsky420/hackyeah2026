@@ -32,7 +32,7 @@ describe("percentile (nearest rank)", () => {
 });
 
 function sets(entries: Partial<Record<ProblemSet, { present: number; failed?: string[] }>>): SetTally[] {
-  const sizes = { P: 10, R: 12, S: 4, F: 3 } as const;
+  const sizes = { P: 10, R: 13, S: 4, F: 3 } as const;
   return (["P", "R", "S", "F"] as const).map((set) => {
     const entry = entries[set] ?? { present: 0 };
     const failed = entry.failed ?? [];
@@ -41,7 +41,7 @@ function sets(entries: Partial<Record<ProblemSet, { present: number; failed?: st
 }
 
 const PROBLEMS: Pick<Problem, "id" | "set">[] = Array.from({ length: 10 }, (_, i) => ({ id: `P${String(i + 1).padStart(2, "0")}`, set: "P" }));
-const COMPLETE = { P: { present: 10 }, R: { present: 12 }, S: { present: 4 }, F: { present: 3 } };
+const COMPLETE = { P: { present: 10 }, R: { present: 13 }, S: { present: 4 }, F: { present: 3 } };
 const PAIRS = [
   { id: "F01", pass: true },
   { id: "F02", pass: true },
@@ -67,7 +67,7 @@ describe("mustRule (13.5)", () => {
     expect(mustRule({ ...draft, sets: sets({ ...COMPLETE, P: { present: 10, failed: ["P01", "P02", "P03", "P04", "P05"] } }) }).failures).toEqual([
       "test problems: 5 pass, at least 6 of 10 must (13.5, draft)",
     ]);
-    expect(mustRule({ ...draft, sets: sets({ ...COMPLETE, R: { present: 11 } }) }).failures).toEqual(["robustness set R01-R12: 11 of 12 files present"]);
+    expect(mustRule({ ...draft, sets: sets({ ...COMPLETE, R: { present: 12 } }) }).failures).toEqual(["robustness set R01-R13: 12 of 13 files present"]);
     expect(mustRule({ ...draft, sets: sets({ ...COMPLETE, S: { present: 4, failed: ["S02"] } }) }).failures).toEqual(["sensitive set S01-S04: failing S02"]);
   });
 

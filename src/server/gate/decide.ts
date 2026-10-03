@@ -9,14 +9,19 @@ import { DECLINE_MIN_CONFIDENCE, OFF_TOPIC_MIN_CONFIDENCE, REDIRECT_MIN_CONFIDEN
  *   1. a crisis lexicon hit, or a repeat of a text that was redirected   -> redirected
  *   2. a repeated identical text, or a text mostly of links              -> off_topic (spam)
  *   3. no model answer                                                   -> need, "model:unavailable"
- *   4. crisis or individual_case at REDIRECT_MIN_CONFIDENCE or more      -> redirected
+ *   4. crisis at REDIRECT_MIN_CONFIDENCE or more, or an individual case
+ *      that touches a sensitive topic at that confidence                 -> redirected
  *   5. harm at DECLINE_MIN_CONFIDENCE or more                            -> declined
  *   6. off_topic or spam at OFF_TOPIC_MIN_CONFIDENCE or more             -> off_topic
  *   7. otherwise                                                         -> need
  *
  * Principle E3 sets the bias: nothing is declined without the model, and a
- * crisis or an individual case below the threshold is routed with the crisis
- * banner. The banner is set when the need touches a sensitive topic (the
+ * crisis below the threshold is routed with the crisis banner. An
+ * individual case is a person writing about their own situation or one
+ * family's (decision E.4): without a sensitive topic it is routed like any
+ * need, and the route tells where individual matters go (the social
+ * assistance centre, ROPS); only with violence, abuse, suicide, self-harm
+ * or addiction in it does it lead to human help first. The banner is set when the need touches a sensitive topic (the
  * model's or the community lexicon's) and is about a group or a place, not
  * one person. A readiness registration's display name is screened for harm
  * only (7.12, first paragraph). A message in an ongoing conversation with
@@ -135,7 +140,9 @@ export function decide(input: DecisionInput): Decision {
     };
   }
 
-  const redirecting = model.category === "crisis" || model.category === "individual_case";
+  // E.4: an individual case is a crisis only when it touches a sensitive topic.
+  const caseTopics = unique([...model.topics, ...communityTopics]);
+  const redirecting = model.category === "crisis" || (model.category === "individual_case" && caseTopics.length > 0);
   if (redirecting && model.confidence >= REDIRECT_MIN_CONFIDENCE) {
     return { ...base(model), outcome: "redirected", crisis_banner: false, rules_fired: [`model:${model.category}>=${REDIRECT_MIN_CONFIDENCE}`] };
   }
@@ -147,9 +154,10 @@ export function decide(input: DecisionInput): Decision {
     return { ...base(model), outcome: "off_topic", crisis_banner: false, rules_fired: [`model:${model.category}>=${OFF_TOPIC_MIN_CONFIDENCE}`] };
   }
 
-  const topics = unique([...model.topics, ...communityTopics]);
+  const topics = caseTopics;
   const rules = [`model:${model.category}`, ...communityRules];
-  // E3: a crisis or an individual case the model is unsure of is routed, with the helplines on top.
+  if (model.category === "individual_case" && !redirecting) rules.push("individual_case:routed");
+  // E3: a crisis, or an individual case with a sensitive topic, the model is unsure of is routed, with the helplines on top.
   const doubtfulCrisis = redirecting;
   if (doubtfulCrisis) rules.push(`model:${model.category}<${REDIRECT_MIN_CONFIDENCE}:banner`);
   return {
