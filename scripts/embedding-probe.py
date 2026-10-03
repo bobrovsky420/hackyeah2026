@@ -10,16 +10,18 @@ per model: vector size and seconds per 100 documents.
 Models: an Ollama model by name (http://localhost:11434), or a sentence-transformers model as st:<hugging face id>.
 Query and document prefixes per model family are in QUERY_PREFIX and DOC_PREFIX.
 
-Usage (from the repository root, with the embedding environment):
-  .venv-embedding/Scripts/python scripts/embedding-probe.py st:OPI-PIB/PolDense-400M qwen3-embedding:0.6b [--out path]
+Usage (from the repository root):
+  .venv/Scripts/python scripts/embedding-probe.py st:OPI-PIB/PolDense-400M qwen3-embedding:0.6b [--out path]
 Results are merged into the JSON at --out (default .local/embedding-probe.json); runs worth keeping are copied
 into docs/model-evaluation/ with the date in the name.
 """
 import argparse, glob, json, os, sys, time, urllib.request
 
 import numpy as np
+from dotenv import load_dotenv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 OLLAMA = "http://localhost:11434/api/embed"
 QUERY_PREFIX = {
     "qwen3-embedding": "Instruct: Given a description of a social problem, retrieve social innovations that address it\nQuery: ",

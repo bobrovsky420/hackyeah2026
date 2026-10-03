@@ -1,5 +1,5 @@
 import { estimateCostUsd } from "@/lib/llm/observability";
-import type { StageLog } from "@/server/contracts";
+import type { StageLog } from "@/lib/contracts";
 import type { PairResult } from "./fairness";
 import type { Problem, ProblemSet } from "./problems";
 import { latencyRow, mean, type LatencyRow } from "./stats";

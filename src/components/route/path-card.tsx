@@ -1,4 +1,4 @@
-import type { ImplementationPath } from "@/lib/contracts/path";
+import type { ImplementationPath } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { applicantLabels } from "@/lib/labels";

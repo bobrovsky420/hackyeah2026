@@ -25,6 +25,15 @@ needs bank and drafts the brief for the next incubator call, with a
 duplicate check against the existing innovations. Needs become the
 demand signal the incubators lack today.
 
+It is not a web search: it never looks at the open internet, only at a
+closed catalogue of 381 described and attributed innovations. And it is
+not just RAG, a chatbot writing an answer over retrieved text: retrieval
+only shortlists candidates, a screening gate runs before it, the model
+only ranks and gives reasons it must quote from the source, every
+identifier it returns is checked, and the route itself is assembled from
+structured data (people, legal vehicles, funding calls, next steps) that
+the model never writes.
+
 The concept goes beyond the software: ROPS runs the service in three
 roles (category advisor, catalogue editor, needs-bank coordinator) and
 closes three loops: need to implementation, need to new innovation,
@@ -35,9 +44,62 @@ implementations.
 Built for everyone: a Polish interface in Atkinson Hyperlegible, a
 typeface designed for readers with low vision, 7:1 text contrast, three
 display themes, full keyboard use, a phone layout and an axe check of
-every screen.
+every screen. Blind users can use it with a screen reader.
+
+## Quick start
+
+Clone the repository and run the app in mock mode, on the prototype's
+fixtures, without any data or key:
+
+```
+git clone https://github.com/bobrovsky420/hackyeah2026.git
+cd hackyeah2026
+npx pnpm@12.6.0 install
+npx pnpm@12.6.0 dev
+```
+
+Open http://localhost:3000.
+
+The full version, with the real catalogue, the language model and the
+embeddings, is set up in [docs/quick-start.md](docs/quick-start.md).
 
 ## How a route is made
+
+```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 360}}}%%
+flowchart TD
+    need["<b>1. A need, a gmina and a role</b><br>free text in Polish"]
+    gate["<b>2. Screening gate, model call 1</b><br>fixed rules first, then Bielik reads the purpose<br>personal data removed before any prompt"]
+    screened["<b>Not a community need</b><br>crisis: helplines, nothing stored<br>harm: a refusal and how to appeal<br>off topic: what the tool is for"]
+    retrieve["<b>3. Retrieval</b><br>PolDense-400M picks the 40 closest<br>of 381 innovations"]
+    shortlist["<b>4. Shortlist, model call 2</b><br>Bielik reads the 40 index cards, keeps up to 8"]
+    assess["<b>5. Assessment, model call 3</b><br>fit from 0 to 100, reasons quoting the entry"]
+    grounding["<b>6. Grounding check</b><br>unknown ids and quotes<br>not in the entry are dropped"]
+    mode["<b>7. Code sets the mode from the best fit</b><br>route, partial or none"]
+    compose["<b>8. Composer, model call 4</b><br>Bielik: summary, three next steps,<br>why each path fits<br>code: materials, people, legal and funding paths"]
+    route["<b>The route</b><br>solutions, knowledge, people,<br>implementation path"]
+    partial["<b>Partial match</b><br>solutions that fit in part,<br>with what fits and what is missing<br>paths to start something new, the needs bank"]
+    nomatch["<b>No proven solution</b><br>the three nearest, marked as a low fit<br>the needs bank and a brief for the incubator"]
+
+    need --> gate
+    gate -- "a community need" --> retrieve
+    gate -- "stop" --> screened
+    retrieve --> shortlist --> assess --> grounding --> mode --> compose
+    compose -- "70 or more" --> route
+    compose -- "45 to 69" --> partial
+    compose -- "below 45" --> nomatch
+
+    classDef model fill:#d6e6fa,stroke:#1a4b8c,stroke-width:2px,color:#111
+    classDef code fill:#ffffff,stroke:#8a8f98,color:#111
+    classDef exit fill:#f1f1ef,stroke:#8a8f98,color:#111
+    class gate,shortlist,assess,compose model
+    class need,retrieve,grounding,mode,route code
+    class screened,partial,nomatch exit
+```
+
+The blue steps are the four model calls of a route; everything else is
+code and curated data. The gate's call is skipped when its fixed rules
+already decide, and the composer's when nothing is shortlisted.
 
 1. **The screening gate** reads every text before any matching: a
    deterministic pre-check, then the model. A community need is routed;
@@ -49,7 +111,7 @@ every screen.
    nearest index cards of the 381 innovations are selected.
 3. **Rerank and reasons**: Bielik 11B v3.0 (the Polish open model, on the
    Hugging Face router) picks the two or three that fit and explains why;
-   Claude and Llama 3.3 70B are the fallbacks. Every identifier the model
+   Claude is the fallback. Every identifier the model
    returns is checked against the catalogue, every reason quotes the
    source, and generated text is labelled. The model never creates a
    solution, an organisation, a person, an amount or a deadline.
@@ -69,6 +131,68 @@ and plain language, accountability) are section 3.6 of the
 [specification](docs/functional-specification.md) and the "Zasady" page
 of the app.
 
+## Architecture
+
+```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 360}}}%%
+flowchart TD
+    browser["<b>Browser</b><br>Polish UI, three themes, no cookies"]
+
+    subgraph server["Next.js 16 server, one process"]
+        direction LR
+        pages["<b>Pages and /api/*</b>"] --> gate["<b>Gate</b>"] --> matcher["<b>Matcher</b>"] --> composer["<b>Composer</b>"] --> needs["<b>Needs bank</b>"]
+    end
+
+    entries[("<b>Entries store</b><br>one JSON file: needs, contacts,<br>registrations, moderation log")]
+    llm["<b>Model adapter</b><br>Bielik on the HF router, then Claude,<br>then the replay recording"]
+    embed["<b>Embedding service</b><br>PolDense-400M, Python"]
+    catalogue[("<b>Catalogue</b><br>data/, JSON, read-only")]
+
+    browser <--> server
+    server --> entries
+    server --> llm
+    server --> embed
+    server --> catalogue
+
+    classDef model fill:#d6e6fa,stroke:#1a4b8c,stroke-width:2px,color:#111
+    classDef code fill:#ffffff,stroke:#8a8f98,color:#111
+    classDef store fill:#f1f1ef,stroke:#8a8f98,color:#111
+    class llm model
+    class browser,pages,gate,matcher,composer,needs,embed code
+    class catalogue,entries store
+    style server fill:#f6f8fa,stroke:#8a8f98,color:#111
+    linkStyle default stroke:#6e7681,stroke-width:1.5px
+```
+
+- **Web app**: Next.js 16 with React, TypeScript and Tailwind CSS 4;
+  forms post to route handlers under `/api`, and every Polish string
+  lives in `messages/pl.json`.
+- **Route pipeline** (`src/server/`): four modules, the gate, the
+  matcher, the composer and the needs bank, that meet only through typed
+  contracts and receive the model as a function, so each is tested
+  without the network. A replay cache keeps a route stable for the same
+  need.
+- **Model layer** (`src/lib/llm/`): one adapter over Bielik on the
+  Hugging Face router, then Claude, then recorded answers; the prompts
+  are versioned files in `prompts/`.
+- **Retriever**: PolDense-400M in a small Python service; when it is
+  down, the matcher falls back to a lexical scorer, so the app keeps
+  answering.
+- **Catalogue**: built offline by the Python pipeline in `scripts/`
+  from the two source catalogues and public GUS data, shipped as a
+  versioned data release and read by the app through one facade. The
+  record contract is [docs/innovation-record.md](docs/innovation-record.md).
+- **Storage**: no database; the entries (needs, contact requests,
+  registrations, moderation log) are kept in memory and saved to one
+  JSON file after every change, with retention run by the server.
+- **Deployment**: one Ubuntu server on AWS Lightsail, the
+  app and the embedding service as two systemd services behind Caddy
+  ([docs/server-deploy.md](docs/server-deploy.md)); a laptop runs the
+  same two processes from a checkout.
+
+The requirements are in the
+[functional specification](docs/functional-specification.md).
+
 ## Data, models and licences
 
 | What | Source | Licence |
@@ -77,53 +201,40 @@ of the app.
 | 115 innovations | Biblioteka innowacji społecznych, ROPS Kraków | CC BY 4.0, or the MIIS terms of use, shown with attribution |
 | The catalogue of the app | The two merged (34 duplicates joined) into 381 records with derived fields; the contract is [data/README.md](data/README.md) | as above; the catalogues stay the systems of record |
 | Municipalities | The TERC register (GUS); indicators from the Local Data Bank (GUS BDL, 2024); boundaries from the PRG in the public-domain GeoJSON of waszkiewiczja | CC BY 4.0 (BDL, PRG) |
-| Language models | Bielik 11B v3.0 (SpeakLeash) through the Hugging Face router; Claude (Anthropic) and Llama 3.3 70B (Meta) as fallbacks | The providers' terms |
+| Language models | Bielik 11B v3.0 (SpeakLeash) through the Hugging Face router; Claude (Anthropic) as the fallback | The providers' terms |
 | Retriever | PolDense-400M by OPI PIB (Dadas et al. 2026, "Parameter-Efficient Retrievers for Polish and European Languages") | Gemma Terms of Use |
 | Software | Next.js 16, React, TypeScript, Tailwind CSS 4, MapLibre GL JS, Lucide; form patterns from the GOV.UK Design System; a Python data pipeline | Open-source licences of the packages |
 | Typeface | Atkinson Hyperlegible Next, Braille Institute | SIL Open Font License |
 
-## Run it
+## How the models were chosen
 
-```
-npx pnpm@12.6.0 install
-npx pnpm@12.6.0 dev
-```
+Both models were chosen by measurement before the hackathon, against
+other candidates, on how well they process Polish text: semantic
+retrieval and matching, intent detection and the detection of emotional
+distress.
 
-Open http://localhost:3000. A fresh clone runs on the prototype's
-fixtures without any key; the real data comes as a bundle and the model
-as a Hugging Face token: [docs/quick-start.md](docs/quick-start.md) has
-the four steps, [docs/local-stack.md](docs/local-stack.md) runs the whole
-app in Docker. There is no database: the entries live in one JSON file
-([docs/storage.md](docs/storage.md)). The ROPS console needs an access
-code. The demo address will be added before the presentation.
-
-## The repository
-
-- `src/app/`: the pages (English folders, Polish URLs) and the API;
-  `src/server/`: the gate, the matcher, the route composer, the needs
-  bank and the store; `src/lib/`: the data facade, the model adapter,
-  the contracts.
-- `scripts/`: the data pipeline (crawl, parse, extract, build, pack) and
-  the embedding service; `data/`: what the app serves; `prompts/`: the
-  versioned prompts; `tests/`: Vitest and Playwright.
-- `docs/`: the [functional specification](docs/functional-specification.md),
-  the [decision log](docs/decision-log.md), the
-  [challenge selection](docs/challenge-selection.md), the
-  [model evaluation](docs/model-evaluation.md), the
-  [record contract](docs/innovation-record.md) of the catalogue, the
-  [quick start](docs/quick-start.md), [storage](docs/storage.md),
-  [data setup](docs/data-setup.md) and the [Docker stack](docs/local-stack.md).
-- [AGENTS.md](AGENTS.md): the rules every contributor and AI assistant
-  follows here.
+- **Language model**: Bielik 11B v3.0 against Llama 3.3 70B,
+  gpt-oss-120b, Qwen3.5-9B and Apertus-8B, on Polish texts to classify
+  by intent and emotional state and on semantic matching, measuring
+  correct answers, strict structured output, invented identifiers,
+  latency and cost. Bielik was the only model right on every case,
+  including those where larger generalist models failed, at a fraction
+  of a cent. A review of European models and hosts with Polish support
+  went with it.
+- **Retriever**: PolDense-400M against PolDense-150M, three sizes of
+  Qwen3 Embedding and Snowflake Arctic Embed 2, on semantic retrieval
+  of Polish texts, measuring recall at 1, 10 and 40 and the mean
+  reciprocal rank. On the harder query set, PolDense-400M ranked the
+  right text first 92 percent of the time, against 84 percent for the
+  best other family (Qwen3 Embedding 8B, twenty times its size).
 
 ## Team, credits and licence
 
-The team: Alexander Bobrovsky, Anton Myshelov, Dmytro Chernikov, Dmytro
+The team: Alexander Bobrovský, Anton Myshelov, Dmytro Chernikov, Dmytro
 Ushakov and Krzysztof Zając. AI coding assistants (Claude Code) wrote
 code, texts and tests under the team's direction; every Polish text the
 public sees is reviewed by the team's Polish speakers, and the idea and
-the decisions are the team's own, recorded in the
-[decision log](docs/decision-log.md).
+every decision are the team's own.
 
 The code is under the Apache License 2.0 ([LICENSE](LICENSE)); copyright
 2026 the team members named above. The rules of the partner task may

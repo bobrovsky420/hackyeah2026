@@ -16,9 +16,9 @@ Endpoints:
 Privacy: needs are sensitive texts (12.6). The log has one line per request (count, kind, milliseconds, status), never
         a text, a query string or a client address.
 
-Usage (from the repository root, with the embedding environment):
-  .venv-embedding/Scripts/python scripts/embedding-service.py [--model OPI-PIB/PolDense-150M] [--port 8765]
-  .venv-embedding/Scripts/python scripts/embedding-service.py --self-test
+Usage (from the repository root):
+  .venv/Scripts/python scripts/embedding-service.py [--model OPI-PIB/PolDense-150M] [--port 8765]
+  .venv/Scripts/python scripts/embedding-service.py --self-test
 --self-test starts no server: it loads the model, embeds one query and two passages, prints the cosines and exits 0
 when the shapes and norms are right.
 """
@@ -26,8 +26,10 @@ import argparse, json, logging, os, sys, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import numpy as np
+from dotenv import load_dotenv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 VECTORS = os.path.join(ROOT, "data", "index-vectors.json")
 DEFAULT_MODEL = "OPI-PIB/PolDense-400M"
 PREFIX = {"query": "[query]: ", "passage": ""}

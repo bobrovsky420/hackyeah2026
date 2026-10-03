@@ -7,7 +7,15 @@ subscriptions, a native Polish speaker who is a trained lawyer, and two
 business analysts with DevOps experience. Besides the lawyer, one of the
 developers and one of the analysts speak Polish at C1 level. Most of the development will be
 AI-assisted. The team concentrates on **one task: the HubMI.pl problem
-router**, with all five people.
+router**, with all five people. A second entry happens only if there is
+time and capacity:
+
+- **Main entry: the HubMI.pl problem router** with the adoption map as its
+  second screen. A 15 000 PLN pool, a brief whose partner has told us what
+  it wants, real data from the first hour, and a role for every team member.
+
+The reasoning follows: the event, the tasks, the two candidates, an honest
+comparison, the team and its roles, and how we work with AI assistants.
 
 ## Decisions
 
@@ -46,7 +54,9 @@ The organisers' statement on AI, verbatim in its key sentences:
 Submission goes through HackTribe: a title of at most five words, a
 description of at most 500 words, at least one image, a presentation PDF of
 at most ten slides, an optional 60-second video, a demo link and one
-viewable repository.
+viewable repository. The participant guide says the final submission is due
+at noon on Sunday, while the rules say 23:00. We plan for noon. Finalists
+pitch to the jury on Sunday afternoon, with one presenter per team.
 
 Default jury criteria, unless a partner publishes its own: Idea and
 Innovation 30 %, Relation to Category 20 %, Practical Applicability 20 %,
@@ -60,9 +70,11 @@ no prize is awarded.
 | **HubMI.pl** (partner: ROPS Kraków) | 15 000 PLN | PL or EN | Candidate 1. A specific brief with a partner who has data and a follow-up path |
 | **Smart City** (open) | 5 000 PLN | PL or EN | Candidate 2. Brief names "communication with citizens", "public services", "access to information" |
 | **Artificial Intelligence** (open) | 5 000 PLN | PL or EN | Considered for candidate 2 and rejected; see below |
+| **AI Control Layer** (partner: Goldman Sachs) | 15 000 PLN | | Topic to be announced. Watch item for candidate 2 |
 | Cracow without barriers (partner: City of Kraków) | 5 000 PLN | PL only | Accessibility of places and routes; narrow |
 | IMAGINE WHAT'S NEXT (Huawei) | 25 000 PLN | EN only | Tied to HarmonyOS |
 | Finance Without Intermediaries (Superteam) | 11 300 PLN | PL or EN | Tied to blockchain |
+| Bank Pekao | 25 000 PLN | | Topic to be announced |
 | DEFENCE, SPORT & HEALTHCARE, ImpactHer, REENTRY CTF (open) | 5 000 PLN each | | Off topic for both candidates |
 
 The Artificial Intelligence brief, verbatim:
@@ -80,7 +92,7 @@ The Smart City brief, verbatim in its key sentence:
 > better in everyday conditions - improving mobility, resource management,
 > communication with citizens, and crisis response.
 
-## HubMI.pl
+## Candidate 1: HubMI.pl
 
 ### The task
 
@@ -113,7 +125,9 @@ knowledge about them exists but is scattered.
 HubMI.pl is not a company. It is the working name of the digital core of a
 planned **Małopolski Hub Innowacji Społecznych**, brought by the Regional
 Social Policy Centre in Kraków (Regionalny Ośrodek Polityki Społecznej,
-ROPS), under the "Małopolska Innowacyjna" brand of the Marshal's Office.
+ROPS), under the "Małopolska Innowacyjna" brand of the Marshal's Office. The
+teaser talk is given by the head of the ROPS social-innovation department
+and by the ROPS director, on Saturday 3 October at 12:00.
 
 The domain hubmi.pl is a parked page offered for sale by a private person.
 It is not the partner's site, and we do not build on it.
@@ -163,6 +177,10 @@ people and unmet needs as first-class data.
 | Kraków NGOs who do not believe consultations change city action | 45 % | 2021 city evaluation, cited by NIW 2026 |
 | Polish municipalities where anyone filed a local-initiative application in 2022 | under 7 % | GUS data in the Batory Foundation report, 2024 |
 
+Beyond the published figures: before the event, Krzysztof Zajac
+went through the published catalogues and talked with volunteers in
+Kraków, listening to the problems they meet in their work.
+
 ### Four app variants
 
 **1. Problem router.** A social worker, an NGO leader, a district councillor
@@ -205,6 +223,39 @@ the strongest: it answers every clause of the brief, including the case
 where no solution exists yet, and it has real data from the first hour.
 Variants 3 and 4 are roadmap modules.
 
+## Candidate 2: Swiss TIP for Poland
+
+### What it is
+
+Swiss TIP is an existing product: a server that gives an AI assistant
+grounded answers about a resident's own city. Every fact rests on an excerpt
+of an official page, is applied by containment to the resident's place, is
+reviewed by a named person, and the release passes an acceptance suite and
+readiness gates before it is served. The server declines questions outside
+its coverage instead of guessing. It exists as published Python packages,
+container images, a one-command quickstart, a regression pack of several
+hundred cases and an attested Zurich release. Its demo interface is a chat
+client with the server attached, not a user interface of its own.
+
+The Polish pack applies the same server and pipeline to the questions whose
+answer depends on where a resident lives: the waste fee, the clean
+transport zone, the anti-smog rules, the winter school holidays, the
+participatory budget. First places: Kraków, Warsaw and Katowice, so every
+question has at least two different answers in the pack.
+
+The pitch, in one sentence: the same question, a different official answer
+per city. A generic assistant gives one answer for the whole country.
+
+Examples of the trap questions already drafted:
+
+| Question | Trap a generic assistant falls into |
+|---|---|
+| How much do I pay for waste collection? | Kraków charges per person, Warsaw per household with a composting discount; a national average is wrong for both |
+| I drive a 2008 diesel. May I enter the centre? | Kraków and Warsaw require Euro 5 since January 2026, Katowice has no zone |
+| May I burn wood in my fireplace? | Kraków bans all solid fuels, Śląskie allows an efficient fireplace |
+| When are my child's winter holidays in 2027? | Three voivodeships, three different fortnights |
+| I have an idea for a green space on my estate. How and by when do I submit it? | Each city's participatory budget and local initiative have their own dates and offices |
+
 ### Which category
 
 - **Smart City.** The brief names communication with citizens, public
@@ -219,6 +270,42 @@ Variants 3 and 4 are roadmap modules.
   to act; the pack answers questions about rules, and touches the brief only
   through its civic-participation topic. The rights-transfer concern
   applies here too.
+
+## Honest comparison
+
+| Criterion | HubMI problem router (new build) | Swiss TIP for Poland in Smart City |
+|---|---|---|
+| Idea and Innovation, 30 % | Strong. No Polish product matches a problem to proven solutions and people, or keeps a needs bank | Medium. The grounding, review and decline model is genuinely rare, but a jury in a hurry may see a chatbot with citations |
+| Relation to Category, 20 % | Strong. Answers every clause of the brief | Strong. "Communication with citizens" and "access to information" are in the brief |
+| Practical Applicability, 20 % | Medium. Depends on ROPS adopting it; the data and the incubator process exist | Strong. Trap questions with real, different answers per city; a pack a city could keep |
+| Design, 20 % | Medium to strong. An AI-designed interface on a fixed design system with one human owner; the team controls every screen | Weak. The jury sees a third-party chat client; the design is the grounded answer itself |
+| Completeness, 10 % | Medium. A working demo with two catalogues is feasible in 24 hours with AI-assisted builders; edges will be rough | Strong, if the Polish slice is finished in time |
+| Prize pool | 15 000 PLN | 5 000 PLN |
+| Competition | Probably few entries: a specific brief, Polish social policy | Many entries |
+| What the jury sees built at the event | Everything | The Polish facts, reviewed and attested; the code was prepared before, which the rules allow with citation |
+| Bottleneck with AI-assisted development | Human judgement: the quality of routes, the Polish text, the design | Human review of every fact, by design; AI cannot attest |
+| Risk before the event | Low. Prepare the repository, the data and the test problems | High. Search, build, synthetic pack and demo image in five days |
+| Risk at the event | Medium. AI-assisted builders make a working demo in 24 hours realistic; coordination of several agents in one repository is the new risk | Medium. Curation and review are routine for the owner; the review is slow and cannot be parallelised without a second reviewer |
+| Rights | The partner may take the rights; the rules are published on 3 October | No transfer known for open tasks |
+| Value after the event | Low unless ROPS continues it; the concept could become a pilot | High. A Polish pack advances the product whatever the jury says |
+
+Points the table cannot show:
+
+- **The two candidates are different kinds of work.** The router is a
+  hackathon project in the classic sense: new, visible, scored on what is
+  built on the day. Swiss TIP for Poland is a product milestone that uses
+  the event as its deadline; most of its value is invisible to a jury and
+  durable for its owner. For the team, the router is the main shot.
+- **AI assistance favours the router more than Swiss TIP.** It makes a
+  from-zero build in 24 hours realistic. Swiss TIP's remaining work is
+  mostly human by design: every fact is reviewed by a named person, and the
+  release is never attested on someone's behalf.
+- **The router could be built on the Swiss TIP engine.** Each innovation
+  would become a concept with excerpt-backed facts, and the hybrid search
+  and the decline behaviour would transfer. It would show the engine in a
+  second use, but it ties the router to unfinished Polish search and a new
+  pack type. With two separate projects, the router is better built on its
+  own simple stack.
 
 ## Recommendation: one task, HubMI.pl
 
@@ -375,9 +462,9 @@ human.
 1. **One human owner.** Analyst 1 owns the look and the flow and has the
    last word. The developers' agents build screens; they do not decide
    them.
-2. **Fix the design system before the event.** Component library, map
-   library, colour and type tokens, spacing and icons are
-   written into the agents' shared instructions. Screens built by two
+2. **Fix the design system.** Component library, map
+   library, colour and type tokens, spacing and icons
+   and written into the agents' shared instructions. Screens built by two
    developers and many agents must look like one product.
 3. **Real content first.** Design around real Polish routes from the ten
    test problems, never placeholder text. Polish words are long and a route
@@ -462,8 +549,8 @@ keep it small and fast.
    every font and export.
 8. **Fixed sign-off slots at the event.** The C1 reviewers work
    continuously; the lawyer signs off in batches, not on request: after the
-   spec (Saturday afternoon), before the draft submission (Saturday 20:00),
-   and before the design freeze (Sunday 08:00). Text that misses a slot
+   spec (Saturday afternoon), before the draft submission (Saturday 19:00),
+   and before the design freeze (Sunday 07:00). Text that misses a slot
    waits for the next one.
 9. **User documentation stays short.** Help texts inside the product, and
    one page for ROPS staff on what the router does and how to use it. A
@@ -514,7 +601,8 @@ subtitles on the video. Confirm with the partner at the teaser talk.
 - **Unknown criteria.** Partner criteria for HubMI are not published. The
   default HackYeah criteria are listed above.
 - **Stale expected answers.** Kraków's participatory-budget voting closed
-  on 28 September and Katowice's consultation on 29 September.
+  on 28 September and Katowice's consultation on 29 September; the
+  date-bound cases of the Polish pack must be restated as of 3 October.
 
 ## Sources
 
@@ -526,9 +614,6 @@ subtitles on the video. Confirm with the partner at the teaser talk.
   one task?", "Can I submit one project to more than one category?", "How
   many people should be in a team?", "Can I create pseudocode and UI designs
   before the hackathon?"
-- Swiss TIP for Poland, implementation plan:
-  `swiss-tip/docs/product/poland-implementation-plan.md` in the
-  Hackathon2026 workspace
 - The Polish pack: `swiss-tip-mvp/releases/mvp-poland/README.md`, same
   workspace, and the branch logs of `mvp-poland` in both repositories
 - ROPS Inkubator Włączenia Społecznego 2.0:

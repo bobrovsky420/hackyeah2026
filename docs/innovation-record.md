@@ -255,7 +255,7 @@ Every record carries its licence per source. The app renders from the
 national base: title, organisation, codes, our own summaries, the
 "Problem" and "Jak działa" passages of at most 60 words with attribution,
 and links; it never copies software. ROPS items under CC BY 4.0 may be
-shown in full with attribution; the 15 `MIIS-agreement` items are shown
-as title, category and link only. The attribution line is fixed in
+shown in full with attribution, and so are the 15 `MIIS-agreement` items
+(the app is built for ROPS, the licensor of these items, so no separate licence applies; the licence value is kept as provenance). The attribution line is fixed in
 FR-1.8 and is followed by the prototype note of FR-1.8. No lawyer
 confirms the reading in the hackathon (OP-09 closed).

@@ -1,4 +1,3 @@
-import "server-only";
 import { randomBytes } from "node:crypto";
 import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";

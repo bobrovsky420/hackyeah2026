@@ -8,7 +8,7 @@
  *
  * Checked against the real files: node scripts/build-data-types.mjs --check
  * (it also fails when a union and the taxonomies differ in either direction).
- * The screens' view model is separate, in src/lib/contracts/.
+ * The screens' view model is separate, in src/lib/contracts.ts.
  */
 import type { DerivedRecord, EvidenceItem, SourceRecord } from "./schema-types";
 
@@ -261,6 +261,23 @@ export interface PlacesRegister {
   codes: string;
   counts: { wojewodztwa: number; powiaty: number; gminy: number };
   places: Place[];
+}
+
+/** A town, village or Kraków delegatura of data/places/malopolska-localities.json; terc is its gmina. */
+export interface LocalityPlace {
+  /** Seven-digit SIMC identifier. */
+  simc: string;
+  name: string;
+  kind: "wieś" | "miasto" | "delegatura";
+  terc: string;
+}
+export interface LocalitiesFile {
+  source: string;
+  stan_na: string;
+  retrieved_at: string;
+  scope: string;
+  counts: Partial<Record<LocalityPlace["kind"], number>>;
+  localities: LocalityPlace[];
 }
 
 /** data/map/malopolska-gminy.geojson (8.8). */

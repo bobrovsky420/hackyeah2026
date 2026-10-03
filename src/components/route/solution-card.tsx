@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Attribution } from "@/components/innovation/attribution";
 import { buttonVariants } from "@/components/ui/button";
-import type { RouteSolution } from "@/lib/contracts/route";
+import type { RouteSolution } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import {
   costLabel,

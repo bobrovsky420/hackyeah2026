@@ -6,8 +6,8 @@ import { InfoPage } from "@/components/info/info-page";
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
 import { getGmina, helplines } from "@/lib/catalogue";
-import { placeLabel, placeOptions } from "@/lib/places";
-import { getRoute } from "@/lib/server/routes";
+import { localityOptions, placeLabel, placeOptions } from "@/lib/places";
+import { getRoute } from "@/server/route-service";
 
 export const metadata: Metadata = { title: t("s9c.meta.title") };
 
@@ -44,6 +44,7 @@ export default async function SaveNeedPage({ searchParams }: PageProps<"/save-ne
         routeId={route?.id ?? null}
         backHref={backHref}
         places={placeOptions()}
+        localities={localityOptions()}
         helplines={helplines()}
       />
     </InfoPage>

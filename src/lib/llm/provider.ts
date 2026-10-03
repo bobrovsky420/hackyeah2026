@@ -1,4 +1,4 @@
-import type { LlmCall, LlmTask, LlmUsage } from "./types";
+import type { LlmCall, LlmUsage } from "./types";
 
 /*
  * One live provider of the chain (9.3). A provider makes one call, with its
@@ -19,21 +19,13 @@ export interface ProviderResult<T> {
 }
 
 export interface LlmProvider {
-  /** Chain position name for logs and tests: "bielik", "anthropic", "llama". */
+  /** Chain position name for logs and tests: "bielik" or "anthropic". */
   id: string;
   /** LlmResult.provider: "openai-compatible" or "anthropic". */
   name: string;
   model: string;
   /** False without a key: the chain skips it. */
   configured: boolean;
-  /** Tasks this provider must never serve (Llama never serves the gate). */
-  excludedTasks?: readonly LlmTask[];
-  /**
-   * True when a refusal from this provider already went through its own
-   * fallback (Anthropic's server-side one): the live chain stops there
-   * (FR-12.12). A refusal from any other provider moves on to the next.
-   */
-  refusalIsFinal?: boolean;
   call<T>(call: LlmCall<T>, options: ProviderOptions): Promise<ProviderResult<T>>;
 }
 

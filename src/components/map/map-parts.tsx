@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import type { Innovation } from "@/lib/contracts/catalogue";
-import type { IndicatorKey } from "@/lib/contracts/map";
+import type { Innovation, IndicatorKey } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { indicatorLabel, targetGroupLabel } from "@/lib/labels";
-import type { GminaPanel, GminaRow, RankedGmina } from "@/lib/server/map";
-import { indicatorEntry, indicatorFacts, isSuppressed, toMedian } from "@/lib/server/map";
+import type { GminaPanel, GminaRow, RankedGmina } from "@/server/map";
+import { indicatorEntry, indicatorFacts, isSuppressed, toMedian } from "@/server/map";
 import { formatNumber } from "@/lib/text";
 
 /* The parts of S4 around the map: legend, table, the ranked list and the gmina panel. */

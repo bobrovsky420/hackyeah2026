@@ -1,7 +1,5 @@
-import type { CostBand, EvidenceLevel, RoleCode, SourceName, TimeToImplement } from "@/lib/contracts/catalogue";
-import type { RouteSolution } from "@/lib/contracts/route";
+import type { CostBand, EvidenceLevel, RoleCode, SourceName, TimeToImplement, RouteSolution, IndicatorKey } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
-import type { IndicatorKey } from "@/lib/contracts/map";
 
 /* Codes of the contracts (data/taxonomies.json, schemas 8.4 and 8.7) mapped to interface strings. */
 

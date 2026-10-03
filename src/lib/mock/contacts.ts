@@ -1,4 +1,4 @@
-import type { Department, Helpline } from "@/lib/contracts/contacts";
+import type { Department, Helpline } from "@/lib/contracts";
 
 /** From data/advisors.yaml (the ROPS contact page, read on 28 September 2026). */
 export const ropsDepartment: Department = {

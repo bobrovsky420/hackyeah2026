@@ -1,4 +1,4 @@
-import type { CostBand, EvidenceLevel, RoleCode } from "@/lib/contracts/catalogue";
+import type { CostBand, EvidenceLevel, RoleCode } from "@/lib/contracts";
 import type { ImplementerType, Path, PathApplicantType } from "@/lib/data/types";
 
 /*

@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { z } from "zod";
-import { parseYamlSubset, YamlSubsetError } from "@/lib/data/yaml";
+import { parseYaml, YamlError } from "@/lib/data/yaml";
 
 /*
  * The test problems of specification 13.1: one YAML file per problem in
@@ -19,11 +19,6 @@ import { parseYamlSubset, YamlSubsetError } from "@/lib/data/yaml";
  * - `sensitive`: the text never appears in a report; default true for the
  *   R and S sets, false otherwise;
  * - `pair` and `pair_with` for the fairness pairs (FR-12.11), see fairness.ts.
- *
- * The repository's YAML subset (src/lib/data/yaml.ts) has no block scalars,
- * and the format of 13.1 writes the problem text and the notes with `>`,
- * so foldBlockScalars() turns every `|` and `>` value into one quoted line
- * first, keeping the line numbers of the file.
  */
 
 export const DEFAULT_PROBLEMS_DIR = "tests/problems";
@@ -138,77 +133,6 @@ export interface LoadedProblems {
   hashes: { file: string; sha256: string }[];
 }
 
-// ------------------------------------------------------------ block scalars
-
-const BLOCK_HEADER = /^(\s*(?:-\s+)?)((?:"(?:[^"\\]|\\.)*"|'(?:[^']|'')*'|[^\s"'#-][^#]*?)\s*:)\s+([|>])([+-]?)\s*(?:#.*)?$/;
-
-/**
- * Every `key: >` or `key: |` value (with the chomping indicators - and +)
- * becomes `key: "<json string>"`; the lines it consumed stay as blank
- * lines, so errors keep their line numbers. Folding follows YAML 1.2 for
- * the common case: `>` joins lines with a space and keeps a blank line as
- * a line break; `|` keeps the lines. More-indented lines under `>` are kept
- * on lines of their own.
- */
-export function foldBlockScalars(source: string): string {
-  const lines = source.split(/\r?\n/);
-  const out: string[] = [];
-  for (let i = 0; i < lines.length; i++) {
-    const header = BLOCK_HEADER.exec(lines[i]);
-    if (!header) {
-      out.push(lines[i]);
-      continue;
-    }
-    const [, lead, keyPart, style, chomp] = header;
-    const keyColumn = lead.length;
-    const body: string[] = [];
-    let j = i + 1;
-    while (j < lines.length && (lines[j].trim() === "" || indentOf(lines[j]) > keyColumn)) {
-      body.push(lines[j]);
-      j++;
-    }
-    // Trailing blank lines belong to the chomping, not to the next key.
-    let end = body.length;
-    while (end > 0 && body[end - 1].trim() === "") end--;
-    const trailingBlank = body.length - end;
-    const content = body.slice(0, end);
-    const indent = content.length > 0 ? Math.min(...content.filter((line) => line.trim() !== "").map(indentOf)) : 0;
-    const texts = content.map((line) => (line.trim() === "" ? "" : line.slice(indent).trimEnd()));
-
-    let value = (style === "|" ? texts.join("\n") : foldLines(texts)).replace(/\n+$/, "");
-    // Chomping: "-" strips the final line break, the default keeps one, "+" keeps the blank lines too.
-    if (content.length > 0 && chomp !== "-") value += "\n".repeat(chomp === "+" ? 1 + trailingBlank : 1);
-    out.push(`${lead}${keyPart} ${JSON.stringify(value)}`);
-    for (let k = i + 1; k < j; k++) out.push("");
-    i = j - 1;
-  }
-  return out.join("\n");
-}
-
-function indentOf(line: string): number {
-  return line.length - line.trimStart().length;
-}
-
-function foldLines(texts: string[]): string {
-  let result = "";
-  let previous: "start" | "text" | "blank" | "indented" = "start";
-  for (const text of texts) {
-    if (text === "") {
-      result += "\n";
-      previous = "blank";
-    } else if (/^\s/.test(text)) {
-      if (previous === "text") result += "\n";
-      result += `${text}\n`;
-      previous = "indented";
-    } else {
-      if (previous === "text") result += " ";
-      result += text;
-      previous = "text";
-    }
-  }
-  return result;
-}
-
 // ------------------------------------------------------------------ parsing
 
 function setOf(id: string): ProblemSet {
@@ -238,9 +162,9 @@ export function parseProblem(
   const sha256 = createHash("sha256").update(source, "utf8").digest("hex");
   let raw: unknown;
   try {
-    raw = parseYamlSubset(foldBlockScalars(source), file);
+    raw = parseYaml(source, file);
   } catch (error) {
-    const message = error instanceof YamlSubsetError ? error.message : `not readable: ${(error as Error).message}`;
+    const message = error instanceof YamlError ? error.message : `not readable: ${(error as Error).message}`;
     return { problem: null, issues: [{ file, field: "", message }] };
   }
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {

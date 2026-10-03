@@ -4,8 +4,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { t } from "@/lib/i18n";
 import { targetGroupCodes } from "@/lib/labels";
-import { allowRouteRequest, clientAddress } from "@/lib/server/rate-limit";
-import { createRoute, getRoute } from "@/lib/server/routes";
+import { allowRouteRequest, clientAddress } from "@/server/rate-limit";
+import { createRoute, getRoute } from "@/server/route-service";
 import { PipelineUnavailableError } from "@/server/pipeline";
 
 export interface ClarifyState {

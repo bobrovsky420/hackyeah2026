@@ -1,6 +1,6 @@
 import type { TargetGroup } from "@/lib/data/types";
 import type { Dataset } from "@/lib/data/to-contracts";
-import type { Embed, StageLog } from "@/server/contracts";
+import type { Embed, StageLog } from "@/lib/contracts";
 import { buildLexicalIndex, rankLexical, type LexicalIndex } from "./lexical";
 import { RETRIEVE_K } from "./thresholds";
 

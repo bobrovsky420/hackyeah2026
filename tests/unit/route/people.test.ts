@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { Readiness } from "@/lib/contracts/records";
+import type { Readiness } from "@/lib/contracts";
 import { loadDataset } from "@/lib/data/load";
 import { buildAdvisor, buildImplementersNearby, buildInnovators, buildReadiness } from "@/server/route/people";
 import { NEARBY_KM, whereItRuns } from "@/server/route/solutions";

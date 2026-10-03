@@ -1,9 +1,9 @@
-import type { ContactRequest } from "@/lib/contracts/records";
+import type { ContactRequest } from "@/lib/contracts";
 import { getLlm } from "@/lib/llm";
-import { clientAddress } from "@/lib/server/rate-limit";
-import { getRoute } from "@/lib/server/routes";
-import { CONSENT_VERSION, countEvent, newId, nowIso } from "@/lib/server/store";
-import { EMAIL, invalid, optionalText, readJson, requiredText } from "@/lib/server/validate";
+import { clientAddress } from "@/server/rate-limit";
+import { getRoute } from "@/server/route-service";
+import { CONSENT_VERSION, countEvent, newId, nowIso } from "@/server/ephemeral";
+import { EMAIL, invalid, optionalText, readJson, requiredText } from "@/server/validate";
 import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
 

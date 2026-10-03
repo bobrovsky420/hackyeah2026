@@ -1,4 +1,4 @@
-import type { Route } from "@/lib/contracts/route";
+import type { Route } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { ropsDepartment } from "./contacts";
 import { withPlaceFacts } from "./implementations";

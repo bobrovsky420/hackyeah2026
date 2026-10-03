@@ -1,4 +1,3 @@
-import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 import { mapDataset, type Dataset, type RawData } from "./to-contracts";
@@ -15,12 +14,13 @@ import type {
   IndexVectorsFile,
   IndicatorsFile,
   KnowledgeFile,
+  LocalitiesFile,
   OrganisationsFile,
   Path,
   PlacesRegister,
   TaxonomiesFile,
 } from "./types";
-import { parseYamlSubset } from "./yaml";
+import { parseYaml } from "./yaml";
 
 /*
  * The server-side loader of data/ (data/README.md): reads every file the
@@ -34,7 +34,7 @@ import { parseYamlSubset } from "./yaml";
 const PY = ".venv/Scripts/python";
 const DERIVE = `${PY} scripts/derive-records.py build`;
 const STATIC = (step: string) => `${PY} scripts/build-static-data.py --only ${step}`;
-const VECTORS = ".venv-embedding/Scripts/python scripts/build-index-vectors.py";
+const VECTORS = `${PY} scripts/build-index-vectors.py`;
 const HAND = (file: string) => `hand-written and committed: git checkout -- data/${file}`;
 
 /** The command that builds each file; a bundle restores all of them: `${PY} scripts/unpack-data.py <zip>`. */
@@ -45,6 +45,7 @@ const BUILT_BY: Record<string, string> = {
   "index-vectors.json": VECTORS,
   "incubators.json": `${PY} scripts/parse-catalogues.py`,
   "places/pl-register.json": STATIC("places"),
+  "places/malopolska-localities.json": STATIC("places"),
   "map/malopolska-gminy.geojson": STATIC("map"),
   "indicators.json": STATIC("indicators"),
   "implementations-derived.json": STATIC("origins"),
@@ -108,7 +109,7 @@ export function loadRawData(options: LoadOptions = {}): RawData {
     const text = read(rel, key);
     if (text === undefined) return undefined;
     try {
-      return parseYamlSubset(text, `data/${rel}`) as T;
+      return parseYaml(text, `data/${rel}`) as T;
     } catch (error) {
       problems.push(`${(error as Error).message}; ${rebuild(key)}`);
       return undefined;
@@ -135,6 +136,7 @@ export function loadRawData(options: LoadOptions = {}): RawData {
   const taxonomies = json<TaxonomiesFile>("taxonomies.json");
   const incubators = json<IncubatorsFile>("incubators.json");
   const places = json<PlacesRegister>("places/pl-register.json");
+  const localities = json<LocalitiesFile>("places/malopolska-localities.json");
   const boundaries = json<GminaBoundaries>("map/malopolska-gminy.geojson");
   const indicators = json<IndicatorsFile>("indicators.json");
   const derived = json<ImplementationsDerivedFile>("implementations-derived.json");
@@ -215,6 +217,7 @@ export function loadRawData(options: LoadOptions = {}): RawData {
     organisations: organisations!,
     implementations: merged!.implementations,
     places: places!,
+    localities: localities!,
     boundaries: boundaries!,
     indicators: indicators!,
     advisors: advisors!,

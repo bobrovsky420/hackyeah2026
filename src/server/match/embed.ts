@@ -1,7 +1,6 @@
-import "server-only";
 import { DEFAULT_EMBEDDING_MODEL } from "@/lib/data/load";
 import { envValue } from "@/lib/env";
-import type { Embed } from "@/server/contracts";
+import type { Embed } from "@/lib/contracts";
 
 /*
  * The client of the embedding service (scripts/embedding-service.py, FR-3.7):

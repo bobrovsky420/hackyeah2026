@@ -1,8 +1,7 @@
 import { Phone } from "lucide-react";
 import Link from "next/link";
 import { helplines } from "@/lib/catalogue";
-import type { Helpline } from "@/lib/contracts/contacts";
-import type { SensitiveTopic } from "@/lib/contracts/route";
+import type { Helpline, SensitiveTopic } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 
 /* The lines that fit each sensitive topic of 8.10, most relevant first. */

@@ -1,8 +1,6 @@
 import { loadDataset } from "@/lib/data/load";
-import type { Need } from "@/lib/contracts/records";
+import type { Need, Brief, Assessment, MatchResult } from "@/lib/contracts";
 import type { LlmCall, Llm } from "@/lib/llm/types";
-import type { Brief } from "@/lib/contracts/brief";
-import type { Assessment, MatchResult } from "@/server/contracts";
 
 /* Shared fixtures of the needs-bank tests: the real dataset, a need, a template brief and a fake model. */
 

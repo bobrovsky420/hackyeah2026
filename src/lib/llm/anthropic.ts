@@ -1,4 +1,3 @@
-import "server-only";
 import Anthropic, { APIConnectionTimeoutError, APIError, APIUserAbortError } from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import type {
@@ -82,7 +81,6 @@ export function anthropicRequest<T>(call: LlmCall<T>, model: string): MessageCre
 export class AnthropicProvider implements LlmProvider {
   readonly id = "anthropic";
   readonly name = "anthropic";
-  readonly refusalIsFinal = true;
   readonly model: string;
   readonly configured: boolean;
   private client: AnthropicClient | undefined;

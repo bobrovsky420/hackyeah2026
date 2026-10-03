@@ -7,7 +7,7 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { controlClass } from "@/components/ui/field";
 import { getGmina, getInnovation, gminy } from "@/lib/catalogue";
-import type { IndicatorKey } from "@/lib/contracts/map";
+import type { IndicatorKey } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { indicatorLabel } from "@/lib/labels";
 import {
@@ -24,7 +24,7 @@ import {
   needCounts,
   valuesOf,
   whereMostNeeded,
-} from "@/lib/server/map";
+} from "@/server/map";
 import { formatNumber } from "@/lib/text";
 import { cn } from "@/lib/utils";
 

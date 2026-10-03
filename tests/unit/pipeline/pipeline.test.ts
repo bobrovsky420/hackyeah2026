@@ -1,6 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import type { Readiness } from "@/lib/contracts/records";
-import type { Route } from "@/lib/contracts/route";
+import type { Readiness, Route } from "@/lib/contracts";
 import { loadDataset } from "@/lib/data/load";
 import type { Dataset } from "@/lib/data/to-contracts";
 import { LlmError, type Llm, type LlmCall, type LlmErrorKind, type LlmTask } from "@/lib/llm/types";

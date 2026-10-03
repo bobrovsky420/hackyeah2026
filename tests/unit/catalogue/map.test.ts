@@ -10,7 +10,7 @@ const hasData = fs.existsSync(path.join(process.cwd(), "data", "data-version.jso
 async function mapOn(source: "data" | "mock") {
   vi.resetModules();
   vi.stubEnv("DATA_SOURCE", source);
-  const map = await import("@/lib/server/map");
+  const map = await import("@/server/map");
   const catalogue = await import("@/lib/catalogue");
   return { ...map, ...catalogue };
 }

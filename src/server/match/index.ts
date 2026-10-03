@@ -1,5 +1,4 @@
-import "server-only";
-import type { MatchNeed, MatchResult } from "@/server/contracts";
+import type { MatchNeed, MatchResult } from "@/lib/contracts";
 import { runAssess } from "./assess";
 import type { ReaderContext } from "./context";
 import { retrieve } from "./retrieve";

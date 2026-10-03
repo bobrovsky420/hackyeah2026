@@ -39,7 +39,7 @@ actions call `repository()`, client components never do.
 - The line `[store] .local/store/records.json: 3 needs, 2 readiness, 0
   routes` in the server's log names the file it opened.
 
-Never in the file, in the server's memory only (`src/lib/server/store.ts`):
+Never in the file, in the server's memory only (`src/server/ephemeral.ts`):
 the rate limiter's request times per client address (12.5 and FR-10.2
 allow IP addresses nowhere else) and the gate's repeat and abuse memory
 (FR-12.1, FR-6.4, FR-12.14), hashed or per identity for an hour or a day.
@@ -98,15 +98,14 @@ store.
 
 ## Deployment (12.9, Analyst 2)
 
-- The file must sit on a disk that outlives the container. In the stack
-  of [local-stack.md](local-stack.md) it is
-  `/app/.local/store/records.json` in the named volume `stack-local`,
-  which survives `stop`, `up` and a rebuild of the image and dies with
-  `down -v`. A host without a persistent disk (a container service with
-  an ephemeral file system) needs a mounted volume for `.local/store/`,
-  or every restart starts from the examples.
-- One app container per file (above). Nothing to migrate on a deploy: the
+- The file must sit on a disk that outlives the process. On the server
+  of [server-deploy.md](server-deploy.md) it is
+  `.local/store/records.json` of the checkout, which survives a restart,
+  an update and a rebuild. A host without a persistent disk (an ephemeral
+  file system) needs a mounted volume for `.local/store/`, or every
+  restart starts from the examples.
+- One app process per file (above). Nothing to migrate on a deploy: the
   app reads the file it finds. A file of a newer format stops an older
-  image, so roll forward rather than back.
+  version of the app, so roll forward rather than back.
 - The "database dump" of 12.4 and 13.5 is a copy of the file, taken while
   the server is stopped; the `.bak` of a start is one.

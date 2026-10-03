@@ -4,10 +4,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { InfoPage } from "@/components/info/info-page";
 import { ReportForm } from "@/components/report/report-form";
-import type { ContentReport } from "@/lib/contracts/records";
+import type { ContentReport } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import { getInnovation } from "@/lib/catalogue";
-import { getRoute } from "@/lib/server/routes";
+import { getRoute } from "@/server/route-service";
 import { repository } from "@/server/db";
 
 export const metadata: Metadata = { title: t("report.meta.title") };

@@ -8,14 +8,14 @@ import { describedBy, Field, FieldError, Hint, Label, TextInput } from "@/compon
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
 import { targetGroupCodes, targetGroupLabel } from "@/lib/labels";
-import type { PlaceOption } from "@/lib/place-options";
+import type { LocalityOption, PlaceOption } from "@/lib/place-options";
 import { FormFailed } from "./form-failed";
 import { HONEYPOT_FIELD, Honeypot } from "./honeypot";
 import { PlaceCombobox, type PlaceValue } from "./place-combobox";
 import { useSubmitForm } from "./use-submit-form";
 
 /** S9b: readiness to act ("Chcę pomóc"), with separate consents to store and to show the name. */
-export function ReadinessForm({ places }: { places: PlaceOption[] }) {
+export function ReadinessForm({ places, localities }: { places: PlaceOption[]; localities: LocalityOption[] }) {
   const [name, setName] = useState("");
   const [isOrganisation, setIsOrganisation] = useState(false);
   const [place, setPlace] = useState<PlaceValue>({ text: "", terc: null });
@@ -78,7 +78,7 @@ export function ReadinessForm({ places }: { places: PlaceOption[] }) {
         <Checkbox id="organizacja" checked={isOrganisation} onChange={setIsOrganisation}>
           {t("s9b.isOrganisation")}
         </Checkbox>
-        <PlaceCombobox id="miejsce" name="miejsce" places={places} value={place} onChange={setPlace} />
+        <PlaceCombobox id="miejsce" name="miejsce" places={places} localities={localities} value={place} onChange={setPlace} />
         <CheckboxList
           idPrefix="tematy"
           name="tematy"
@@ -106,6 +106,8 @@ export function ReadinessForm({ places }: { places: PlaceOption[] }) {
           checked={consentStore}
           onChange={setConsentStore}
           error={errorFor("zgoda-przechowywanie")}
+          required
+          hint={t("forms.consent.required")}
         >
           {t("s9b.consent.store")}
         </Checkbox>

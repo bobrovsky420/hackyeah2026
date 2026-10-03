@@ -28,7 +28,10 @@ Usage (from the repository root, with the project venv):
 """
 import datetime, hashlib, html, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
 
+from dotenv import load_dotenv
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 RAW = os.path.join(ROOT, ".local", "raw")
 TEAM_UA = "HackYeah2026 social-innovation router (catalogue snapshot; bobrovsky@gmx.ch)"
 BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"

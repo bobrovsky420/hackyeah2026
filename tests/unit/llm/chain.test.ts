@@ -20,15 +20,13 @@ interface Fake extends LlmProvider {
   calls: { task: LlmTask; options: ProviderOptions }[];
 }
 
-function fake(id: string, behaviour: { answer?: string; fail?: LlmErrorKind; configured?: boolean; excludedTasks?: LlmTask[]; refusalIsFinal?: boolean }): Fake {
+function fake(id: string, behaviour: { answer?: string; fail?: LlmErrorKind; configured?: boolean }): Fake {
   const calls: Fake["calls"] = [];
   return {
     id,
     name: id === "anthropic" ? "anthropic" : "openai-compatible",
     model: `${id}-model`,
     configured: behaviour.configured ?? true,
-    excludedTasks: behaviour.excludedTasks,
-    refusalIsFinal: behaviour.refusalIsFinal,
     calls,
     async call<T>(request: LlmCall<T>, options: ProviderOptions) {
       calls.push({ task: request.task, options });
@@ -70,43 +68,38 @@ describe("the provider chain", () => {
     expect(bielik.calls[0].options.timeoutMs).toBe(5_000);
   });
 
-  it("falls through in order and skips a provider without a key", async () => {
+  it("falls through to Anthropic when Bielik fails", async () => {
     const bielik = fake("bielik", { fail: "timeout" });
-    const anthropic = fake("anthropic", { configured: false });
-    const llama = fake("llama", {});
-    const llm = createLlm({ providers: [bielik, anthropic, llama], replay: null, timeouts: TIMEOUTS, log });
+    const anthropic = fake("anthropic", {});
+    const llm = createLlm({ providers: [bielik, anthropic], replay: null, timeouts: TIMEOUTS, log });
     const result = await llm(call("assess"));
-    expect(result.parsed.answer).toBe("llama");
-    expect(anthropic.calls).toHaveLength(0);
+    expect(result.parsed.answer).toBe("anthropic");
     expect(lines[0].failed).toEqual(["bielik:timeout"]);
     expect(getLlmCounters().find((entry) => entry.model === "bielik-model")).toMatchObject({ calls: 1, failures: 1 });
   });
 
-  it("never lets Llama serve the gate", async () => {
-    const bielik = fake("bielik", { fail: "unavailable" });
-    const anthropic = fake("anthropic", { configured: false });
-    const llama = fake("llama", { excludedTasks: ["screen"] });
-    const llm = createLlm({ providers: [bielik, anthropic, llama], replay: null, timeouts: TIMEOUTS, log });
-    await expect(llm(call("screen"))).rejects.toMatchObject({ kind: "unavailable", task: "screen" });
-    expect(llama.calls).toHaveLength(0);
-    expect((await llm(call("compose"))).parsed.answer).toBe("llama");
+  it("skips a provider without a key", async () => {
+    const bielik = fake("bielik", { configured: false });
+    const anthropic = fake("anthropic", {});
+    const result = await createLlm({ providers: [bielik, anthropic], replay: null, timeouts: TIMEOUTS, log })(call("assess"));
+    expect(result.parsed.answer).toBe("anthropic");
+    expect(bielik.calls).toHaveLength(0);
+    expect(lines[0].failed).toEqual([]);
   });
 
-  it("stops at a refusal that survived Anthropic's fallback", async () => {
+  it("reports a refusal that survived Anthropic's own fallback as a refusal", async () => {
     const bielik = fake("bielik", { fail: "timeout" });
-    const anthropic = fake("anthropic", { fail: "refusal", refusalIsFinal: true });
-    const llama = fake("llama", {});
-    const llm = createLlm({ providers: [bielik, anthropic, llama], replay: null, timeouts: TIMEOUTS, log });
+    const anthropic = fake("anthropic", { fail: "refusal" });
+    const llm = createLlm({ providers: [bielik, anthropic], replay: null, timeouts: TIMEOUTS, log });
     const error = await llm(call("compose")).catch((caught: unknown) => caught);
     expect(error).toBeInstanceOf(LlmError);
     expect((error as LlmError).kind).toBe("refusal");
-    expect(llama.calls).toHaveLength(0);
     expect(lines[0].outcome).toBe("refusal");
   });
 
   it("moves on after a content-filter refusal from Bielik", async () => {
     const bielik = fake("bielik", { fail: "refusal" });
-    const anthropic = fake("anthropic", { refusalIsFinal: true });
+    const anthropic = fake("anthropic", {});
     const result = await createLlm({ providers: [bielik, anthropic], replay: null, timeouts: TIMEOUTS, log })(call());
     expect(result.provider).toBe("anthropic");
   });

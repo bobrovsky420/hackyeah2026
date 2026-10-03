@@ -8,7 +8,7 @@ import { ReportLink } from "@/components/report/report-link";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
-import { INCUBATOR_PAGE } from "@/lib/server/brief";
+import { INCUBATOR_PAGE } from "@/server/needs/brief-template";
 import { repository } from "@/server/db";
 import { storedBrief } from "@/server/needs";
 

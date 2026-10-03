@@ -4,14 +4,13 @@ import type { ReactNode } from "react";
 import { ConsolePage, DataTable, Empty, Td, Th } from "@/components/console/console-parts";
 import { DecisionForm, QueueMessagesProvider, QueueStatus } from "@/components/console/decision-form";
 import { isOneOf, logActionLabel, reportReasons, targetLabel } from "@/lib/console";
-import type { ContentReport } from "@/lib/contracts/records";
+import type { ContentReport, GateTextKind, ScreeningCategory } from "@/lib/contracts";
 import { formatDateTime } from "@/lib/dates";
 import { t, type MessageKey } from "@/lib/i18n";
 import { getInnovation } from "@/lib/catalogue";
 import { placeText } from "@/lib/places";
-import { isAuthenticated } from "@/lib/server/auth";
+import { isAuthenticated } from "@/server/console/auth";
 import { loadQueues } from "@/server/console/queries";
-import type { GateTextKind, ScreeningCategory } from "@/server/contracts";
 import { repository } from "@/server/db";
 
 export const metadata: Metadata = { title: t("console.moderation.title") };
