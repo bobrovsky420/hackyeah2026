@@ -71,6 +71,12 @@ http://127.0.0.1:8765`, then open http://localhost:3000.
 - Describe a need, ask for a route and look for
   `retrieve:embedding-service` in the log.
 
+## Open the ROPS panel
+
+Open http://localhost:3000/rops, type a name and the development code
+`rops-demo`. A server elsewhere needs `ROPS_TOKEN` in its environment
+(`deploy/server.env.example`); without it the panel stays locked.
+
 ## Run the browser tests
 
 The Playwright runs build the app and use Edge; on a machine without it,
