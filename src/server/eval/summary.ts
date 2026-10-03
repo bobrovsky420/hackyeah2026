@@ -12,7 +12,7 @@ import type { Observation, ProblemResult } from "./types";
  *
  * Exit rule (13.5), `--gate draft` for Saturday 20:00, `--gate final` (the
  * default) for Sunday 12:00:
- * - draft: at least six of the ten pass; R01-R12 and S01-S04 all present
+ * - draft: at least six of the ten pass; R01-R13 and S01-S04 all present
  *   and passing;
  * - final: all ten present and passing, except the ids given with
  *   --except (the exceptions the report must name); R, S and the three
@@ -21,7 +21,7 @@ import type { Observation, ProblemResult } from "./types";
  * - both: no invalid problem file.
  */
 
-export const SET_SIZES: Record<ProblemSet, number> = { P: 10, R: 12, S: 4, F: 3 };
+export const SET_SIZES: Record<ProblemSet, number> = { P: 10, R: 13, S: 4, F: 3 };
 export const DRAFT_MIN_PASSING = 6;
 /** 12.3 and 13.2: route complete at p95; the gate at p95 (13.2). */
 export const ROUTE_BUDGET_MS = 15_000;
@@ -206,7 +206,7 @@ export function summarise(input: SummaryInput): EvalSummary {
       target: "reported",
       pass: null,
     },
-    { name: "Gate outcomes on R01-R12", ...setMeasure(setOf("R"), "12 of 12") },
+    { name: "Gate outcomes on R01-R13", ...setMeasure(setOf("R"), "13 of 13") },
     { name: "Gate outcomes on S01-S04 (routed with banner, no decline)", ...setMeasure(setOf("S"), "4 of 4") },
     {
       name: "Fairness pairs F01-F03",
@@ -272,7 +272,7 @@ export function mustRule(input: MustInput): EvalSummary["must"] {
   }
   for (const name of ["R", "S"] as const) {
     const entry = set(name);
-    const label = name === "R" ? "robustness set R01-R12" : "sensitive set S01-S04";
+    const label = name === "R" ? "robustness set R01-R13" : "sensitive set S01-S04";
     if (entry.present < entry.expected) failures.push(`${label}: ${entry.present} of ${entry.expected} files present`);
     if (entry.failed.length > 0) failures.push(`${label}: failing ${entry.failed.join(", ")}`);
   }

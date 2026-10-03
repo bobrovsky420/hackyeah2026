@@ -57,14 +57,44 @@ describe("rule 3: no model", () => {
 });
 
 describe("rule 4: crisis and individual case", () => {
-  it.each(["crisis", "individual_case"] as const)("%s at the threshold redirects, just below it routes with the banner", (category) => {
-    expect(decide(input({ model: model(category, REDIRECT_MIN_CONFIDENCE) })).outcome).toBe("redirected");
-    const doubtful = decide(input({ model: model(category, below(REDIRECT_MIN_CONFIDENCE)) }));
+  it("a crisis at the threshold redirects, just below it routes with the banner", () => {
+    expect(decide(input({ model: model("crisis", REDIRECT_MIN_CONFIDENCE) })).outcome).toBe("redirected");
+    const doubtful = decide(input({ model: model("crisis", below(REDIRECT_MIN_CONFIDENCE)) }));
     expect(doubtful).toMatchObject({ outcome: "need", crisis_banner: true });
+  });
+
+  it("an individual case with a sensitive topic redirects like a crisis (E.4)", () => {
+    const violent = model("individual_case", REDIRECT_MIN_CONFIDENCE, { topics: ["child_abuse"] });
+    expect(decide(input({ model: violent })).outcome).toBe("redirected");
+    const doubtful = decide(input({ model: { ...violent, confidence: below(REDIRECT_MIN_CONFIDENCE) } }));
+    expect(doubtful).toMatchObject({ outcome: "need", crisis_banner: true });
+    // A sensitive topic of the community lexicon counts too.
+    const lexicon = { crisis: [], community: [{ topic: "violence" as SensitiveTopic, entry: "bije" }] };
+    expect(decide(input({ lexicon, model: model("individual_case", 0.9) })).outcome).toBe("redirected");
+  });
+
+  it("an individual case without a sensitive topic is routed like any need, without the crisis banner (E.4)", () => {
+    // "Straciłam wzrok i chciałabym wrócić do tańca": a person's own need, not a danger.
+    const own = decide(input({ model: model("individual_case", 0.95) }));
+    expect(own).toMatchObject({ outcome: "need", category: "individual_case", crisis_banner: false });
+    expect(own.rules_fired).toContain("individual_case:routed");
   });
 });
 
 describe("rule 5: harm", () => {
+  it("never declines a text about child abuse or sexual violence: it goes to human help (E.5)", () => {
+    // R02: "Moja sąsiadka … krzyczy na niego i go bije" read once by the live model as harm.
+    const report = decide(input({ model: model("harm", 0.9, { topics: ["child_abuse", "violence"] }) }));
+    expect(report).toMatchObject({ outcome: "redirected", crisis_banner: false });
+    expect(report.rules_fired).toEqual([`model:harm>=${DECLINE_MIN_CONFIDENCE}`, "protective:child_abuse"]);
+    const lexicon = { crisis: [], community: [{ topic: "sexual_violence" as SensitiveTopic, entry: "molestuje" }] };
+    expect(decide(input({ lexicon, model: model("harm", 0.9) })).outcome).toBe("redirected");
+  });
+
+  it("still declines harm whose only sensitive topic is violence, as an expulsion by force", () => {
+    expect(decide(input({ model: model("harm", 0.9, { topics: ["violence"] }) })).outcome).toBe("declined");
+  });
+
   it("declines at the threshold and routes just below it, without a banner", () => {
     expect(decide(input({ model: model("harm", DECLINE_MIN_CONFIDENCE) })).outcome).toBe("declined");
     expect(decide(input({ model: model("harm", below(DECLINE_MIN_CONFIDENCE)) }))).toMatchObject({ outcome: "need", crisis_banner: false });
@@ -119,6 +149,7 @@ describe("a message in an ongoing conversation (module V)", () => {
     const lexicon = { crisis: [{ topic: "suicide" as SensitiveTopic, entry: "nie$ chce$ ~ zyc$" }], community: [] };
     expect(decide(message({ lexicon, model: null })).outcome).toBe("redirected");
     expect(decide(message({ model: model("harm", DECLINE_MIN_CONFIDENCE) })).outcome).toBe("declined");
+    expect(decide(message({ model: model("harm", DECLINE_MIN_CONFIDENCE, { topics: ["child_abuse"] }) })).outcome).toBe("redirected");
   });
 
   it("does not redirect an individual case: a person at ROPS reads the conversation", () => {
