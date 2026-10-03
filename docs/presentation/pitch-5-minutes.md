@@ -1,128 +1,128 @@
 # Pitch to the jury, 5 minutes
 
-One presenter, the nine slides of [presentation.pdf](presentation.pdf).
+One presenter, in Polish (the rules changed on 3 October), slides 1 to 9
+of [presentation.pdf](presentation.pdf); slide 10 has no lines yet.
 Earlier editions gave finalists 5 minutes and then about 5 minutes of
 questions; confirm the format on site. The short version is
-[pitch-2-minutes.md](pitch-2-minutes.md).
+[pitch-2-minutes.md](pitch-2-minutes.md); the English script is in the
+git history.
 
-645 spoken words and 12 seconds of pauses: 4:48 at 140 words a
-minute, which leaves 11 seconds for slide changes and nerves. The
-sentences after *(cut)* add 41 words, about 18 seconds; say them only if
-the rehearsal runs under 4:22. The times below are for the version without
-them.
+428 spoken words (994 syllables) and 12 seconds of pauses: 4:47 at the
+pace the English script was timed at, 140 English words or about 217
+syllables a minute. Polish words are longer, so that is about 93 Polish
+words a minute; a native speaker will be faster. It leaves 13 seconds
+for slide changes and nerves. The sentences after *(cut)* add 55 words,
+about 35 seconds; say one only if the rehearsal leaves time for it (all
+of them need a rehearsal under 4:15). The times below are for the
+version without them.
 
 | Time | Slide | Beat |
 |---|---|---|
 | 0:00 | 1 | A real need |
-| 0:29 | 2 | What ROPS asked for, what is missing |
-| 1:00 | 3 | The route |
-| 1:33 | 4 | Not search, not a chatbot; it can say no |
-| 2:04 | 5 | When nothing fits: needs bank and incubator |
-| 2:35 | 6 | Empathy first: the screening gate |
-| 3:11 | 7 | The pilot today, the service as roadmap, and its cost |
-| 3:53 | 8 | Next: school volunteers with DoBro |
-| 4:23 | 9 | Built for everyone; close |
+| 0:31 | 2 | What ROPS asked for, what is missing |
+| 0:57 | 3 | The route |
+| 1:29 | 4 | Not search, not a chatbot; it can say no |
+| 2:00 | 5 | When nothing fits: needs bank and incubator |
+| 2:29 | 6 | Empathy first: the screening gate |
+| 3:05 | 7 | What runs: the modules and the ROPS panel; the roles as roadmap, and the cost |
+| 3:49 | 8 | Next: school volunteers with DoBro |
+| 4:20 | 9 | Built for everyone; close |
 
 ## Script
 
 **[Slide 1]**
-Laskowa, a rural gmina in Małopolska. More and more seniors live alone,
-and there is no day centre. *(pause)* Somewhere in Poland someone has
-already solved this. The social worker in Laskowa will never find it.
-*(pause)*
-We built the first piece of HubMI.pl, the digital core ROPS Kraków plans
-for its Social Innovation Hub: a pilot where a person describes a need
-and finds a solution.
+Laskowa, wiejska gmina w Małopolsce. Coraz więcej seniorów mieszka
+samotnie, a domu dziennego pobytu nie ma. *(pause)* Gdzieś w Polsce ktoś
+już to rozwiązał. Pracownik socjalny w Laskowej nigdy się o tym nie
+dowie. *(pause)*
+Zbudowaliśmy pierwszy element HubMI.pl dla ROPS w Krakowie: człowiek
+opisuje potrzebę i znajduje rozwiązanie.
 
 **[Slide 2]**
-ROPS's brief: we don't want another portal, catalogue or search engine. Connect a problem to a solution that exists, to knowledge
-and people, and when none exists yet, help create one. *(pause)*
-The knowledge is there: hundreds of proven innovations. But the catalogues
-are browsed by title, none takes a local problem as the question, and the
-incubators pick their next topics without a record of the needs nobody
-could meet.
+Zadanie od ROPS: nie chcemy kolejnego portalu, katalogu ani
+wyszukiwarki. Połączcie problem z rozwiązaniem, wiedzą i ludźmi, a gdy
+rozwiązania nie ma, pomóżcie je stworzyć. *(pause)*
+Wiedza istnieje: setki sprawdzonych innowacji. Ale żaden katalog nie
+przyjmuje lokalnego problemu jako pytania. *(cut)* A inkubatory
+wybierają tematy bez rejestru potrzeb, na które nikt nie odpowiedział.
 
 **[Slide 3]**
-So this is HubMI. *(pause)* Describe the need in plain Polish, pick your
-gmina, and you get a route, not a list. Four blocks. Solutions: two
-proven innovations, each with why it fits, quoted from its source entry.
-Knowledge: the manuals and the ROPS models. People: the
-authors, the ROPS category advisor and neighbours who registered to help.
-And the implementation path: which programme can fund it, how much, by
-when, and three next steps.
+Oto HubMI. *(pause)* Opisujesz potrzebę własnymi słowami, wybierasz
+gminę i dostajesz drogę, a nie listę. Cztery bloki. Rozwiązania:
+sprawdzone innowacje, każda z uzasadnieniem cytowanym ze źródła. Wiedza:
+podręczniki i modele. Ludzie: autorzy, opiekun w ROPS i sąsiedzi gotowi
+pomóc. I ścieżka wdrożenia: który program zapłaci, ile i do kiedy.
 
 **[Slide 4]**
-Is this just search, or a chatbot over documents?
-*(pause)* No. Search gives links, a chatbot gives a fluent paragraph, and
-both answer every question. Bielik, the Polish open model, only selects
-and explains. Code checks every quote. Amounts and deadlines come from
-thirty funding paths the model never sees. And most important: it can say
-no. *(pause)* Below a fit of 45 out of 100, there is no route.
+Czy to tylko wyszukiwarka albo czatbot? *(pause)* Nie. Oba odpowiadają
+na każde pytanie. Bielik, polski otwarty model, tylko wybiera i
+wyjaśnia. Kod sprawdza każdy cytat. Kwoty i terminy pochodzą z
+trzydziestu ścieżek, których model nie widzi. A najważniejsze: potrafi
+powiedzieć „nie”. *(pause)* Poniżej dopasowania 45 na 100 drogi nie ma.
 
 **[Slide 5]**
-The partner asked: what happens when no solution exists yet? This
-summer's drought dried up the wells in the hamlets of gmina Dobra.
-Nothing in the catalogues fits. *(pause)* The tool says so. The need goes
-into the needs bank, and the tool drafts the brief for the next incubator
-call, with the nearest existing innovations. In the roadmap, ROPS merges
-similar needs into call topics. Today's unmet need, tomorrow's innovation.
-*(cut)* And it works in reverse: for a proven innovation, the map shows
-the gminas that need it and don't have it yet.
+Partner zapytał: co, jeśli rozwiązania nie ma? Tegoroczna susza
+wysuszyła studnie w gminie Dobra. Nic w katalogach nie pasuje.
+*(pause)* Narzędzie mówi to wprost. Potrzeba trafia do banku potrzeb, a
+narzędzie przygotowuje fiszkę dla kolejnego naboru inkubatora.
+Dzisiejsza potrzeba bez odpowiedzi to jutrzejsza innowacja. *(cut)* W
+planie rozwoju ROPS łączy podobne potrzeby w tematy naborów. A mapa
+pokazuje gminy, które potrzebują sprawdzonej innowacji, a jeszcze jej
+nie mają.
 
 **[Slide 6]**
-The partner's teaser is called "From empathy to technology". So before any
-matching, every text passes a screening gate. *(pause)* A person in crisis
-never gets a list of projects. They get verified helplines and their local
-social assistance centre, and nothing is stored. A discriminatory request is
-declined, with a reason and a way to appeal. Personal data is
-removed before storage and before any prompt. The tool sends nothing to
-anyone; the ROPS moderator who relays contacts is roadmap.
+Zapowiedź partnera nosi tytuł „Od empatii do technologii”. Dlatego
+każdy tekst najpierw przechodzi przez bramkę bezpieczeństwa. *(pause)*
+Osoba w kryzysie nigdy nie dostaje listy projektów, tylko telefony
+zaufania i swój ośrodek pomocy społecznej. Prośba dyskryminująca zostaje
+odrzucona, z możliwością odwołania. Narzędzie niczego nie wysyła: każdy
+wpis rozpatruje człowiek w panelu ROPS. *(cut)* Dane osobowe usuwamy
+przed zapisem.
 
 **[Slide 7]**
-The brief asks for a concept, not only software. What you saw is the
-pilot for the end user: describe a need, find a solution. Around it we
-propose a service, a roadmap, not built yet. ROPS could run it from
-Monday with three roles: a category advisor, a catalogue editor and a
-needs-bank coordinator, and a console where a person takes every
-decision. Three loops: need to implementation, unmet need to incubator
-topic, proven innovation to the places that need it. *(pause)* And it is
-cheap: about 55 dollars a month, less than one cent per route.
+Zadanie prosi o koncepcję, nie tylko o oprogramowanie. Droga działa, a
+obok fiszka pomysłu, tester innowacji, rozmowy z mentorami i panel ROPS,
+w którym decyduje człowiek. Z siedmiu modułów wyzwania cztery działają
+w całości, trzy częściowo. *(pause)* Planem rozwoju są
+ludzie: od poniedziałku ROPS może prowadzić usługę w trzech rolach,
+opiekun kategorii, redaktor katalogu i koordynator banku potrzeb. A
+utrzymanie kosztuje około 55 dolarów miesięcznie, mniej niż cent za
+drogę.
 
 **[Slide 8]**
-What comes next, and this is an idea, not a promise. Pupils finishing
-primary school earn recruitment points
-for volunteering, so every school looks for real tasks. *(pause)* Our needs
-bank is full of them. No new volunteering app:
-DoBro, last year's City of Kraków winner, already connects
-young volunteers, schools and organisations. HubMI brings the need, checked
-by ROPS, with a proven method; DoBro brings the hands. *(cut)* Children
-first: we never hold pupils' data. We'd like to invite the DoBro team to
-build this with us.
+Co dalej, i to jest pomysł, nie obietnica. Uczniowie dostają punkty
+rekrutacyjne za wolontariat, więc szkoły szukają prawdziwych zadań.
+*(pause)* Nasz bank potrzeb jest ich pełen. Nie budujemy nowej
+aplikacji: DoBro, zeszłoroczny zwycięzca zadania Miasta Krakowa, już
+łączy młodych wolontariuszy ze szkołami. HubMI przynosi potrzebę, DoBro
+ręce do pracy. *(cut)* Dzieci przede wszystkim: nigdy nie przechowujemy
+danych uczniów. Chcielibyśmy zaprosić zespół DoBro do wspólnej pracy.
 
 **[Slide 9]**
-Built for everyone. ROPS ran an accessibility incubator, so we set
-our bar above the legal one: a typeface designed for low vision, 7:1
-contrast, full keyboard and screen-reader use. Everything comes from open
-data: 381 innovations, each linked back to its source. *(pause)*
-From need to solution. Not another catalogue: a route. *(pause)* Thank
-you.
+Dla wszystkich: krój pisma dla osób słabowidzących, kontrast 7:1, pełna
+obsługa klawiaturą i czytnikiem ekranu. Wszystko z otwartych danych: 381
+innowacji, każda z linkiem do źródła. *(pause)*
+Od potrzeby do rozwiązania. Nie kolejny katalog, tylko droga. *(pause)*
+Dziękujemy.
 
 ## Delivery notes
 
-- A *(pause)* is one breath, about one second. Hold the two after "will
-  never find it" and "it can say no" for two seconds and look at the jury:
-  those are the two lines they should remember.
-- Say numbers as words: "three hundred eighty-one", "forty-five out of a
-  hundred", "seven to one".
-- "Pilot" and "roadmap" are the two words that keep the claims honest:
-  the pilot is what runs, the roadmap is what ROPS would run next. Never
-  say the console or the roles exist.
+- A *(pause)* is one breath, about one second. Hold the two after "nigdy
+  się o tym nie dowie" and "potrafi powiedzieć «nie»" for two seconds
+  and look at the jury: those are the two lines they should remember.
+- Say numbers as words: "trzysta osiemdziesiąt jeden", "czterdzieści
+  pięć na sto", "siedem do jednego", "pięćdziesiąt pięć dolarów".
+- "Pilot" and "plan rozwoju" keep the claims honest: what runs is the
+  pilot with the challenge modules and the ROPS panel (decision R.3);
+  the three roles and the loops are the roadmap. Never say the roles
+  exist.
 - DoBro is an invitation, not an agreement: never say "partner".
 - If the stage allows a live demo, slide 3 is the moment for it, with
-  the Laskowa route of P01. The demo replaces the slide 3
-  text, it does not add to it.
+  the Laskowa route of P01. The demo replaces the slide 3 text, it does
+  not add to it.
 - Numbers behind the lines, for the questions: the 45-point threshold and
-  the 30 paths are on slide 4; the cost (Lightsail $24, RDS about $30,
-  about $8 per 1 000 routes) on slide 7; the volunteering points (3 of 200,
-  MEN regulation of 16 March 2017, § 7) on slide 8, the source in
+  the 30 paths are on slide 4; the modules (four in full, three in part,
+  specification 1.1) and the cost (Lightsail $24, RDS about $30, about
+  $8 per 1 000 routes) on slide 7; the volunteering points (3 of 200, MEN
+  regulation of 16 March 2017, § 7) on slide 8, the source in
   specification 14.1.1.
