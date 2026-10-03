@@ -1704,6 +1704,7 @@ change to a prompt.
   data/curated/helplines.yaml  helplines of S10 and Zasady, checked against the operators (hand-written, committed)
   data/curated/lexicon-pl.yaml  the crisis lexicon of the pre-checks (FR-12.1; hand-written, committed)
   data/curated/banned-words-pl.yaml  the banned words of every model text (FR-12.10; hand-written, committed)
+  data/curated/demo-questions.yaml  the question bank of the simulated pilot behind the panel's demonstration data (module II; hand-written, committed)
   data/built/map/           malopolska-gminy.geojson (build-static-data.py; git-ignored)
   data/built/indicators.json  indicators per gmina (build-static-data.py; git-ignored)
   data/built/places/        pl-register.json (build-static-data.py; git-ignored)
