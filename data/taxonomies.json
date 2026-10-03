@@ -1,0 +1,134 @@
+{
+  "version": "tax-v1",
+  "note": "Closed lists of the innovation record (docs/innovation-record.md, spec 8.2). Codes are lowercase ASCII slugs; labels are Polish. Workers may only use codes listed here. 'samodzielnosc' and 'inne' under domains are additions to the spec's 16 (the spec's own example uses 'samodzielnosc').",
+  "target_groups": [
+    {"code": "seniorzy", "label_pl": "Dla seniorów", "rops_category_slug": "dla-seniorow"},
+    {"code": "dzieci-mlodziez-rodziny", "label_pl": "Dla dzieci, młodzieży i rodziny", "rops_category_slug": "dla-dzieci-mlodziezy-i-rodziny"},
+    {"code": "ograniczona-mobilnosc", "label_pl": "Dla osób o ograniczonej mobilności", "rops_category_slug": "dla-osob-o-ograniczonej-mobilnosci"},
+    {"code": "niepelnosprawnosc-sensoryczna", "label_pl": "Dla osób z niepełnosprawnością sensoryczną", "rops_category_slug": "dla-osob-z-niepelnosprawnoscia-sensoryczna"},
+    {"code": "zdrowie", "label_pl": "Dla zdrowia i medycyny", "rops_category_slug": "dla-zdrowia-i-medycyny"},
+    {"code": "rynek-pracy", "label_pl": "Dla rynku pracy", "rops_category_slug": "dla-rynku-pracy"},
+    {"code": "cudzoziemcy", "label_pl": "Dla cudzoziemców", "rops_category_slug": "dla-cudzoziemcow"},
+    {"code": "bezdomnosc", "label_pl": "Dla osób w kryzysie bezdomności", "rops_category_slug": "dla-osob-w-kryzysie-bezdomnosci"},
+    {"code": "niepelnosprawnosc-intelektualna", "label_pl": "Dla osób z niepełnosprawnością intelektualną", "rops_category_slug": "dla-osob-z-niepelnosprawnoscia-intelektualna"},
+    {"code": "inne", "label_pl": "Inne grupy", "rops_category_slug": null}
+  ],
+  "domains": [
+    {"code": "opieka-i-wsparcie-dzienne", "label_pl": "Opieka i wsparcie dzienne", "hint_pl": "opieka nad osobą zależną, dzienne domy, asystentura, wytchnienie"},
+    {"code": "samotnosc-i-izolacja", "label_pl": "Samotność i izolacja", "hint_pl": "kontakt, sąsiedztwo, wolontariat towarzyszący, kluby"},
+    {"code": "zdrowie-psychiczne", "label_pl": "Zdrowie psychiczne", "hint_pl": "kryzys psychiczny, wsparcie psychologiczne, profilaktyka"},
+    {"code": "uzaleznienia", "label_pl": "Uzależnienia", "hint_pl": "profilaktyka i terapia uzależnień"},
+    {"code": "przemoc", "label_pl": "Przemoc", "hint_pl": "przeciwdziałanie przemocy, wsparcie osób doświadczających przemocy"},
+    {"code": "ubostwo", "label_pl": "Ubóstwo", "hint_pl": "ubóstwo, zadłużenie, pomoc materialna, żywność"},
+    {"code": "mieszkalnictwo", "label_pl": "Mieszkalnictwo", "hint_pl": "mieszkania wspomagane, treningowe, adaptacja mieszkań"},
+    {"code": "mobilnosc-i-transport", "label_pl": "Mobilność i transport", "hint_pl": "transport, przemieszczanie się, dojazd do usług"},
+    {"code": "dostepnosc", "label_pl": "Dostępność", "hint_pl": "dostępność przestrzeni, informacji, usług i produktów"},
+    {"code": "kompetencje-cyfrowe", "label_pl": "Kompetencje cyfrowe", "hint_pl": "obsługa urządzeń i usług cyfrowych, wykluczenie cyfrowe"},
+    {"code": "edukacja", "label_pl": "Edukacja", "hint_pl": "nauka, szkoła, kształcenie dorosłych, metody dydaktyczne"},
+    {"code": "praca-i-aktywizacja", "label_pl": "Praca i aktywizacja", "hint_pl": "zatrudnienie, staże, aktywizacja zawodowa i społeczna"},
+    {"code": "integracja-migrantow", "label_pl": "Integracja migrantów", "hint_pl": "język, kultura, orientacja w usługach, integracja"},
+    {"code": "opiekunowie-nieformalni", "label_pl": "Opiekunowie nieformalni", "hint_pl": "wsparcie rodzin i opiekunów osób zależnych"},
+    {"code": "piecza-zastepcza", "label_pl": "Piecza zastępcza", "hint_pl": "rodziny zastępcze, usamodzielnianie, adopcja"},
+    {"code": "aktywnosc-obywatelska", "label_pl": "Aktywność obywatelska", "hint_pl": "partycypacja, wolontariat, samoorganizacja mieszkańców"},
+    {"code": "samodzielnosc", "label_pl": "Samodzielność w codziennym życiu", "hint_pl": "trening samodzielności, komunikacja wspomagająca, czynności dnia codziennego, rehabilitacja"},
+    {"code": "inne", "label_pl": "Inne", "hint_pl": "tylko gdy żadna dziedzina nie pasuje; opisz w notes_pl"}
+  ],
+  "implementer_types": [
+    {"code": "jst", "label_pl": "Gmina lub powiat (urząd)", "national_base_value": "Samorządy i urzędy", "paths_applicant_type": "jst"},
+    {"code": "ops-cus-pcpr", "label_pl": "OPS, CUS, PCPR", "national_base_value": "Instytucje pomocowe", "paths_applicant_type": "jst"},
+    {"code": "ngo", "label_pl": "Organizacja pozarządowa", "national_base_value": "Organizacje społeczne", "paths_applicant_type": "ngo"},
+    {"code": "placowka", "label_pl": "Placówka (szkoła, biblioteka, DPS, ŚDS, WTZ, przychodnia)", "national_base_value": "Placówki edukacyjne", "paths_applicant_type": "jst-or-ngo"},
+    {"code": "firma-pes", "label_pl": "Firma lub podmiot ekonomii społecznej", "national_base_value": "Firmy", "paths_applicant_type": "pes"},
+    {"code": "osoba", "label_pl": "Osoba lub grupa nieformalna", "national_base_value": "Każda osoba", "paths_applicant_type": "mieszkancy"}
+  ],
+  "cost_bands": [
+    {"code": "low", "label_pl": "niski koszt (do 10 000 zł)"},
+    {"code": "medium", "label_pl": "średni koszt (10 000 do 100 000 zł)"},
+    {"code": "high", "label_pl": "wysoki koszt (ponad 100 000 zł)"},
+    {"code": "unknown", "label_pl": "koszt nieznany"}
+  ],
+  "time_to_implement": [
+    {"code": "days", "label_pl": "dni"},
+    {"code": "weeks", "label_pl": "tygodnie"},
+    {"code": "months", "label_pl": "miesiące"},
+    {"code": "year-plus", "label_pl": "rok lub dłużej"},
+    {"code": "unknown", "label_pl": "czas nieznany"}
+  ],
+  "evidence_levels": [
+    {"code": "described", "label_pl": "opisana, bez wyników testu"},
+    {"code": "tested", "label_pl": "przetestowana w inkubatorze"},
+    {"code": "selected-for-dissemination", "label_pl": "wybrana do upowszechniania"},
+    {"code": "implemented-elsewhere", "label_pl": "wdrożona w innych miejscach"},
+    {"code": "in-regional-model", "label_pl": "część modelu regionalnego"}
+  ],
+  "settings": [
+    {"code": "rural", "label_pl": "obszary wiejskie"},
+    {"code": "urban", "label_pl": "miasto"},
+    {"code": "any", "label_pl": "dowolne"}
+  ],
+  "scales": [
+    {"code": "individual", "label_pl": "jedna osoba"},
+    {"code": "group", "label_pl": "grupa"},
+    {"code": "community", "label_pl": "społeczność lub system"}
+  ],
+  "national_base_simple_tags": {
+    "dla_kogo": {
+      "163": {"name": "Osoby z niepełnosprawnościami", "target_groups": []},
+      "164": {"name": "Seniorzy", "target_groups": ["seniorzy"]},
+      "165": {"name": "Uczniowie, studenci", "target_groups": ["dzieci-mlodziez-rodziny"]},
+      "166": {"name": "Pracownicy", "target_groups": ["rynek-pracy"]},
+      "167": {"name": "Rodziny i opiekunowie osób wymagających wsparcia", "target_groups": ["dzieci-mlodziez-rodziny"]},
+      "168": {"name": "Osoby bezrobotne", "target_groups": ["rynek-pracy"]},
+      "169": {"name": "Osoby chorujące i z zaburzeniami", "target_groups": ["zdrowie"]},
+      "170": {"name": "Każda osoba", "target_groups": ["inne"]}
+    },
+    "kto_moze_wdrazac": {
+      "171": {"name": "Firmy", "implementer_types": ["firma-pes"]},
+      "172": {"name": "Samorządy i urzędy", "implementer_types": ["jst"]},
+      "173": {"name": "Organizacje społeczne", "implementer_types": ["ngo"]},
+      "174": {"name": "Instytucje pomocowe", "implementer_types": ["ops-cus-pcpr"]},
+      "175": {"name": "Placówki edukacyjne", "implementer_types": ["placowka"]},
+      "176": {"name": "Każda osoba", "implementer_types": ["osoba"]}
+    },
+    "charakter": {"177": "Usługa", "178": "Produkt", "179": "Działanie edukacyjne i uświadamiające", "180": "Nowa instytucja"},
+    "narzedzia": {"181": "Warsztaty, szkolenia", "182": "Gra", "183": "Aplikacja, platforma cyfrowa", "184": "Nowe technologie"}
+  },
+  "national_base_advanced_patterns": {
+    "note": "Regular expressions (case-insensitive) applied to the path of every advanced 'Dla kogo?' term of an entry; each hit adds the target group. They decide the disability subtype behind the simple value 'Osoby z niepełnosprawnościami' and add groups the simple facet does not carry.",
+    "patterns": [
+      {"pattern": "senior|starsz|\\bemeryt", "target_group": "seniorzy"},
+      {"pattern": "dzieci|młodzie|rodzin|uczni|student|niemowl|przedszkol|nastolat|rodzic|opiekun|piecz|adopc", "target_group": "dzieci-mlodziez-rodziny"},
+      {"pattern": "ruchow|mobilno|wózk|poruszan", "target_group": "ograniczona-mobilnosc"},
+      {"pattern": "sensoryczn|niewidom|słabowidz|wzrok|głuch|niesłysz|słabosłysz|słuch", "target_group": "niepelnosprawnosc-sensoryczna"},
+      {"pattern": "intelektualn|autyz|spektrum|down", "target_group": "niepelnosprawnosc-intelektualna"},
+      {"pattern": "choruj|chorob|zaburze|zdrowi|psychiczn|demencj|alzheim|onkolog|niesamodzieln|pacjen|szpital", "target_group": "zdrowie"},
+      {"pattern": "bezrobot|pracodawc|rynku pracy|nieaktywn|poszukując|absolwen|przedemerytaln|Przedsiębiorstwa > Pracownicy|samozatrudnien", "target_group": "rynek-pracy"},
+      {"pattern": "cudzoziem|migran|uchodź|obcokrajow|mniejszoś", "target_group": "cudzoziemcy"},
+      {"pattern": "bezdomn", "target_group": "bezdomnosc"}
+    ],
+    "settings": [
+      {"pattern": "Wieś", "setting": "rural"},
+      {"pattern": "miasta", "setting": "urban"}
+    ]
+  },
+  "national_base_topic_patterns": {
+    "note": "Regular expressions applied to the path of every advanced 'Temat' term; hits become mapped.domain_hints, a hint for the worker and a consistency warning in the validator, never a constraint.",
+    "patterns": [
+      {"pattern": "^Zatrudnienie i praca", "domain": "praca-i-aktywizacja"},
+      {"pattern": "^Zdrowie psychiczne", "domain": "zdrowie-psychiczne"},
+      {"pattern": "^Dostępność", "domain": "dostepnosc"},
+      {"pattern": "wytchnieniow|odciążenia opiekunów", "domain": "opiekunowie-nieformalni"},
+      {"pattern": "Rodzicielstwo i piecza", "domain": "piecza-zastepcza"},
+      {"pattern": "^Opieka", "domain": "opieka-i-wsparcie-dzienne"},
+      {"pattern": "Samodzielność|rehabilitacja", "domain": "samodzielnosc"},
+      {"pattern": "Aktywizacja społeczna|lokalnych sieci|Dialog społeczny|Lokalność", "domain": "aktywnosc-obywatelska"},
+      {"pattern": "migrantów i mniejszości", "domain": "integracja-migrantow"},
+      {"pattern": "Kryzys bezdomności|^Mieszkalnictwo", "domain": "mieszkalnictwo"},
+      {"pattern": "Przemocy", "domain": "przemoc"},
+      {"pattern": "Wykluczenie ekonomicznie", "domain": "ubostwo"},
+      {"pattern": "^Edukacja", "domain": "edukacja"},
+      {"pattern": "Kompetencje cyfrowe|Cyfryzacja", "domain": "kompetencje-cyfrowe"},
+      {"pattern": "Mobilność i transport", "domain": "mobilnosc-i-transport"}
+    ]
+  }
+}

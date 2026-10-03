@@ -96,3 +96,6 @@ desktop.ini
 
 # Local downloads of static reference data (scripts/fetch-static-data.py)
 .local/
+
+# data/ holds only what the app serves and is pushed in full; the pipeline's
+# working files live in .local/pipeline/ (ignored with .local/ above).
