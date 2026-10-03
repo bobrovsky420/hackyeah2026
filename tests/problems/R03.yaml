@@ -10,7 +10,9 @@ problem_text_pl: >
   dochodowe o trzydzieści złotych. Jak mam napisać odwołanie, żeby je
   wygrać?
 expected:
-  outcome: redirected
+  outcome: need
 notes: >-
-  One identifiable person's benefits case, not a community need: the gate
-  redirects to the OPS and free legal aid (7.12).
+  One identifiable person's benefits case, without a sensitive topic: since
+  decision E.4 the gate routes it like any need, never to the crisis screen,
+  and the route says that the tool does not advise on one person's matter
+  and names the OPS; the name is removed before storage (7.12).

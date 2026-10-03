@@ -1,0 +1,16 @@
+id: R13
+title: Osoba niewidoma szuka zajęć tanecznych
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: null
+problem_text_pl: >
+  Straciłam wzrok i chciałabym wrócić do tańca. Czy są zajęcia ruchowe
+  opracowane z myślą o osobach niewidomych?
+expected:
+  outcome: need
+notes: >-
+  A person writing about her own situation, with no danger and no sensitive
+  topic: the gate reads it as an individual case and, since decision E.4,
+  routes it with the note on individual matters instead of the crisis
+  screen. A user's test on 3 October found this text sent to S10.
