@@ -566,16 +566,24 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
   });
 
   describe("the facts of the stored routes (FR-9.3)", () => {
-    it("gives mode, place, latency, the cache flag and the recommended innovations, newest first", async () => {
+    it("gives mode, place, latency, the cache flag, the recommended innovations and the question's groups, newest first", async () => {
       const recommended = route("rt-2", "route", at(0));
       recommended.solutions = [{ innovation_id: "inn-1" }, { innovation_id: "inn-2" }] as Route["solutions"];
       recommended.engine = { ...recommended.engine, latency_ms: 4200, cached: true };
-      await repo.saveRoute(route("rt-1", "declined", at(-DAY)));
+      recommended.question_groups = ["seniorzy", "zdrowie"];
+      const declined = route("rt-1", "declined", at(-DAY));
+      declined.input.target_groups = ["cudzoziemcy"];
+      await repo.saveRoute(declined);
       await repo.saveRoute(recommended);
       expect(await repo.listRouteFacts()).toEqual([
-        { id: "rt-2", created_at: at(0), mode: "route", place_terc: "1207062", latency_ms: 4200, cached: true, solution_ids: ["inn-1", "inn-2"] },
-        { id: "rt-1", created_at: at(-DAY), mode: "declined", place_terc: "1207062", latency_ms: 1, cached: false, solution_ids: [] },
+        {
+          id: "rt-2", created_at: at(0), mode: "route", place_terc: "1207062", latency_ms: 4200, cached: true,
+          solution_ids: ["inn-1", "inn-2"], target_groups: ["seniorzy", "zdrowie"],
+        },
+        // No groups recorded by the composer: the reader's answer.
+        { id: "rt-1", created_at: at(-DAY), mode: "declined", place_terc: "1207062", latency_ms: 1, cached: false, solution_ids: [], target_groups: ["cudzoziemcy"] },
       ]);
+      expect((await repo.listRoutes()).map((item) => item.id)).toEqual(["rt-2", "rt-1"]);
     });
   });
 

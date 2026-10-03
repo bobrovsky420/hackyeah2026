@@ -58,6 +58,7 @@ export const screens: { name: string; path: string; admin?: boolean }[] = [
   { name: "m6-gotowosc", path: "/rops/gotowosc", admin: true },
   { name: "m6-zgloszenia", path: "/rops/zgloszenia", admin: true },
   { name: "m6-trendy", path: "/rops/trendy", admin: true },
+  { name: "m6-pytania", path: "/rops/trendy/pytania", admin: true },
   { name: "m6-trendy-pomysly", path: "/rops/trendy?widok=pomysly", admin: true },
   { name: "m6-trendy-drogi", path: "/rops/trendy?widok=drogi", admin: true },
   { name: "m6-wiedza", path: "/rops/wiedza?q=senior", admin: true },
