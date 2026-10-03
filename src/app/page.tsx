@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IntakeForm } from "@/components/intake/intake-form";
+import { ROPS_LIBRARY } from "@/lib/attribution";
 import { t, type MessageKey } from "@/lib/i18n";
 import { placeOptions } from "@/lib/places";
 
@@ -32,7 +33,7 @@ export default function StartPage() {
       <p className="max-w-[40rem] text-muted-foreground">
         {t("s1.sources.before")} <a href="https://innowacjespoleczne.pl/">{t("source.name.national")}</a>{" "}
         {t("common.and")}{" "}
-        <a href="https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych">{t("source.name.rops")}</a>.
+        <a href={ROPS_LIBRARY}>{t("source.name.rops")}</a>.
       </p>
     </IntakeForm>
   );

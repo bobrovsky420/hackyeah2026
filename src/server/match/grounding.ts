@@ -118,21 +118,34 @@ export function wordCount(text: string): number {
 }
 
 export type QuoteVerdict =
-  | { ok: true; ratio: number; quote: string }
-  | { ok: false; reason: "empty" | "too_long" | "not_found"; ratio: number };
+  | { ok: true; ratio: number; quote: string; cut: boolean }
+  | { ok: false; reason: "empty" | "not_found"; ratio: number };
 
 /**
- * FR-3.4 for one reason: at least two and at most 15 words, found in the
- * field at a ratio of at least 0.8. The quote that is kept is the window of
- * the record itself, so the reader sees the source's words, not the
- * model's copy of them (unless that window would be longer than 15 words).
+ * The first 15 words of a record's text, with an ellipsis. Short words at
+ * the cut ("w", "i", "na") are left out, so the quote does not end on a
+ * preposition.
+ */
+export function cutQuote(text: string): string {
+  const words = text.trim().split(/\s+/).slice(0, MAX_QUOTE_WORDS);
+  while (words.length > 2 && tokenize(words[words.length - 1]).tokens.every((token) => token.text.length <= 2)) words.pop();
+  return `${words.join(" ").replace(/[\s,;:.–-]+$/, "")}…`;
+}
+
+/**
+ * FR-3.4 for one reason: at least two words, found in the field at a ratio
+ * of at least 0.8. The quote that is kept is the window of the record
+ * itself, so the reader sees the source's words, not the model's copy of
+ * them (unless that window is longer than 15 words and the model's copy
+ * is not). A found quote longer than 15 words is cut to its first 15 words
+ * (8.3), not dropped: models copy whole sentences, and a verbatim sentence
+ * grounds the fit as well as a part of it does.
  */
 export function checkQuote(quote: string, field: string): QuoteVerdict {
-  const words = wordCount(quote);
   if (tokenize(quote).tokens.length < 2) return { ok: false, reason: "empty", ratio: 0 };
-  if (words > MAX_QUOTE_WORDS) return { ok: false, reason: "too_long", ratio: 0 };
   const match = bestQuoteMatch(quote, field);
   if (match.ratio < QUOTE_MIN_RATIO || match.text === null) return { ok: false, reason: "not_found", ratio: match.ratio };
-  const kept = wordCount(match.text) <= MAX_QUOTE_WORDS ? match.text : quote.trim().replace(/\s+/g, " ");
-  return { ok: true, ratio: match.ratio, quote: kept };
+  if (wordCount(match.text) <= MAX_QUOTE_WORDS) return { ok: true, ratio: match.ratio, quote: match.text, cut: false };
+  if (wordCount(quote) <= MAX_QUOTE_WORDS) return { ok: true, ratio: match.ratio, quote: quote.trim().replace(/\s+/g, " "), cut: false };
+  return { ok: true, ratio: match.ratio, quote: cutQuote(match.text), cut: true };
 }

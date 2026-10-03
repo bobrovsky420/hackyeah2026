@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { InfoPage, InfoSection } from "@/components/info/info-page";
+import { ROPS_LIBRARY } from "@/lib/attribution";
 import { t } from "@/lib/i18n";
 
 export const metadata: Metadata = { title: t("sources.meta.title") };
@@ -13,7 +14,7 @@ export default function SourcesPage() {
           <a href="https://innowacjespoleczne.pl/">{t("source.name.national")}</a>. {t("sources.catalogues.national")}
         </p>
         <p>
-          <a href="https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych">{t("source.name.rops")}</a>.{" "}
+          <a href={ROPS_LIBRARY}>{t("source.name.rops")}</a>.{" "}
           {t("sources.catalogues.rops")}
         </p>
       </InfoSection>

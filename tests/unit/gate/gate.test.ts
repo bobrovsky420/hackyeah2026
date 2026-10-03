@@ -239,6 +239,17 @@ describe("spam by repetition (R12)", () => {
     expect((await screenText({ ...need(text), kind: "saved_need" }, { llm })).screening.outcome).toBe("need");
   });
 
+  it("the same text with another place is not a repeat, and a recompute is never counted", async () => {
+    const { llm } = fakeLlm(answer());
+    const text = "Brak klubu seniora i transportu do przychodni w gminie.";
+    const first = await screenText({ ...need(text), repeatScope: "1207062" }, { llm });
+    expect(first.screening.outcome).toBe("need");
+    expect((await screenText({ ...need(text), repeatScope: "1261011" }, { llm })).screening.outcome).toBe("need");
+    const recompute = await screenText({ ...need(text), repeatScope: "1207062", countRepeats: false }, { llm });
+    expect(recompute.screening.outcome).toBe("need");
+    expect((await screenText({ ...need(text), repeatScope: "1207062" }, { llm })).screening.outcome).toBe("off_topic");
+  });
+
   it("GATE_REPEAT_LIMIT raises the limit for the test runs", async () => {
     process.env.GATE_REPEAT_LIMIT = "3";
     const { llm } = fakeLlm(answer());

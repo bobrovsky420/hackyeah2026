@@ -5,6 +5,8 @@ import { sourceName } from "@/lib/labels";
 
 export const CC_BY_DEED = "https://creativecommons.org/licenses/by/4.0/deed.pl";
 export const MIIS_TERMS = "https://rops.krakow.pl/mpliki/IS/BIBLIOTEKA_INNOWACJI_SPOECZNYCH/Zasady_wykorzystania_innowacji_MIIS.pdf";
+/** The library has no index page; this one lists its nine categories. */
+export const ROPS_LIBRARY = "https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/kategorie";
 
 /**
  * The licence of the attribution line (FR-1.8) as a reader sees it. The MIIS

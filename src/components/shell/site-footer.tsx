@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ROPS_LIBRARY } from "@/lib/attribution";
 import { t, type MessageKey } from "@/lib/i18n";
 
 const pages: { href: string; label: MessageKey }[] = [
@@ -27,7 +28,7 @@ export function SiteFooter() {
         <p>
           {t("shell.footer.catalogues")}{" "}
           <a href="https://innowacjespoleczne.pl/">{t("source.name.national")}</a> {t("common.and")}{" "}
-          <a href="https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych">
+          <a href={ROPS_LIBRARY}>
             {t("source.name.rops")}
           </a>
           .

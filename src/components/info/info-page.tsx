@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
-import { Notice } from "@/components/ui/notice";
-import { t } from "@/lib/i18n";
 
 /**
  * The frame of the information pages (S8) and the form pages. `headingId`
@@ -11,7 +9,6 @@ import { t } from "@/lib/i18n";
 export function InfoPage({
   title,
   lead,
-  draft,
   top,
   headingId = "naglowek-strony",
   leadId,
@@ -19,7 +16,6 @@ export function InfoPage({
 }: {
   title: string;
   lead?: ReactNode;
-  draft?: boolean;
   top?: ReactNode;
   headingId?: string;
   leadId?: string;
@@ -39,11 +35,6 @@ export function InfoPage({
           </p>
         )}
       </header>
-      {draft && (
-        <Notice tone="warning" title={t("info.draft.title")}>
-          <p>{t("info.draft.text")}</p>
-        </Notice>
-      )}
       {children}
     </div>
   );

@@ -22,7 +22,7 @@ const principles: [MessageKey, MessageKey][] = [
 /** S12: "Zasady" (FR-11.6), linked from S11 and from "Zgłoś problem z tą treścią". */
 export default function RulesPage() {
   return (
-    <InfoPage title={t("rules.title")} lead={t("rules.lead")} draft>
+    <InfoPage title={t("rules.title")} lead={t("rules.lead")}>
       <ol className="grid list-decimal gap-4 pl-6">
         {principles.map(([name, text]) => (
           <li key={name}>

@@ -1,5 +1,5 @@
 import "server-only";
-import { randomInt } from "node:crypto";
+import { createHash, randomInt } from "node:crypto";
 import { catalogue, getGmina, withPlaceFacts } from "@/lib/catalogue";
 import type { RoleCode } from "@/lib/contracts/catalogue";
 import type { Route } from "@/lib/contracts/route";
@@ -12,8 +12,9 @@ import { createEmbedClient } from "@/server/match";
 import { runPipeline } from "@/server/pipeline";
 import { createFileRouteCache, type RouteCache } from "@/server/route-cache";
 import { repository } from "@/server/db";
+import { REPEAT_WINDOW_MS } from "@/server/gate/thresholds";
 import { REDACTED, redact } from "./redact";
-import { countEvent, newId, nowIso } from "./store";
+import { countEvent, memory, newId, nowIso } from "./store";
 
 /*
  * Creates and reads routes. Two engines: "live" runs the pipeline of
@@ -56,11 +57,56 @@ async function newRouteId(): Promise<string> {
 }
 
 /**
+ * The key of an identical request (FR-12.14): the client, the text with
+ * case and spacing evened out, the place, the role and the target groups.
+ */
+function requestKey(input: RouteInput): string {
+  const text = input.problemText.toLocaleLowerCase("pl-PL").replace(/\s+/g, " ").trim();
+  const parts = [input.client ?? "", text, input.placeTerc ?? "", input.role ?? "", [...input.targetGroups].sort().join(",")];
+  return createHash("sha256").update(JSON.stringify(parts)).digest("hex");
+}
+
+/** The memory of identical requests; created here too, for a server whose memory predates it (next dev). */
+function routeRepeats() {
+  return (memory.routeRepeats ??= new Map());
+}
+
+/** The stored route of the same request from the same client within the hour, if there is one. */
+async function previousRoute(key: string, now = Date.now()): Promise<Route | undefined> {
+  const repeats = routeRepeats();
+  for (const [other, seen] of repeats) {
+    if (now - seen.at >= REPEAT_WINDOW_MS) repeats.delete(other);
+  }
+  const seen = repeats.get(key);
+  return seen ? repository().getRoute(seen.routeId) : undefined;
+}
+
+/**
+ * Answers an identical request of the same client within the hour with
+ * the route it already got, without the gate or a model call (FR-12.14:
+ * identical texts merged); otherwise runs the engine. "Policz ponownie"
+ * always runs it. `repeated` tells the form to open the route at once.
+ */
+export async function createRoute(input: RouteInput): Promise<{ route: Route; repeated: boolean }> {
+  const key = requestKey(input);
+  if (!input.bypassCache) {
+    const previous = await previousRoute(key);
+    if (previous) {
+      await countEvent("route_repeated");
+      return { route: previous, repeated: true };
+    }
+  }
+  const route = await runEngine(input);
+  routeRepeats().set(key, { routeId: route.id, at: Date.now() });
+  return { route, repeated: false };
+}
+
+/**
  * Runs the engine and stores the route under a new id. A text that leads
  * to human help is not stored (FR-2.5). Throws PipelineUnavailableError
  * when every provider failed and no cached route exists.
  */
-export async function createRoute(input: RouteInput): Promise<Route> {
+async function runEngine(input: RouteInput): Promise<Route> {
   if (routeEngine() === "canned") return createCannedRoute(input);
 
   const dataset = catalogue().dataset;

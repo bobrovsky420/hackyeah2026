@@ -8,8 +8,10 @@ import { PipelineUnavailableError } from "@/server/pipeline";
 /**
  * POST /api/routes (9.2): the rate limit of FR-2.4, the intake validation
  * of FR-2.1, then the route engine (gate, matching, composition); returns
- * the new route's id. 503 with `{fallback: "cache"}` when the model failed
- * at every provider and no cached route exists.
+ * the new route's id, or the id of the route an identical request of the
+ * same client got within the hour, with `repeated: true` (FR-12.14). 503
+ * with `{fallback: "cache"}` when the model failed at every provider and no
+ * cached route exists.
  */
 export async function POST(request: Request) {
   const client = clientAddress(request.headers);
@@ -25,8 +27,8 @@ export async function POST(request: Request) {
   const targetGroups = stringList(body.target_groups, targetGroupCodes);
 
   try {
-    const route = await createRoute({ problemText, placeTerc, role, targetGroups, client });
-    return Response.json({ id: route.id, mode: route.mode });
+    const { route, repeated } = await createRoute({ problemText, placeTerc, role, targetGroups, client });
+    return Response.json({ id: route.id, mode: route.mode, repeated });
   } catch (error) {
     if (error instanceof PipelineUnavailableError) {
       return Response.json({ error: "unavailable", fallback: "cache" }, { status: 503 });

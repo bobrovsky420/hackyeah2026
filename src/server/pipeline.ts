@@ -79,7 +79,15 @@ export async function runPipeline(input: PipelineInput, deps: PipelineDeps): Pro
   const placeTerc = gmina?.terc ?? null;
 
   const gate = await screenText(
-    { text: input.problemText, kind: "need", placeName: gmina?.name ?? null, client: input.client, ref: id },
+    {
+      text: input.problemText,
+      kind: "need",
+      placeName: gmina?.name ?? null,
+      client: input.client,
+      ref: id,
+      repeatScope: JSON.stringify([placeTerc, input.role, [...input.targetGroups].sort()]),
+      countRepeats: !input.bypassCache,
+    },
     { llm: deps.llm },
   );
   const stages: StageLog[] = gate.stage ? [gate.stage] : [];
