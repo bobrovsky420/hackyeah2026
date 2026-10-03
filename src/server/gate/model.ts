@@ -45,6 +45,7 @@ const KIND_LABELS: Record<GateTextKind, string> = {
   contact: "wiadomość do organizacji",
   readiness: "nazwa zgłaszającego",
   offer: 'odpowiedź "Chcemy pomóc"',
+  idea: "opis pomysłu na innowację społeczną",
 };
 
 const MAX_NAMES = 20;

@@ -4,8 +4,8 @@ import { expect, test, type Page } from "@playwright/test";
  * The MUST requirements of section 7 around the journeys: the gate's
  * redaction and crisis banner, the quick exit, the clarification, the rate
  * limit, the path selection, the recompute, the content report, the MIIS
- * attribution, the accessibility statement, the register card and the map
- * table.
+ * attribution, the accessibility statement, the register card, the map
+ * table and the idea card of module III.
  */
 
 const problem = (page: Page) => page.getByLabel("Co się dzieje i kogo dotyczy?");
@@ -175,4 +175,49 @@ test("FR-7.5: the map's table lists all 183 gminas and sorts by value", async ({
   await expect(page).toHaveURL(/sort=wartosc/);
   await expect(table.getByRole("columnheader", { name: /^Wartość/ })).toHaveAttribute("aria-sort", "descending");
   await expect(table.locator("tbody tr").first()).toContainText("1 074");
+});
+
+test("module III: an idea card is checked field by field, stored, and its page shows similar innovations", async ({ page }) => {
+  await page.goto("/zglos-pomysl");
+  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
+  const summary = page.getByRole("group", { name: "Sprawdź formularz" });
+  await expect(summary).toBeFocused();
+  await expect(summary.getByRole("link")).toHaveCount(8);
+  await summary.getByRole("link", { name: "Wpisz nazwę pomysłu." }).click();
+  await expect(page.getByLabel("Nazwa pomysłu")).toBeFocused();
+
+  await page.getByLabel("Nazwa pomysłu").fill("Wspólne gotowanie seniorów i młodzieży");
+  await page.getByLabel("Krótki opis").fill("Raz w tygodniu seniorzy gotują w świetlicy razem z młodzieżą ze szkoły, a potem zostają na rozmowę.");
+  await page.getByLabel("Co jest jego istotą?").fill("Wspólny posiłek daje powód, żeby wyjść z domu.");
+  await page.getByLabel("Komu jest dedykowany?").fill("Samotni seniorzy w małych wsiach.");
+  await page.getByRole("radio", { name: "Testowany w małej skali" }).check();
+  await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Koło Gospodyń Wiejskich");
+  await page.getByLabel("E-mail", { exact: true }).fill("kgw@example.org");
+  await page.getByRole("checkbox", { name: /przechowywał fiszkę/ }).check();
+  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
+  await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toBeVisible();
+
+  await page.getByRole("link", { name: "Zobacz fiszkę" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Wspólne gotowanie seniorów i młodzieży" })).toBeFocused();
+  await expect(page.getByText("Testowany w małej skali")).toBeVisible();
+  const similar = page.getByRole("region", { name: "Podobne sprawdzone rozwiązania" });
+  await expect(similar.getByRole("listitem").first()).toBeVisible({ timeout: 20_000 });
+  await expect(similar.getByText(/dopasowanie \d+ na 100/).first()).toBeVisible();
+  // The author's contact is never shown on the card.
+  await expect(page.getByText("kgw@example.org")).toHaveCount(0);
+});
+
+test("module III: a crisis text in an idea card shows human help, and nothing is stored", async ({ page }) => {
+  await page.goto("/zglos-pomysl");
+  await page.getByLabel("Nazwa pomysłu").fill("Pomysł");
+  await page.getByLabel("Krótki opis").fill("Nie daję już rady, nie chcę żyć, proszę o pomoc dla mnie.");
+  await page.getByLabel("Co jest jego istotą?").fill("Nie chcę już żyć.");
+  await page.getByLabel("Komu jest dedykowany?").fill("Dla mnie.");
+  await page.getByRole("radio", { name: "Pomysł, jeszcze nie zaczęty" }).check();
+  await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Osoba");
+  await page.getByLabel("E-mail", { exact: true }).fill("osoba@example.org");
+  await page.getByRole("checkbox", { name: /przechowywał fiszkę/ }).check();
+  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
+  await expect(page.getByRole("link", { name: /^112/ })).toHaveAttribute("href", "tel:112");
+  await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toHaveCount(0);
 });
