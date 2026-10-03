@@ -184,7 +184,7 @@ test("FR-7.5: the map's table lists all 183 gminas and sorts by value", async ({
 
 test("module III: an idea card is checked field by field, stored, and its page shows similar innovations", async ({ page }) => {
   await page.goto("/zglos-pomysl");
-  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
+  await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
   const summary = page.getByRole("group", { name: "Sprawdź formularz" });
   await expect(summary).toBeFocused();
   await expect(summary.getByRole("link")).toHaveCount(8);
@@ -199,7 +199,7 @@ test("module III: an idea card is checked field by field, stored, and its page s
   await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Koło Gospodyń Wiejskich");
   await page.getByLabel("E-mail", { exact: true }).fill("kgw@example.org");
   await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
-  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
+  await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
   await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toBeVisible();
 
   await page.getByRole("link", { name: "Zobacz fiszkę" }).click();
@@ -222,7 +222,7 @@ test("module III: a crisis text in an idea card shows human help, and nothing is
   await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Osoba");
   await page.getByLabel("E-mail", { exact: true }).fill("osoba@example.org");
   await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
-  await page.getByRole("button", { name: "Zapisz fiszkę" }).click();
+  await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
   await expect(page.getByRole("link", { name: /^112/ })).toHaveAttribute("href", "tel:112");
   await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toHaveCount(0);
 });
