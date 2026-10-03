@@ -46,7 +46,7 @@ finansowych, do której model nie ma dostępu.
 potrzeb, a narzędzie przygotowuje fiszkę dla kolejnego naboru inkubatora
 z podobnymi istniejącymi innowacjami.
 
-**Moduły wyzwania.** Działają: I Matchmaking społeczny, II Zasobnik
+**Moduły wyzwania.** Zaimplementowane: I Matchmaking społeczny, II Zasobnik
 wiedzy (nie kolejny katalog: wiedza jest częścią drogi, z linkami do
 dokumentów i filmów, aktualizowana w panelu; trendy potrzeb widzi tylko
 ROPS), IV Tester innowacji (oceny, opinie, propozycje ulepszeń, zapisy
