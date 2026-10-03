@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { InfoPage, InfoSection } from "@/components/info/info-page";
 import { t, type MessageKey } from "@/lib/i18n";
-import { ropsDepartment } from "@/lib/mock/contacts";
+import { ropsDepartment } from "@/lib/catalogue";
 
 export const metadata: Metadata = { title: t("rules.meta.title") };
 
@@ -33,7 +33,7 @@ export default function RulesPage() {
       </ol>
       <InfoSection id="zglaszanie" title={t("rules.report.title")}>
         <p>
-          {t("rules.report.text")} <a href={`mailto:${ropsDepartment.email}`}>{ropsDepartment.email}</a>.
+          {t("rules.report.text")} <a href={`mailto:${ropsDepartment().email}`}>{ropsDepartment().email}</a>.
         </p>
         <p>{t("rules.report.appeal")}</p>
       </InfoSection>

@@ -1,19 +1,37 @@
 import "server-only";
 import { randomInt } from "node:crypto";
+import { catalogue, getGmina, withPlaceFacts } from "@/lib/catalogue";
 import type { RoleCode } from "@/lib/contracts/catalogue";
 import type { Route } from "@/lib/contracts/route";
-import { getGmina } from "@/lib/mock/data";
-import { withPlaceFacts } from "@/lib/mock/implementations";
+import { envValue, llmProvider } from "@/lib/env";
+import { describeLlm, getLlm } from "@/lib/llm";
 import { getExampleRoute, withRouteId } from "@/lib/mock/routes";
 import { pickScenario } from "@/lib/mock/scenarios";
+import type { Embed } from "@/server/contracts";
+import { createEmbedClient } from "@/server/match";
+import { runPipeline } from "@/server/pipeline";
+import { createFileRouteCache, type RouteCache } from "@/server/route-cache";
+import { repository } from "@/server/db";
 import { REDACTED, redact } from "./redact";
-import { countEvent, newId, nowIso, store } from "./store";
+import { countEvent, newId, nowIso } from "./store";
 
-/* The time the real pipeline takes (12.3: a route within 15 s), shortened for the prototype. */
-const SIMULATED_WORK_MS = 3500;
+/*
+ * Creates and reads routes. Two engines: "live" runs the pipeline of
+ * src/server/pipeline.ts on the real data and the configured models;
+ * "canned" is the prototype's stand-in, which answers with an example
+ * route picked by keywords, for the Playwright journeys and for a fresh
+ * clone without data/ or a model key. ROUTE_ENGINE=live|canned forces one;
+ * by default the app runs live when the real data loaded and a model (or
+ * the replay recording) is there.
+ */
 
-export function simulateWork(): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, SIMULATED_WORK_MS));
+export type RouteEngine = "live" | "canned";
+
+export function routeEngine(): RouteEngine {
+  const forced = envValue("ROUTE_ENGINE");
+  if (forced === "live" || forced === "canned") return forced;
+  const hasModel = llmProvider() === "replay" || describeLlm().configured.length > 0;
+  return catalogue().dataset && hasModel ? "live" : "canned";
 }
 
 export interface RouteInput {
@@ -22,22 +40,67 @@ export interface RouteInput {
   role: RoleCode | null;
   /** Given by the reader, as the answer to the question of FR-2.3. */
   targetGroups: string[];
+  /** The client address, for the gate's repeat check (FR-12.14). */
+  client?: string | null;
+  /** "Policz ponownie" (FR-3.5). */
+  bypassCache?: boolean;
+}
+
+let live: { embed: Embed; cache: RouteCache } | undefined;
+
+/** A route id no stored route has. */
+async function newRouteId(): Promise<string> {
+  let id = newId("rt");
+  while (await repository().getRoute(id)) id = newId("rt");
+  return id;
 }
 
 /**
- * Stand-in for the pipeline of 7.12 and 7.3 to 7.4: removes personal data
- * (FR-12.4), screens the text by keywords, takes the matching example as
- * the result, fills the facts that depend on the reader's gmina and stores
- * it under a new id. A text that leads to human help is not stored (FR-2.5).
+ * Runs the engine and stores the route under a new id. A text that leads
+ * to human help is not stored (FR-2.5). Throws PipelineUnavailableError
+ * when every provider failed and no cached route exists.
  */
-export function createRoute(input: RouteInput): Route {
+export async function createRoute(input: RouteInput): Promise<Route> {
+  if (routeEngine() === "canned") return createCannedRoute(input);
+
+  const dataset = catalogue().dataset;
+  if (!dataset) throw new Error("ROUTE_ENGINE=live needs the real data in data/");
+  live ??= { embed: createEmbedClient(), cache: createFileRouteCache() };
+  const id = await newRouteId();
+  const result = await runPipeline(
+    { ...input, client: input.client ?? null },
+    {
+      llm: getLlm(),
+      dataset,
+      embed: live.embed,
+      cache: live.cache,
+      newId: () => id,
+      readiness: () => repository().listReadiness(),
+    },
+  );
+  const route = withPlaceFacts(result.route);
+  // A redirected route holds no text of the reader (FR-2.5), so it is stored for its page like any other.
+  await repository().saveRoute(route);
+  await countEvent(`route_created:${route.mode}`);
+  return route;
+}
+
+/* The time the real pipeline takes (12.3: a route within 15 s), shortened for the canned engine. */
+const SIMULATED_WORK_MS = 3500;
+
+/**
+ * The prototype's stand-in for the pipeline: removes personal data
+ * (FR-12.4), screens the text by keywords, takes the matching example as
+ * the result and fills the facts that depend on the reader's gmina.
+ */
+async function createCannedRoute(input: RouteInput): Promise<Route> {
+  await new Promise((resolve) => setTimeout(resolve, SIMULATED_WORK_MS));
   const text = redact(input.problemText).text;
   const scenario = pickScenario(text, input.targetGroups);
   const template = getExampleRoute(scenario.routeId);
   if (!template) throw new Error("No example route for the scenario");
 
-  let id = newId("rt");
-  while (store.routes.has(id)) id = newId("rt");
+  const id = await newRouteId();
   const route = withRouteId(template, id);
   const gmina = getGmina(input.placeTerc);
   const redirected = route.mode === "redirected";
@@ -64,12 +127,12 @@ export function createRoute(input: RouteInput): Route {
   if (route.mode === "declined") route.reference_code = `HM-${new Date().getFullYear()}-${randomInt(1000, 10000)}`;
 
   const stored = withPlaceFacts(route);
-  store.routes.set(id, stored);
-  countEvent(`route_created:${stored.mode}`);
+  await repository().saveRoute(stored);
+  await countEvent(`route_created:${stored.mode}`);
   return stored;
 }
 
 /** A stored route, or one of the examples that exist in every run. */
-export function getRoute(id: string): Route | undefined {
-  return store.routes.get(id) ?? getExampleRoute(id);
+export async function getRoute(id: string): Promise<Route | undefined> {
+  return (await repository().getRoute(id)) ?? getExampleRoute(id);
 }

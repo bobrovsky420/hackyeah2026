@@ -2,14 +2,13 @@ import { attributionText } from "@/lib/attribution";
 import type { Route } from "@/lib/contracts/route";
 import { t } from "@/lib/i18n";
 import { applicantLabels, costLabel, fitLabel, quoteFieldLabel, roleLabel, timeLabel } from "@/lib/labels";
-import { getInnovation } from "@/lib/mock/data";
-import { getPath } from "@/lib/mock/paths";
+import { getInnovation, getPath } from "@/lib/catalogue";
 import { placeText } from "@/lib/places";
 
 /** The route as a Markdown file for "Pobierz jako plik tekstowy" (FR-4.7). */
 export function routeToMarkdown(route: Route): string {
   const isRoute = route.mode === "route";
-  const title = isRoute ? route.need_summary_pl : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
+  const title = isRoute ? (route.need_summary_pl ?? t("s2.title.fallback")) : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
   const lines: string[] = [`# ${t("route.eyebrow")}: ${title ?? ""}`, ""];
 
   if (!isRoute && route.need_summary_pl) lines.push(`${t("route.need")} ${route.need_summary_pl}`, "");
@@ -35,7 +34,7 @@ export function routeToMarkdown(route: Route): string {
         const needs = solution.what_it_takes;
         lines.push("", `${t("facts.cost")}: ${costLabel(needs.cost_band)}. ${t("facts.time")}: ${timeLabel(needs.time_to_implement)}.`);
       }
-      lines.push("", `${attributionText(item)} ${item.sourceUrl}`, "", `_${t("attribution.note")}_`);
+      lines.push("", `${attributionText(item)}${item.sourceUrl ? ` ${item.sourceUrl}` : ""}`, "", `_${t("attribution.note")}_`);
     }
   }
 

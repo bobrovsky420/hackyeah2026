@@ -33,6 +33,12 @@ challenge, the team and the decisions made so far are in
   are git-ignored; `data/taxonomies.json`, `data/duplicates-decisions.json`,
   `data/advisors.yaml` and `data/implementations.yaml` are hand-written and
   committed.
+- A data release for another machine is
+  `.venv/Scripts/python scripts/pack-data.py --release X.Y.Z` (with
+  `--rebuild` after the records changed), which writes
+  `.local/bundles/data-X.Y.Z.zip` and its note; `scripts/unpack-data.py <zip>`
+  restores it and never touches the files git tracks
+  ([docs/data-setup.md](docs/data-setup.md)).
 
 ## App
 
@@ -69,31 +75,54 @@ challenge, the team and the decisions made so far are in
   settings and the intake draft live in the browser under the keys of
   `src/lib/storage-keys.ts`; the inline script in `src/app/layout.tsx`
   applies the view settings before the first paint.
-- The data is mocked in `src/lib/mock/`: canned routes in the shape of
-  schema 8.4 (types in `src/lib/contracts/`) and fixtures extracted from
-  `data/`, the map's boundaries, indicators and implementations in
-  `src/lib/mock/map/`. `/api/droga` stands in for the pipeline
-  (`src/lib/server/routes.ts`): the redaction of
-  `src/lib/server/redact.ts`, the keyword scenarios of
-  `src/lib/mock/scenarios.ts` and the route limit
-  `RATE_LIMIT_ROUTES_PER_MINUTE` (default 10). Innovation text is always
-  shown with the attribution line and the prototype note of FR-1.8; the
-  MIIS items like every ROPS item, their
+- The app reads `data/` through one server-only facade,
+  `src/lib/catalogue.ts`; when `data/` is missing or fails the loader's
+  checks it falls back to the committed fixtures in `src/lib/mock/`, so a
+  fresh clone runs (`DATA_SOURCE=data|mock` forces one). Client components
+  get what they need as props, never from the facade. Innovation text is
+  always shown with the attribution line and the prototype note of FR-1.8;
+  the MIIS items like every ROPS item (decided 29 September 2026), their
   licence named by its terms.
+- The backend lives in `src/server/`: the gate (`gate/`, 7.12), the
+  matcher (`match/`, 7.3), the composer (`route/`, 7.4), the needs bank
+  (`needs/`, 7.5) and `pipeline.ts`, which runs them with the replay cache
+  of FR-3.5 (`route-cache.ts`, files in `.local/route-cache/`). The modules
+  meet only through the types of `src/server/contracts.ts` and receive the
+  model as an `Llm` function, so their Vitest tests
+  (`npx pnpm@12.6.0 test`, in `tests/unit/`) never reach the network. The
+  model adapter is `src/lib/llm/` (9.3: Bielik, then Anthropic, then Llama,
+  then the per-call recording in `.local/llm-replay/`), configured through
+  `src/lib/env.ts`, which also reads `.env.dev` outside production. The
+  prompts are `prompts/<task>.md` with a `version` in the front matter.
+  `/api/routes` runs the pipeline when the real data and a model are
+  there; `ROUTE_ENGINE=canned` forces the prototype's keyword stand-in
+  (`src/lib/mock/scenarios.ts`, canned routes in `src/lib/mock/routes.ts`),
+  which the Playwright journeys use. The retriever needs the embedding
+  service (`.venv-embedding/Scripts/python scripts/embedding-service.py`)
+  and falls back to a lexical scorer without it. `npx pnpm@12.6.0 eval`
+  runs the test problems of 13.1 and writes `reports/`;
+  `npx pnpm@12.6.0 cache:warm` fills the replay cache for the demo. The
+  route limit is `RATE_LIMIT_ROUTES_PER_MINUTE` (default 10).
 - The map (S4) runs MapLibre GL 6 on the local GeoJSON only; its worker
   files are served from the installed package by
   `src/app/vendor/maplibre/`. The map's class colours stay the same in
   every theme, like an image, and are the only raw colours in components;
   the legend and the table carry the same values.
 - The forms post to route handlers under `src/app/api/`, which keep the
-  entries in the in-memory store of `src/lib/server/store.ts`; a restart
-  empties it. The real app replaces that module with PostgreSQL behind the
-  same functions.
+  entries through the async repository of `src/server/db/`
+  (`repository()`): PostgreSQL 16 through Drizzle when `DATABASE_URL` is
+  set, the server's memory otherwise (a restart empties it; the Playwright
+  journeys and a fresh clone run so). Only server code calls it; the
+  composer gets the readiness registry as a dependency. The rate limiter's
+  and the gate's short-lived memory stay in `src/lib/server/store.ts` in
+  both cases. Schema changes go through `pnpm db:generate`; start,
+  migrate, seed and reset are in [docs/database.md](docs/database.md).
 - The ROPS console (`/rops`, S7) asks for the access code in `ROPS_TOKEN`.
   Without it, `next dev` accepts the prototype's code `rops-prototyp` and a
   production server keeps the console locked. The Playwright config starts
-  its server with that code and a high route limit; a server it reuses
-  needs `ROPS_TOKEN=rops-prototyp` and `RATE_LIMIT_ROUTES_PER_MINUTE=1000`.
+  its server with that code, the canned route engine, an empty replay
+  recording for the gate (no model calls) and high limits; a server it
+  reuses needs the same variables, listed in `playwright.config.ts`.
   `ROPS_REVIEWER` names the reviewer in the action log.
 - Console forms submit through `submitTo` in
   `src/components/forms/submit.ts`, not `<form action>`: React resets a

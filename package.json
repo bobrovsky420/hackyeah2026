@@ -11,18 +11,31 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test --project=e2e",
     "a11y": "playwright test --project=a11y",
-    "screenshots": "playwright test --project=screenshots"
+    "screenshots": "playwright test --project=screenshots",
+    "test": "vitest run",
+    "db:up": "docker compose --env-file .env.dev up -d --wait db",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "seed": "tsx scripts/seed.ts",
+    "retention": "tsx scripts/retention.ts",
+    "eval": "tsx --conditions=react-server scripts/eval.ts",
+    "cache:warm": "tsx --conditions=react-server scripts/cache-warm.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "drizzle-orm": "^0.45.3",
     "lucide-react": "^1.48.0",
     "maplibre-gl": "^6.11.2",
     "next": "16.3.6",
+    "openai": "^7.23.0",
+    "postgres": "^3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
-    "tailwind-merge": "^3.7.0"
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -31,9 +44,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.0.2"
   }
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ClusterForm } from "@/components/console/cluster-form";
 import { ConsolePage, DataTable, Empty, Filters, Td, Th } from "@/components/console/console-parts";
 import { StatusForm } from "@/components/console/status-form";
 import { isOneOf, moderationStatuses, needStatuses } from "@/lib/console";
@@ -7,30 +8,32 @@ import { t } from "@/lib/i18n";
 import { roleNoun, targetGroupCodes, targetGroupLabel } from "@/lib/labels";
 import { placeText } from "@/lib/places";
 import { isAuthenticated } from "@/lib/server/auth";
-import { store } from "@/lib/server/store";
-import { fold } from "@/lib/text";
+import { placesMatching } from "@/lib/server/place-filter";
+import { repository } from "@/server/db";
 
 export const metadata: Metadata = { title: t("console.needs.title") };
 
 const categories = targetGroupCodes.map((code) => ({ value: code, label: targetGroupLabel(code) }));
 
-/** "Potrzeby": the needs bank with filters, status, note and CSV export (S7, FR-9.2). */
+/** "Potrzeby": the needs bank with filters, status, note, clusters (FR-5.4) and CSV export (S7, FR-9.2). */
 export default async function NeedsPage({ searchParams }: PageProps<"/rops/potrzeby">) {
   if (!(await isAuthenticated())) return null;
   const query = await searchParams;
   const status = typeof query.status === "string" && isOneOf(needStatuses, query.status) ? query.status : "";
   const gmina = typeof query.gmina === "string" ? query.gmina.trim() : "";
   const category = typeof query.kategoria === "string" && targetGroupCodes.includes(query.kategoria) ? query.kategoria : "";
-  const rows = store.needs.filter(
-    (need) =>
-      (!status || need.status === status) &&
-      (!gmina || fold(placeText(need.place_terc)).includes(fold(gmina))) &&
-      (!category || need.target_groups.includes(category)),
-  );
+  const repo = repository();
+  const clusterNames = new Map((await repo.listClusters()).map((cluster) => [cluster.id, cluster.name_pl]));
+  const rows = await repo.listNeeds({
+    status: status || undefined,
+    category: category || undefined,
+    places: placesMatching(gmina),
+  });
 
   return (
     <ConsolePage title={t("console.needs.title")} lead={t("console.needs.lead")}>
-      <Filters statuses={needStatuses} current={{ status, gmina, category }} exportType="potrzeby" categories={categories} />
+      <ClusterForm />
+      <Filters statuses={needStatuses} current={{ status, gmina, category }} exportType="needs" categories={categories} />
       <p role="status">{t("console.results", { count: rows.length })}</p>
       {rows.length === 0 ? (
         <Empty>{t("console.empty")}</Empty>
@@ -40,6 +43,7 @@ export default async function NeedsPage({ searchParams }: PageProps<"/rops/potrz
             <tr>
               <Th>{t("console.col.date")}</Th>
               <Th>{t("console.col.need")}</Th>
+              <Th>{t("console.col.cluster")}</Th>
               <Th>{t("console.col.place")}</Th>
               <Th>{t("console.col.role")}</Th>
               <Th>{t("console.col.publish")}</Th>
@@ -59,6 +63,11 @@ export default async function NeedsPage({ searchParams }: PageProps<"/rops/potrz
                     <span className="mt-1 block text-[0.9rem] text-muted-foreground">
                       {need.target_groups.map(targetGroupLabel).join(", ")}
                     </span>
+                  )}
+                </Td>
+                <Td>
+                  {(need.cluster_id && clusterNames.get(need.cluster_id)) ?? (
+                    <span className="text-muted-foreground">{t("console.clusters.none")}</span>
                   )}
                 </Td>
                 <Td>{placeText(need.place_terc)}</Td>

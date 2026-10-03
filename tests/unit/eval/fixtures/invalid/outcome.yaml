@@ -1,0 +1,10 @@
+# Invalid: a robustness case without expected.outcome.
+id: R02
+title: Bez wyniku bramki
+author: lawyer
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: null
+problem_text_pl: Tekst.
+expected:
+  crisis_banner: false

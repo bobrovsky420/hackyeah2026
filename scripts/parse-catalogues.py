@@ -11,6 +11,7 @@ fields are added by the extraction skill (.claude/skills/extract-innovations).
 
 Rules applied here (spec 8.1, FR-1.9, R6): source text is copied verbatim;
 contact details are never copied, only the fact that the entry has them;
+postal addresses in the other fields are removed, the town kept (parse-v4);
 names of people are kept exactly as published and nothing else about them;
 websites are kept for organisations only.
 
@@ -24,8 +25,9 @@ RAW = os.path.join(ROOT, ".local", "raw")
 OUT = os.path.join(ROOT, ".local", "pipeline", "sources")
 INCUBATORS_OUT = os.path.join(ROOT, "data", "incubators.json")
 TAXONOMIES = os.path.join(ROOT, "data", "taxonomies.json")
-PARSER_VERSION = "parse-v3"   # v2: links are real URLs pulled from the free text of "Strona internetowa";
+PARSER_VERSION = "parse-v4"   # v2: links are real URLs pulled from the free text of "Strona internetowa";
                               # v3: v2 had overwritten the entry URL of sources[] with the last link; fixed
+                              # v4: postal addresses (street with house number, postal code) removed, the town kept
 URL_IN_TEXT = re.compile(r"https?://[^\s\"'<>;,]+")
 URL_HOST = re.compile(r"^https?://[^\s/]+\.[^\s/]+")
 
@@ -37,6 +39,48 @@ def real_urls(href):
     if URL_HOST.match(href) and not re.search(r"\s", href):
         return [href]
     return [u.rstrip(".;,)") for u in URL_IN_TEXT.findall(href) if URL_HOST.match(u)]
+
+
+# Postal addresses are not copied for anybody (docs/innovation-record.md, personal data). A street address is a
+# street word (ul., al., aleja, os., osiedle, pl., plac, rynek) + a name with a capital + a house number of at most
+# three digits ("5", "12a", "31-33", "66 lok. 33 A", "7 m. 5"); a postal code NN-NNN counts only with a capitalised
+# town after it. The town is kept: "Muzeum Kaset; ul. Jana Pawła II 55, 05-500 Piaseczno" -> "Muzeum Kaset; Piaseczno".
+# Prose stays: "rynek pracy", "ul." without a number, years and ranges such as "2016-2019".
+_UP, _LO = "A-ZŁŚŻŹĆŃÓĘĄ", "a-ząćęłńóśźż"
+_CAP = rf"[{_UP}][{_UP}{_LO}'.-]*"
+_STREET = (rf"(?<![.\w])(?i:ul\.|al\.|os\.|pl\.|ulic[ayę]|alej[aię]|aleje|osiedl[eu]|plac[u]?|rynek|rynku)\s*"
+           rf"(?:(?:[{_LO}]{{1,5}}\.|\d{{1,2}})\s+){{0,3}}{_CAP}(?:\s+(?:{_CAP}|[{_LO}]{{1,5}}\.)){{0,4}}"
+           rf"\s+\d{{1,3}}[a-zA-Z]?(?:\s*[-/]\s*\d{{1,3}}[a-zA-Z]?)?"
+           rf"(?:\s*(?:lok\.|lokal|m\.|/)\s*\d{{1,4}}(?:\s?[A-Z](?![\w]))?)?(?![\d\w])")
+_TOWN = rf"[{_UP}][{_LO}]+(?:(?:-| )[{_UP}][{_LO}]+){{0,2}}"
+_POSTAL = r"(?<![\d-])\d{2}-\d{3}(?![\d-])[ \t]+"
+ADDRESS_RE = re.compile(rf"(?P<lead>[ \t]*[,;]?[ \t]*\n?[ \t]*){_STREET}(?:[ \t]*[,;]?\s*{_POSTAL}(?P<town>{_TOWN}))?"
+                        rf"|{_POSTAL}(?P<town_only>{_TOWN})")
+
+
+def _address_sub(m):
+    if m.group("town_only"):
+        return m.group("town_only")
+    return m.group("lead") + m.group("town") if m.group("town") else ""
+
+
+EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+# Polish phone numbers: optional +48 or (0)12, then nine digits in groups of 2 or 3 separated by spaces or hyphens.
+PHONE_RE = re.compile(r"(?<![\d-])(?:\+48[ -]?)?(?:\(\d{2}\)[ -]?)?\d{2,3}(?:[ -]\d{2,3}){2,3}(?![\d-])")
+
+
+def _phone_sub(m):
+    return "(telefon w źródle)" if len(re.sub(r"\D", "", m.group(0))) in (9, 11) else m.group(0)
+
+
+def redact_addresses(text):
+    """Drop street addresses and postal codes, keep the town (ADDRESS_RE); replace e-mail
+    addresses and phone numbers with a pointer to the source (parse-v4, innovation-record.md)."""
+    if not text:
+        return text
+    text = ADDRESS_RE.sub(_address_sub, text)
+    text = EMAIL_RE.sub("(adres e-mail w źródle)", text)
+    return PHONE_RE.sub(_phone_sub, text)
 
 S1 = "https://innowacjespoleczne.pl"
 S2 = "https://rops.krakow.pl"
@@ -363,6 +407,8 @@ def parse_s1_entry(url, rec, files_log, terms, tax, profiles, by_slug):
                 fields[key] = inline_text(content)
                 continue
             fields[key] = html_to_text(content)
+    fields = {k: v if k == "kontakt" else redact_addresses(v) for k, v in fields.items()}
+    intro = redact_addresses(intro)
     # other links
     m = re.search(r"<h2>Inne linki</h2>(.*?)</section>", b, re.S)
     if m:
@@ -478,7 +524,7 @@ def parse_s1_entry(url, rec, files_log, terms, tax, profiles, by_slug):
                    "settings": sorted(set(settings)), "domain_hints": sorted(set(hints))},
         "innovator": innovator, "organisation": organisation, "persons_public": persons,
         "contact_in_source": contact_in_source, "origin": origin, "materials": materials, "links": links,
-        "text_pl": build_text(title, intro, fields, order),
+        "text_pl": redact_addresses(build_text(title, intro, fields, order)),
         "review_flags": sorted(set(flags)),
         "fingerprint": fingerprint(title, None, fields),
         "parser_version": PARSER_VERSION,
@@ -595,6 +641,7 @@ def parse_s2_entry(url, rec, files_log, tax):
         last_key = key
         if content:
             fields[key] = (fields[key] + "\n" + content) if key in fields else content
+    fields = {k: redact_addresses(v) for k, v in fields.items()}
     for req in ("na_czym_polega", "jakich_problemow_dotyczy", "grupa_docelowa", "kto_moze_skorzystac", "czy_to_dziala"):
         if req not in fields:
             flags.append(f"missing-field:{req}")
@@ -626,7 +673,7 @@ def parse_s2_entry(url, rec, files_log, tax):
         "organisation": organisation, "persons_public": persons,
         **({"authors_unclassified": unclassified} if unclassified else {}),
         "contact_in_source": False, "origin": origin, "materials": materials, "links": [],
-        "text_pl": build_text(title, None, fields, order),
+        "text_pl": redact_addresses(build_text(title, None, fields, order)),
         "review_flags": sorted(set(flags)),
         "fingerprint": fingerprint(title, category, fields),
         "parser_version": PARSER_VERSION,

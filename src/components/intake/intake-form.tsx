@@ -11,10 +11,9 @@ import { describedBy, Field, FieldError, Hint, Label, TextArea } from "@/compone
 import { Notice } from "@/components/ui/notice";
 import { t, type MessageKey } from "@/lib/i18n";
 import { isRoleCode, roleCodes, roleLabel } from "@/lib/labels";
-import { getGmina } from "@/lib/mock/data";
+import { placeLabeller, type PlaceOption } from "@/lib/place-options";
 import { DRAFT_KEY } from "@/lib/storage-keys";
 import type { RoleCode } from "@/lib/contracts/catalogue";
-import { placeLabel } from "@/lib/places";
 import { groupThousands, pluralPl } from "@/lib/text";
 import { cn } from "@/lib/utils";
 
@@ -66,9 +65,9 @@ function writeDraft(draft: Draft) {
 /**
  * Screen S1 and its waiting state. The text survives going back ("Zmień
  * opis") through sessionStorage; nothing leaves the browser except the call
- * to the mock API.
+ * to the mock API. The gminas of the picker come from the server page.
  */
-export function IntakeForm({ children }: { children: ReactNode }) {
+export function IntakeForm({ children, places }: { children: ReactNode; places: PlaceOption[] }) {
   const router = useRouter();
   const [draft, setDraft] = useState<Draft>({ problem: "", place: { text: "", terc: null }, role: "" });
   const [errors, setErrors] = useState<FormError[]>([]);
@@ -136,7 +135,7 @@ export function IntakeForm({ children }: { children: ReactNode }) {
     const minimumWait = new Promise((resolve) => window.setTimeout(resolve, STEP_MS * 3));
 
     try {
-      const response = await fetch("/api/droga", {
+      const response = await fetch("/api/routes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem_text: problem, place_terc: draft.place.terc, role: draft.role || null }),
@@ -163,10 +162,10 @@ export function IntakeForm({ children }: { children: ReactNode }) {
   }
 
   function fillExample(example: (typeof examples)[number]) {
-    const gmina = getGmina(example.placeTerc);
+    const gmina = places.find((place) => place.terc === example.placeTerc);
     update({
       problem: t(example.text),
-      place: gmina ? { text: placeLabel(gmina), terc: gmina.terc } : { text: "", terc: null },
+      place: gmina ? { text: placeLabeller(places)(gmina), terc: gmina.terc } : { text: "", terc: null },
       role: example.role,
     });
     setErrors([]);
@@ -268,7 +267,7 @@ export function IntakeForm({ children }: { children: ReactNode }) {
             </p>
           </Field>
 
-          <PlaceCombobox id="miejsce" name="miejsce" value={draft.place} onChange={(place) => update({ place })} />
+          <PlaceCombobox id="miejsce" name="miejsce" places={places} value={draft.place} onChange={(place) => update({ place })} />
 
           <RadioList
             idPrefix="rola"

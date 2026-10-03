@@ -1,34 +1,65 @@
-"""Pack the data of this machine into one bundle for another machine (docs/data-setup.md).
+"""Pack the data of this machine into one bundle, a data release, for another machine (docs/data-setup.md).
 
 Build outputs are git-ignored and a rebuild needs the raw snapshot and the
 extraction run, so the data travels as a bundle instead: every file under data/ (whatever exists at pack time,
-subfolders and hand-written files included) and the pipeline's working files .local/pipeline/{sources, derived,
-manifest.json, duplicates.json, link-check.json}, so that the extraction does not rerun on the other machine.
+subfolders and hand-written files included), the pipeline's working files .local/pipeline/{sources, derived,
+manifest.json, duplicates.json, link-check.json}, so that the extraction does not rerun on the other machine, and,
+unless --no-cache, the demo's replay files .local/route-cache/ and .local/llm-replay/ (specification 12.4).
 
-Output: .local/bundles/data-<data version>.zip (or --out), with the files under their paths from the repository root
-and a manifest.json at the zip root: the data version and record count (data/data-version.json), the parser, prompt
-and taxonomy versions, the embedding model and dims of data/index-vectors.json, created_at, the git commit
-(git rev-parse HEAD) and a dirty flag (uncommitted changes anywhere in the working tree), and path, size and sha256
-per file. Entries are in sorted path order with a fixed timestamp.
+A release: --release X.Y.Z names the bundle data-X.Y.Z.zip and writes the label into the manifest. The internal data
+version (date and content hash, data/data-version.json) stays the key of the load-time checks and of the replay
+cache; the release label is the name people use. Refused when that zip exists or when X.Y.Z is not above the
+releases already in .local/bundles/ (--force overrides both).
+
+--rebuild first runs the deterministic build steps of data/README.md, "Rebuild order", 4 to 7: derive-records.py
+build; build-static-data.py --only origins,organisations; build-index-vectors.py (the embedding venv); check-links.py
+and the build again (both skipped with --no-links, for a machine without network). The extraction (step 3, the skill
+/extract-innovations in Claude Code) and the static downloads (fetch-static-data.py) never run here: a source record
+without a valid derived record makes the pack refuse (see below). Then node scripts/build-data-types.mjs --check
+type-checks the data files (unless --no-typecheck), the consistency checks run, and the zip is written.
+
+Output: .local/bundles/data-X.Y.Z.zip (data-<data version>.zip without --release; or --out), with the files under
+their paths from the repository root and a manifest.json at the zip root: the release label, the data version, the
+record and merged counts (data/data-version.json), the parser, prompt and taxonomy versions, the embedding model and
+dims of data/index-vectors.json, created_at, the git commit (git rev-parse HEAD) and a dirty flag (uncommitted
+changes anywhere in the working tree), the comparison with the previous release in .local/bundles/ (records added
+and removed, files changed), and path, size and sha256 per file. Entries are in sorted path order with a fixed
+timestamp. A note with the same summary, data-X.Y.Z.md, is written beside the zip for whoever shares it.
 
 Refuses to pack (exit 1) when data/data-version.json, data/index-cards.json, data/index-vectors.json and
 data/innovations/ disagree on the data version or on the record ids, when data/implementations-derived.json (if
-present) carries another data version, or when index-vectors.json names no embedding model: the app would refuse
-to serve such a set anyway (data/README.md, load-time checks).
+present) carries another data version, when index-vectors.json names no embedding model, or when the last build
+skipped source records without a valid derived record (--force packs without them): the app would refuse to serve
+such a set anyway (data/README.md, load-time checks).
 
 Usage (from the repository root, with the project venv):
+  .venv/Scripts/python scripts/pack-data.py --release X.Y.Z [--rebuild] [--no-links] [--no-cache] [--no-typecheck] [--force]
   .venv/Scripts/python scripts/pack-data.py [--out path.zip] [--root dir]
---root packs the data/ and .local/pipeline/ of another directory tree (used for testing); the default is this
-repository. unpack-data.py is the counterpart.
+--root packs the data/ and .local/ files of another directory tree (used for testing); the default is this
+repository, and --rebuild and the type check run only for this repository. unpack-data.py is the counterpart.
 """
-import argparse, datetime, hashlib, json, os, subprocess, sys, zipfile
+import argparse, datetime, hashlib, json, os, re, shutil, subprocess, sys, zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BUNDLE_FORMAT = 1
+BUNDLE_FORMAT = 2                                                         # 2: release label, previous, replay folders
 PIPELINE_DIRS = ["sources", "derived"]                                   # required
 PIPELINE_FILES = ["manifest.json", "duplicates.json", "link-check.json"]  # manifest.json required, the others optional
+CACHE_DIRS = [".local/route-cache", ".local/llm-replay"]                 # the demo's replay files, optional
 SKIP_NAMES = {".DS_Store", "Thumbs.db", "desktop.ini"}
 FIXED_TIME = (2026, 1, 1, 0, 0, 0)                                        # every entry, so the order is the only variable
+RELEASE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+RELEASE_ZIP = re.compile(r"^data-(\d+\.\d+\.\d+)\.zip$")
+PY = ".venv/Scripts/python" if os.name == "nt" else ".venv/bin/python"
+PY_EMBEDDING = ".venv-embedding/Scripts/python" if os.name == "nt" else ".venv-embedding/bin/python"
+# data/README.md, "Rebuild order", steps 4 to 7; the last two need the network and are skipped with --no-links.
+REBUILD = [
+    ("the records, the index cards and the data version", PY, ["scripts/derive-records.py", "build"]),
+    ("the origins and organisations of the static data", PY, ["scripts/build-static-data.py", "--only", "origins,organisations"]),
+    ("the index vectors", PY_EMBEDDING, ["scripts/build-index-vectors.py"]),
+    ("the link check", PY, ["scripts/check-links.py"]),
+    ("the build again, with the link status", PY, ["scripts/derive-records.py", "build"]),
+]
+TYPECHECK = ["scripts/build-data-types.mjs", "--check"]
 
 
 def fail(msg):
@@ -98,8 +129,10 @@ def check_consistency(root):
                  f"{version}: rerun build-static-data.py --only origins")
     tax = os.path.join(root, "data", "taxonomies.json")
     taxonomy = load_json(root, "data/taxonomies.json").get("version") if os.path.exists(tax) else None
-    return {"data_version": version, "records": records, "parser_version": dv.get("parser_version"),
-            "prompt_version": dv.get("prompt_version"), "taxonomy_version": taxonomy, "built_at": dv.get("built_at"),
+    return {"data_version": version, "records": records, "merged": dv.get("merged"),
+            "skipped_without_valid_derived": dv.get("skipped_without_valid_derived") or 0,
+            "parser_version": dv.get("parser_version"), "prompt_version": dv.get("prompt_version"),
+            "taxonomy_version": taxonomy, "built_at": dv.get("built_at"),
             "embedding_model": vec.get("model"), "embedding_dims": vec.get("dims")}
 
 
@@ -120,14 +153,118 @@ def human(n):
         n /= 1024
 
 
+def release_key(label):
+    m = RELEASE.match(label)
+    return tuple(int(g) for g in m.groups()) if m else None
+
+
+def releases_here(bundles):
+    """[(key, zip path)] of the release bundles in .local/bundles/, lowest first."""
+    if not os.path.isdir(bundles):
+        return []
+    found = []
+    for name in os.listdir(bundles):
+        m = RELEASE_ZIP.match(name)
+        if m:
+            found.append((release_key(m.group(1)), os.path.join(bundles, name)))
+    return sorted(found)
+
+
+def read_manifest(zip_path):
+    try:
+        with zipfile.ZipFile(zip_path) as z:
+            return json.loads(z.read("manifest.json"))
+    except (OSError, KeyError, ValueError, zipfile.BadZipFile):
+        return None
+
+
+def compare(previous, entries):
+    """What changed since the previous release: records added and removed, files added, removed and changed."""
+    before = {e["path"]: e["sha256"] for e in previous.get("files", [])}
+    after = {e["path"]: e["sha256"] for e in entries}
+    record = lambda p: p.startswith("data/innovations/") and p.endswith(".json")
+    added, removed = sorted(set(after) - set(before)), sorted(set(before) - set(after))
+    changed = sorted(p for p in after if p in before and before[p] != after[p])
+    return {"release_version": previous.get("release_version"), "data_version": previous.get("data_version"),
+            "records": previous.get("records"),
+            "records_added": [p[len("data/innovations/"):-5] for p in added if record(p)],
+            "records_removed": [p[len("data/innovations/"):-5] for p in removed if record(p)],
+            "records_changed": sum(1 for p in changed if record(p)),
+            "files_added": len(added), "files_removed": len(removed), "files_changed": len(changed)}
+
+
+def run_step(root, label, exe, args):
+    """Run one build step in root, or exit 1; the interpreter is resolved to an absolute path for Windows."""
+    full = exe if os.path.isabs(exe) else os.path.join(root, exe)
+    if os.name == "nt" and not os.path.exists(full) and os.path.exists(full + ".exe"):
+        full += ".exe"                   # .venv/Scripts/python is python.exe
+    if not os.path.exists(full):
+        fail(f"{exe} is missing; create the environment as docs/data-setup.md says")
+    cmd = [full, *args]
+    print(f"==> {label}: {os.path.relpath(full, root) if full.startswith(root) else full} {' '.join(args)}", flush=True)
+    code = subprocess.run(cmd, cwd=root).returncode
+    if code != 0:
+        fail(f"{label} failed (exit {code}); nothing was packed")
+
+
 def main():
-    ap = argparse.ArgumentParser(description="Pack data/ and the pipeline's working files into one zip.")
-    ap.add_argument("--out", help="the zip to write (default .local/bundles/data-<data version>.zip)")
+    ap = argparse.ArgumentParser(description="Pack data/, the pipeline's working files and the replay files into one zip.")
+    ap.add_argument("--release", help="the release label X.Y.Z; names the zip data-X.Y.Z.zip")
+    ap.add_argument("--rebuild", action="store_true",
+                    help="first run the build steps 4 to 7 of data/README.md (build, static origins and organisations, "
+                         "vectors, link check and build again)")
+    ap.add_argument("--no-links", action="store_true", help="with --rebuild: skip the link check and the second build")
+    ap.add_argument("--no-cache", action="store_true", help="leave out .local/route-cache/ and .local/llm-replay/")
+    ap.add_argument("--no-typecheck", action="store_true", help="skip node scripts/build-data-types.mjs --check")
+    ap.add_argument("--force", action="store_true",
+                    help="overwrite an existing zip, accept a release label that is not above the newest here, and pack "
+                         "although the build skipped records")
+    ap.add_argument("--out", help="the zip to write (default .local/bundles/data-<release or data version>.zip)")
     ap.add_argument("--root", default=ROOT, help="the directory tree to pack (default: this repository)")
     args = ap.parse_args()
     root = os.path.abspath(args.root)
+    here = os.path.normcase(root) == os.path.normcase(os.path.abspath(ROOT))
+    bundles = os.path.join(root, ".local", "bundles")
 
+    # 0. the release label, before any slow step
+    key = None
+    if args.release:
+        key = release_key(args.release)
+        if not key:
+            fail(f"the release label must be three numbers, X.Y.Z, not {args.release!r}")
+        newest = max((k for k, _ in releases_here(bundles)), default=None)
+        if newest and key <= newest and not args.force:
+            fail(f"release {args.release} is not above the newest release here, {'.'.join(map(str, newest))}: "
+                 f"pick a higher number, or --force")
+    if args.out:
+        out = os.path.abspath(args.out)
+    elif args.release:
+        out = os.path.join(bundles, f"data-{args.release}.zip")
+    else:
+        out = None                       # data-<data version>.zip, known after the checks
+    if out and os.path.exists(out) and not args.force:
+        fail(f"{out} exists: pick another release number, or --force to overwrite it")
+
+    # 1. the build steps and the type check
+    if args.rebuild:
+        if not here:
+            fail("--rebuild runs only in this repository, not with --root")
+        for label, exe, step_args in (REBUILD[:3] if args.no_links else REBUILD):
+            run_step(root, label, exe, step_args)
+    if not args.no_typecheck:
+        if not here:
+            print("pack-data: note: the type check runs only in this repository; skipped for --root")
+        else:
+            node = shutil.which("node")
+            if not node:
+                fail("node is not on PATH; the type check needs it, or pass --no-typecheck")
+            run_step(root, "the type check of the data files", node, TYPECHECK)
+
+    # 2. consistency, then the file list
     versions = check_consistency(root)
+    if versions["skipped_without_valid_derived"] and not args.force:
+        fail(f"the last build skipped {versions['skipped_without_valid_derived']} source records without a valid "
+             f"derived record: run /extract-innovations first (derive-records.py status), or --force")
     pipe = os.path.join(root, ".local", "pipeline")
     paths = walk(root, os.path.join(root, "data"))
     for d in PIPELINE_DIRS:
@@ -141,10 +278,18 @@ def main():
             fail(".local/pipeline/manifest.json is missing")
         else:
             print(f"pack-data: note: .local/pipeline/{name} is missing, packed without it")
+    if not args.no_cache:
+        for d in CACHE_DIRS:
+            top = os.path.join(root, *d.split("/"))
+            if os.path.isdir(top):
+                paths += walk(root, top)
+            else:
+                print(f"pack-data: note: {d}/ is missing, packed without it")
     paths = sorted(set(paths))
 
+    # 3. the zip, every entry hashed and written from the same bytes
     commit, dirty = git_state(root)
-    out = os.path.abspath(args.out or os.path.join(root, ".local", "bundles", f"data-{versions['data_version']}.zip"))
+    out = out or os.path.join(bundles, f"data-{versions['data_version']}.zip")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     tmp = out + ".part"
     entries = []
@@ -158,24 +303,56 @@ def main():
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             z.writestr(info, data)
-        manifest = {"bundle_format": BUNDLE_FORMAT, **versions,
+        previous = None
+        candidates = [(k, p) for k, p in releases_here(bundles)
+                      if os.path.normcase(p) != os.path.normcase(out) and (key is None or k < key)]
+        if candidates:
+            prev_manifest = read_manifest(candidates[-1][1])
+            if prev_manifest:
+                previous = compare(prev_manifest, entries)
+                previous["zip"] = os.path.basename(candidates[-1][1])
+        manifest = {"bundle_format": BUNDLE_FORMAT, "release_version": args.release, **versions,
                     "created_at": datetime.datetime.now().astimezone().isoformat(timespec="seconds"),
-                    "git_commit": commit, "git_dirty": dirty, "files_count": len(entries),
-                    "files_bytes": sum(e["size"] for e in entries), "files": entries}
+                    "git_commit": commit, "git_dirty": dirty, "previous": previous,
+                    "files_count": len(entries), "files_bytes": sum(e["size"] for e in entries), "files": entries}
         info = zipfile.ZipInfo("manifest.json", date_time=FIXED_TIME)
         info.compress_type = zipfile.ZIP_DEFLATED
         info.external_attr = 0o644 << 16
         z.writestr(info, json.dumps(manifest, ensure_ascii=False, indent=1) + "\n")
     os.replace(tmp, out)
 
+    # 4. the summary, printed and written beside the zip
     n_data = sum(1 for e in entries if e["path"].startswith("data/"))
-    print(f"data version {versions['data_version']} ({versions['records']} records), parser "
-          f"{versions['parser_version']}, prompt {versions['prompt_version']}, taxonomy {versions['taxonomy_version']}, "
-          f"embedding {versions['embedding_model']}")
-    print(f"git {commit or '-'}{' (dirty)' if dirty else ''}")
-    print(f"{len(entries)} files ({n_data} in data/, {len(entries) - n_data} in .local/pipeline/), "
-          f"{human(manifest['files_bytes'])} unpacked")
-    print(f"bundle {out} ({human(os.path.getsize(out))})")
+    n_pipe = sum(1 for e in entries if e["path"].startswith(".local/pipeline/"))
+    n_cache = len(entries) - n_data - n_pipe
+    lines = [
+        f"release {args.release or '-'}: data version {versions['data_version']} ({versions['records']} records, "
+        f"{versions['merged']} merged, built {versions['built_at']})",
+        f"parser {versions['parser_version']}, prompt {versions['prompt_version']}, taxonomy "
+        f"{versions['taxonomy_version']}, embedding {versions['embedding_model']} ({versions['embedding_dims']} dims)",
+        f"git {commit or '-'}{' (dirty)' if dirty else ''}",
+        f"{len(entries)} files ({n_data} in data/, {n_pipe} in .local/pipeline/, {n_cache} replay files), "
+        f"{human(manifest['files_bytes'])} unpacked",
+    ]
+    if previous:
+        lines.append(f"since {previous['zip']} (release {previous['release_version'] or '-'}, data version "
+                     f"{previous['data_version']}): {len(previous['records_added'])} records added, "
+                     f"{len(previous['records_removed'])} removed, {previous['records_changed']} changed; "
+                     f"{previous['files_added']} files added, {previous['files_removed']} removed, "
+                     f"{previous['files_changed']} changed")
+    elif key:
+        lines.append("no earlier release in .local/bundles/ to compare with")
+    if versions["skipped_without_valid_derived"]:
+        lines.append(f"warning: {versions['skipped_without_valid_derived']} source records are not in this release "
+                     f"(no valid derived record)")
+    lines.append(f"bundle {out} ({human(os.path.getsize(out))})")
+    lines.append(f"unpack: {PY} scripts/unpack-data.py .local/bundles/{os.path.basename(out)}")
+    print("\n".join(lines))
+    if args.release:
+        note = os.path.splitext(out)[0] + ".md"
+        with open(note, "w", encoding="utf-8", newline="\n") as f:
+            f.write(f"# Data release {args.release}\n\n" + "".join(f"- {line}\n" for line in lines))
+        print(f"note {note}")
 
 
 if __name__ == "__main__":

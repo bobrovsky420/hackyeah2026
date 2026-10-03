@@ -137,7 +137,12 @@ changes a source (new fingerprint), only the stale records rerun.
 
 ## 7. Partner hand-over on 3 October
 
-If the partner provides a file, the parser needs an adapter first
-(FR-1.6, a small script that writes source records in the same shape).
-Then this skill runs unchanged on the new ids. Do not extract from a
-file that has no source record.
+If the partner provides a file, the adapter writes the source records
+(FR-1.6): copy `tests/fixtures/partner/mapping.yaml`, put the partner's
+column headers into it, and run
+`.venv/Scripts/python scripts/ingest-partner.py --file <file> --map <mapping.yaml> --dry-run`,
+then without `--dry-run`. The new `inn-partner-*` ids show as missing in
+`status` (row `partner`); `batches --source partner` lists them. Then this
+skill runs unchanged on the new ids. Do not extract from a file that has
+no source record. Rehearsed with the five-row sample
+in a copy of the repository.

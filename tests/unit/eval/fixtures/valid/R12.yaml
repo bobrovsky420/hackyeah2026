@@ -1,0 +1,14 @@
+# A fixture of the loader tests: the robustness case of repeated submissions.
+id: R12
+title: Ten sam tekst dwadzieścia razy
+author: lawyer
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: null
+repeat: 20
+problem_text_pl: |
+  Brakuje nam miejsc w przedszkolu,
+  proszę o pomysł.
+expected:
+  outcome: off_topic
+notes: null

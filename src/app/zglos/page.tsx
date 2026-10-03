@@ -6,9 +6,9 @@ import { InfoPage } from "@/components/info/info-page";
 import { ReportForm } from "@/components/report/report-form";
 import type { ContentReport } from "@/lib/contracts/records";
 import { t } from "@/lib/i18n";
-import { getInnovation } from "@/lib/mock/data";
+import { getInnovation } from "@/lib/catalogue";
 import { getRoute } from "@/lib/server/routes";
-import { store } from "@/lib/server/store";
+import { repository } from "@/server/db";
 
 export const metadata: Metadata = { title: t("report.meta.title") };
 
@@ -19,13 +19,13 @@ interface Resolved {
   backLabel: string;
 }
 
-function resolve(query: Record<string, string | string[] | undefined>): Resolved | null {
+async function resolve(query: Record<string, string | string[] | undefined>): Promise<Resolved | null> {
   const value = (key: string) => (typeof query[key] === "string" ? (query[key] as string) : null);
   const routeId = value("droga");
   const innovationId = value("innowacja");
   const needId = value("fiszka");
 
-  const route = routeId ? getRoute(routeId) : undefined;
+  const route = routeId ? await getRoute(routeId) : undefined;
   if (route) {
     return {
       target: { type: "route", id: route.id },
@@ -43,7 +43,7 @@ function resolve(query: Record<string, string | string[] | undefined>): Resolved
       backLabel: t("forms.backToInnovation"),
     };
   }
-  const need = needId ? store.needs.find((entry) => entry.id === needId) : undefined;
+  const need = needId ? await repository().getNeed(needId) : undefined;
   if (need) {
     return {
       target: { type: "brief", id: need.id },
@@ -57,7 +57,7 @@ function resolve(query: Record<string, string | string[] | undefined>): Resolved
 
 /** "Zgłoś problem z tą treścią" (FR-12.9) as a page; the report goes to the moderation queue of S7. */
 export default async function ReportPage({ searchParams }: PageProps<"/zglos">) {
-  const resolved = resolve(await searchParams);
+  const resolved = await resolve(await searchParams);
   if (!resolved) notFound();
 
   return (
