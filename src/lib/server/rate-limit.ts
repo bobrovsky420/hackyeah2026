@@ -1,5 +1,5 @@
 import "server-only";
-import { store } from "./store";
+import { memory } from "./store";
 
 /*
  * The route limit of FR-2.4 and 12.5: 10 route requests per minute per
@@ -21,12 +21,12 @@ export function clientAddress(headers: Headers): string {
 /** Counts a route request; false when the address used up its minute. */
 export function allowRouteRequest(address: string): boolean {
   const now = Date.now();
-  const recent = (store.rateHits.get(address) ?? []).filter((time) => now - time < WINDOW_MS);
+  const recent = (memory.rateHits.get(address) ?? []).filter((time) => now - time < WINDOW_MS);
   if (recent.length >= limit()) {
-    store.rateHits.set(address, recent);
+    memory.rateHits.set(address, recent);
     return false;
   }
   recent.push(now);
-  store.rateHits.set(address, recent);
+  memory.rateHits.set(address, recent);
   return true;
 }

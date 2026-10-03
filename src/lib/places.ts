@@ -1,21 +1,28 @@
+import { getGmina, gminy } from "@/lib/catalogue";
 import type { Gmina } from "@/lib/contracts/catalogue";
 import { t } from "@/lib/i18n";
-import { getGmina, gminy } from "@/lib/mock/data";
+import { ambiguousNames, formatPlaceLabel, type PlaceOption } from "@/lib/place-options";
 
-/** Names that occur twice in one powiat, such as the town and the rural gmina of Nowy Targ. */
-const ambiguous = new Set(
-  gminy
-    .map((g) => `${g.name}|${g.powiat}`)
-    .filter((key, index, all) => all.indexOf(key) !== index),
-);
+/*
+ * Place labels on the server. Client components get the gminas as props
+ * (placeOptions) and label them with src/lib/place-options.ts.
+ */
+
+let ambiguous: { list: Gmina[]; names: Set<string> } | undefined;
+
+function ambiguousOf(list: Gmina[]): Set<string> {
+  if (ambiguous?.list !== list) ambiguous = { list, names: ambiguousNames(list) };
+  return ambiguous.names;
+}
 
 /** "Laskowa, powiat limanowski"; adds the kind of gmina only where the name is ambiguous. */
 export function placeLabel(gmina: Gmina): string {
-  if (gmina.name === gmina.powiat) return t("place.label.city", { name: gmina.name });
-  if (ambiguous.has(`${gmina.name}|${gmina.powiat}`)) {
-    return t("place.label.withKind", { name: gmina.name, kind: gmina.kind, powiat: gmina.powiat });
-  }
-  return t("place.label", { name: gmina.name, powiat: gmina.powiat });
+  return formatPlaceLabel(gmina, ambiguousOf(gminy()));
+}
+
+/** The 183 gminas of Małopolska for the picker, without the centroids. */
+export function placeOptions(): PlaceOption[] {
+  return gminy().map(({ terc, name, powiat, kind }) => ({ terc, name, powiat, kind }));
 }
 
 /** The place of a route or a need as a label, "cała Małopolska" when none was chosen. */

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { InfoPage, InfoSection } from "@/components/info/info-page";
 import { t } from "@/lib/i18n";
-import { ropsDepartment } from "@/lib/mock/contacts";
+import { ropsDepartment } from "@/lib/catalogue";
 
 export const metadata: Metadata = { title: t("privacy.meta.title") };
 
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
       </InfoSection>
       <InfoSection id="kontakt" title={t("privacy.contact.title")}>
         <p>
-          {t("privacy.contact.p1")} <a href={`mailto:${ropsDepartment.email}`}>{ropsDepartment.email}</a>.
+          {t("privacy.contact.p1")} <a href={`mailto:${ropsDepartment().email}`}>{ropsDepartment().email}</a>.
         </p>
       </InfoSection>
     </InfoPage>

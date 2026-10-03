@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InfoPage, InfoSection } from "@/components/info/info-page";
 import { t } from "@/lib/i18n";
-import { ropsDepartment } from "@/lib/mock/contacts";
+import { ropsDepartment } from "@/lib/catalogue";
 
 export const metadata: Metadata = { title: t("a11y.meta.title") };
 
@@ -75,16 +75,16 @@ export default function AccessibilityStatementPage() {
       <InfoSection id="a11y-kontakt" title={t("a11y.contact.title")}>
         <ul className="grid list-disc gap-2 pl-6">
           <li>
-            {t("a11y.contact.person")} <span id="a11y-osoba">{ropsDepartment.name}</span>
+            {t("a11y.contact.person")} <span id="a11y-osoba">{ropsDepartment().name}</span>
           </li>
           <li>
             {t("a11y.contact.email")}{" "}
-            <a id="a11y-email" href={`mailto:${ropsDepartment.email}`}>
-              {ropsDepartment.email}
+            <a id="a11y-email" href={`mailto:${ropsDepartment().email}`}>
+              {ropsDepartment().email}
             </a>
           </li>
           <li>
-            {t("a11y.contact.phone")} <span id="a11y-telefon">{ropsDepartment.phone}</span>
+            {t("a11y.contact.phone")} <span id="a11y-telefon">{ropsDepartment().phone}</span>
           </li>
         </ul>
         <p>{t("a11y.contact.rights")}</p>

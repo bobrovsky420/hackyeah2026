@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import type { Innovation } from "@/lib/contracts/catalogue";
+import type { IndicatorKey } from "@/lib/contracts/map";
 import { t } from "@/lib/i18n";
 import { indicatorLabel, targetGroupLabel } from "@/lib/labels";
-import { indicatorFacts, indicatorValue, toMedian, type IndicatorKey } from "@/lib/mock/indicators";
 import type { GminaPanel, GminaRow, RankedGmina } from "@/lib/server/map";
-import { SUPPRESS_BELOW } from "@/lib/server/map";
+import { indicatorEntry, indicatorFacts, isSuppressed, toMedian } from "@/lib/server/map";
 import { formatNumber } from "@/lib/text";
 
 /* The parts of S4 around the map: legend, table, the ranked list and the gmina panel. */
@@ -22,8 +22,7 @@ export function medianText(ratio: number): string {
 
 /** Counts under five are not shown (FR-7.4). */
 export function countText(count: number): string {
-  if (count === 0) return "0";
-  return count < SUPPRESS_BELOW ? t("map.suppressed") : String(count);
+  return isSuppressed(count) ? t("map.suppressed") : String(count);
 }
 
 function valueText(key: IndicatorKey, value: number): string {
@@ -33,14 +32,15 @@ function valueText(key: IndicatorKey, value: number): string {
 export function MapLegend({ indicator, breaks, colors }: { indicator: IndicatorKey; breaks: number[]; colors: string[] }) {
   const facts = indicatorFacts(indicator);
   const label = indicatorLabel(indicator);
-  const limits = [facts.min, ...breaks, facts.max];
+  // Without any value (min and max null) the legend keeps only "brak danych".
+  const limits = facts.min !== null && facts.max !== null && breaks.length > 0 ? [facts.min, ...breaks, facts.max] : null;
   return (
     <div className="grid gap-2">
       <p className="font-bold">
-        {t("map.legend.title", { name: label.name, unit: label.unit, year: facts.year })}
+        {t("map.legend.title", { name: label.name, unit: label.unit, year: facts.year ?? "" })}
       </p>
       <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
-        {colors.map((color, index) => (
+        {limits && colors.map((color, index) => (
           <li key={color} className="flex items-center gap-2">
             <span aria-hidden className="inline-block size-5 shrink-0 rounded-sm border border-border" style={{ backgroundColor: color }} />
             {t(index < colors.length - 1 ? "map.legend.range" : "map.legend.rangeLast", {
@@ -58,7 +58,7 @@ export function MapLegend({ indicator, breaks, colors }: { indicator: IndicatorK
           {t("map.legend.implementations")}
         </li>
       </ul>
-      <p>{t("map.legend.median", { median: formatNumber(facts.median), unit: label.unit })}</p>
+      {facts.median !== null && <p>{t("map.legend.median", { median: formatNumber(facts.median), unit: label.unit })}</p>}
     </div>
   );
 }
@@ -70,7 +70,7 @@ export function IndicatorNote({ indicator }: { indicator: IndicatorKey }) {
       <p>
         <span className="font-bold">{t("map.caveat")}</span> {indicatorLabel(indicator).caveat}
       </p>
-      <p>{t("map.attribution", { year: indicatorFacts(indicator).year })}</p>
+      <p>{t("map.attribution", { year: indicatorFacts(indicator).year ?? "" })}</p>
     </div>
   );
 }
@@ -222,14 +222,16 @@ export function GminaPanelView({ panel, innovationHref }: { panel: GminaPanel; i
         <h3 className="font-bold">{t("map.gmina.indicators")}</h3>
         <dl className="grid gap-2">
           {keys.map((key) => {
-            const value = indicatorValue(gmina.terc, key);
+            const entry = indicatorEntry(gmina.terc, key);
+            const ratio = entry && toMedian(entry.value, key);
             return (
               <div key={key}>
                 <dt>{indicatorLabel(key).name}</dt>
                 <dd className="font-bold">
-                  {value === null
+                  {entry === null
                     ? t("map.legend.noData")
-                    : `${valueText(key, value)} (${indicatorFacts(key).year}), ${medianText(toMedian(value, key))}`}
+                    : `${valueText(key, entry.value)} (${entry.year})${ratio === null ? "" : `, ${medianText(ratio)}`}`}
+                  {entry?.flagText && <span className="block font-normal text-muted-foreground">{entry.flagText}</span>}
                 </dd>
               </div>
             );

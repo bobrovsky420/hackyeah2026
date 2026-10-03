@@ -1,0 +1,227 @@
+# Banned words in generated text (specification FR-12.10, E1 of 3.6, 11 rule 6
+# and 13.2). src/server/route/safety.ts checks every text a model writes for
+# the reader (the need summary that titles the route, from the gate and from
+# stage 1; the route's summary, next steps and "Dlaczego ta ścieżka"; the
+# brief; the names of need clusters) against this list; a text with a hit is
+# dropped and replaced by its template of messages/pl.json, and the stage log
+# names the category, never the text. The evaluation harness runs the same
+# check on every generated string. Hand-written, committed to git.
+#
+# This list is about our words, never about the user's. It is never applied
+# to what a person types: people say "alkoholik", "kaleka" or "żule pod
+# sklepem" in everyday speech, and such a word alone never declines,
+# redirects or slows down a request. The
+# gate judges the purpose of a text (prompts/screen.md), and the models
+# restate the need in people-first words.
+#
+# Polish plurals of persons change the stem ("alkoholik", "alkoholicy";
+# "pijak", "pijacy"; "wariat", "wariaci"), so a prefix does not cover them:
+# list the plural forms too.
+#
+# Syntax of an entry: one or more words separated by spaces; each word must
+# match one word of the text, in order and next to each other, compared in
+# lower case. A word ending in * matches every word that starts with it
+# (all inflected forms); a word without * matches only that exact form. Use
+# the * only where no ordinary word starts the same way (for example not
+# "żul*", which would also match "Żuławy"; list the forms instead).
+#
+# The list is a draft: the lawyer reviews and completes it (FR-12.10). It
+# errs on the side of dropping model text, because a dropped text only
+# costs a templated sentence.
+#
+# For the lawyer's review (open points of this draft):
+#   1. Proper names are caught too: "Anonimowi Alkoholicy", "Szpital dla
+#      Nerwowo i Psychicznie Chorych" in Rybnik (a catalogue organisation).
+#      A model sentence naming them becomes its template; the names still
+#      show where the app prints them from the data. Accept, or ask for an
+#      allowed-names list.
+#   2. "przedawkowa*" also drops "zapobieganie przedawkowaniom", a harm
+#      reduction topic of addiction routes; narrow it to method phrases?
+#   3. "dysfunkcyjn*" and "patologiczn*" are everyday social-work jargon
+#      ("rodzina dysfunkcyjna", "hazard patologiczny"); kept, because the
+#      people-first form costs nothing in our own text.
+owner: "the team's lawyer"
+status: "szkic przygotowany przez asystenta AI, do przeglądu"
+date: "2026-10-03"
+reviewer: null
+
+categories:
+  # Stigmatising labels for people and groups (E1). The people-first forms
+  # to use instead: "osoba z niepełnosprawnością intelektualną", "osoba
+  # w kryzysie bezdomności", "osoba uzależniona od alkoholu", "osoba
+  # w kryzysie psychicznym", "osoba poruszająca się na wózku".
+  stigmatising:
+    - "upośledz*"
+    - "niedorozwinię*"
+    - "niedorozwój"
+    - "opóźnion* umysłowo"
+    - "umysłowo chor*"
+    - "psychicznie chor*"
+    - "chor* psychicznie"
+    - "debil*"
+    - "idiot*"
+    - "kretyn*"
+    - "imbecyl*"
+    - "kaleka"
+    - "kaleki"
+    - "kalek"
+    - "kalekę"
+    - "kaleką"
+    - "kalekom"
+    - "kalekami"
+    - "kalece"
+    - "inwalida"
+    - "inwalidy"
+    - "inwalidę"
+    - "inwalidą"
+    - "inwalidzie"
+    - "inwalidzi"
+    - "inwalidów"
+    - "inwalidom"
+    - "inwalidami"
+    - "głuchoniem*"
+    - "przykut* do wózka"
+    - "cierpi* na autyzm"
+    - "autyk"
+    - "autyka"
+    - "autykiem"
+    - "autycy"
+    - "autyków"
+    - "autykom"
+    - "autykami"
+    - "wariat*"
+    - "wariaci"
+    - "psychol"
+    - "psychola"
+    - "psycholem"
+    - "psychole"
+    - "psycholi"
+    - "świr"
+    - "świra"
+    - "świrem"
+    - "świry"
+    - "świrów"
+    - "menel*"
+    - "żul"
+    - "żula"
+    - "żulowi"
+    - "żulem"
+    - "żule"
+    - "żuli"
+    - "żulom"
+    - "żulami"
+    - "bezdomniak*"
+    - "bezdomniacy"
+    - "lump"
+    - "lumpa"
+    - "lumpem"
+    - "lumpy"
+    - "lumpów"
+    - "lumpom"
+    - "lumpami"
+    - "pijak*"
+    - "pijacy"
+    - "pijaczk*"
+    - "pijaczyn*"
+    - "alkoholik*"
+    - "alkoholicy"
+    - "alkoholicz*"
+    - "ćpun*"
+    - "narkoman"
+    - "narkomana"
+    - "narkomanowi"
+    - "narkomanem"
+    - "narkomanie"
+    - "narkomani"
+    - "narkomanów"
+    - "narkomanom"
+    - "narkomanami"
+    - "narkomank*"
+    - "patologiczn*"
+    - "patola"
+    - "patus*"
+    - "margines* społeczn*"
+    - "aspołeczn*"
+    - "dysfunkcyjn*"
+    - "nieudaczni*"
+    - "roszczeniow*"
+    - "nielegaln* imigran*"
+    - "nielegaln* migran*"
+    - "cygan*"
+    - "murzyn*"
+    - "ciapat*"
+    - "ciapaci"
+    - "pedał"
+    - "pedały"
+    - "pedałów"
+    - "staruch*"
+    - "starcy"
+    - "starców"
+    - "moher*"
+    - "dziadostw*"
+    - "sam sobie winien"
+    - "sama sobie winna"
+    - "sami sobie winni"
+    - "na własne życzenie"
+
+  # Sensational and dramatising words (FR-12.10: no sensational or blaming
+  # language), which also break the plain register of section 11.
+  sensational:
+    - "tragedi*"
+    - "tragiczn*"
+    - "dramatyczn*"
+    - "szokując*"
+    - "wstrząsając*"
+    - "zatrważając*"
+    - "przerażając*"
+    - "horror*"
+    - "koszmar*"
+    - "katastrof*"
+    - "plaga"
+    - "plagą"
+    - "plagi"
+    - "epidemi* samobójstw"
+    - "fal* samobójstw"
+    - "bestialsk*"
+    - "zwyrodnial*"
+    - "dramat"
+    - "dramatu"
+    - "dramatem"
+
+  # Suicide and self-harm: methods, means and framing the safe-messaging
+  # guidance rules out (FR-12.10, 14.7.3): no method, no means, no
+  # "popełnić" (the crime framing), no "udane" or "nieudane".
+  self_harm:
+    - "popełni* samobójstw*"
+    - "popełnieni* samobójstw*"
+    - "udan* samobójstw*"
+    - "nieudan* samobójstw*"
+    - "udan* prób* samobój*"
+    - "nieudan* prób* samobój*"
+    - "skuteczn* samobójstw*"
+    - "metod* samobój*"
+    - "sposob* samobój*"
+    - "sposób samobój*"
+    - "sposób odebrania"
+    - "powiesi*"
+    - "powiesz*"
+    - "powieszeni*"
+    - "wiesza się"
+    - "pętl* na szyi"
+    - "podci* żył*"
+    - "podcina* żył*"
+    - "cięci* się"
+    - "ciąć się"
+    - "tnie się"
+    - "żyletk*"
+    - "brzytw*"
+    - "przedawkowa*"
+    - "otru*"
+    - "trutk*"
+    - "skok* z mostu"
+    - "skocz* z mostu"
+    - "skok* z dachu"
+    - "skocz* z dachu"
+    - "rzuci* się pod"
+    - "pod pociąg"
+    - "zastrzeli*"

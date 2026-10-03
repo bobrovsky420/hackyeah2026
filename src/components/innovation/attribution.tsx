@@ -6,7 +6,8 @@ import type { Innovation } from "@/lib/contracts/catalogue";
 /**
  * The attribution line of FR-1.8, with the source entry and the licence
  * linked (the CC BY deed, or the MIIS terms), followed everywhere by the
- * same prototype note.
+ * same prototype note. A partner record without a web page names its
+ * source unlinked.
  */
 export function Attribution({ item }: { item: Innovation }) {
   const date = retrievedDate(item);
@@ -15,7 +16,8 @@ export function Attribution({ item }: { item: Innovation }) {
     <div className="grid gap-1 border-t border-border pt-3 text-[0.9rem] text-muted-foreground">
       <p>
         {t("attribution.source")} {item.title}
-        {item.organisation ? `, ${item.organisation}` : ""}. <a href={item.sourceUrl}>{sourceName(item.source)}</a>,{" "}
+        {item.organisation ? `, ${item.organisation}` : ""}.{" "}
+        {item.sourceUrl ? <a href={item.sourceUrl}>{sourceName(item.source)}</a> : sourceName(item.source)},{" "}
         {licence.href ? <a href={licence.href}>{licence.label}</a> : licence.label}.
         {date && ` ${t("attribution.retrieved", { date })}`}
       </p>

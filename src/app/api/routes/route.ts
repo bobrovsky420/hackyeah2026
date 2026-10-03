@@ -1,15 +1,19 @@
+import { getGmina } from "@/lib/catalogue";
 import { isRoleCode, targetGroupCodes } from "@/lib/labels";
-import { getGmina } from "@/lib/mock/data";
 import { allowRouteRequest, clientAddress } from "@/lib/server/rate-limit";
-import { createRoute, simulateWork } from "@/lib/server/routes";
+import { createRoute } from "@/lib/server/routes";
 import { invalid, readJson, requiredText, stringList } from "@/lib/server/validate";
+import { PipelineUnavailableError } from "@/server/pipeline";
 
 /**
- * Mock of POST /api/routes (9.2): the rate limit of FR-2.4, the intake
- * validation of FR-2.1, then a route in the shape of 8.4; returns its id.
+ * POST /api/routes (9.2): the rate limit of FR-2.4, the intake validation
+ * of FR-2.1, then the route engine (gate, matching, composition); returns
+ * the new route's id. 503 with `{fallback: "cache"}` when the model failed
+ * at every provider and no cached route exists.
  */
 export async function POST(request: Request) {
-  if (!allowRouteRequest(clientAddress(request.headers))) {
+  const client = clientAddress(request.headers);
+  if (!allowRouteRequest(client)) {
     return Response.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": "60" } });
   }
   const body = await readJson(request);
@@ -20,7 +24,13 @@ export async function POST(request: Request) {
   const role = isRoleCode(body.role) ? body.role : null;
   const targetGroups = stringList(body.target_groups, targetGroupCodes);
 
-  await simulateWork();
-  const route = createRoute({ problemText, placeTerc, role, targetGroups });
-  return Response.json({ id: route.id, mode: route.mode });
+  try {
+    const route = await createRoute({ problemText, placeTerc, role, targetGroups, client });
+    return Response.json({ id: route.id, mode: route.mode });
+  } catch (error) {
+    if (error instanceof PipelineUnavailableError) {
+      return Response.json({ error: "unavailable", fallback: "cache" }, { status: 503 });
+    }
+    throw error;
+  }
 }

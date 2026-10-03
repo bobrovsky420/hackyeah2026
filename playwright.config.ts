@@ -36,9 +36,21 @@ export default defineConfig({
     ? undefined
     : {
         command: `npx next build && npx next start --port ${PORT}`,
-        // A production server without ROPS_TOKEN keeps the console locked; the
-        // tests create many routes from one address, above the limit of FR-2.4.
-        env: { ROPS_TOKEN: CONSOLE_TOKEN, RATE_LIMIT_ROUTES_PER_MINUTE: "1000" },
+        // A production server without ROPS_TOKEN keeps the console locked. The
+        // journeys make no model calls: the canned route engine answers routes,
+        // and the gate of the forms reads an empty replay recording, so it takes
+        // its deterministic path. They send many requests from one address, above
+        // the limits of FR-2.4, FR-6.4 and FR-12.14.
+        env: {
+          ROPS_TOKEN: CONSOLE_TOKEN,
+          ROUTE_ENGINE: "canned",
+          LLM_PROVIDER: "replay",
+          LLM_REPLAY_DIR: ".local/playwright-replay",
+          RATE_LIMIT_ROUTES_PER_MINUTE: "1000",
+          GATE_REPEAT_LIMIT: "1000",
+          ABUSE_LIMIT_CONTACTS_PER_DAY: "1000",
+          ABUSE_LIMIT_READINESS_PER_DAY: "1000",
+        },
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 300_000,
