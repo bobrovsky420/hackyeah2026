@@ -28,7 +28,7 @@ test("J1: the seniors example leads to a route with three solutions", async ({ p
 
   await page.getByRole("link", { name: "Zobacz szczegóły" }).first().click();
   await expect(page.getByRole("heading", { level: 1, name: "Kapsuła czasu - recepta na samotność" })).toBeVisible();
-  await page.getByRole("link", { name: "Wróć do drogi" }).click();
+  await page.getByRole("link", { name: "Wróć do listy rozwiązań" }).click();
   await expect(heading).toBeVisible();
 
   await page.getByRole("button", { name: "Tak", exact: true }).click();

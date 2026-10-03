@@ -102,7 +102,7 @@ test("FR-8.2: the applicant type re-selects the paths on the route", async ({ pa
 test("FR-3.5: Policz ponownie runs the route again", async ({ page }) => {
   await page.goto("/droga/przyklad-seniorzy");
   await page.getByRole("button", { name: "Policz ponownie" }).click();
-  await expect(page.getByText("Liczymy drogę od nowa.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Szukamy rozwiązań od nowa.", { exact: false })).toBeVisible();
   await expect(page).toHaveURL(/\/droga\/rt-/, { timeout: 30_000 });
   await expect(page.getByRole("heading", { level: 1, name: /Samotni seniorzy/ })).toBeVisible();
 });
@@ -320,7 +320,7 @@ test("module VI: a verified innovation with a film shows on the route at once, a
   await expect(page.getByRole("link", { name: "Film o rozwiązaniu" })).toHaveAttribute("href", "https://www.youtube.com/watch?v=e2e");
 
   await page.goto("/rops/innowacje/inn-nat-pomosty");
-  await page.getByRole("radio", { name: "Ukryj w drogach i na stronie rozwiązania" }).check();
+  await page.getByRole("radio", { name: "Ukryj w wynikach wyszukiwania i na stronie rozwiązania" }).check();
   await page.getByRole("button", { name: "Zapisz", exact: true }).click();
   await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
   await page.goto("/droga/przyklad-mlodziez");
