@@ -18,7 +18,10 @@ Exit 0 when the release is installed (now or before), 1 on any failure.
 """
 import argparse, datetime, hashlib, json, os, re, subprocess, sys, urllib.error, urllib.request
 
+from dotenv import load_dotenv
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 DEFAULT_REPO = "bobrovsky420/hackyeah2026"
 RELEASE = re.compile(r"^\d+\.\d+\.\d+$")
 

@@ -19,7 +19,9 @@ challenge, the team and the decisions made so far are in
   repository root; packages are pinned in `requirements.txt`. The three
   embedding scripts (`embedding-probe.py`, `build-index-vectors.py`,
   `embedding-service.py`) run with `.venv-embedding/Scripts/python`,
-  pinned in `requirements-embedding.txt`.
+  pinned in `requirements-embedding.txt`. A script that reads variables
+  loads `.env.dev` with `load_dotenv` right after `ROOT`, like the app a
+  variable set in the environment wins, and takes no `--env` option.
 - The catalogue data flows raw snapshot (`.local/raw/`) to
   `.local/pipeline/sources/` (parser) to `.local/pipeline/derived/`
   (extraction workers) to `data/innovations/` (build). `data/` holds only

@@ -18,8 +18,10 @@ into docs/model-evaluation/ with the date in the name.
 import argparse, glob, json, os, sys, time, urllib.request
 
 import numpy as np
+from dotenv import load_dotenv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 OLLAMA = "http://localhost:11434/api/embed"
 QUERY_PREFIX = {
     "qwen3-embedding": "Instruct: Given a description of a social problem, retrieve social innovations that address it\nQuery: ",

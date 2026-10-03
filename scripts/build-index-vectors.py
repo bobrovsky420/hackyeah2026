@@ -16,8 +16,10 @@ Usage (from the repository root, with the embedding environment):
 import argparse, glob, json, os, sys, time
 
 import numpy as np
+from dotenv import load_dotenv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 INNOVATIONS = os.path.join(ROOT, "data", "innovations")
 OUT = os.path.join(ROOT, "data", "index-vectors.json")
 DEFAULT_MODEL = "OPI-PIB/PolDense-400M"

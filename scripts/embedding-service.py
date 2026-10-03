@@ -26,8 +26,10 @@ import argparse, json, logging, os, sys, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import numpy as np
+from dotenv import load_dotenv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
 VECTORS = os.path.join(ROOT, "data", "index-vectors.json")
 DEFAULT_MODEL = "OPI-PIB/PolDense-400M"
 PREFIX = {"query": "[query]: ", "passage": ""}
