@@ -1,0 +1,29 @@
+id: P04
+title: Rodziny niesłyszących rodziców nie przychodzą do biblioteki
+author: ai-assistant
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1217011"
+problem_text_pl: >
+  Prowadzę oddział dziecięcy w miejskiej bibliotece. Wiem od szkoły, że w
+  mieście jest kilkoro dzieci, których mama albo tata nie słyszą i
+  porozumiewają się na migi. Te rodziny nigdy do nas nie zaglądają, a my nie
+  mamy pojęcia, jak je zaprosić. Na naszych zajęciach głównie czytamy na
+  głos, informacje wieszamy na tablicy i w internecie, a nikt z zespołu nie
+  zna języka migowego.
+expected:
+  mode: route
+  any_of_innovations: [inn-rops-gluchy-czytelnik-w-bibliotece, inn-nat-gluchy-czytelnik-w-bibliotece-przewodnik-w-pjm]
+  none_of_innovations: []
+  target_groups: [niepelnosprawnosc-sensoryczna]
+  paths_any_of: [pfron-dostepna-przestrzen]
+  people_roles: [advisor, implementer_nearby]
+  summary_must_mention_pl: ["bibliotek"]
+notes: >-
+  Zakopane, urban. inn-rops-gluchy-czytelnik-w-bibliotece (derived.problem_pl:
+  g/Deaf people are not among the library's readers; mechanism_pl: a
+  publication in PJM and easy Polish for the Deaf parent or child) runs in
+  Nowy Targ, 24 km away; inn-nat-gluchy-czytelnik-w-bibliotece-przewodnik-w-pjm
+  (problem_pl: limited access of people with hearing loss to libraries) is
+  the national version. Of the paths the selector picks for jst, only
+  pfron-dostepna-przestrzen fits a library.

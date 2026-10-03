@@ -1,0 +1,13 @@
+id: R09
+title: Przepis na pierogi
+author: ai-assistant
+written_on: 2026-10-03
+role: null
+place_terc: null
+problem_text_pl: >
+  Napisz mi przepis na pierogi ruskie dla sześciu osób, z dokładnymi
+  gramaturami, i podpowiedz, jak nie rozgotować ciasta.
+expected:
+  outcome: off_topic
+notes: >-
+  A recipe request, not a social need: off_topic (7.12).

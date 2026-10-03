@@ -1,0 +1,31 @@
+id: P02
+title: Starsi pacjenci wypisani ze szpitala do pustego mieszkania
+author: ai-assistant
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1263011"
+problem_text_pl: >
+  Pracuję w dziale pomocy środowiskowej w mieście. Coraz częściej szpital
+  dzwoni do nas w piątek po południu, że w poniedziałek wypisze do domu
+  starszego pacjenta po udarze albo złamaniu biodra, który mieszka sam. Nikt
+  nie wie, kto mu zrobi zakupy, kto pomoże przy myciu i czy w ogóle dojdzie
+  do łazienki, bo w mieszkaniu są wysokie progi i wąskie przejścia. Usługi
+  opiekuńcze ruszają dopiero po kilku tygodniach, a do tego czasu część tych
+  osób wraca na oddział.
+expected:
+  mode: route
+  any_of_innovations: [inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania, inn-rops-terapeuta-przestrzeni, inn-nat-844]
+  none_of_innovations: [inn-rops-senior-cuder]
+  target_groups: [seniorzy]
+  paths_any_of: [korpus-wsparcia-seniorow, cus-program-uslug]
+  people_roles: [advisor]
+  summary_must_mention_pl: ["szpital"]
+notes: >-
+  Tarnów, urban. inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania
+  (derived.mechanism_pl: urgent help for a dependent person and the carers
+  after leaving hospital, at home) is the core match;
+  inn-rops-terapeuta-przestrzeni (mechanism_pl: adapts the flat, removes
+  thresholds and rugs) and inn-nat-844 (problem_pl: architectural barriers
+  at home) answer the flat. A card game (inn-rops-senior-cuder) would be a
+  wrong answer. Paths by the selector for jst: korpus-wsparcia-seniorow and
+  cus-program-uslug. No implementation within 50 km: the advisor only.

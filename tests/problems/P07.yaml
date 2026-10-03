@@ -1,0 +1,30 @@
+id: P07
+title: Mężczyźni bez dachu nad głową w gminie wiejskiej
+author: ai-assistant
+written_on: 2026-10-03
+role: urzad-gminy
+place_terc: "1207082"
+problem_text_pl: >
+  Zgłaszam sprawę z naszej gminy. Mamy kilku mężczyzn, którzy od lat nie
+  mają własnego kąta: jeden nocuje w budynku gospodarczym u kuzyna, inny w
+  opuszczonym domu przy drodze. Nie mają gdzie się umyć ani wyprać ubrań.
+  Zimą dwóch trafia do noclegowni w mieście, ale szybko stamtąd uciekają i
+  wracają tutaj. Ośrodek pomocy wypłaca zasiłki, tylko że to niczego nie
+  zmienia. Chcielibyśmy pomóc im na miejscu, a nie odsyłać do dużego miasta.
+expected:
+  mode: route
+  any_of_innovations: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa, inn-rops-szlakiem-ludzi-bezdomnych]
+  none_of_innovations: []
+  target_groups: [bezdomnosc]
+  paths_any_of: [cus-program-uslug]
+  people_roles: [advisor]
+  summary_must_mention_pl: ["bezdomn"]
+notes: >-
+  Łukowica, rural. inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa
+  (derived.problem_pl: small rural gminas lack long-term solutions for
+  homelessness; mechanism_pl: uses the gmina's own resources instead of
+  shelters) is the core match; inn-rops-szlakiem-ludzi-bezdomnych
+  (problem_pl: poor hygiene of homeless people; a heated sanitary trailer)
+  answers the washing. Path by the selector for jst: cus-program-uslug. No
+  implementation in Małopolska: the advisor only. The summary names the
+  people "w kryzysie bezdomności" (E1), so the stem is "bezdomn".

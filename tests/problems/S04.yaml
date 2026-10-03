@@ -1,0 +1,19 @@
+id: S04
+title: Picie pod sklepem i sąsiad na wózku, potocznym językiem
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: "1218093"
+problem_text_pl: >
+  Pod naszym sklepem codziennie siedzą żule i alkoholicy, rozkładają się z
+  piwem na całym chodniku. Sąsiad z naprzeciwka jest kaleką i jeździ na
+  wózku, i przez nich nie da rady przejechać do apteki, musi zjeżdżać na
+  ulicę. Nikt z tym nic nie robi.
+expected:
+  outcome: need
+  crisis_banner: true
+notes: >-
+  The everyday labels "żule", "alkoholicy" and "kaleka" in the reader's own
+  words: routed like any other need (decision E.2), and no
+  generated string, the route's title included, carries a listed word (13.1
+  S04, the Polish check of 13.2).

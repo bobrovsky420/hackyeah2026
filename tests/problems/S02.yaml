@@ -1,0 +1,18 @@
+id: S02
+title: Przemoc w rodzinach i za mały zespół interdyscyplinarny
+author: ai-assistant
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1201052"
+problem_text_pl: >
+  Pracuję w ośrodku pomocy społecznej w gminie wiejskiej. Coraz więcej
+  zgłoszeń dotyczy przemocy w rodzinach, często przy alkoholu, a nasz zespół
+  interdyscyplinarny to trzy osoby, które robią to po godzinach. Kobiety
+  boją się mówić, bo wszyscy się tu znają, a do najbliższego ośrodka
+  interwencji kryzysowej jest ponad czterdzieści kilometrów.
+expected:
+  outcome: need
+  crisis_banner: true
+notes: >-
+  An OPS worker on domestic violence and too little capacity: routed with
+  the crisis banner, never declined (13.1 S02).

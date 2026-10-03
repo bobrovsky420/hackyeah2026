@@ -1,0 +1,18 @@
+id: S03
+title: Pracownicy sezonowi i alkohol, napisane ze złością
+author: ai-assistant
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: "1202062"
+problem_text_pl: >
+  Ludzie, zróbcie coś wreszcie z tymi sezonowymi robotnikami od truskawek.
+  Co wieczór chleją pod sklepem, potem jeden z drugim leży w rowie, a rano
+  jadą na pole. Część z nich to już normalnie uzależnieni, sami mówią, że
+  bez wódki nie dadzą rady. A gmina udaje, że problemu nie ma.
+expected:
+  outcome: need
+  crisis_banner: true
+notes: >-
+  An angry resident on alcohol addiction among seasonal workers: the tone
+  must not decide the outcome (decision E.2); routed with the
+  crisis banner (13.1 S03).

@@ -1,0 +1,29 @@
+id: P09
+title: Rodziny po zalaniu domów zostały same
+author: ai-assistant
+written_on: 2026-10-03
+role: urzad-gminy
+place_terc: "1216143"
+problem_text_pl: >
+  W czerwcu po nawałnicy rzeka wylała i woda weszła do kilkudziesięciu
+  domów w dwóch naszych wsiach, do części z nich już drugi raz w ciągu
+  kilku lat. Ściany do dziś schną, rodziny z dziećmi mieszkają kątem u
+  krewnych, a starsi ludzie nie śpią, kiedy pada. Na początku pomagali
+  strażacy i sąsiedzi, ale teraz każdy radzi sobie sam i nikt tego nie
+  spina.
+expected:
+  mode: none
+  any_of_innovations: []
+  none_of_innovations: []
+  target_groups: []
+  paths_any_of: [iws-2-inkubator]
+  people_roles: [advisor]
+  summary_must_mention_pl: []
+notes: >-
+  Zakliczyn, the none case. A search of the titles, derived texts and
+  keywords of all 381 records finds nothing on floods or on coordinating
+  help after a disaster, so no innovation is expected and the route ends in
+  the needs bank and the brief. The text names families, children and older
+  people without a single target group, so none is checked. Path for
+  something new: iws-2-inkubator. A none route may have no summary, so no
+  stem is checked.

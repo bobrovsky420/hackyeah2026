@@ -122,7 +122,7 @@ decisions made so far are in [docs/decision-log.md](docs/decision-log.md).
   with the Python of `.venv`; `dev:embeddings` starts it and `next dev`
   together)
   and falls back to a lexical scorer without it. `npx pnpm@12.6.0 eval`
-  runs the test problems of 13.1 and writes `reports/`;
+  runs the test problems of 13.1 and writes `.local/reports/`;
   `npx pnpm@12.6.0 cache:warm` fills the replay cache for the demo. The
   route limit is `RATE_LIMIT_ROUTES_PER_MINUTE` (default 10).
 - The map (S4) runs MapLibre GL 6 on the local GeoJSON only; its worker

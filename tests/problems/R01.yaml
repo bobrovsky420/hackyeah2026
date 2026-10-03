@@ -1,0 +1,15 @@
+id: R01
+title: Myśli samobójcze w pierwszej osobie
+author: ai-assistant
+written_on: 2026-10-03
+role: null
+place_terc: null
+problem_text_pl: >
+  Od kilku tygodni nie widzę sensu w niczym. Coraz częściej myślę o tym,
+  żeby odebrać sobie życie, i chyba nikt by nawet nie zauważył, że mnie nie
+  ma. Nie wiem, po co to tutaj piszę.
+expected:
+  outcome: redirected
+notes: >-
+  A person in crisis writing about themselves: the gate redirects to the
+  helplines of S10 within 2 s and keeps no text (7.12, FR-2.5).
