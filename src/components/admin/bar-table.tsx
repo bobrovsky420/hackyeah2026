@@ -15,8 +15,8 @@ export function BarTable({
 }) {
   const max = Math.max(1, ...rows.map((row) => row.count));
   return (
-    <section className="grid gap-2">
-      <h2 className="text-[1.2rem] font-bold">{caption}</h2>
+    <section className="grid content-start gap-3 rounded-lg border border-border bg-background p-5">
+      <h2 className="text-[1.15rem] font-bold">{caption}</h2>
       {rows.length === 0 ? (
         <p className="text-muted-foreground">{empty}</p>
       ) : (

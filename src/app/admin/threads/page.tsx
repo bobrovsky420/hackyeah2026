@@ -25,13 +25,14 @@ export default async function AdminThreadsPage({ searchParams }: PageProps<"/adm
       <nav aria-label={t("admin.filter.label")}>
         <ul className="flex flex-wrap gap-x-5">
           <li>
-            <Link href="/rops/rozmowy" aria-current={!topic ? "page" : undefined} className="inline-flex min-h-11 items-center aria-[current=page]:font-bold">
+            <Link scroll={false} href="/rops/rozmowy" aria-current={!topic ? "page" : undefined} className="inline-flex min-h-11 items-center aria-[current=page]:font-bold">
               {t("admin.filter.all")}
             </Link>
           </li>
           {topicCodes.map((code) => (
             <li key={code}>
               <Link
+                scroll={false}
                 href={`/rops/rozmowy?temat=${code}`}
                 aria-current={topic === code ? "page" : undefined}
                 className="inline-flex min-h-11 items-center aria-[current=page]:font-bold"
