@@ -23,6 +23,15 @@ for (const size of sizes) {
         if (screen.console) await signIn(page, baseURL);
         await page.goto(screen.path);
         await page.evaluate(() => document.fonts.ready);
+        // The map loads and draws in a worker; on a phone the table comes first and no map loads.
+        if (screen.path.startsWith("/mapa")) {
+          const drawn = await page
+            .locator(".maplibregl-canvas")
+            .waitFor({ timeout: 8000 })
+            .then(() => true)
+            .catch(() => false);
+          if (drawn) await page.waitForTimeout(2500);
+        }
         await page.screenshot({ path: `${OUT}/${screen.name}-${size.name}.png`, fullPage: true });
       });
     }

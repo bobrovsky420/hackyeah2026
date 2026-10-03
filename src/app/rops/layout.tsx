@@ -5,12 +5,12 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
-import { isAuthenticated } from "@/lib/server/auth";
+import { consoleLocked, isAuthenticated } from "@/lib/server/auth";
 import { logout } from "./actions";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
-/** S7: the ROPS console behind the access code. */
+/** S7: the ROPS console behind the access code; locked on a server without one. */
 export default async function ConsoleLayout({ children }: LayoutProps<"/rops">) {
   if (!(await isAuthenticated())) {
     return (
@@ -22,7 +22,13 @@ export default async function ConsoleLayout({ children }: LayoutProps<"/rops">) 
           </h1>
           <p className="text-[1.1rem]">{t("console.login.lead")}</p>
         </header>
-        <LoginForm />
+        {consoleLocked() ? (
+          <Notice tone="warning" title={t("console.locked.title")} titleAs="h2">
+            <p>{t("console.locked.text")}</p>
+          </Notice>
+        ) : (
+          <LoginForm />
+        )}
       </div>
     );
   }

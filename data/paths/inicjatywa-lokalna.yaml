@@ -1,0 +1,28 @@
+id: inicjatywa-lokalna
+name_pl: "Inicjatywa lokalna"
+legal_basis_pl: "art. 19b-19h ustawy z dnia 24 kwietnia 2003 r. o działalności pożytku publicznego i o wolontariacie, t.j. Dz.U. 2025 poz. 1338, zm. Dz.U. 2026 poz. 1040"
+applicant_types: [mieszkancy, ngo]
+decides: jst
+purposes: [inicjatywa-mieszkancow]
+target_groups: [any]
+scope: lokalna
+amount_min_pln: null
+amount_max_pln: null
+amount_note_pl: "Mieszkańcy wnoszą wkład pracą społeczną, pieniędzmi lub rzeczami. Dziedziny, w których można złożyć wniosek, wymienia art. 19b ustawy. W Krakowie pula na 2026 r. wynosi 275 000 zł."
+timing:
+  kind: rolling
+  note_pl: "Tryb i kryteria określa uchwała rady gminy. Wniosek jest wnioskiem w rozumieniu Kodeksu postępowania administracyjnego. W Krakowie wnioski przyjmowane są w sposób ciągły."
+  calls: []
+decision_maker_pl: "Wójt, burmistrz lub prezydent miasta, oceniając celowość inicjatywy"
+steps_pl:
+  - "Sprawdź uchwałę rady gminy o trybie inicjatywy lokalnej."
+  - "Zbierz mieszkańców gotowych wnieść pracę, pieniądze lub rzeczy."
+  - "Złóż wniosek o realizację inicjatywy w urzędzie gminy."
+fit:
+  cost_bands: [low, medium, high, unknown]
+  roles: [mieszkaniec, organizacja-spoleczna]
+  boost_when_implementer_types: [osoba, ngo]
+source_url: "https://api.sejm.gov.pl/eli/acts/DU/2025/1338/text.pdf"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Wniosek składają mieszkańcy swojej gminy bezpośrednio albo przez organizację. Dane dla Krakowa pochodzą ze źródła pośredniego. Progi w Krakowie, 60 punktów i 8 tygodni, nie zostały potwierdzone."

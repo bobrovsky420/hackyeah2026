@@ -72,7 +72,7 @@ export function IntakeForm({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [draft, setDraft] = useState<Draft>({ problem: "", place: { text: "", terc: null }, role: "" });
   const [errors, setErrors] = useState<FormError[]>([]);
-  const [phase, setPhase] = useState<"form" | "waiting" | "failed">("form");
+  const [phase, setPhase] = useState<"form" | "waiting" | "failed" | "limited">("form");
   const [step, setStep] = useState(0);
   const [announcement, setAnnouncement] = useState("");
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -141,6 +141,13 @@ export function IntakeForm({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem_text: problem, place_terc: draft.place.terc, role: draft.role || null }),
       });
+      if (response.status === 429) {
+        timers.current.forEach((timer) => window.clearTimeout(timer));
+        setPhase("limited");
+        setAnnouncement("");
+        requestAnimationFrame(() => failedRef.current?.focus());
+        return;
+      }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const { id } = (await response.json()) as { id: string };
       await minimumWait;
@@ -227,6 +234,13 @@ export function IntakeForm({ children }: { children: ReactNode }) {
           <div ref={failedRef} tabIndex={-1}>
             <Notice tone="error" title={t("s1.failed.title")} titleAs="h2">
               <p>{t("s1.failed.text")}</p>
+            </Notice>
+          </div>
+        )}
+        {phase === "limited" && (
+          <div ref={failedRef} tabIndex={-1}>
+            <Notice tone="error" title={t("s1.limited.title")} titleAs="h2">
+              <p>{t("s1.limited.text")}</p>
             </Notice>
           </div>
         )}

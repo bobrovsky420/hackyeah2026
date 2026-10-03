@@ -4,9 +4,15 @@ import type { Page } from "@playwright/test";
 export const screens: { name: string; path: string; console?: boolean }[] = [
   { name: "s1-start", path: "/" },
   { name: "s2-droga", path: "/droga/przyklad-seniorzy" },
+  { name: "s2-przemoc", path: "/droga/przyklad-przemoc" },
+  { name: "s2-usuniete-dane", path: "/droga/przyklad-usuniete-dane" },
   { name: "s3-czesciowe", path: "/droga/przyklad-mlodziez" },
+  { name: "s3-zdrowie-psychiczne", path: "/droga/przyklad-zdrowie-psychiczne" },
   { name: "s3-brak", path: "/droga/przyklad-dzieci" },
+  { name: "s3-doprecyzowanie", path: "/droga/przyklad-doprecyzowanie" },
   { name: "s5-innowacja", path: "/innowacja/inn-nat-649?droga=przyklad-seniorzy" },
+  { name: "s5-miis", path: "/innowacja/inn-rops-senior-cuder" },
+  { name: "s6-fiszka", path: "/potrzeba/nd-przyklad-3/fiszka" },
   { name: "s9a-kontakt", path: "/kontakt?innowacja=inn-nat-649&droga=przyklad-seniorzy" },
   { name: "s9b-chce-pomoc", path: "/chce-pomoc" },
   { name: "s9c-zapisz-potrzebe", path: "/zapisz-potrzebe?droga=przyklad-mlodziez" },
@@ -19,6 +25,10 @@ export const screens: { name: string; path: string; console?: boolean }[] = [
   { name: "s8-prywatnosc", path: "/prywatnosc" },
   { name: "s8-dostepnosc", path: "/dostepnosc" },
   { name: "s4-mapa", path: "/mapa" },
+  { name: "s4-tabela", path: "/mapa?widok=tabela" },
+  { name: "s4-innowacja", path: "/mapa?innowacja=inn-nat-649" },
+  { name: "s4-gmina", path: "/mapa?gmina=1214053" },
+  { name: "s12-zglos", path: "/zglos?droga=przyklad-seniorzy" },
   { name: "404", path: "/nie-ma-takiej-strony" },
   { name: "s7-logowanie", path: "/rops" },
   { name: "s7-moderacja", path: "/rops", console: true },
@@ -28,7 +38,10 @@ export const screens: { name: string; path: string; console?: boolean }[] = [
   { name: "s7-miary", path: "/rops/miary", console: true },
 ];
 
-/** The console's access code: ROPS_TOKEN, or the prototype's default. */
+/**
+ * The console's access code: ROPS_TOKEN, or the prototype's code. The test
+ * server gets it from the Playwright config; a reused server must run with it.
+ */
 export const CONSOLE_TOKEN = process.env.ROPS_TOKEN || "rops-prototyp";
 
 /** Signs the page in to the ROPS console by setting its cookie. */

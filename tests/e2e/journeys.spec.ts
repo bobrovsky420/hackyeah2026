@@ -60,6 +60,50 @@ test("J2: a need without a proven solution goes to the needs bank", async ({ pag
   await page.getByRole("checkbox", { name: /przechowywał opis potrzeby/ }).check();
   await page.getByRole("button", { name: "Zapisz potrzebę" }).click();
   await expect(page.getByText("Zapisaliśmy potrzebę w banku potrzeb")).toBeVisible();
+
+  // S6 (FR-5.5): the brief, its sections in the order of the incubator's application form.
+  await page.getByRole("link", { name: "Przygotuj fiszkę dla inkubatora" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Brakuje transportu do przychodni dla osób z naszej wsi" })).toBeFocused();
+  await expect(page.locator("article h2")).toHaveText([
+    "Problem",
+    "Kogo dotyczy i skala",
+    "Co już istnieje",
+    "Luka",
+    "Kierunek rozwiązania (hipoteza)",
+    "Potencjalni partnerzy",
+    "Możliwe ścieżki",
+    "Źródła",
+  ]);
+  await expect(page.getByText("Czy podobne rozwiązania są stosowane w Polsce albo na świecie?")).toBeVisible();
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("button", { name: "Pobierz jako plik tekstowy" }).click(),
+  ]);
+  expect(download.suggestedFilename()).toMatch(/^fiszka-nd-.+\.md$/);
+});
+
+test("J4: an innovation leads to the gminas where it is most needed", async ({ page }) => {
+  await page.goto("/innowacja/inn-nat-649");
+  await page.getByRole("link", { name: "Gdzie jest najbardziej potrzebna" }).click();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Gdzie „Kapsuła czasu - recepta na samotność” jest najbardziej potrzebna" }),
+  ).toBeVisible();
+  await expect(page.getByText("Wskaźnik potrzeby: Osoby w wieku 65 lat i więcej.")).toBeVisible();
+  const proposals = page.getByRole("link", { name: /^Zaproponuj gminie / });
+  await expect(proposals).toHaveCount(10);
+  const gmina = ((await proposals.first().textContent()) ?? "").replace("Zaproponuj gminie ", "");
+  await proposals.first().click();
+  await expect(page.getByRole("heading", { level: 1, name: "Poproś o kontakt" })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Wiadomość" })).toHaveValue(new RegExp(`gmina ${gmina} rozważyła`));
+});
+
+test("J5: a gmina shows its indicators, what runs there and the gminas nearby", async ({ page }) => {
+  await page.goto("/mapa?gmina=1214053");
+  await expect(page.getByRole("heading", { level: 2, name: "Proszowice" })).toBeFocused();
+  await expect(page.getByText(/na 10 tys\. mieszkańców \(2024\)/).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Mobilna pomoc terapeutyczna" })).toBeVisible();
+  await page.getByRole("link", { name: "Połącz z gminą, która już to wdrożyła" }).first().click();
+  await expect(page.getByText(/skontaktuje Cię z gminą/)).toBeVisible();
 });
 
 test("J10: a sentence about a crisis shows human help, not innovations", async ({ page }) => {
@@ -212,12 +256,12 @@ test("a saved need is rejected with a reason in the console, and its status is s
   await page.getByRole("link", { name: "Potrzeby", exact: true }).click();
   const need = page.getByRole("row").filter({ hasText: text });
   await expect(need).toContainText("Odrzucona");
-  await need.getByLabel("Status").selectOption("przejrzana");
+  await need.getByLabel("Status").selectOption("w-analizie");
   await need.getByRole("textbox", { name: "Notatka" }).fill(note);
   await need.getByRole("button", { name: "Zapisz" }).click();
   await expect(need.getByRole("status")).toHaveText("Zapisano.");
-  await expect(need.getByLabel("Status")).toHaveValue("przejrzana");
+  await expect(need.getByLabel("Status")).toHaveValue("w-analizie");
   await page.reload();
-  await expect(need.getByLabel("Status")).toHaveValue("przejrzana");
+  await expect(need.getByLabel("Status")).toHaveValue("w-analizie");
   await expect(need.getByRole("textbox", { name: "Notatka" })).toHaveValue(note);
 });

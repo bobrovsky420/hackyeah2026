@@ -61,6 +61,7 @@ const approvedKeys = {
   contact: "console.done.contact",
   readiness: "console.done.readiness",
   declined: "console.done.declined",
+  report: "console.done.report",
 } as const satisfies Record<ModerationLogEntry["target_type"], MessageKey>;
 
 /** The entry was decided or removed meanwhile: refresh the queue and say so. */
@@ -107,6 +108,11 @@ export async function moderate(_state: ConsoleFormState, form: FormData): Promis
     const action = approved ? "zweryfikowane" : "odrzucone";
     entry.verification = { status: action, reviewer: REVIEWER_NAME, decided_at: decidedAt };
     log({ target_type: "readiness", target_id: id, action, status: null, reason_pl: reason, note_pl: note });
+  } else if (kind === "report") {
+    const report = store.reports.find((item) => item.id === id);
+    if (!report || report.moderation.status !== "do-weryfikacji") return gone();
+    report.moderation = { status: decision, reviewer: REVIEWER_NAME, decided_at: decidedAt, reason_pl: reason };
+    log({ target_type: "report", target_id: id, action: decision, status: null, reason_pl: reason, note_pl: note });
   } else {
     if (!store.routes.has(id) || store.reviewedDeclines.has(id)) return gone();
     store.reviewedDeclines.add(id);

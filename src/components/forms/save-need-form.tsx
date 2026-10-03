@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox, RadioList } from "@/components/ui/choice";
 import { ErrorSummary, type FormError } from "@/components/ui/error-summary";
 import { describedBy, Field, FieldError, Hint, Label, TextArea, TextInput } from "@/components/ui/field";
@@ -10,6 +10,7 @@ import { Notice } from "@/components/ui/notice";
 import type { RoleCode } from "@/lib/contracts/catalogue";
 import { t } from "@/lib/i18n";
 import { isRoleCode, roleCodes, roleLabel } from "@/lib/labels";
+import { pluralPl } from "@/lib/text";
 import { FormFailed } from "./form-failed";
 import { PlaceCombobox, type PlaceValue } from "./place-combobox";
 import { EMAIL_PATTERN, useSubmitForm } from "./use-submit-form";
@@ -30,7 +31,7 @@ export function SaveNeedForm({
   const [email, setEmail] = useState("");
   const [consentStore, setConsentStore] = useState(false);
   const [consentPublish, setConsentPublish] = useState(false);
-  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/potrzeby");
+  const { errors, status, result, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/potrzeby");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,11 +53,35 @@ export function SaveNeedForm({
   }
 
   if (status === "sent") {
+    const needId = typeof result?.id === "string" ? result.id : null;
+    const removed = typeof result?.redactions === "number" ? result.redactions : 0;
     return (
       <div ref={doneRef} tabIndex={-1} className="grid gap-4">
         <Notice tone="success" title={t("s9c.done.title")} titleAs="h2">
           <p>{t("s3.bank.text")}</p>
+          {removed > 0 && (
+            <p>
+              {t("route.redacted.text", {
+                count: removed,
+                unit: pluralPl(removed, {
+                  one: t("route.redacted.unit.one"),
+                  few: t("route.redacted.unit.few"),
+                  many: t("route.redacted.unit.many"),
+                }),
+              })}
+            </p>
+          )}
         </Notice>
+        {needId && (
+          <div className="grid gap-2">
+            <p>{t("s9c.done.briefLead")}</p>
+            <div>
+              <Link href={`/potrzeba/${needId}/fiszka`} className={buttonVariants({ variant: "secondary" })}>
+                {t("s9c.done.brief")}
+              </Link>
+            </div>
+          </div>
+        )}
         {backHref && (
           <p>
             <Link href={backHref}>{t("forms.backToRoute")}</Link>

@@ -1,4 +1,5 @@
 import { defineConfig } from "@playwright/test";
+import { CONSOLE_TOKEN } from "./tests/e2e/screens";
 
 const PORT = 3100;
 const baseURL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`;
@@ -27,7 +28,7 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   projects: [
-    { name: "e2e", testMatch: /journeys\.spec\.ts/ },
+    { name: "e2e", testMatch: /(journeys|features)\.spec\.ts/ },
     { name: "a11y", testMatch: /accessibility\.spec\.ts/ },
     { name: "screenshots", testMatch: /screenshots\.spec\.ts/ },
   ],
@@ -35,6 +36,9 @@ export default defineConfig({
     ? undefined
     : {
         command: `npx next build && npx next start --port ${PORT}`,
+        // A production server without ROPS_TOKEN keeps the console locked; the
+        // tests create many routes from one address, above the limit of FR-2.4.
+        env: { ROPS_TOKEN: CONSOLE_TOKEN, RATE_LIMIT_ROUTES_PER_MINUTE: "1000" },
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 300_000,

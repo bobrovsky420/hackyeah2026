@@ -1,0 +1,1174 @@
+{
+ "source": {
+  "name": "GUS Bank Danych Lokalnych",
+  "url": "https://bdl.stat.gov.pl/api/v1/",
+  "licence": "CC BY 4.0",
+  "retrieved_at": "2026-10-03",
+  "unit_parent_id": "011200000000",
+  "unit_level": 6
+ },
+ "indicators": [
+  {
+   "key": "social-assistance",
+   "variable_id": 1548717,
+   "year": 2024,
+   "gminas_with_value": 182,
+   "median": 283.5,
+   "min": 30,
+   "max": 1074
+  },
+  {
+   "key": "ageing",
+   "variable_id": 634989,
+   "year": 2024,
+   "gminas_with_value": 182,
+   "median": 17.35,
+   "min": 11.3,
+   "max": 26.4
+  },
+  {
+   "key": "unemployment",
+   "variable_id": 79214,
+   "year": 2024,
+   "gminas_with_value": 182,
+   "median": 3.0,
+   "min": 0.9,
+   "max": 7.1
+  },
+  {
+   "key": "civic-density",
+   "variable_id": 288095,
+   "year": 2024,
+   "gminas_with_value": 182,
+   "median": 36.5,
+   "min": 16,
+   "max": 89
+  }
+ ],
+ "need_by_target_group": {
+  "seniorzy": [
+   "ageing"
+  ],
+  "ograniczona-mobilnosc": [
+   "ageing"
+  ],
+  "bezdomnosc": [
+   "social-assistance",
+   "unemployment"
+  ],
+  "rynek-pracy": [
+   "social-assistance",
+   "unemployment"
+  ],
+  "dzieci-mlodziez-rodziny": [
+   "social-assistance",
+   "unemployment"
+  ],
+  "default": [
+   "social-assistance"
+  ]
+ },
+ "values": {
+  "1201011": {
+   "social-assistance": 242,
+   "ageing": 22.1,
+   "unemployment": 2.0,
+   "civic-density": 47
+  },
+  "1201022": {
+   "social-assistance": 155,
+   "ageing": 16.6,
+   "unemployment": 1.3,
+   "civic-density": 33
+  },
+  "1201032": {
+   "social-assistance": 259,
+   "ageing": 19.7,
+   "unemployment": 1.0,
+   "civic-density": 42
+  },
+  "1201042": {
+   "social-assistance": 290,
+   "ageing": 14.9,
+   "unemployment": 1.4,
+   "civic-density": 31
+  },
+  "1201052": {
+   "social-assistance": 125,
+   "ageing": 14.7,
+   "unemployment": 1.2,
+   "civic-density": 57
+  },
+  "1201063": {
+   "social-assistance": 140,
+   "ageing": 15.5,
+   "unemployment": 1.2,
+   "civic-density": 30
+  },
+  "1201072": {
+   "social-assistance": 267,
+   "ageing": 15.6,
+   "unemployment": 1.5,
+   "civic-density": 32
+  },
+  "1201082": {
+   "social-assistance": 305,
+   "ageing": 15.5,
+   "unemployment": 0.9,
+   "civic-density": 37
+  },
+  "1201092": {
+   "social-assistance": 384,
+   "ageing": 16.1,
+   "unemployment": 1.3,
+   "civic-density": 36
+  },
+  "1202012": {
+   "social-assistance": 272,
+   "ageing": 17.9,
+   "unemployment": 3.6,
+   "civic-density": 30
+  },
+  "1202023": {
+   "social-assistance": 240,
+   "ageing": 19.1,
+   "unemployment": 3.4,
+   "civic-density": 47
+  },
+  "1202033": {
+   "social-assistance": 368,
+   "ageing": 17.0,
+   "unemployment": 2.5,
+   "civic-density": 21
+  },
+  "1202042": {
+   "social-assistance": 217,
+   "ageing": 16.8,
+   "unemployment": 2.6,
+   "civic-density": 42
+  },
+  "1202052": {
+   "social-assistance": 285,
+   "ageing": 15.4,
+   "unemployment": 2.6,
+   "civic-density": 37
+  },
+  "1202062": {
+   "social-assistance": 448,
+   "ageing": 15.7,
+   "unemployment": 1.5,
+   "civic-density": 27
+  },
+  "1202072": {
+   "social-assistance": 215,
+   "ageing": 19.2,
+   "unemployment": 2.5,
+   "civic-density": 52
+  },
+  "1203013": {
+   "social-assistance": 225,
+   "ageing": 20.7,
+   "unemployment": 2.6,
+   "civic-density": 38
+  },
+  "1203022": {
+   "social-assistance": 142,
+   "ageing": 20.4,
+   "unemployment": 2.9,
+   "civic-density": 37
+  },
+  "1203033": {
+   "social-assistance": 356,
+   "ageing": 25.3,
+   "unemployment": 4.1,
+   "civic-density": 39
+  },
+  "1203043": {
+   "social-assistance": 225,
+   "ageing": 21.7,
+   "unemployment": 3.1,
+   "civic-density": 30
+  },
+  "1203053": {
+   "social-assistance": 412,
+   "ageing": 22.8,
+   "unemployment": 3.8,
+   "civic-density": 41
+  },
+  "1204012": {
+   "social-assistance": 640,
+   "ageing": 18.7,
+   "unemployment": 4.5,
+   "civic-density": 49
+  },
+  "1204023": {
+   "social-assistance": 357,
+   "ageing": 18.6,
+   "unemployment": 6.1,
+   "civic-density": 31
+  },
+  "1204032": {
+   "social-assistance": 327,
+   "ageing": 23.1,
+   "unemployment": 3.6,
+   "civic-density": 61
+  },
+  "1204042": {
+   "social-assistance": 566,
+   "ageing": 19.7,
+   "unemployment": 6.7,
+   "civic-density": 43
+  },
+  "1204052": {
+   "social-assistance": 256,
+   "ageing": 17.3,
+   "unemployment": 5.8,
+   "civic-density": 33
+  },
+  "1204062": {
+   "social-assistance": 713,
+   "ageing": 16.1,
+   "unemployment": 5.5,
+   "civic-density": 31
+  },
+  "1204073": {
+   "social-assistance": 849,
+   "ageing": 17.4,
+   "unemployment": 7.1,
+   "civic-density": 35
+  },
+  "1205011": {
+   "social-assistance": 289,
+   "ageing": 26.0,
+   "unemployment": 4.5,
+   "civic-density": 58
+  },
+  "1205023": {
+   "social-assistance": 518,
+   "ageing": 19.9,
+   "unemployment": 3.8,
+   "civic-density": 37
+  },
+  "1205033": {
+   "social-assistance": 790,
+   "ageing": 14.9,
+   "unemployment": 2.8,
+   "civic-density": 29
+  },
+  "1205042": {
+   "social-assistance": 663,
+   "ageing": 17.9,
+   "unemployment": 3.7,
+   "civic-density": 31
+  },
+  "1205052": {
+   "social-assistance": 665,
+   "ageing": 18.4,
+   "unemployment": 4.3,
+   "civic-density": 27
+  },
+  "1205062": {
+   "social-assistance": 683,
+   "ageing": 15.6,
+   "unemployment": 3.6,
+   "civic-density": 44
+  },
+  "1205072": {
+   "social-assistance": 756,
+   "ageing": 15.4,
+   "unemployment": 3.0,
+   "civic-density": 24
+  },
+  "1205082": {
+   "social-assistance": 456,
+   "ageing": 14.7,
+   "unemployment": 2.3,
+   "civic-density": 31
+  },
+  "1205092": {
+   "social-assistance": 654,
+   "ageing": 18.3,
+   "unemployment": 3.9,
+   "civic-density": 53
+  },
+  "1205102": {
+   "social-assistance": 821,
+   "ageing": 16.0,
+   "unemployment": 2.5,
+   "civic-density": 89
+  },
+  "1206012": {
+   "social-assistance": 124,
+   "ageing": 16.8,
+   "unemployment": 2.5,
+   "civic-density": 37
+  },
+  "1206022": {
+   "social-assistance": 343,
+   "ageing": 20.0,
+   "unemployment": 2.0,
+   "civic-density": 39
+  },
+  "1206032": {
+   "social-assistance": 135,
+   "ageing": 17.5,
+   "unemployment": 2.3,
+   "civic-density": 43
+  },
+  "1206042": {
+   "social-assistance": 141,
+   "ageing": 18.8,
+   "unemployment": 3.0,
+   "civic-density": 37
+  },
+  "1206052": {
+   "social-assistance": 167,
+   "ageing": 15.7,
+   "unemployment": 2.3,
+   "civic-density": 32
+  },
+  "1206063": {
+   "social-assistance": 169,
+   "ageing": 22.0,
+   "unemployment": 3.9,
+   "civic-density": 46
+  },
+  "1206072": {
+   "social-assistance": 102,
+   "ageing": 16.3,
+   "unemployment": 2.2,
+   "civic-density": 42
+  },
+  "1206082": {
+   "social-assistance": 175,
+   "ageing": 13.9,
+   "unemployment": 1.9,
+   "civic-density": 42
+  },
+  "1206092": {
+   "social-assistance": 87,
+   "ageing": 14.3,
+   "unemployment": 2.4,
+   "civic-density": 33
+  },
+  "1206103": {
+   "social-assistance": 228,
+   "ageing": 18.8,
+   "unemployment": 2.9,
+   "civic-density": 56
+  },
+  "1206113": {
+   "social-assistance": 193,
+   "ageing": 19.3,
+   "unemployment": 2.8,
+   "civic-density": 35
+  },
+  "1206123": {
+   "social-assistance": 257,
+   "ageing": 19.8,
+   "unemployment": 3.6,
+   "civic-density": 42
+  },
+  "1206132": {
+   "social-assistance": 180,
+   "ageing": 19.8,
+   "unemployment": 2.5,
+   "civic-density": 18
+  },
+  "1206143": {
+   "social-assistance": 154,
+   "ageing": 15.8,
+   "unemployment": 2.5,
+   "civic-density": 27
+  },
+  "1206152": {
+   "social-assistance": 143,
+   "ageing": 13.2,
+   "unemployment": 1.7,
+   "civic-density": 33
+  },
+  "1206162": {
+   "social-assistance": 154,
+   "ageing": 18.1,
+   "unemployment": 2.5,
+   "civic-density": 51
+  },
+  "1206172": {
+   "social-assistance": 90,
+   "ageing": 13.9,
+   "unemployment": 1.5,
+   "civic-density": 35
+  },
+  "1207011": {
+   "social-assistance": 458,
+   "ageing": 20.3,
+   "unemployment": 4.5,
+   "civic-density": 57
+  },
+  "1207021": {
+   "social-assistance": 376,
+   "ageing": 18.6,
+   "unemployment": 5.5,
+   "civic-density": 41
+  },
+  "1207032": {
+   "social-assistance": 928,
+   "ageing": 16.2,
+   "unemployment": 3.9,
+   "civic-density": 23
+  },
+  "1207042": {
+   "social-assistance": 458,
+   "ageing": 15.6,
+   "unemployment": 2.9,
+   "civic-density": 25
+  },
+  "1207052": {
+   "social-assistance": 952,
+   "ageing": 13.9,
+   "unemployment": 5.4,
+   "civic-density": 40
+  },
+  "1207062": {
+   "social-assistance": 619,
+   "ageing": 13.9,
+   "unemployment": 3.6,
+   "civic-density": 27
+  },
+  "1207072": {
+   "social-assistance": 337,
+   "ageing": 13.4,
+   "unemployment": 4.5,
+   "civic-density": 20
+  },
+  "1207082": {
+   "social-assistance": 868,
+   "ageing": 14.4,
+   "unemployment": 4.0,
+   "civic-density": 26
+  },
+  "1207092": {
+   "social-assistance": 363,
+   "ageing": 14.3,
+   "unemployment": 4.7,
+   "civic-density": 35
+  },
+  "1207102": {
+   "social-assistance": 677,
+   "ageing": 13.5,
+   "unemployment": 5.0,
+   "civic-density": 34
+  },
+  "1207112": {
+   "social-assistance": 202,
+   "ageing": 11.3,
+   "unemployment": 4.4,
+   "civic-density": 30
+  },
+  "1207122": {
+   "social-assistance": 450,
+   "ageing": 15.2,
+   "unemployment": 3.8,
+   "civic-density": 48
+  },
+  "1207132": {},
+  "1208012": {
+   "social-assistance": 257,
+   "ageing": 23.6,
+   "unemployment": 3.0,
+   "civic-density": 43
+  },
+  "1208022": {
+   "social-assistance": 254,
+   "ageing": 20.6,
+   "unemployment": 3.0,
+   "civic-density": 68
+  },
+  "1208032": {
+   "social-assistance": 293,
+   "ageing": 24.0,
+   "unemployment": 3.4,
+   "civic-density": 30
+  },
+  "1208043": {
+   "social-assistance": 316,
+   "ageing": 25.3,
+   "unemployment": 3.4,
+   "civic-density": 65
+  },
+  "1208053": {
+   "social-assistance": 327,
+   "ageing": 23.7,
+   "unemployment": 3.2,
+   "civic-density": 70
+  },
+  "1208062": {
+   "social-assistance": 301,
+   "ageing": 22.3,
+   "unemployment": 2.1,
+   "civic-density": 67
+  },
+  "1208072": {
+   "social-assistance": 316,
+   "ageing": 25.1,
+   "unemployment": 3.4,
+   "civic-density": 61
+  },
+  "1209013": {
+   "social-assistance": 333,
+   "ageing": 16.5,
+   "unemployment": 2.5,
+   "civic-density": 62
+  },
+  "1209022": {
+   "social-assistance": 193,
+   "ageing": 15.5,
+   "unemployment": 1.8,
+   "civic-density": 24
+  },
+  "1209033": {
+   "social-assistance": 140,
+   "ageing": 17.1,
+   "unemployment": 1.9,
+   "civic-density": 45
+  },
+  "1209042": {
+   "social-assistance": 270,
+   "ageing": 16.3,
+   "unemployment": 1.5,
+   "civic-density": 19
+  },
+  "1209052": {
+   "social-assistance": 447,
+   "ageing": 16.7,
+   "unemployment": 1.9,
+   "civic-density": 43
+  },
+  "1209062": {
+   "social-assistance": 164,
+   "ageing": 14.8,
+   "unemployment": 1.6,
+   "civic-density": 28
+  },
+  "1209073": {
+   "social-assistance": 269,
+   "ageing": 15.9,
+   "unemployment": 1.7,
+   "civic-density": 29
+  },
+  "1209082": {
+   "social-assistance": 201,
+   "ageing": 14.4,
+   "unemployment": 1.6,
+   "civic-density": 31
+  },
+  "1209092": {
+   "social-assistance": 327,
+   "ageing": 16.1,
+   "unemployment": 2.0,
+   "civic-density": 45
+  },
+  "1210011": {
+   "social-assistance": 391,
+   "ageing": 19.1,
+   "unemployment": 4.1,
+   "civic-density": 39
+  },
+  "1210022": {
+   "social-assistance": 340,
+   "ageing": 12.9,
+   "unemployment": 4.0,
+   "civic-density": 36
+  },
+  "1210032": {
+   "social-assistance": 726,
+   "ageing": 15.6,
+   "unemployment": 3.2,
+   "civic-density": 30
+  },
+  "1210042": {
+   "social-assistance": 687,
+   "ageing": 13.9,
+   "unemployment": 4.4,
+   "civic-density": 21
+  },
+  "1210052": {
+   "social-assistance": 529,
+   "ageing": 12.8,
+   "unemployment": 4.1,
+   "civic-density": 36
+  },
+  "1210062": {
+   "social-assistance": 1074,
+   "ageing": 13.4,
+   "unemployment": 3.7,
+   "civic-density": 34
+  },
+  "1210073": {
+   "social-assistance": 499,
+   "ageing": 22.1,
+   "unemployment": 5.2,
+   "civic-density": 78
+  },
+  "1210082": {
+   "social-assistance": 729,
+   "ageing": 12.5,
+   "unemployment": 3.9,
+   "civic-density": 28
+  },
+  "1210092": {
+   "social-assistance": 617,
+   "ageing": 13.6,
+   "unemployment": 4.1,
+   "civic-density": 29
+  },
+  "1210102": {
+   "social-assistance": 465,
+   "ageing": 14.5,
+   "unemployment": 3.4,
+   "civic-density": 25
+  },
+  "1210113": {
+   "social-assistance": 359,
+   "ageing": 19.0,
+   "unemployment": 3.7,
+   "civic-density": 60
+  },
+  "1210122": {
+   "social-assistance": 390,
+   "ageing": 13.4,
+   "unemployment": 4.7,
+   "civic-density": 24
+  },
+  "1210133": {
+   "social-assistance": 558,
+   "ageing": 17.9,
+   "unemployment": 4.5,
+   "civic-density": 47
+  },
+  "1210142": {
+   "social-assistance": 514,
+   "ageing": 12.7,
+   "unemployment": 4.3,
+   "civic-density": 37
+  },
+  "1210152": {
+   "social-assistance": 464,
+   "ageing": 17.5,
+   "unemployment": 5.1,
+   "civic-density": 52
+  },
+  "1210163": {
+   "social-assistance": 588,
+   "ageing": 16.3,
+   "unemployment": 4.7,
+   "civic-density": 37
+  },
+  "1211011": {
+   "social-assistance": 247,
+   "ageing": 20.3,
+   "unemployment": 3.5,
+   "civic-density": 55
+  },
+  "1211023": {
+   "social-assistance": 581,
+   "ageing": 20.6,
+   "unemployment": 5.3,
+   "civic-density": 54
+  },
+  "1211033": {
+   "social-assistance": 132,
+   "ageing": 16.7,
+   "unemployment": 1.9,
+   "civic-density": 39
+  },
+  "1211042": {
+   "social-assistance": 123,
+   "ageing": 16.1,
+   "unemployment": 5.5,
+   "civic-density": 37
+  },
+  "1211052": {
+   "social-assistance": 127,
+   "ageing": 13.9,
+   "unemployment": 2.1,
+   "civic-density": 22
+  },
+  "1211062": {
+   "social-assistance": 225,
+   "ageing": 18.9,
+   "unemployment": 4.4,
+   "civic-density": 39
+  },
+  "1211072": {
+   "social-assistance": 350,
+   "ageing": 13.6,
+   "unemployment": 2.4,
+   "civic-density": 28
+  },
+  "1211082": {
+   "social-assistance": 30,
+   "ageing": 16.9,
+   "unemployment": 1.8,
+   "civic-density": 26
+  },
+  "1211092": {
+   "social-assistance": 207,
+   "ageing": 15.8,
+   "unemployment": 2.4,
+   "civic-density": 37
+  },
+  "1211102": {
+   "social-assistance": 442,
+   "ageing": 14.8,
+   "unemployment": 3.1,
+   "civic-density": 26
+  },
+  "1211112": {
+   "social-assistance": 287,
+   "ageing": 16.1,
+   "unemployment": 2.3,
+   "civic-density": 29
+  },
+  "1211123": {
+   "social-assistance": 201,
+   "ageing": 21.1,
+   "unemployment": 3.4,
+   "civic-density": 61
+  },
+  "1211132": {
+   "social-assistance": 261,
+   "ageing": 15.7,
+   "unemployment": 2.2,
+   "civic-density": 23
+  },
+  "1211142": {
+   "social-assistance": 228,
+   "ageing": 15.1,
+   "unemployment": 2.5,
+   "civic-density": 28
+  },
+  "1212011": {
+   "social-assistance": 282,
+   "ageing": 26.4,
+   "unemployment": 4.0,
+   "civic-density": 34
+  },
+  "1212032": {
+   "social-assistance": 235,
+   "ageing": 25.2,
+   "unemployment": 3.9,
+   "civic-density": 27
+  },
+  "1212042": {
+   "social-assistance": 305,
+   "ageing": 23.0,
+   "unemployment": 4.7,
+   "civic-density": 46
+  },
+  "1212053": {
+   "social-assistance": 173,
+   "ageing": 24.5,
+   "unemployment": 5.4,
+   "civic-density": 32
+  },
+  "1212062": {
+   "social-assistance": 143,
+   "ageing": 19.5,
+   "unemployment": 2.6,
+   "civic-density": 36
+  },
+  "1212073": {
+   "social-assistance": 183,
+   "ageing": 21.5,
+   "unemployment": 3.5,
+   "civic-density": 40
+  },
+  "1213011": {
+   "social-assistance": 387,
+   "ageing": 25.1,
+   "unemployment": 3.3,
+   "civic-density": 56
+  },
+  "1213023": {
+   "social-assistance": 102,
+   "ageing": 22.3,
+   "unemployment": 2.1,
+   "civic-density": 32
+  },
+  "1213033": {
+   "social-assistance": 164,
+   "ageing": 22.7,
+   "unemployment": 2.4,
+   "civic-density": 30
+  },
+  "1213043": {
+   "social-assistance": 197,
+   "ageing": 20.6,
+   "unemployment": 3.1,
+   "civic-density": 27
+  },
+  "1213052": {
+   "social-assistance": 150,
+   "ageing": 16.8,
+   "unemployment": 1.7,
+   "civic-density": 20
+  },
+  "1213062": {
+   "social-assistance": 100,
+   "ageing": 19.0,
+   "unemployment": 1.8,
+   "civic-density": 29
+  },
+  "1213072": {
+   "social-assistance": 156,
+   "ageing": 16.8,
+   "unemployment": 1.8,
+   "civic-density": 16
+  },
+  "1213082": {
+   "social-assistance": 147,
+   "ageing": 20.4,
+   "unemployment": 2.7,
+   "civic-density": 29
+  },
+  "1213093": {
+   "social-assistance": 257,
+   "ageing": 18.7,
+   "unemployment": 2.6,
+   "civic-density": 42
+  },
+  "1214012": {
+   "social-assistance": 224,
+   "ageing": 18.6,
+   "unemployment": 2.7,
+   "civic-density": 49
+  },
+  "1214023": {
+   "social-assistance": 570,
+   "ageing": 22.2,
+   "unemployment": 2.9,
+   "civic-density": 63
+  },
+  "1214033": {
+   "social-assistance": 361,
+   "ageing": 21.2,
+   "unemployment": 3.3,
+   "civic-density": 43
+  },
+  "1214042": {
+   "social-assistance": 405,
+   "ageing": 21.2,
+   "unemployment": 3.0,
+   "civic-density": 84
+  },
+  "1214053": {
+   "social-assistance": 229,
+   "ageing": 21.4,
+   "unemployment": 3.6,
+   "civic-density": 51
+  },
+  "1214062": {
+   "social-assistance": 281,
+   "ageing": 20.6,
+   "unemployment": 2.5,
+   "civic-density": 73
+  },
+  "1215011": {
+   "social-assistance": 302,
+   "ageing": 19.2,
+   "unemployment": 2.0,
+   "civic-density": 54
+  },
+  "1215021": {
+   "social-assistance": 320,
+   "ageing": 22.1,
+   "unemployment": 3.3,
+   "civic-density": 74
+  },
+  "1215032": {
+   "social-assistance": 128,
+   "ageing": 14.6,
+   "unemployment": 2.9,
+   "civic-density": 16
+  },
+  "1215042": {
+   "social-assistance": 531,
+   "ageing": 14.7,
+   "unemployment": 1.7,
+   "civic-density": 19
+  },
+  "1215052": {
+   "social-assistance": 476,
+   "ageing": 16.1,
+   "unemployment": 2.9,
+   "civic-density": 29
+  },
+  "1215063": {
+   "social-assistance": 343,
+   "ageing": 18.7,
+   "unemployment": 2.6,
+   "civic-density": 32
+  },
+  "1215072": {
+   "social-assistance": 345,
+   "ageing": 18.4,
+   "unemployment": 2.5,
+   "civic-density": 19
+  },
+  "1215082": {
+   "social-assistance": 359,
+   "ageing": 19.1,
+   "unemployment": 3.5,
+   "civic-density": 42
+  },
+  "1215092": {
+   "social-assistance": 254,
+   "ageing": 19.3,
+   "unemployment": 2.9,
+   "civic-density": 35
+  },
+  "1216013": {
+   "social-assistance": 572,
+   "ageing": 17.8,
+   "unemployment": 2.8,
+   "civic-density": 25
+  },
+  "1216022": {
+   "social-assistance": 322,
+   "ageing": 16.5,
+   "unemployment": 3.6,
+   "civic-density": 23
+  },
+  "1216032": {
+   "social-assistance": 326,
+   "ageing": 14.6,
+   "unemployment": 3.1,
+   "civic-density": 37
+  },
+  "1216042": {
+   "social-assistance": 270,
+   "ageing": 17.1,
+   "unemployment": 3.7,
+   "civic-density": 26
+  },
+  "1216053": {
+   "social-assistance": 392,
+   "ageing": 18.2,
+   "unemployment": 4.1,
+   "civic-density": 42
+  },
+  "1216063": {
+   "social-assistance": 375,
+   "ageing": 16.1,
+   "unemployment": 3.0,
+   "civic-density": 32
+  },
+  "1216072": {
+   "social-assistance": 1030,
+   "ageing": 17.8,
+   "unemployment": 3.0,
+   "civic-density": 18
+  },
+  "1216082": {
+   "social-assistance": 231,
+   "ageing": 16.6,
+   "unemployment": 3.0,
+   "civic-density": 21
+  },
+  "1216092": {
+   "social-assistance": 347,
+   "ageing": 17.0,
+   "unemployment": 3.0,
+   "civic-density": 34
+  },
+  "1216103": {
+   "social-assistance": 204,
+   "ageing": 18.2,
+   "unemployment": 4.1,
+   "civic-density": 39
+  },
+  "1216112": {
+   "social-assistance": 243,
+   "ageing": 19.6,
+   "unemployment": 2.6,
+   "civic-density": 42
+  },
+  "1216122": {
+   "social-assistance": 381,
+   "ageing": 20.9,
+   "unemployment": 4.9,
+   "civic-density": 49
+  },
+  "1216133": {
+   "social-assistance": 189,
+   "ageing": 17.6,
+   "unemployment": 2.5,
+   "civic-density": 39
+  },
+  "1216143": {
+   "social-assistance": 451,
+   "ageing": 16.5,
+   "unemployment": 3.2,
+   "civic-density": 39
+  },
+  "1216153": {
+   "social-assistance": 262,
+   "ageing": 18.7,
+   "unemployment": 4.8,
+   "civic-density": 30
+  },
+  "1216162": {
+   "social-assistance": 558,
+   "ageing": 18.7,
+   "unemployment": 3.7,
+   "civic-density": 31
+  },
+  "1217011": {
+   "social-assistance": 282,
+   "ageing": 24.4,
+   "unemployment": 6.3,
+   "civic-density": 85
+  },
+  "1217022": {
+   "social-assistance": 261,
+   "ageing": 16.1,
+   "unemployment": 5.9,
+   "civic-density": 32
+  },
+  "1217032": {
+   "social-assistance": 307,
+   "ageing": 16.7,
+   "unemployment": 4.2,
+   "civic-density": 38
+  },
+  "1217042": {
+   "social-assistance": 157,
+   "ageing": 17.4,
+   "unemployment": 5.1,
+   "civic-density": 43
+  },
+  "1217052": {
+   "social-assistance": 161,
+   "ageing": 15.3,
+   "unemployment": 6.4,
+   "civic-density": 36
+  },
+  "1218013": {
+   "social-assistance": 207,
+   "ageing": 19.5,
+   "unemployment": 4.6,
+   "civic-density": 27
+  },
+  "1218022": {
+   "social-assistance": 341,
+   "ageing": 16.5,
+   "unemployment": 1.8,
+   "civic-density": 40
+  },
+  "1218033": {
+   "social-assistance": 257,
+   "ageing": 18.0,
+   "unemployment": 2.8,
+   "civic-density": 32
+  },
+  "1218042": {
+   "social-assistance": 98,
+   "ageing": 16.3,
+   "unemployment": 3.1,
+   "civic-density": 56
+  },
+  "1218052": {
+   "social-assistance": 316,
+   "ageing": 17.8,
+   "unemployment": 3.1,
+   "civic-density": 45
+  },
+  "1218062": {
+   "social-assistance": 271,
+   "ageing": 16.0,
+   "unemployment": 2.4,
+   "civic-density": 25
+  },
+  "1218072": {
+   "social-assistance": 170,
+   "ageing": 16.2,
+   "unemployment": 2.3,
+   "civic-density": 40
+  },
+  "1218082": {
+   "social-assistance": 188,
+   "ageing": 15.4,
+   "unemployment": 2.3,
+   "civic-density": 41
+  },
+  "1218093": {
+   "social-assistance": 141,
+   "ageing": 20.5,
+   "unemployment": 3.7,
+   "civic-density": 42
+  },
+  "1218102": {
+   "social-assistance": 230,
+   "ageing": 15.1,
+   "unemployment": 2.9,
+   "civic-density": 20
+  },
+  "1219012": {
+   "social-assistance": 101,
+   "ageing": 15.0,
+   "unemployment": 2.1,
+   "civic-density": 25
+  },
+  "1219022": {
+   "social-assistance": 142,
+   "ageing": 15.8,
+   "unemployment": 2.5,
+   "civic-density": 35
+  },
+  "1219032": {
+   "social-assistance": 249,
+   "ageing": 18.2,
+   "unemployment": 2.3,
+   "civic-density": 34
+  },
+  "1219043": {
+   "social-assistance": 162,
+   "ageing": 14.7,
+   "unemployment": 1.5,
+   "civic-density": 42
+  },
+  "1219053": {
+   "social-assistance": 176,
+   "ageing": 15.6,
+   "unemployment": 2.5,
+   "civic-density": 34
+  },
+  "1261011": {
+   "social-assistance": 178,
+   "ageing": 19.9,
+   "unemployment": 2.2,
+   "civic-density": 70
+  },
+  "1262011": {
+   "social-assistance": 312,
+   "ageing": 21.1,
+   "unemployment": 3.4,
+   "civic-density": 69
+  },
+  "1263011": {
+   "social-assistance": 319,
+   "ageing": 24.8,
+   "unemployment": 3.7,
+   "civic-density": 57
+  }
+ },
+ "missing": {
+  "1207132": [
+   "ageing",
+   "civic-density",
+   "social-assistance",
+   "unemployment"
+  ]
+ }
+}

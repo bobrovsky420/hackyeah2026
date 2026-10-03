@@ -46,10 +46,25 @@ export interface Innovation {
   materials: Material[];
 }
 
-/** A gmina of the place register (8.9). */
+/** A gmina of the place register (8.9), with its area-weighted centroid as [lon, lat]. */
 export interface Gmina {
   terc: string;
   name: string;
   powiat: string;
   kind: string;
+  centroid: [number, number];
+}
+
+/** An implementation of an innovation in a gmina (8.6). */
+export interface Implementation {
+  id: string;
+  innovation_id: string;
+  place_terc: string;
+  place_name: string | null;
+  organisation: string | null;
+  year: number | null;
+  status: "running" | "completed" | "planned";
+  source: string;
+  source_url: string | null;
+  note_pl: string | null;
 }

@@ -1,0 +1,36 @@
+id: krakow-male-granty
+name_pl: "Małe granty w Krakowie 2026 i „Otwarty Kraków”"
+legal_basis_pl: "art. 19a ustawy z dnia 24 kwietnia 2003 r. o działalności pożytku publicznego i o wolontariacie, t.j. Dz.U. 2025 poz. 1338, zm. Dz.U. 2026 poz. 1040"
+applicant_types: [ngo]
+decides: jst
+purposes: [zadanie-publiczne]
+target_groups: [any]
+scope: krakow
+amount_min_pln: null
+amount_max_pln: 20000
+amount_note_pl: "Pula 160 650 zł w czterech obszarach. Ustawa od 1 września 2026 r. pozwala na 20 000 zł na zadanie, ale komunikat miasta z maja 2026 r. podaje stary limit 10 000 zł."
+timing:
+  kind: fixed
+  note_pl: "Oferty w oknach od 11 maja do 30 września 2026 r. oraz do 16 listopada 2026 r."
+  calls:
+    - label_pl: "Pierwsze okno"
+      applicant_types: [ngo]
+      opens_on: "2026-05-11"
+      closes_on: "2026-09-30"
+    - label_pl: "Drugie okno"
+      applicant_types: [ngo]
+      opens_on: null
+      closes_on: "2026-11-16"
+decision_maker_pl: "Prezydent Miasta Krakowa"
+steps_pl:
+  - "Sprawdź komunikat o małych grantach na stronie ngo.krakow.pl."
+  - "Przygotuj ofertę w jednym z czterech obszarów komunikatu."
+  - "Złóż ofertę najpóźniej 16 listopada 2026 r."
+fit:
+  cost_bands: [low]
+  roles: [organizacja-spoleczna]
+  boost_when_implementer_types: [ngo]
+source_url: "https://ngo.krakow.pl/granty/323706,1061,komunikat,male_granty_na_2026_r__.html"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Ścieżka dotyczy zadań dla Krakowa. Miasto nadal podaje stary limit 10 000 zł, więc przed złożeniem oferty zapytaj urząd, który limit stosuje. Data otwarcia drugiego okna nie jest podana."

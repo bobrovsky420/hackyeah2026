@@ -16,7 +16,17 @@ import {
 import { getInnovation } from "@/lib/mock/data";
 
 /** A solution on S2 (FR-4.2) or a nearest partial match on S3. */
-export function SolutionCard({ solution, routeId, partial }: { solution: RouteSolution; routeId: string; partial: boolean }) {
+export function SolutionCard({
+  solution,
+  routeId,
+  partial,
+  hasPlace,
+}: {
+  solution: RouteSolution;
+  routeId: string;
+  partial: boolean;
+  hasPlace: boolean;
+}) {
   const item = getInnovation(solution.innovation_id);
   if (!item) return null;
   const headingId = `rozwiazanie-${item.id}`;
@@ -94,7 +104,7 @@ export function SolutionCard({ solution, routeId, partial }: { solution: RouteSo
       )}
 
       <p>
-        <span className="font-bold">{t("s2.card.where")}</span> {whereItRunsLabel(solution.where_it_runs)}
+        <span className="font-bold">{t("s2.card.where")}</span> {whereItRunsLabel(solution.where_it_runs, hasPlace)}
       </p>
 
       <div className="no-print flex flex-wrap gap-3">

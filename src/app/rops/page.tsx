@@ -3,7 +3,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ConsolePage, DataTable, Empty, Td, Th } from "@/components/console/console-parts";
 import { DecisionForm, QueueMessagesProvider, QueueStatus } from "@/components/console/decision-form";
-import { logActionLabel, targetLabel } from "@/lib/console";
+import { logActionLabel, reportReasons, targetLabel } from "@/lib/console";
+import type { ContentReport } from "@/lib/contracts/records";
 import { formatDateTime } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { getInnovation } from "@/lib/mock/data";
@@ -12,6 +13,17 @@ import { isAuthenticated } from "@/lib/server/auth";
 import { store } from "@/lib/server/store";
 
 export const metadata: Metadata = { title: t("console.moderation.title") };
+
+/** What a content report points at, with a link where the content has a page. */
+function ReportTarget({ target }: { target: ContentReport["target"] }) {
+  if (target.type === "route") return <Link href={`/droga/${target.id}`}>{t("console.report.route", { id: target.id })}</Link>;
+  if (target.type === "brief") return <Link href={`/potrzeba/${target.id}/fiszka`}>{t("console.report.brief", { id: target.id })}</Link>;
+  if (target.type === "innovation") {
+    const item = getInnovation(target.id);
+    return <Link href={`/innowacja/${target.id}`}>{item?.title ?? target.id}</Link>;
+  }
+  return <>{t("console.report.need", { id: target.id })}</>;
+}
 
 /** A queue; its heading takes the focus after a decision, with the status line below it. */
 function Queue({ id, title, count, children }: { id: string; title: string; count: number; children: ReactNode }) {
@@ -35,6 +47,7 @@ export default async function ModerationPage() {
   const contacts = store.contacts.filter((contact) => contact.moderation.status === "do-weryfikacji");
   const readiness = store.readiness.filter((entry) => entry.verification.status === "niezweryfikowane");
   const declined = [...store.routes.values()].filter((route) => route.mode === "declined" && !store.reviewedDeclines.has(route.id));
+  const reports = store.reports.filter((report) => report.moderation.status === "do-weryfikacji");
   const log = store.log.slice(0, 20);
 
   return (
@@ -142,12 +155,40 @@ export default async function ModerationPage() {
           </DataTable>
         </Queue>
 
-        <section aria-labelledby="kolejka-zgloszenia" className="grid gap-3">
-          <h2 id="kolejka-zgloszenia" className="text-[1.3rem] font-bold">
-            {t("console.queue.heading", { title: t("console.queue.reports"), count: 0 })}
-          </h2>
-          <Empty>{t("console.queue.reportsEmpty")}</Empty>
-        </section>
+        <Queue id="kolejka-zgloszenia" title={t("console.queue.reports")} count={reports.length}>
+          <DataTable caption={t("console.queue.reports")}>
+            <thead>
+              <tr>
+                <Th>{t("console.col.date")}</Th>
+                <Th>{t("console.col.about")}</Th>
+                <Th>{t("console.col.reason")}</Th>
+                <Th>{t("console.col.comment")}</Th>
+                <Th>{t("console.col.decision")}</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((report) => (
+                <tr key={report.id}>
+                  <Td>{formatDateTime(report.created_at)}</Td>
+                  <Td id={`wpis-${report.id}`}>
+                    <ReportTarget target={report.target} />
+                  </Td>
+                  <Td>{t(reportReasons[report.reason])}</Td>
+                  <Td>{report.comment ?? ""}</Td>
+                  <Td>
+                    <DecisionForm
+                      kind="report"
+                      id={report.id}
+                      queue="kolejka-zgloszenia"
+                      approve={{ value: "zatwierdz", label: "console.decision.accept" }}
+                      describedBy={`wpis-${report.id}`}
+                    />
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </DataTable>
+        </Queue>
 
         <Queue id="kolejka-odmowy" title={t("console.queue.declined")} count={declined.length}>
           <DataTable caption={t("console.queue.declined")}>

@@ -28,7 +28,7 @@ const paths: ImplementationPath[] = [
       "Złóż ofertę w kwietniowym naborze.",
     ],
     source_url: "https://www.gov.pl/web/senior/ogloszenie-o-konkursie-priorytet-v---asy-2026",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: prototypeNote,
   },
@@ -48,7 +48,7 @@ const paths: ImplementationPath[] = [
       "Po 7 dniach i rozpatrzeniu uwag podpisz umowę i zacznij zadanie.",
     ],
     source_url: "https://eli.gov.pl/eli/DU/2026/1040/ogl/pol",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: `Część urzędów, w tym Kraków, nadal podaje stary limit 10 000 zł. Sprawdź aktualny komunikat urzędu. ${prototypeNote}`,
   },
@@ -70,7 +70,30 @@ const paths: ImplementationPath[] = [
       "Złóż wniosek w urzędzie gminy.",
     ],
     source_url: "https://eli.gov.pl/eli/DU/2025/1338/ogl/pol",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
+    reviewer: null,
+    notes_pl: prototypeNote,
+  },
+  {
+    id: "usluga-wrazliwa-b",
+    name_pl: "Grant ROPS „Usługa wrażliwa” na wdrożenie innowacji",
+    legal_basis_pl:
+      "Projekt ROPS w Krakowie „Usługa wrażliwa - upowszechnianie innowacji społecznych w środowiskach lokalnych”, program Fundusze Europejskie dla Małopolski 2021-2027, działanie 6.23",
+    applicant_types: ["jst", "ngo", "firmy"],
+    amount_note_pl: "Do 600 000 zł, bez wkładu własnego, na najwyżej 18 miesięcy.",
+    timing: {
+      kind: "none-open",
+      note_pl: "Nabór I zakończył się 20 lutego 2026 r., nabór II 30 czerwca 2026 r. Kolejnego naboru nie ogłoszono, sprawdź u źródła.",
+    },
+    decision_maker_pl: "ROPS w Krakowie",
+    steps_pl: [
+      "Wybierz innowację z Biblioteki innowacji społecznych ROPS, którą chcesz wdrożyć.",
+      "Zapytaj o kolejny nabór pod adresem uw@rops.krakow.pl.",
+      "Przygotuj z partnerami plan wdrożenia na najwyżej 18 miesięcy.",
+    ],
+    source_url:
+      "https://rops.krakow.pl/realizowane-projekty-i-zadania/usluga-wrazliwa-upowszechnianie-innowacji-spolecznych-w-srodowiskach-lokalnych,o-projekcie",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: prototypeNote,
   },
@@ -91,7 +114,7 @@ const paths: ImplementationPath[] = [
       "Zapytaj Dział Innowacji Społecznych ROPS o kolejny nabór.",
     ],
     source_url: "https://mapadotacji.gov.pl/projekty/1677388/",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: prototypeNote,
   },
@@ -101,4 +124,9 @@ const pathsById = new Map(paths.map((path) => [path.id, path]));
 
 export function getPath(id: string): ImplementationPath | undefined {
   return pathsById.get(id);
+}
+
+/** Every path, for the deterministic selection by applicant type (FR-8.2). */
+export function allPaths(): ImplementationPath[] {
+  return paths;
 }

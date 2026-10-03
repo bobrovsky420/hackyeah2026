@@ -1,0 +1,32 @@
+id: nowefio
+name_pl: "NOWEFIO 2026"
+legal_basis_pl: "program Narodowego Instytutu Wolności NOWEFIO na lata 2021-2030"
+applicant_types: [ngo]
+decides: panstwo
+purposes: [zadanie-publiczne]
+target_groups: [any]
+scope: krajowa
+amount_min_pln: 100000
+amount_max_pln: null
+amount_note_pl: "Co najmniej 100 000 zł na jeden grant. Pula wynosi około 73 mln zł."
+timing:
+  kind: closed
+  note_pl: "Nabór na 2026 r. trwał od 14 listopada do 15 grudnia 2025 r. Kolejny spodziewany jest w listopadzie 2026 r."
+  calls:
+    - label_pl: "Nabór 2026"
+      applicant_types: [ngo]
+      opens_on: "2025-11-14"
+      closes_on: "2025-12-15"
+decision_maker_pl: "Narodowy Instytut Wolności - Centrum Rozwoju Społeczeństwa Obywatelskiego"
+steps_pl:
+  - "Sprawdź, czy Twoja organizacja spełnia warunki rejestracji i budżetu."
+  - "Przygotuj projekt o wartości co najmniej 100 000 zł."
+  - "Złóż wniosek, gdy Narodowy Instytut Wolności otworzy nabór."
+fit:
+  cost_bands: [high, unknown]
+  roles: [organizacja-spoleczna]
+  boost_when_implementer_types: [ngo]
+source_url: "https://niw.gov.pl/nasze-programy/nowefio/edycja-2026/nabor-wnioskow/"
+verified_on: "2026-10-03"
+reviewer: null
+notes_pl: "Prototyp z hackathonu HackYeah 2026: treści pochodzą z publicznych katalogów innowacji społecznych na licencjach podanych przy wpisie i nie były weryfikowane prawnie. Sprawdź źródło przed użyciem. Sprawdź u źródła. Warunki: rejestracja do 31 grudnia 2024 r. i budżet ponad 30 000 zł w każdym z ostatnich 3 lat. Maksymalna kwota grantu nie została sprawdzona. Termin kolejnego naboru nie jest potwierdzony."

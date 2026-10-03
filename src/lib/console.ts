@@ -3,6 +3,7 @@ import type {
   ModerationLogEntry,
   ModerationStatus,
   NeedStatus,
+  ReportReason,
   VerificationStatus,
 } from "@/lib/contracts/records";
 import { t, type MessageKey } from "@/lib/i18n";
@@ -21,8 +22,9 @@ export type RejectReason = keyof typeof rejectReasons;
 
 export const needStatuses = {
   nowa: "console.status.need.nowa",
-  przejrzana: "console.status.need.przejrzana",
-  "w-temacie": "console.status.need.wTemacie",
+  "w-analizie": "console.status.need.wAnalizie",
+  "dopasowano-pozniej": "console.status.need.dopasowanoPozniej",
+  "temat-naboru": "console.status.need.tematNaboru",
   zamknieta: "console.status.need.zamknieta",
 } as const satisfies Record<NeedStatus, MessageKey>;
 
@@ -55,9 +57,18 @@ const targetKeys = {
   contact: "console.log.target.contact",
   readiness: "console.log.target.readiness",
   declined: "console.log.target.declined",
+  report: "console.log.target.report",
 } as const satisfies Record<TargetType, MessageKey>;
 
-const statusLists: Record<Exclude<TargetType, "declined">, Record<string, MessageKey>> = {
+/** The content report reasons of FR-12.9 (8.11). */
+export const reportReasons = {
+  nieprawdziwe: "report.reason.nieprawdziwe",
+  obrazliwe: "report.reason.obrazliwe",
+  dane_osobowe: "report.reason.daneOsobowe",
+  inne: "report.reason.inne",
+} as const satisfies Record<ReportReason, MessageKey>;
+
+const statusLists: Record<Exclude<TargetType, "declined" | "report">, Record<string, MessageKey>> = {
   need: needStatuses,
   contact: contactStatuses,
   readiness: verificationStatuses,
@@ -77,7 +88,7 @@ export function targetLabel(type: TargetType): string {
 /** "Zatwierdzono", or "Status: Przekazana" for a change of status. */
 export function logActionLabel(entry: ModerationLogEntry): string {
   if (entry.action !== "status") return t(actionKeys[entry.action]);
-  const list = entry.target_type === "declined" ? {} : statusLists[entry.target_type];
+  const list = entry.target_type === "declined" || entry.target_type === "report" ? {} : statusLists[entry.target_type];
   const key = entry.status && isOneOf(list, entry.status) ? list[entry.status] : undefined;
   return t("console.log.action.status", { status: key ? t(key) : (entry.status ?? "") });
 }

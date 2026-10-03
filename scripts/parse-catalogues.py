@@ -24,7 +24,8 @@ RAW = os.path.join(ROOT, ".local", "raw")
 OUT = os.path.join(ROOT, ".local", "pipeline", "sources")
 INCUBATORS_OUT = os.path.join(ROOT, "data", "incubators.json")
 TAXONOMIES = os.path.join(ROOT, "data", "taxonomies.json")
-PARSER_VERSION = "parse-v2"   # v2 (29 September 2026): links are real URLs pulled from the free text of "Strona internetowa"
+PARSER_VERSION = "parse-v3"   # v2: links are real URLs pulled from the free text of "Strona internetowa";
+                              # v3: v2 had overwritten the entry URL of sources[] with the last link; fixed
 URL_IN_TEXT = re.compile(r"https?://[^\s\"'<>;,]+")
 URL_HOST = re.compile(r"^https?://[^\s/]+\.[^\s/]+")
 
@@ -356,9 +357,9 @@ def parse_s1_entry(url, rec, files_log, terms, tax, profiles, by_slug):
                 continue
             if key == "strona_www":
                 for href in re.findall(r'href="([^"]+)"', content):
-                    for url in real_urls(html.unescape(href).strip()):
-                        links.append({"title": "Strona internetowa", "url": url})
-                        strona = strona or url
+                    for link_url in real_urls(html.unescape(href).strip()):
+                        links.append({"title": "Strona internetowa", "url": link_url})
+                        strona = strona or link_url
                 fields[key] = inline_text(content)
                 continue
             fields[key] = html_to_text(content)
@@ -368,8 +369,8 @@ def parse_s1_entry(url, rec, files_log, terms, tax, profiles, by_slug):
         for href, text in re.findall(r'<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>', m.group(1), re.S):
             href = html.unescape(href).strip()
             t = inline_text(text) or href
-            for url in real_urls(href):
-                links.append({"title": t if t != href else "Link", "url": url})
+            for link_url in real_urls(href):
+                links.append({"title": t if t != href else "Link", "url": link_url})
     if "<h2>Multimedia</h2>" in b:
         flags.append("has-gallery")
     if "<h2>Materiały wideo</h2>" in b:

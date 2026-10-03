@@ -20,7 +20,8 @@ export interface Consent {
   timestamp: string;
 }
 
-export type NeedStatus = "nowa" | "przejrzana" | "w-temacie" | "zamknieta";
+/** The statuses of FR-5.7. */
+export type NeedStatus = "nowa" | "w-analizie" | "dopasowano-pozniej" | "temat-naboru" | "zamknieta";
 
 export interface Need {
   id: string;
@@ -86,11 +87,23 @@ export interface Feedback {
   created_at: string;
 }
 
+export type ReportReason = "nieprawdziwe" | "obrazliwe" | "dane_osobowe" | "inne";
+
+/** "Zgłoś problem z tą treścią" (FR-12.9, 8.11): no identity of the reporter is stored. */
+export interface ContentReport {
+  id: string;
+  created_at: string;
+  target: { type: "route" | "brief" | "innovation" | "need"; id: string };
+  reason: ReportReason;
+  comment: string | null;
+  moderation: Moderation;
+}
+
 /** Every moderation action is logged with the reviewer's token name (FR-12.8). */
 export interface ModerationLogEntry {
   ts: string;
   reviewer: string;
-  target_type: "need" | "contact" | "readiness" | "declined";
+  target_type: "need" | "contact" | "readiness" | "declined" | "report";
   target_id: string;
   action: "zatwierdzone" | "odrzucone" | "zweryfikowane" | "przejrzane" | "status";
   /** The new status code of a "status" action; null for decisions. */

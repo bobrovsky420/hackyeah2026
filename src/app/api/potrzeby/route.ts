@@ -1,6 +1,7 @@
 import type { Need } from "@/lib/contracts/records";
 import { isRoleCode, targetGroupCodes } from "@/lib/labels";
 import { getGmina } from "@/lib/mock/data";
+import { redact } from "@/lib/server/redact";
 import { getRoute } from "@/lib/server/routes";
 import { CONSENT_VERSION, countEvent, newId, nowIso, store } from "@/lib/server/store";
 import { EMAIL, invalid, optionalText, readJson, requiredText, stringList } from "@/lib/server/validate";
@@ -10,8 +11,10 @@ export async function POST(request: Request) {
   const body = await readJson(request);
   if (!body) return Response.json({ error: "invalid_json" }, { status: 400 });
 
-  const problemText = requiredText(body.problem_text, 2000, 20);
-  if (!problemText) return invalid("problem_text");
+  const text = requiredText(body.problem_text, 2000, 20);
+  if (!text) return invalid("problem_text");
+  // Personal data never reaches storage (FR-12.4); the reader is told how much was removed.
+  const { text: problemText, count: redactions } = redact(text);
   const summary = optionalText(body.summary_pl, 300);
   if (summary === undefined) return invalid("summary_pl");
   const email = optionalText(body.email, 200);
@@ -48,5 +51,5 @@ export async function POST(request: Request) {
   };
   store.needs.unshift(need);
   countEvent("need_saved");
-  return Response.json({ id: need.id }, { status: 201 });
+  return Response.json({ id: need.id, redactions }, { status: 201 });
 }

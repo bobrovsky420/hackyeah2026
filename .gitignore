@@ -110,6 +110,8 @@ data/map/
 data/indicators.json
 data/places/
 data/implementations-derived.json
+data/organisations.json
+data/implementations-merged.json
 data/index-vectors.json
 
 # Next.js generated type references (recreated by next dev and next typegen)

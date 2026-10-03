@@ -3,29 +3,41 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
 
-/** The frame of the information pages (S8) and the form pages. */
+/**
+ * The frame of the information pages (S8) and the form pages. `headingId`
+ * and `leadId` let a page carry required identifiers, such as those of the
+ * gov.pl accessibility statement.
+ */
 export function InfoPage({
   title,
   lead,
   draft,
   top,
+  headingId = "naglowek-strony",
+  leadId,
   children,
 }: {
   title: string;
-  lead?: string;
+  lead?: ReactNode;
   draft?: boolean;
   top?: ReactNode;
+  headingId?: string;
+  leadId?: string;
   children: ReactNode;
 }) {
   return (
     <div className="grid max-w-[44rem] gap-8">
-      <FocusOnMount targetId="naglowek-strony" />
+      <FocusOnMount targetId={headingId} />
       <header className="grid gap-3">
         {top}
-        <h1 id="naglowek-strony" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
+        <h1 id={headingId} tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
           {title}
         </h1>
-        {lead && <p className="text-[1.1rem]">{lead}</p>}
+        {lead && (
+          <p id={leadId} className="text-[1.1rem]">
+            {lead}
+          </p>
+        )}
       </header>
       {draft && (
         <Notice tone="warning" title={t("info.draft.title")}>

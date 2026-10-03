@@ -1,18 +1,27 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ReportLink } from "@/components/report/report-link";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
-import type { Channel, Route } from "@/lib/contracts/route";
+import type { Channel, Route, SensitiveTopic } from "@/lib/contracts/route";
 import { t, type MessageKey } from "@/lib/i18n";
 import { knowledgeTypeLabel, roleLabel, targetGroupLabel, telHref } from "@/lib/labels";
 import { getInnovation } from "@/lib/mock/data";
-import { getPath } from "@/lib/mock/paths";
+import { allPaths } from "@/lib/mock/paths";
 import { placeText, placeWhere } from "@/lib/places";
+import { pluralPl } from "@/lib/text";
+import { ClarificationForm } from "./clarification-form";
+import { CrisisBanner } from "./crisis-banner";
 import { FocusOnMount } from "./focus-on-mount";
-import { PathCard } from "./path-card";
+import { PathChooser } from "./path-chooser";
+import { QuickExit } from "./quick-exit";
+import { RecomputeButton } from "./recompute-button";
 import { RouteActions } from "./route-actions";
 import { SolutionCard } from "./solution-card";
+
+/** Topics whose routes get the quick exit of FR-12.5. */
+const exitTopics: SensitiveTopic[] = ["violence", "child_abuse", "sexual_violence"];
 
 const channelLabels: Record<Channel["type"], MessageKey> = {
   www: "people.channel.website",
@@ -114,11 +123,14 @@ function People({ route }: { route: Route }) {
 export function RouteView({ route, markdown }: { route: Route; markdown: string }) {
   const isRoute = route.mode === "route";
   const title = isRoute ? route.need_summary_pl : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
+  const { sensitive_topics: topics, redactions } = route.screening;
+  const hasPlace = route.input.place_terc !== null;
 
   return (
     <div className="grid gap-10 @4xl:grid-cols-[minmax(0,1fr)_18rem] @4xl:items-start @4xl:gap-12">
       <FocusOnMount targetId="naglowek-drogi" />
       <div className="grid min-w-0 gap-8">
+        {topics.some((topic) => exitTopics.includes(topic)) && <QuickExit />}
         <header className="grid gap-3">
           <Link href="/" className="no-print inline-flex min-h-11 items-center gap-2 justify-self-start font-bold">
             <ArrowLeft aria-hidden className="size-5" />
@@ -148,6 +160,25 @@ export function RouteView({ route, markdown }: { route: Route; markdown: string 
           </dl>
         </header>
 
+        {route.screening.crisis_banner && <CrisisBanner topics={topics} />}
+
+        {redactions > 0 && (
+          <Notice title={t("route.redacted.title")}>
+            <p>
+              {t("route.redacted.text", {
+                count: redactions,
+                unit: pluralPl(redactions, {
+                  one: t("route.redacted.unit.one"),
+                  few: t("route.redacted.unit.few"),
+                  many: t("route.redacted.unit.many"),
+                }),
+              })}
+            </p>
+          </Notice>
+        )}
+
+        {!isRoute && route.clarification_needed && route.input.problem_text && <ClarificationForm routeId={route.id} />}
+
         <Notice title={t(isRoute ? "route.generated.title" : "route.generated.titlePartial")}>
           {route.summary_pl && <p>{route.summary_pl}</p>}
           <p className="text-[0.95rem] text-muted-foreground">{route.label_pl}</p>
@@ -161,7 +192,13 @@ export function RouteView({ route, markdown }: { route: Route; markdown: string 
           >
             <div className="grid gap-4">
               {route.solutions.map((solution) => (
-                <SolutionCard key={solution.innovation_id} solution={solution} routeId={route.id} partial={!isRoute} />
+                <SolutionCard
+                  key={solution.innovation_id}
+                  solution={solution}
+                  routeId={route.id}
+                  partial={!isRoute}
+                  hasPlace={hasPlace}
+                />
               ))}
             </div>
           </Block>
@@ -203,17 +240,10 @@ export function RouteView({ route, markdown }: { route: Route; markdown: string 
           title={t("s2.block.paths.title")}
           lead={t(isRoute ? "s2.block.paths.lead" : "s3.block.paths.lead")}
         >
-          <div className="grid gap-4">
-            {route.path.paths.map(({ path_id, why_pl }) => {
-              const path = getPath(path_id);
-              return path ? <PathCard key={path_id} path={path} why={why_pl} /> : null;
-            })}
-          </div>
+          <PathChooser route={route.path} paths={allPaths()} />
         </Block>
 
-        <p className="no-print border-t border-border pt-6">
-          <Link href="/zasady#zglaszanie">{t("route.report")}</Link>
-        </p>
+        <ReportLink target={{ droga: route.id }} />
       </div>
 
       <aside aria-label={t("route.aside.label")} className="grid gap-5">
@@ -242,6 +272,7 @@ export function RouteView({ route, markdown }: { route: Route; markdown: string 
           </section>
         )}
         <RouteActions routeId={route.id} markdown={markdown} />
+        {route.input.problem_text && <RecomputeButton routeId={route.id} />}
       </aside>
     </div>
   );

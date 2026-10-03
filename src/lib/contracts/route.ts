@@ -2,12 +2,15 @@ import type { CostBand, EvidenceLevel, RoleCode, TimeToImplement } from "./catal
 
 /*
  * The route as the pipeline returns and stores it: schema 8.4 of the
- * specification. Four fields the screens need are proposed additions to
+ * specification. Five fields the screens need are proposed additions to
  * 8.4, marked below.
  */
 
 /** Matching modes (FR-3.3) and the screening outcomes that replace a route (8.10). */
 export type RouteMode = "route" | "partial" | "none" | "redirected" | "declined" | "off_topic";
+
+/** The sensitive topics of the screening (8.10). */
+export type SensitiveTopic = "suicide" | "self_harm" | "violence" | "child_abuse" | "sexual_violence" | "addiction";
 
 export interface Channel {
   type: "www" | "email" | "phone";
@@ -57,10 +60,15 @@ export interface Route {
   screening: {
     category: string;
     confidence: number;
-    sensitive_topics: string[];
+    sensitive_topics: SensitiveTopic[];
     redactions: number;
     crisis_banner: boolean;
   };
+  /**
+   * Proposed addition to 8.4: stage 1 found neither a target group nor a
+   * place, so S3 asks the one question of FR-2.3.
+   */
+  clarification_needed: boolean;
   summary_pl: string | null;
   solutions: RouteSolution[];
   knowledge: { title: string; url: string; type: string; for_innovation_id: string | null }[];

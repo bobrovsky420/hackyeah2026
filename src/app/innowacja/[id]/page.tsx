@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Attribution } from "@/components/innovation/attribution";
+import { ReportLink } from "@/components/report/report-link";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
+import type { Innovation, Material } from "@/lib/contracts/catalogue";
 import { t } from "@/lib/i18n";
 import {
   costLabel,
@@ -17,7 +19,6 @@ import {
 } from "@/lib/labels";
 import { getInnovation } from "@/lib/mock/data";
 import { getRoute } from "@/lib/server/routes";
-import type { Material } from "@/lib/contracts/catalogue";
 
 export async function generateMetadata({ params }: PageProps<"/innowacja/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -31,7 +32,38 @@ function materialFormat(material: Material): string {
 
 const sectionTitle = "text-[1.3rem] font-bold @3xl:text-[1.45rem]";
 
-/** S5: the innovation as a page, reached from a route (rule R1: no browse page). */
+function Header({ item, routeId }: { item: Innovation; routeId: string | undefined }) {
+  return (
+    <header className="grid gap-3">
+      {routeId && (
+        <Link href={`/droga/${routeId}`} className="no-print inline-flex min-h-11 items-center gap-2 justify-self-start font-bold">
+          <ArrowLeft aria-hidden className="size-5" />
+          {t("s5.back")}
+        </Link>
+      )}
+      <div className="flex flex-wrap gap-2">
+        {item.targetGroups.slice(0, 2).map((code) => (
+          <p key={code} className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">
+            {targetGroupLabel(code)}
+          </p>
+        ))}
+        <p className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">
+          {sourceBadge(item.source)}
+        </p>
+      </div>
+      <h1 id="naglowek-innowacji" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
+        {item.title}
+      </h1>
+      {item.organisation && <p className="text-[1.1rem]">{item.organisation}</p>}
+    </header>
+  );
+}
+
+/**
+ * S5: the innovation as a page, reached from a route or the map (rule R1:
+ * no browse page). The MIIS items are shown like every ROPS item (decided
+ * 29 September 2026).
+ */
 export default async function InnovationPage({ params, searchParams }: PageProps<"/innowacja/[id]">) {
   const { id } = await params;
   const query = await searchParams;
@@ -42,28 +74,7 @@ export default async function InnovationPage({ params, searchParams }: PageProps
   return (
     <article aria-labelledby="naglowek-innowacji" className="grid max-w-[48rem] gap-8">
       <FocusOnMount targetId="naglowek-innowacji" />
-      <header className="grid gap-3">
-        {routeId && (
-          <Link href={`/droga/${routeId}`} className="no-print inline-flex min-h-11 items-center gap-2 justify-self-start font-bold">
-            <ArrowLeft aria-hidden className="size-5" />
-            {t("s5.back")}
-          </Link>
-        )}
-        <div className="flex flex-wrap gap-2">
-          {item.targetGroups.slice(0, 2).map((code) => (
-            <p key={code} className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">
-              {targetGroupLabel(code)}
-            </p>
-          ))}
-          <p className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">
-            {sourceBadge(item.source)}
-          </p>
-        </div>
-        <h1 id="naglowek-innowacji" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
-          {item.title}
-        </h1>
-        {item.organisation && <p className="text-[1.1rem]">{item.organisation}</p>}
-      </header>
+      <Header item={item} routeId={routeId} />
 
       <Notice title={t("s5.generated.title")}>
         <p>{item.summary}</p>
@@ -161,6 +172,7 @@ export default async function InnovationPage({ params, searchParams }: PageProps
       </div>
 
       <Attribution item={item} />
+      <ReportLink target={{ innowacja: item.id }} />
     </article>
   );
 }

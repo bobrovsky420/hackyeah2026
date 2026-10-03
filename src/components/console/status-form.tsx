@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { updateRecord, type ConsoleFormState } from "@/app/rops/actions";
 import { smallLabel } from "@/components/console/console-parts";
-import { submitTo } from "@/components/console/submit";
+import { submitTo } from "@/components/forms/submit";
 import { Button } from "@/components/ui/button";
 import { controlClass } from "@/components/ui/field";
 import { t, type MessageKey } from "@/lib/i18n";

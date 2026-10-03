@@ -19,6 +19,10 @@ export default function SourcesPage() {
       </InfoSection>
       <InfoSection id="dane" title={t("sources.data.title")}>
         <p>{t("sources.data.p1")}</p>
+        <p>
+          <a href="https://bdl.stat.gov.pl/">{t("sources.data.p2")}</a>
+        </p>
+        <p>{t("sources.data.p3")}</p>
       </InfoSection>
       <InfoSection id="modele" title={t("sources.models.title")}>
         <p>{t("sources.models.p1")}</p>

@@ -10,6 +10,14 @@ export function fold(text: string): string {
     .replace(/\p{M}/gu, "");
 }
 
+// "always": Polish CLDR leaves four-digit numbers ungrouped, section 11 groups them.
+const decimal = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 1, useGrouping: "always" });
+
+/** A figure in the Polish format: a decimal comma and grouped thousands, as in "1 074" or "17,4". */
+export function formatNumber(value: number): string {
+  return decimal.format(value);
+}
+
 /** Groups thousands with a no-break space, as in "1 200 zł" (section 11). */
 export function groupThousands(value: number): string {
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, " ");

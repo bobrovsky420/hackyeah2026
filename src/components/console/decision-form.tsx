@@ -4,7 +4,7 @@ import { CircleCheck } from "lucide-react";
 import { createContext, useActionState, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { moderate, type ConsoleFormState } from "@/app/rops/actions";
 import { smallLabel } from "@/components/console/console-parts";
-import { submitTo } from "@/components/console/submit";
+import { submitTo } from "@/components/forms/submit";
 import { Button } from "@/components/ui/button";
 import { controlClass, FieldError } from "@/components/ui/field";
 import { rejectReasons } from "@/lib/console";
@@ -64,7 +64,7 @@ export function DecisionForm({
   describedBy,
   withReason = true,
 }: {
-  kind: "need" | "contact" | "readiness" | "declined";
+  kind: "need" | "contact" | "readiness" | "declined" | "report";
   id: string;
   queue: string;
   approve: { value: "zatwierdz" | "zweryfikuj" | "przejrzane"; label: MessageKey };

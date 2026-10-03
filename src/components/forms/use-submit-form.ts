@@ -12,6 +12,8 @@ export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export function useSubmitForm(endpoint: string) {
   const [errors, setErrors] = useState<FormError[]>([]);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
+  /** The API's answer, such as the new entry's id. */
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
   const doneRef = useRef<HTMLDivElement>(null);
   const failedRef = useRef<HTMLDivElement>(null);
@@ -31,6 +33,7 @@ export function useSubmitForm(endpoint: string) {
         body: JSON.stringify(payload),
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      setResult(await response.json().catch(() => null));
       setStatus("sent");
       requestAnimationFrame(() => doneRef.current?.focus());
     } catch {
@@ -43,5 +46,5 @@ export function useSubmitForm(endpoint: string) {
     return errors.find((error) => error.fieldId === fieldId)?.message;
   }
 
-  return { errors, status, summaryRef, doneRef, failedRef, submit, errorFor };
+  return { errors, status, result, summaryRef, doneRef, failedRef, submit, errorFor };
 }

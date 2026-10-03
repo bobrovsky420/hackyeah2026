@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { emergencyNumber, helplines, type Helpline } from "@/lib/mock/contacts";
 import { FocusOnMount } from "./focus-on-mount";
+import { QuickExit } from "./quick-exit";
 
 function HelplineRow({ line }: { line: Helpline }) {
   return (
@@ -26,8 +27,9 @@ function HelplineRow({ line }: { line: Helpline }) {
 }
 
 /**
- * S10 (FR-12.5): numbers before any other content; the two entry paths only
- * reorder the list. Nothing typed is stored.
+ * S10 (FR-12.5): numbers before any other content, only the quick exit
+ * above them; the two entry paths only reorder the list. Nothing typed is
+ * stored.
  */
 export function HumanHelp({ placeName }: { placeName: string | null }) {
   const [focus, setFocus] = useState<"self" | "someone" | null>(null);
@@ -38,6 +40,7 @@ export function HumanHelp({ placeName }: { placeName: string | null }) {
   return (
     <div className="grid max-w-[40rem] gap-7">
       <FocusOnMount targetId="naglowek-drogi" />
+      <QuickExit />
       <h1 id="naglowek-drogi" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
         {t("s10.title")}
       </h1>

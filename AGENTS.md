@@ -71,18 +71,32 @@ challenge, the team and the decisions made so far are in
   applies the view settings before the first paint.
 - The data is mocked in `src/lib/mock/`: canned routes in the shape of
   schema 8.4 (types in `src/lib/contracts/`) and fixtures extracted from
-  `data/`; `/api/droga` stands in for the pipeline. Innovation text is
-  shown only for CC BY 4.0 records, always with the attribution line and
-  the prototype note of FR-1.8.
+  `data/`, the map's boundaries, indicators and implementations in
+  `src/lib/mock/map/`. `/api/droga` stands in for the pipeline
+  (`src/lib/server/routes.ts`): the redaction of
+  `src/lib/server/redact.ts`, the keyword scenarios of
+  `src/lib/mock/scenarios.ts` and the route limit
+  `RATE_LIMIT_ROUTES_PER_MINUTE` (default 10). Innovation text is always
+  shown with the attribution line and the prototype note of FR-1.8; the
+  MIIS items like every ROPS item, their
+  licence named by its terms.
+- The map (S4) runs MapLibre GL 6 on the local GeoJSON only; its worker
+  files are served from the installed package by
+  `src/app/vendor/maplibre/`. The map's class colours stay the same in
+  every theme, like an image, and are the only raw colours in components;
+  the legend and the table carry the same values.
 - The forms post to route handlers under `src/app/api/`, which keep the
   entries in the in-memory store of `src/lib/server/store.ts`; a restart
   empties it. The real app replaces that module with PostgreSQL behind the
   same functions.
-- The ROPS console (`/rops`, S7) asks for the access code in `ROPS_TOKEN`;
-  without it the prototype's code is `rops-prototyp`, so set a real one on
-  any shared server. `ROPS_REVIEWER` names the reviewer in the action log.
+- The ROPS console (`/rops`, S7) asks for the access code in `ROPS_TOKEN`.
+  Without it, `next dev` accepts the prototype's code `rops-prototyp` and a
+  production server keeps the console locked. The Playwright config starts
+  its server with that code and a high route limit; a server it reuses
+  needs `ROPS_TOKEN=rops-prototyp` and `RATE_LIMIT_ROUTES_PER_MINUTE=1000`.
+  `ROPS_REVIEWER` names the reviewer in the action log.
 - Console forms submit through `submitTo` in
-  `src/components/console/submit.ts`, not `<form action>`: React resets a
+  `src/components/forms/submit.ts`, not `<form action>`: React resets a
   form after its action, and the reset puts even a controlled select back
   on its first option.
 - The React Compiler lint rules apply: no writes to `document` inside a
