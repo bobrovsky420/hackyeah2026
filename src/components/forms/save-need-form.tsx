@@ -12,7 +12,7 @@ import type { RoleCode } from "@/lib/contracts/catalogue";
 import type { Helpline } from "@/lib/contracts/contacts";
 import { t } from "@/lib/i18n";
 import { isRoleCode, roleCodes, roleLabel } from "@/lib/labels";
-import type { PlaceOption } from "@/lib/place-options";
+import type { LocalityOption, PlaceOption } from "@/lib/place-options";
 import { pluralPl } from "@/lib/text";
 import { FormFailed } from "./form-failed";
 import { HONEYPOT_FIELD, Honeypot } from "./honeypot";
@@ -102,12 +102,14 @@ export function SaveNeedForm({
   routeId,
   backHref,
   places,
+  localities,
   helplines,
 }: {
   defaults: { text: string; place: PlaceValue; role: RoleCode | ""; targetGroups: string[] };
   routeId: string | null;
   backHref: string | null;
   places: PlaceOption[];
+  localities: LocalityOption[];
   /** For the human help of S10 when the gate redirects the text (FR-12.5). */
   helplines: { alarm: Helpline[]; support: Helpline[] };
 }) {
@@ -207,7 +209,7 @@ export function SaveNeedForm({
             aria-describedby={describedBy("opis-podpowiedz", textError && "opis-blad")}
           />
         </Field>
-        <PlaceCombobox id="miejsce" name="miejsce" places={places} value={place} onChange={setPlace} />
+        <PlaceCombobox id="miejsce" name="miejsce" places={places} localities={localities} value={place} onChange={setPlace} />
         <RadioList
           idPrefix="rola"
           name="rola"

@@ -48,6 +48,14 @@ export interface Innovation {
   materials: Material[];
 }
 
+/** A town or village of Małopolska (GUS SIMC) that the place picker resolves to its gmina (FR-2.2). */
+export interface Locality {
+  simc: string;
+  name: string;
+  /** The TERC of its gmina: the only place passed on. */
+  terc: string;
+}
+
 /** A gmina of the place register (8.9), with its area-weighted centroid as [lon, lat]. */
 export interface Gmina {
   terc: string;

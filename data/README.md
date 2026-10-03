@@ -27,6 +27,7 @@ generated from `schemas/` by `node scripts/build-data-types.mjs`;
 | `data-version.json` | The data version (FR-1.7) | `derive-records.py build` | rebuilt | `DataVersion` |
 | `index-vectors.json` | One embedding per record for the retriever (FR-3.7) | `build-index-vectors.py` | rebuilt | `IndexVectorsFile` |
 | `places/pl-register.json` | Voivodeships, powiats and gminas of Poland (8.9) | `build-static-data.py`, step `places` | rebuilt | `PlacesRegister` |
+| `places/malopolska-localities.json` | Villages and Kraków delegatury of Małopolska, each with its gmina (FR-2.2) | `build-static-data.py`, step `places` | rebuilt | `LocalitiesFile` |
 | `map/malopolska-gminy.geojson` | The 183 gmina boundaries of Małopolska (8.8, FR-7.1) | `build-static-data.py`, step `map` | rebuilt | `GminaBoundaries` |
 | `indicators.json` | Four GUS BDL indicators per gmina (8.8, FR-7.2) | `build-static-data.py`, step `indicators` | rebuilt | `IndicatorsFile` |
 | `implementations-derived.json` | The place of origin of every built record as an implementation (8.6) | `build-static-data.py`, step `origins` | rebuilt | `ImplementationsDerivedFile` |
@@ -39,12 +40,16 @@ be recreated. Hand-written data is committed; every build output is in
 the whole folder. On a fresh clone the loader names each missing file and the
 command that builds it.
 
-To move the data to another machine, `.venv/Scripts/python scripts/pack-data.py`
-writes `.local/bundles/data-<version>.zip` (every file of `data/` plus
-`.local/pipeline/{sources,derived,manifest.json,duplicates.json,link-check.json}`,
-with a sha256 manifest; it refuses an inconsistent set) and
-`scripts/unpack-data.py <zip>` verifies and restores it; see
-[docs/data-setup.md](../docs/data-setup.md).
+To move the data to another machine, make a data release:
+`.venv/Scripts/python scripts/pack-data.py --release X.Y.Z` writes
+`.local/bundles/data-X.Y.Z.zip` (every file of `data/`,
+`.local/pipeline/{sources,derived,manifest.json,duplicates.json,link-check.json}`
+and the replay files of `.local/route-cache/` and `.local/llm-replay/`, with
+a sha256 manifest and a note `data-X.Y.Z.md`; it type-checks the data first
+and refuses an inconsistent set or a label that is not above the last
+release; `--rebuild` runs steps 4 to 7 below first) and
+`scripts/unpack-data.py <zip>` verifies and restores it without touching
+the files git tracks; see [docs/data-setup.md](../docs/data-setup.md).
 
 A partner hand-over (FR-1.6, OP-17) enters the pipeline beside the two
 catalogues: save the file under `.local/raw/partner/`, copy
@@ -281,11 +286,24 @@ mechanism and keywords.
 `centroids`, `codes`, `counts`) and `places[]` on three levels:
 `wojewodztwo` (16), `powiat` (380), `gmina` (2 479). A gmina carries the
 picker `label` and its `centroid` `[lon, lat]`; `terc` is the seven-digit
-TERC used everywhere else. The picker offers gminas only and resolves the
+TERC used everywhere else. The picker passes on gminas only and resolves the
 districts of Kraków to `1261011`.
 
 ```json
 {"code": "PL-12-61-011", "terc": "1261011", "level": "gmina", "name": "Kraków", "kind": "gmina miejska", "parent": "PL-12-61", "powiat": "Kraków", "wojewodztwo": "małopolskie", "label": "Kraków (miasto na prawach powiatu)", "centroid": [19.985, 50.0532]}
+```
+
+`places/malopolska-localities.json` (125 KB): a header (`source`, `stan_na`,
+`retrieved_at`, `scope`, `counts`) and `localities[]` from the GUS SIMC
+register (the step needs `.local/teryt/SIMC_Urzedowy`): the villages (1 730)
+and the four delegatury of Kraków, without parts of localities, hamlets and
+settlements, and without a locality named like its own gmina (all 64 towns),
+which the gmina already covers. `terc` is the gmina the locality belongs to:
+the picker finds the gmina by the locality's name and passes on only that
+TERC. The fixtures carry a copy as `src/lib/mock/localities.json`.
+
+```json
+{"simc": "0453492", "name": "Mszana Górna", "kind": "wieś", "terc": "1207092"}
 ```
 
 `map/malopolska-gminy.geojson` (85 KB): a FeatureCollection with a `source`

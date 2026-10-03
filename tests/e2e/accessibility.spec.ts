@@ -47,7 +47,7 @@ for (const [theme, applyTheme] of Object.entries(themes)) {
     test("s1 with the gmina list open", async ({ page }) => {
       await applyTheme(page);
       await page.goto("/");
-      await page.getByRole("combobox", { name: "Gmina" }).fill("nowy");
+      await page.getByRole("combobox", { name: "Miejscowość lub gmina" }).fill("nowy");
       await expect(page.getByRole("listbox")).toBeVisible();
       await expectAccessible(page);
     });

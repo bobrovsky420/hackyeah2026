@@ -2,7 +2,7 @@ import type { Catalogue } from "@/lib/catalogue";
 import type { GminaBoundaries, IndicatorKey, IndicatorSet } from "@/lib/contracts/map";
 import type { LocatedImplementation } from "@/lib/data/to-contracts";
 import { helplines, ropsDepartment } from "./contacts";
-import { gminy, innovations } from "./data";
+import { gminy, innovations, localities } from "./data";
 import boundariesData from "./map/boundaries.json";
 import implementationsData from "./map/implementations.json";
 import indicatorsData from "./map/indicators.json";
@@ -65,6 +65,7 @@ export function fixtureCatalogue(): Catalogue {
     innovationById: new Map(innovations.map((item) => [item.id, item])),
     gminy,
     gminaByTerc: new Map(gminy.map((gmina) => [gmina.terc, gmina])),
+    localities,
     implementations: implementationsData as LocatedImplementation[],
     paths,
     pathById: new Map(paths.map((path) => [path.id, path])),

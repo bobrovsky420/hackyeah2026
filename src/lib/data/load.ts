@@ -15,6 +15,7 @@ import type {
   IndexVectorsFile,
   IndicatorsFile,
   KnowledgeFile,
+  LocalitiesFile,
   OrganisationsFile,
   Path,
   PlacesRegister,
@@ -45,6 +46,7 @@ const BUILT_BY: Record<string, string> = {
   "index-vectors.json": VECTORS,
   "incubators.json": `${PY} scripts/parse-catalogues.py`,
   "places/pl-register.json": STATIC("places"),
+  "places/malopolska-localities.json": STATIC("places"),
   "map/malopolska-gminy.geojson": STATIC("map"),
   "indicators.json": STATIC("indicators"),
   "implementations-derived.json": STATIC("origins"),
@@ -135,6 +137,7 @@ export function loadRawData(options: LoadOptions = {}): RawData {
   const taxonomies = json<TaxonomiesFile>("taxonomies.json");
   const incubators = json<IncubatorsFile>("incubators.json");
   const places = json<PlacesRegister>("places/pl-register.json");
+  const localities = json<LocalitiesFile>("places/malopolska-localities.json");
   const boundaries = json<GminaBoundaries>("map/malopolska-gminy.geojson");
   const indicators = json<IndicatorsFile>("indicators.json");
   const derived = json<ImplementationsDerivedFile>("implementations-derived.json");
@@ -215,6 +218,7 @@ export function loadRawData(options: LoadOptions = {}): RawData {
     organisations: organisations!,
     implementations: merged!.implementations,
     places: places!,
+    localities: localities!,
     boundaries: boundaries!,
     indicators: indicators!,
     advisors: advisors!,

@@ -13,7 +13,7 @@ test("J1: the seniors example leads to a route with three solutions", async ({ p
   await page.goto("/");
   await page.getByRole("button", { name: "Samotni seniorzy na wsi" }).click();
   await expect(problem(page)).toHaveValue(/samotnych seniorów/);
-  await expect(page.getByRole("combobox", { name: "Gmina" })).toHaveValue("Laskowa, powiat limanowski");
+  await expect(page.getByRole("combobox", { name: "Miejscowość lub gmina" })).toHaveValue("Laskowa, powiat limanowski");
   await expect(page.getByRole("radio", { name: "Pracuję w instytucji" })).toBeChecked();
 
   await page.getByRole("button", { name: "Znajdź drogę" }).click();
@@ -128,7 +128,7 @@ test("the short text is refused with an error linked to the field", async ({ pag
 
 test("FR-2.2: the gmina picker ignores diacritics and lists Kraków first", async ({ page }) => {
   await page.goto("/");
-  const gmina = page.getByRole("combobox", { name: "Gmina" });
+  const gmina = page.getByRole("combobox", { name: "Miejscowość lub gmina" });
   await gmina.fill("krak");
   await expect(page.getByRole("option").first()).toHaveText("Kraków, miasto na prawach powiatu");
   await gmina.fill("zakop");
@@ -136,6 +136,15 @@ test("FR-2.2: the gmina picker ignores diacritics and lists Kraków first", asyn
   await gmina.press("Enter");
   await expect(gmina).toHaveValue(/^Zakopane, powiat tatrzański$/);
   await expect(page.getByRole("listbox")).toBeHidden();
+});
+
+test("FR-2.2: a village finds its gmina, and only the gmina is passed on", async ({ page }) => {
+  await page.goto("/");
+  const place = page.getByRole("combobox", { name: "Miejscowość lub gmina" });
+  await place.fill("mszana gor");
+  await page.getByRole("option", { name: "Mszana Górna, gmina wiejska Mszana Dolna, powiat limanowski" }).click();
+  await expect(place).toHaveValue("Mszana Górna, gmina wiejska Mszana Dolna, powiat limanowski");
+  await expect(page.locator('input[type="hidden"][name="miejsce"]')).toHaveValue("1207092");
 });
 
 test("the view settings apply at once and survive a reload", async ({ page }) => {

@@ -11,6 +11,9 @@ Outputs (data/, build outputs, git-ignored; spec 8.8 and 8.9):
   data/places/pl-register.json        every voivodeship, powiat and gmina of Poland: code PL-12,
                                       PL-12-07, PL-12-07-132, the seven-digit TERC, names, the
                                       picker label of the gminas and their centroid (lon, lat)
+  data/places/malopolska-localities.json  towns, villages and the delegatury of Krakow in Malopolska
+                                      from the SIMC register, each with the TERC of its gmina: the
+                                      picker finds a gmina by any of its localities (FR-2.2)
   data/map/malopolska-gminy.geojson   the 183 gminas of Malopolska simplified with mapshaper
                                       (spec 8.8), properties JPT_KOD_JE, JPT_NAZWA_, kind, powiat
   data/indicators.json                the four indicators per gmina of Malopolska, the latest year
@@ -212,6 +215,38 @@ def build_places(rows, retrieved, centroids):
     return gmi, pow_
 
 
+# SIMC kinds the picker offers; parts of localities, hamlets and settlements (00, 03, 99 ...) are left out.
+LOCALITY_KINDS = {"01": "wieś", "96": "miasto", "98": "delegatura"}
+
+
+def build_localities(gmi):
+    """Towns and villages of Malopolska for the picker (FR-2.2): each resolves to its gmina.
+    A locality named like its own gmina is left out; the gmina itself covers it."""
+    rows, retrieved = read_simc_rows()
+    localities, dropped = [], 0
+    for r in rows:
+        if r["WOJ"] != MALOPOLSKA or r["RM"] not in LOCALITY_KINDS or r["SYM"] != r["SYMPOD"]:
+            continue
+        terc = simc_gmina(r)
+        if terc not in gmi:
+            sys.exit(f"SIMC {r['SYM']} {r['NAZWA']}: gmina {terc} is not in the TERC register")
+        if r["NAZWA"] == gmi[terc]["NAZWA"]:
+            dropped += 1
+            continue
+        localities.append({"simc": r["SYM"], "name": r["NAZWA"], "kind": LOCALITY_KINDS[r["RM"]], "terc": terc})
+    localities.sort(key=lambda x: (x["name"], x["simc"]))
+    head = {
+        "source": "GUS TERYT, rejestr SIMC (dane publiczne), https://eteryt.stat.gov.pl/",
+        "stan_na": rows[0]["STAN_NA"],
+        "retrieved_at": retrieved,
+        "scope": "miasta, wsie i delegatury Krakowa w Małopolsce, bez części miejscowości; "
+                 "bez miejscowości o nazwie swojej gminy; terc = gmina, do której należy miejscowość",
+        "counts": dict(collections.Counter(x["kind"] for x in localities)),
+    }
+    write_json_lines(os.path.join(DATA, "places", "malopolska-localities.json"), head, "localities", localities)
+    log(f"localities: {len(localities)} in Malopolska ({head['counts']}), {dropped} named like their gmina left out")
+
+
 # ------------------------------------------------------------------------ map
 
 def build_map(geojson, gmi, pow_, simplify):
@@ -355,21 +390,31 @@ PLACE_SPLIT = re.compile(r"\s*,\s*|\s+i\s+|\s+oraz\s+")
 ORIGIN_NOTE_PL = "Miejsce pochodzenia innowacji według katalogu: siedziba innowatora w czasie testowania."
 
 
-def read_simc():
-    """Localities of Poland (GUS SIMC): lower-case name -> set of gmina TERC codes."""
+def read_simc_rows():
+    """(rows, retrieved date) of the latest GUS SIMC register in .local/teryt."""
     files = sorted(glob.glob(os.path.join(LOCAL, "teryt", "SIMC_Urzedowy", "SIMC_Urzedowy_*.csv")))
     if not files:
         sys.exit("no SIMC file in .local/teryt/SIMC_Urzedowy; run scripts/fetch-static-data.py --only teryt")
-    out = collections.defaultdict(set)
     with open(files[-1], encoding="utf-8-sig") as f:
-        for r in csv.DictReader(f, delimiter=";"):
-            rodz = r["RODZ_GMI"]
-            if rodz in ("8", "9"):          # districts of Warsaw, delegatury of Krakow, Lodz, Poznan, Wroclaw
-                out[r["NAZWA"].lower()].add(r["WOJ"] + r["POW"] + "011")
-                continue
-            if rodz in ("4", "5"):          # town or rural part of an urban-rural gmina
-                rodz = "3"
-            out[r["NAZWA"].lower()].add(r["WOJ"] + r["POW"] + r["GMI"] + rodz)
+        rows = list(csv.DictReader(f, delimiter=";"))
+    return rows, os.path.basename(files[-1])[len("SIMC_Urzedowy_"):-4]
+
+
+def simc_gmina(r):
+    """The gmina TERC of a SIMC row."""
+    rodz = r["RODZ_GMI"]
+    if rodz in ("8", "9"):          # districts of Warsaw, delegatury of Krakow, Lodz, Poznan, Wroclaw
+        return r["WOJ"] + r["POW"] + "011"
+    if rodz in ("4", "5"):          # town or rural part of an urban-rural gmina
+        rodz = "3"
+    return r["WOJ"] + r["POW"] + r["GMI"] + rodz
+
+
+def read_simc():
+    """Localities of Poland (GUS SIMC): lower-case name -> set of gmina TERC codes."""
+    out = collections.defaultdict(set)
+    for r in read_simc_rows()[0]:
+        out[r["NAZWA"].lower()].add(simc_gmina(r))
     return out
 
 
@@ -869,6 +914,7 @@ def main():
     voiv, pow_, gmi = build_places_index(rows)
     if "places" in steps:
         build_places(rows, retrieved, centroids)
+        build_localities(gmi)
     if "map" in steps:
         build_map(geojson, gmi, pow_, simplify)
     if "indicators" in steps:
