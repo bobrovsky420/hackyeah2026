@@ -50,7 +50,7 @@ Three writers. The parser owns the source records; the workers own the
 derived records; the build owns `data/innovations`. Nobody edits a file
 another step owns.
 
-Versions: the parser stamps `parser_version` (`parse-v1`); the worker
+Versions: the parser stamps `parser_version` (`parse-v4`: v2 pulled real URLs from the free text of "Strona internetowa", v3 fixed v2's overwriting of the entry URL in `sources[]`, v4 removes postal addresses, e-mail addresses and phone numbers from the text and changed the fingerprints of the 8 records that had one); the worker
 prompt carries `version: extract-v1` in its header and every derived
 record repeats it; the taxonomies carry `tax-v3` (section 4). A change of the prompt
 or of the taxonomies' closed lists is a new version, and `derive-records.py status` then
@@ -72,7 +72,7 @@ catalogue (300 and 115 entries, no
 collisions). A merged duplicate keeps the ROPS id and lists the national
 id under `merged_from`.
 
-## 3. The source record (`.local/pipeline/sources/<id>.json`, parse-v1)
+## 3. The source record (`.local/pipeline/sources/<id>.json`, parse-v4)
 
 Schema: [schemas/source-record.schema.json](../schemas/source-record.schema.json).
 Everything here is copied or computed mechanically.
@@ -100,7 +100,7 @@ Keys of `source_fields`. National base: `charakter`, `problem`,
 `rezultaty_testowania`, `komentarz_do_oceny`, `miejsce_testowania`,
 `zrodlo_finansowania`, `strona_www`, `kto_niezbedny`, `co_niezbedne`,
 `typ_innowatora`, `innowator` (legal entities only), `miejscowosc`,
-`instytucja_wspierajaca`. ROPS library: `wstep` (rare), `na_czym_polega`,
+`instytucja_wspierajaca`. ROPS library: `oznaczenie` (the incubator label, 27 entries), `wstep` (rare), `na_czym_polega`,
 `jakich_problemow_dotyczy`, `grupa_docelowa`, `kto_moze_skorzystac`,
 `czy_to_dziala`, `autorzy`. The section "Kontakt w sprawie innowacji" is
 never stored (`contact_in_source` records that it exists).
@@ -110,6 +110,12 @@ names of people stay as published (they are the authors of a public
 work); phone numbers, e-mail addresses and postal addresses are not
 copied for anybody, organisations included; a website is kept for
 organisations only. The route screen links the source entry for contact.
+Since parse-v4 the parser enforces this in every source field and in
+`text_pl`: a street with a house number (ul., al., os., pl., plac, rynek
+and the like) and a postal code NN-NNN are dropped while the institution
+and the town stay ("Muzeum Kaset; Piaseczno"); an e-mail address becomes
+"(adres e-mail w źródle)" and a nine-digit phone number "(telefon w
+źródle)".
 
 ## 4. The derived record (`.local/pipeline/derived/<id>.json`, extract-v1)
 

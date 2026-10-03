@@ -46,6 +46,17 @@ with a sha256 manifest; it refuses an inconsistent set) and
 `scripts/unpack-data.py <zip>` verifies and restores it; see
 [docs/data-setup.md](../docs/data-setup.md).
 
+A partner hand-over (FR-1.6, OP-17) enters the pipeline beside the two
+catalogues: save the file under `.local/raw/partner/`, copy
+`tests/fixtures/partner/mapping.yaml`, put the partner's column headers into
+it, and run `scripts/ingest-partner.py --dry-run`, then without it. The
+adapter writes `inn-partner-<slug>` source records, which the extraction skill
+and `derive-records.py build` treat like the catalogue records. A row that
+repeats a catalogue title is listed as a possible duplicate and decided in
+`duplicates-decisions.json`. Nothing in `data/` changes until the next build.
+The app reads `data/` through `src/lib/data/load.ts`, which runs the checks
+below and maps the files onto the app's contracts (`docs/data-to-contracts.md`).
+
 ## Rebuild order
 
 From the repository root, with `.venv` and `.venv-embedding` as in `AGENTS.md`:

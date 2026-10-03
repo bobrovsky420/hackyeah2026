@@ -66,7 +66,7 @@ export function Filters({
 }: {
   statuses: Record<string, MessageKey>;
   current: { status: string; gmina: string; category?: string };
-  exportType: "potrzeby" | "kontakty" | "gotowosc";
+  exportType: "needs" | "contacts" | "readiness";
   /** The target groups for the category filter of the needs list (FR-9.2). */
   categories?: { value: string; label: string }[];
 }) {
@@ -111,7 +111,7 @@ export function Filters({
           {t("console.filter.submit")}
         </Button>
       </form>
-      <a href={`/api/rops/eksport/${exportType}`} className={buttonVariants({ variant: "secondary" })}>
+      <a href={`/api/rops/export.csv?what=${exportType}`} className={buttonVariants({ variant: "secondary" })}>
         {t("console.export")}
       </a>
     </div>

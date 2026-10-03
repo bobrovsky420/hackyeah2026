@@ -155,7 +155,9 @@ def load_sources():
 
 
 def source_kind(sid):
-    return "nat" if sid.startswith("inn-nat-") else "rops"
+    if sid.startswith("inn-nat-"):
+        return "nat"
+    return "partner" if sid.startswith("inn-partner-") else "rops"
 
 
 # ---------------------------------------------------------------- validation
@@ -375,7 +377,7 @@ def cmd_status(args):
         rows[source_kind(sid)][st] += 1
         rows["all"][st] += 1
     log(f"{'source':8s} {'parsed':>7s} {'valid':>7s} {'invalid':>8s} {'stale':>6s} {'missing':>8s}")
-    for k in ("nat", "rops", "all"):
+    for k in ("nat", "rops", "partner", "all"):
         c = rows[k]
         log(f"{k:8s} {sum(c.values()):7d} {c['valid']:7d} {c['invalid']:8d} {c['stale']:6d} {c['missing']:8d}")
     warn = sum(len(r["warnings"]) for r in manifest["records"].values())
@@ -503,7 +505,10 @@ def cmd_build(args):
                         merged.append({"primary": r, "secondary": n, "title": sources[r]["title"], "organisations": [org_r or None, org_n or None]})
                     else:
                         possible.append({"ids": [r, n], "title": sources[r]["title"], "reason": "same title, different organisations", "organisations": [org_r, org_n]})
-        if len(rops) > 1 or len(nat) > 1:
+        partner = [i for i in ids if source_kind(i) == "partner"]
+        if partner and (rops or nat):
+            possible.append({"ids": ids, "title": sources[ids[0]]["title"], "reason": "partner row with the title of a catalogue record; decide in duplicates-decisions.json"})
+        if len(rops) > 1 or len(nat) > 1 or len(partner) > 1:
             possible.append({"ids": ids, "title": sources[ids[0]]["title"], "reason": "same title inside one catalogue; not merged"})
     # A person's decisions (data/duplicates-decisions.json) override the flags.
     decided = []
@@ -620,7 +625,7 @@ def main():
     sub.add_parser("status").set_defaults(fn=cmd_status)
     b = sub.add_parser("batches")
     b.add_argument("--size", type=int, default=12)
-    b.add_argument("--source", choices=["nat", "rops"])
+    b.add_argument("--source", choices=["nat", "rops", "partner"])
     b.add_argument("--all", action="store_true", help="every id, not only the pending ones")
     b.set_defaults(fn=cmd_batches)
     v = sub.add_parser("validate")

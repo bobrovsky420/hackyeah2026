@@ -76,7 +76,7 @@ test("FR-2.3: one question when neither a group nor a place is known, and the an
 });
 
 test("FR-2.4: a refused request says so and keeps the text", async ({ page }) => {
-  await page.route("**/api/droga", (route) =>
+  await page.route("**/api/routes", (route) =>
     route.fulfill({ status: 429, contentType: "application/json", body: '{"error":"rate_limited"}' }),
   );
   await page.goto("/");

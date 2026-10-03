@@ -7,7 +7,7 @@ const gminaName = (terc: string | null) => getGmina(terc)?.name ?? "";
 
 /* "Eksportuj CSV" of the console (S7), with the moderation columns of FR-12.8. */
 const exports = {
-  potrzeby: () =>
+  needs: () =>
     toCsv(
       ["id", "data", "gmina", "teryt", "rola", "opis", "streszczenie", "grupy", "zgoda_na_publikacje", "status", "moderacja", "moderujacy", "data_decyzji", "powod", "notatka", "przyklad"],
       store.needs.map((need) => [
@@ -29,7 +29,7 @@ const exports = {
         need.example,
       ]),
     ),
-  kontakty: () =>
+  contacts: () =>
     toCsv(
       ["id", "data", "imie_i_nazwisko", "organizacja", "email", "cel", "cel_id", "droga", "wiadomosc", "status", "moderacja", "moderujacy", "data_decyzji", "powod", "notatka"],
       store.contacts.map((contact) => [
@@ -50,7 +50,7 @@ const exports = {
         contact.note_pl,
       ]),
     ),
-  gotowosc: () =>
+  readiness: () =>
     toCsv(
       ["id", "data", "nazwa", "organizacja", "gmina", "teryt", "tematy", "kanal", "kontakt", "pokazac_nazwe", "weryfikacja", "weryfikujacy", "data_weryfikacji", "przechowywac_do", "notatka"],
       store.readiness.map((entry) => [
@@ -73,16 +73,23 @@ const exports = {
     ),
 };
 
-export async function GET(_request: Request, { params }: RouteContext<"/api/rops/eksport/[typ]">) {
+type ExportName = keyof typeof exports;
+
+// The downloaded file is named in Polish: the reader sees it.
+const fileNames: Record<ExportName, string> = { needs: "potrzeby", contacts: "kontakty", readiness: "gotowosc" };
+
+/** GET /api/rops/export.csv?what=needs|contacts|readiness (9.2). */
+export async function GET(request: Request) {
   if (!(await isAuthenticated())) return new Response("Brak dostępu", { status: 401 });
-  const { typ } = await params;
-  if (!Object.hasOwn(exports, typ)) return new Response("Nie ma takiego eksportu", { status: 404 });
-  const csv = exports[typ as keyof typeof exports]();
+  const what = new URL(request.url).searchParams.get("what") ?? "";
+  if (!Object.hasOwn(exports, what)) return new Response("Nie ma takiego eksportu", { status: 404 });
+  const name = what as ExportName;
+  const csv = exports[name]();
   const date = new Date().toISOString().slice(0, 10);
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${typ}-${date}.csv"`,
+      "Content-Disposition": `attachment; filename="${fileNames[name]}-${date}.csv"`,
       "Cache-Control": "no-store",
     },
   });

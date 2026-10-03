@@ -30,7 +30,7 @@ export default async function NeedsPage({ searchParams }: PageProps<"/rops/potrz
 
   return (
     <ConsolePage title={t("console.needs.title")} lead={t("console.needs.lead")}>
-      <Filters statuses={needStatuses} current={{ status, gmina, category }} exportType="potrzeby" categories={categories} />
+      <Filters statuses={needStatuses} current={{ status, gmina, category }} exportType="needs" categories={categories} />
       <p role="status">{t("console.results", { count: rows.length })}</p>
       {rows.length === 0 ? (
         <Empty>{t("console.empty")}</Empty>

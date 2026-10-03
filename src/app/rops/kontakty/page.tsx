@@ -27,7 +27,7 @@ export default async function ContactsPage({ searchParams }: PageProps<"/rops/ko
 
   return (
     <ConsolePage title={t("console.contacts.title")} lead={t("console.contacts.lead")}>
-      <Filters statuses={contactStatuses} current={{ status, gmina }} exportType="kontakty" />
+      <Filters statuses={contactStatuses} current={{ status, gmina }} exportType="contacts" />
       <p role="status">{t("console.results", { count: rows.length })}</p>
       {rows.length === 0 ? (
         <Empty>{t("console.empty")}</Empty>

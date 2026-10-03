@@ -47,7 +47,7 @@ function exampleNeed(
 ): Need {
   return {
     id,
-    created_at: "2026-10-03T09:00:00+02:00",
+    created_at: "2026-09-29T09:00:00+02:00",
     route_id: routeId,
     problem_text: text,
     summary_pl: text,
@@ -61,7 +61,7 @@ function exampleNeed(
       publish_anonymised: publish,
       contact: false,
       text_version: CONSENT_VERSION,
-      timestamp: "2026-10-03T09:00:00+02:00",
+      timestamp: "2026-09-29T09:00:00+02:00",
     },
     status: "nowa",
     moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },

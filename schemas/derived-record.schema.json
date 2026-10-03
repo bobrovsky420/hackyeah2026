@@ -13,7 +13,7 @@
     "origin_place_pl", "requires_pl", "keywords_pl", "evidence", "confidence", "notes_pl"
   ],
   "properties": {
-    "id": {"type": "string", "pattern": "^inn-(nat|rops)-[a-z0-9-]+$"},
+    "id": {"type": "string", "pattern": "^inn-(nat|rops|partner)-[a-z0-9-]+$"},
     "prompt_version": {"type": "string", "pattern": "^extract-v[0-9]+$"},
     "generated_by": {"type": "string", "minLength": 3, "description": "Model id of the worker, as given by the coordinator, e.g. claude-haiku-4-5"},
     "generated_at": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
