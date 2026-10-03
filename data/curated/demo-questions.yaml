@@ -1,0 +1,2374 @@
+# The question bank of the simulated pilot in the ROPS panel: the questions
+# behind the demonstration data of the trends (module II), each run once
+# through the route pipeline. Hand-written reference data, committed to git.
+#
+# Source: two sets of test questions in Polish prepared by the team, 180 on
+# the nine ROPS categories (20 per category, covering all 115 ROPS items of
+# the catalogue) and 50 on matters outside the catalogue. The questions are
+# authored examples, not quotes of users, and confirm no service. The place
+# names and events of the second set build test scenarios only; nobody
+# verified the renovations, plans or complaints they mention.
+#
+# Fields:
+# - id: the id of the source set (EMPP01 ... FAMP20, X01 ... X50).
+# - scope: catalogue (written for named ROPS items), partial (shares a topic
+#   or a target group with a category, which does not mean the catalogue
+#   solves it) or outside (beyond the catalogue).
+# - category: the target-group code of the question's ROPS category
+#   (data/curated/taxonomies.json); catalogue questions only.
+# - expected: the innovation ids of the ROPS items the question was written
+#   for, matched by their ROPS page; candidates to check, not a closed list
+#   of right answers.
+# - related: the target-group codes a partial question touches; empty when
+#   outside.
+# - topic_pl: the short topic of the source set (for scope outside and
+#   partial, its theme section).
+# - role: added by the team, read from the voice of the text (who writes:
+#   a resident or relative, an institution's worker, a social organisation
+#   or a gmina office).
+# - place_terc: added by the team. A place the text names (Kraków for the
+#   Korona pool, Podgórze, Krzemionki and a district; a gmina on the Raba)
+#   is kept; otherwise the gmina was drawn once, weighted by its population
+#   (GUS BDL, variable 72305, 2024), among the gminas the text implies: the
+#   three cities (Kraków, Tarnów, Nowy Sącz) for street homelessness, city
+#   transport and big hospitals, urban gminas for blocks of flats, rural and
+#   urban-rural gminas for villages, and all gminas otherwise.
+# - text_pl: the question as the source set has it, word for word.
+version: "2026-10-03"
+
+questions:
+  - id: EMPP01
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-agencja-pracy-incydentalnej]
+    topic_pl: Powrót do pracy
+    role: mieszkaniec
+    place_terc: "1201082"  # Trzciana
+    text_pl: >-
+      Od dawna nie pracuję i po trudnym okresie nie dam rady od razu wrócić na
+      pełny etat. Czy jest jakiś sposób, żeby zacząć od pojedynczych zleceń?
+  - id: EMPP02
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-agencja-pracy-incydentalnej]
+    topic_pl: Praca od czasu do czasu
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Szukam pracy, którą można wykonywać od czasu do czasu, bo na razie nie
+      radzę sobie z codziennymi obowiązkami. Co mogłoby mi pomóc?
+  - id: EMPP03
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-agencja-pracy-incydentalnej]
+    topic_pl: Wsparcie po kryzysie
+    role: mieszkaniec
+    place_terc: "1210042"  # Grybów
+    text_pl: >-
+      Mój brat wychodzi z poważnego kryzysu i chciałby znowu pracować. Gdzie
+      szukać pomysłu na spokojny powrót do pracy?
+  - id: EMPP04
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-agencja-pracy-incydentalnej]
+    topic_pl: Organizacja wsparcia
+    role: organizacja-spoleczna
+    place_terc: "1206012"  # Czernichów
+    text_pl: >-
+      Pomagamy osobom, które od dawna są bez pracy i mają za sobą trudne
+      doświadczenia. Jak zorganizować im krótkie zadania na początek?
+  - id: EMPP05
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-niewypaleni]
+    topic_pl: Zmęczenie pracą
+    role: mieszkaniec
+    place_terc: "1213052"  # Osiek
+    text_pl: >-
+      Mój syn ma niepełnosprawność intelektualną, pracuje, ale ostatnio jest
+      ciągle zmęczony i nie chce wychodzić do pracy. Czy są materiały, które
+      pomogą nam go wesprzeć?
+  - id: EMPP06
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-niewypaleni]
+    topic_pl: Zapobieganie wypaleniu
+    role: mieszkaniec
+    place_terc: "1215011"  # Jordanów
+    text_pl: >-
+      Zatrudniam osobę z niepełnosprawnością intelektualną. Jak mogę jej
+      pomóc, żeby praca nie stała się dla niej zbyt dużym obciążeniem?
+  - id: EMPP07
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-niewypaleni]
+    topic_pl: Utrzymanie pracy
+    role: mieszkaniec
+    place_terc: "1217042"  # Kościelisko
+    text_pl: >-
+      Mam niepełnosprawność intelektualną. Lubiłem swoją pracę, ale teraz
+      wszystko mnie w niej męczy. Czy jest coś, co może mi pomóc?
+  - id: EMPP08
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-niewypaleni]
+    topic_pl: Wsparcie pracowników
+    role: organizacja-spoleczna
+    place_terc: "1214033"  # Nowe Brzesko
+    text_pl: >-
+      Prowadzimy zajęcia dla pracujących osób z niepełnosprawnością
+      intelektualną. Czy są gotowe ćwiczenia o zmęczeniu pracą i wypaleniu?
+  - id: EMPP09
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-konsultant-etr]
+    topic_pl: Sprawdzanie prostych tekstów
+    role: mieszkaniec
+    place_terc: "1202052"  # Gnojnik
+    text_pl: >-
+      Mam niepełnosprawność intelektualną. Dobrze zauważam, kiedy jakiś tekst
+      jest niezrozumiały. Czy można wykorzystać to w pracy?
+  - id: EMPP10
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-konsultant-etr]
+    topic_pl: Praca konsultanta
+    role: mieszkaniec
+    place_terc: "1218093"  # Wadowice
+    text_pl: >-
+      Moja córka ma niepełnosprawność intelektualną i chciałaby pracować przy
+      sprawdzaniu, czy teksty są proste. Czy jest taki zawód?
+  - id: EMPP11
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-konsultant-etr]
+    topic_pl: Zrozumiałe materiały
+    role: urzad-gminy
+    place_terc: "1210163"  # Stary Sącz
+    text_pl: >-
+      Tworzymy proste instrukcje dla mieszkańców. Jak włączyć osoby z
+      niepełnosprawnością intelektualną w sprawdzanie, czy da się je
+      zrozumieć?
+  - id: EMPP12
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-konsultant-etr]
+    topic_pl: Przygotowanie do zawodu
+    role: pracownik-instytucji
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Pracuję z dorosłymi z niepełnosprawnością intelektualną. Szukam pomysłu
+      na przygotowanie ich do pracy z tekstami łatwymi do czytania. Co już
+      opracowano?
+  - id: EMPP13
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-mobilna-gielda-pracy]
+    topic_pl: Kobiety na wsi
+    role: mieszkaniec
+    place_terc: "1212053"  # Olkusz
+    text_pl: >-
+      Mieszkam na wsi i od kilku lat nie pracuję. Czy jest jakieś wsparcie dla
+      kobiet, które chcą wrócić do pracy?
+  - id: EMPP14
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-mobilna-gielda-pracy]
+    topic_pl: Powrót po przerwie
+    role: mieszkaniec
+    place_terc: "1215082"  # Zawoja
+    text_pl: >-
+      Po przerwie na wychowanie dzieci chciałabym znowu pracować, ale mieszkam
+      w małej miejscowości. Od czego mogę zacząć?
+  - id: EMPP15
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-mobilna-gielda-pracy]
+    topic_pl: Dostęp do wsparcia
+    role: mieszkaniec
+    place_terc: "1216133"  # Wojnicz
+    text_pl: >-
+      W mojej okolicy kobiety chcą pracować, ale trudno im dotrzeć do
+      doradców. Czy jest pomysł na wsparcie bliżej miejsca zamieszkania?
+  - id: EMPP16
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-mobilna-gielda-pracy]
+    topic_pl: Pomysł dla gminy
+    role: urzad-gminy
+    place_terc: "1210092"  # Łącko
+    text_pl: >-
+      Pracuję w gminie. Jak możemy pomóc kobietom z okolicznych wsi, które od
+      dawna są poza rynkiem pracy?
+  - id: EMPP17
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-oddawacze]
+    topic_pl: Oddawanie rzeczy
+    role: mieszkaniec
+    place_terc: "1219022"  # Gdów
+    text_pl: >-
+      Mam sprawny sprzęt, którego już nie używam. Czy mogę go komuś oddać i
+      przy okazji wesprzeć organizację charytatywną?
+  - id: EMPP18
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-oddawacze]
+    topic_pl: Rzeczy z drugiej ręki
+    role: mieszkaniec
+    place_terc: "1216053"  # Radłów
+    text_pl: >-
+      Czy jest miejsce, gdzie można dostać używaną rzecz w zamian za niewielką
+      wpłatę na dobry cel?
+  - id: EMPP19
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-oddawacze]
+    topic_pl: Pomoc organizacji
+    role: organizacja-spoleczna
+    place_terc: "1213043"  # Kęty
+    text_pl: >-
+      Nasza fundacja szuka sposobu na zbieranie drobnych wpłat przy wymianie
+      używanych rzeczy. Czy istnieje taki pomysł?
+  - id: EMPP20
+    scope: catalogue
+    category: rynek-pracy
+    expected: [inn-rops-oddawacze]
+    topic_pl: Wymiana i dobroczynność
+    role: mieszkaniec
+    place_terc: "1207011"  # Limanowa
+    text_pl: >-
+      Robię porządki w domu i szkoda mi wyrzucać dobre rzeczy. Jak połączyć
+      przekazanie ich innym z pomocą potrzebującym?
+  - id: MOBP01
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-uniodziez]
+    topic_pl: Ochrona przed deszczem
+    role: mieszkaniec
+    place_terc: "1210052"  # Kamionka Wielka
+    text_pl: >-
+      Jeżdżę na wózku i podczas deszczu mam mokre nogi. Czy są peleryny, które
+      lepiej chronią osobę siedzącą na wózku?
+  - id: MOBP02
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-zakupy-na-jednym-wozku-z-dzieckiem-z-niepelnosprawnoscia-ruchowa]
+    topic_pl: Zakupy z dzieckiem
+    role: mieszkaniec
+    place_terc: "1210042"  # Grybów
+    text_pl: >-
+      Moje dziecko ma niepełnosprawność ruchową. Jak robić z nim zakupy, żebym
+      nie musiała prowadzić jednocześnie dwóch wózków?
+  - id: MOBP03
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-kompleksowa-pomoc-dla-osob-po-amputacji-konczyny-dolnej]
+    topic_pl: Pomoc po amputacji
+    role: mieszkaniec
+    place_terc: "1207082"  # Łukowica
+    text_pl: >-
+      Tata jest po amputacji nogi i nie wiemy, od czego zacząć organizowanie
+      pomocy. Czy jest rozwiązanie, które łączy różne formy wsparcia?
+  - id: MOBP04
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-puzzles-ramp]
+    topic_pl: Próg przy wejściu
+    role: mieszkaniec
+    place_terc: "1213093"  # Zator
+    text_pl: >-
+      Przy wejściu do naszego lokalu jest niewysoki próg, którego nie mogę
+      pokonać wózkiem. Czy da się go jakoś łatwo wyrównać?
+  - id: MOBP05
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-chlap-pro]
+    topic_pl: Osłona protezy
+    role: mieszkaniec
+    place_terc: "1219043"  # Niepołomice
+    text_pl: >-
+      Używam protezy nogi i szukam osłony przed zachlapaniem. Czy jest coś
+      przeznaczonego właśnie do tego?
+  - id: MOBP06
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-marina-pai]
+    topic_pl: Dostępna przystań
+    role: organizacja-spoleczna
+    place_terc: "1202023"  # Brzesko
+    text_pl: >-
+      Prowadzimy małą przystań. Jak sprawdzić, czy osoba na wózku będzie mogła
+      z niej korzystać?
+  - id: MOBP07
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-zakupy-bez-barier]
+    topic_pl: Pomoc w sklepie
+    role: mieszkaniec
+    place_terc: "1212053"  # Olkusz
+    text_pl: >-
+      Poruszam się o kulach i trudno mi samemu robić zakupy. Czy jest prosty
+      sposób, żeby poprosić obsługę sklepu o pomoc?
+  - id: MOBP08
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-nakreceni-na-aktywnosc]
+    topic_pl: Dostępność budynków
+    role: mieszkaniec
+    place_terc: "1202012"  # Borzęcin
+    text_pl: >-
+      Zanim pojadę do urzędu, chcę sprawdzić, czy dostanę się tam na wózku.
+      Czy jest narzędzie z takimi informacjami?
+  - id: MOBP09
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-moduly-niezaleznosci]
+    topic_pl: Podróż kamperem
+    role: mieszkaniec
+    place_terc: "1206113"  # Skawina
+    text_pl: >-
+      Chcielibyśmy pojechać na wakacje kamperem, ale mąż porusza się na wózku.
+      Czy są pomysły, jak dostosować takie auto?
+  - id: MOBP10
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-biustspinka]
+    topic_pl: Zapinanie biustonosza
+    role: mieszkaniec
+    place_terc: "1219032"  # Kłaj
+    text_pl: >-
+      Mam ograniczoną sprawność jednej ręki i trudno mi zapiąć biustonosz. Czy
+      jest jakiś przyrząd, który mi to ułatwi?
+  - id: MOBP11
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-szablony-piekna]
+    topic_pl: Bielizna łatwa do założenia
+    role: mieszkaniec
+    place_terc: "1210022"  # Chełmiec
+    text_pl: >-
+      Mam trudności z poruszaniem się i zakładaniem zwykłej bielizny. Czy
+      istnieje bielizna, którą łatwiej samodzielnie założyć?
+  - id: MOBP12
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-ev-modul-do-wozkow-inwalidzkich]
+    topic_pl: Napęd do wózka
+    role: mieszkaniec
+    place_terc: "1219053"  # Wieliczka
+    text_pl: >-
+      Jeżdżę na ręcznym wózku, ale podjazdy są dla mnie coraz trudniejsze. Czy
+      można dołożyć napęd elektryczny zamiast wymieniać cały wózek?
+  - id: MOBP13
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-dostepny-stol-targowy]
+    topic_pl: Zakupy na targu
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Sprzedaję na targu i chciałbym, żeby klienci na wózkach mogli wygodnie
+      obejrzeć towar. Jak może wyglądać odpowiedni stół?
+  - id: MOBP14
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-cloudleg]
+    topic_pl: Wygląd protezy
+    role: mieszkaniec
+    place_terc: "1209033"  # Myślenice
+    text_pl: >-
+      Jestem po amputacji nogi i zależy mi też na wyglądzie protezy. Czy są
+      rozwiązania, które pomagają dopasować ją do mojego stylu?
+  - id: MOBP15
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-lekki-wozek-aktywny]
+    topic_pl: Lekki wózek
+    role: mieszkaniec
+    place_terc: "1206162"  # Zabierzów
+    text_pl: >-
+      Szukam lekkiego wózka do aktywnego poruszania się na co dzień. Jakie
+      rozwiązania warto sprawdzić?
+  - id: MOBP16
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-wozek-szermierczy]
+    topic_pl: Wózek do szermierki
+    role: mieszkaniec
+    place_terc: "1205042"  # Gorlice
+    text_pl: >-
+      Chciałbym spróbować szermierki na wózku. Czy jest specjalny wózek
+      przeznaczony do tego sportu?
+  - id: MOBP17
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-dostepna-szermierka]
+    topic_pl: Sprzęt dla klubu
+    role: organizacja-spoleczna
+    place_terc: "1209073"  # Sułkowice
+    text_pl: >-
+      Chcemy w klubie prowadzić szermierkę dla osób na wózkach. Czy jest
+      rozwiązanie do ustawienia i mocowania wózków podczas walki?
+  - id: MOBP18
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-innotextil]
+    topic_pl: Ubranie do rehabilitacji
+    role: mieszkaniec
+    place_terc: "1218093"  # Wadowice
+    text_pl: >-
+      Czy są specjalne ubrania, które mogą wspierać ćwiczenia rehabilitacyjne
+      w domu?
+  - id: MOBP19
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-puzzles-ramp, inn-rops-nakreceni-na-aktywnosc]
+    topic_pl: Wejście do budynku
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Na mapie znalazłem budynek opisany jako dostępny, ale przy wejściu jest
+      próg. Co mogłoby pomóc go pokonać?
+  - id: MOBP20
+    scope: catalogue
+    category: ograniczona-mobilnosc
+    expected: [inn-rops-biustspinka, inn-rops-szablony-piekna]
+    topic_pl: Samodzielne ubieranie
+    role: mieszkaniec
+    place_terc: "1214042"  # Pałecznica
+    text_pl: >-
+      Po chorobie mam mniej sprawne ręce i chciałabym ubierać się bez pomocy
+      bliskich. Jakie rozwiązania ułatwiają zakładanie bielizny?
+  - id: SENP01
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-straznik]
+    topic_pl: Sygnały alarmowe
+    role: mieszkaniec
+    place_terc: "1209073"  # Sułkowice
+    text_pl: >-
+      Nie słyszę alarmów ani syren. Czy telefon może mi jakoś pokazać, że w
+      pobliżu dzieje się coś niebezpiecznego?
+  - id: SENP02
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-wsparcie-imprez-masowych-dla-osob-z-niepelnosprawnoscia-wzroku]
+    topic_pl: Poruszanie się na wydarzeniu
+    role: organizacja-spoleczna
+    place_terc: "1206103"  # Skała
+    text_pl: >-
+      Organizujemy plenerowy festyn. Jak oznaczyć drogę, żeby osoby niewidome
+      mogły ją wyczuć pod stopami lub laską?
+  - id: SENP03
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-teleasystent]
+    topic_pl: Pomoc na odległość
+    role: mieszkaniec
+    place_terc: "1205023"  # Biecz
+    text_pl: >-
+      Nie widzę i czasem potrzebuję, żeby ktoś pomógł mi rozpoznać rzecz albo
+      przeczytać napis. Czy można dostać taką pomoc przez telefon?
+  - id: SENP04
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-hear-it]
+    topic_pl: Nauka informatyki
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Jestem osobą głuchą i chcę nauczyć się czegoś z informatyki. Czy są
+      materiały w polskim języku migowym?
+  - id: SENP05
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-gluchy-czytelnik-w-bibliotece]
+    topic_pl: Dostępna biblioteka
+    role: pracownik-instytucji
+    place_terc: "1202023"  # Brzesko
+    text_pl: >-
+      Pracuję w bibliotece. Jak ułatwić osobom głuchym korzystanie z książek i
+      naszych zajęć?
+  - id: SENP06
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-blue-sea-eye]
+    topic_pl: Żeglowanie
+    role: mieszkaniec
+    place_terc: "1203043"  # Libiąż
+    text_pl: >-
+      Słabo widzę, ale chcę żeglować. Czy jest sprzęt lub aplikacja, która
+      może mi pomóc orientować się na wodzie?
+  - id: SENP07
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-osoby-niewidome-i-niedowidzace-jako-nauczyciele-jezyka-polskiego]
+    topic_pl: Praca nauczyciela
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Jestem osobą niewidomą i dobrze znam polski. Czy jest pomysł na pracę
+      przy uczeniu tego języka innych osób?
+  - id: SENP08
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-ngoz-nawigacja-glosowa-osob-zaleznych]
+    topic_pl: Nawigacja w budynku
+    role: mieszkaniec
+    place_terc: "1211112"  # Raba Wyżna
+    text_pl: >-
+      Nie widzę i gubię się w dużych budynkach. Czy jest aplikacja, która
+      głosem poprowadzi mnie do właściwego pokoju?
+  - id: SENP09
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-wibraap]
+    topic_pl: Odczuwanie muzyki
+    role: mieszkaniec
+    place_terc: "1209062"  # Siepraw
+    text_pl: >-
+      Nie słyszę muzyki. Czy są urządzenia, dzięki którym można ją poczuć
+      przez drgania?
+  - id: SENP10
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-my-way-to-culture]
+    topic_pl: Zwiedzanie muzeum
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Chcę pójść do muzeum, ale mam problemy ze wzrokiem. Czy jest narzędzie,
+      które pomoże mi poruszać się po wystawie?
+  - id: SENP11
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-glucha-ankieta]
+    topic_pl: Ankieta w języku migowym
+    role: mieszkaniec
+    place_terc: "1201092"  # Żegocina
+    text_pl: >-
+      Łatwiej mi odpowiadać w języku migowym niż pisać po polsku. Czy da się
+      tak wypełnić ankietę internetową?
+  - id: SENP12
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-dostepny-wniosek-dla-ggluchych]
+    topic_pl: Wniosek o dostępność
+    role: mieszkaniec
+    place_terc: "1219053"  # Wieliczka
+    text_pl: >-
+      Jestem osobą głuchą i chcę poprosić urząd o dostępną formę obsługi. Czy
+      znajdę prosty wzór takiego wniosku?
+  - id: SENP13
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-czytamoda]
+    topic_pl: Wybór ubrań
+    role: mieszkaniec
+    place_terc: "1207052"  # Kamienica
+    text_pl: >-
+      Nie widzę dobrze ubrań w sklepie. Czy coś może opisać mi ich kolor, wzór
+      i wygląd, żebym mógł sam zdecydować?
+  - id: SENP14
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-dostepny-transport-publiczny]
+    topic_pl: Komunikacja miejska
+    role: mieszkaniec
+    place_terc: "1262011"  # Nowy Sącz
+    text_pl: >-
+      Jestem osobą niewidomą i mam telefon z Androidem. Czy jest rozwiązanie,
+      które ułatwi mi korzystanie z komunikacji miejskiej?
+  - id: SENP15
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-turystyka-gorskawspinaczka-dostepna-dla-wszystkich]
+    topic_pl: Wspinaczka
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Słabo widzę i chciałbym spróbować wspinaczki. Czy są sposoby prowadzenia
+      takich zajęć dla osób z problemami ze wzrokiem?
+  - id: SENP16
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-zdobadz-swoje-szczyty]
+    topic_pl: Trasy górskie
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Nie widzę i planuję wyjście w góry z osobą towarzyszącą. Gdzie szukać
+      opisów tras uwzględniających moje potrzeby?
+  - id: SENP17
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-spotkania-kulturlove]
+    topic_pl: Towarzystwo do muzeum
+    role: mieszkaniec
+    place_terc: "1218062"  # Spytkowice
+    text_pl: >-
+      Mam niepełnosprawność wzroku i nie chcę iść sam do muzeum. Czy jest
+      sposób na znalezienie wolontariusza, który mi potowarzyszy?
+  - id: SENP18
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-zmysly-w-ruchu-model-choreografii-dla-osob-niewidomych]
+    topic_pl: Taniec i ruch
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Straciłam wzrok i chciałabym wrócić do tańca. Czy są zajęcia ruchowe
+      opracowane z myślą o osobach niewidomych?
+  - id: SENP19
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-kaski-binauralne]
+    topic_pl: Oswajanie utraty wzroku
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Niedawno straciłem wzrok. Czy są pomoce wykorzystujące dźwięk, które
+      mogą wesprzeć mnie w oswajaniu tej zmiany?
+  - id: SENP20
+    scope: catalogue
+    category: niepelnosprawnosc-sensoryczna
+    expected: [inn-rops-wielodziedzinowy-slownik-terminow-specjalistycznych-pl-pjm]
+    topic_pl: Trudne słowa w PJM
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Używam polskiego języka migowego i nie rozumiem specjalistycznych słów z
+      pisma. Czy jest słownik, który pokazuje takie pojęcia w PJM?
+  - id: MIGP01
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-bajkala]
+    topic_pl: Dziecko z Czeczenii
+    role: mieszkaniec
+    place_terc: "1213062"  # Oświęcim
+    text_pl: >-
+      Moje dziecko pochodzi z Czeczenii i trudno mu odnaleźć się w nowym
+      miejscu. Czy jest jakaś pomoc lub przedmiot nawiązujący do jego kultury?
+  - id: MIGP02
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-bajkala]
+    topic_pl: Wsparcie w świetlicy
+    role: pracownik-instytucji
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      W naszej świetlicy są dzieci z Czeczenii. Czy jest coś, co pomoże im
+      poczuć się bardziej u siebie?
+  - id: MIGP03
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-bajkala]
+    topic_pl: Pomoc kulturowa dla dzieci
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Słyszałam o lampce przygotowanej z myślą o dzieciach czeczeńskich. Co to
+      za rozwiązanie i do czego służy?
+  - id: MIGP04
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-dialog-ponad-kulturami]
+    topic_pl: Obawa o wyjazd dziecka
+    role: mieszkaniec
+    place_terc: "1215032"  # Budzów
+    text_pl: >-
+      Mój były partner pochodzi z innego kraju i boję się, że wywiezie tam
+      nasze dziecko bez mojej zgody. Czy jest pomoc w rozmowie między
+      rodzicami?
+  - id: MIGP05
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-dialog-ponad-kulturami]
+    topic_pl: Spór między rodzicami
+    role: mieszkaniec
+    place_terc: "1216122"  # Wietrzychowice
+    text_pl: >-
+      Jesteśmy z różnych krajów i nie możemy się porozumieć w sprawie wyjazdu
+      dziecka za granicę. Czy jest specjalny rodzaj mediacji dla takich
+      rodzin?
+  - id: MIGP06
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-dialog-ponad-kulturami]
+    topic_pl: Dziecko za granicą
+    role: mieszkaniec
+    place_terc: "1207092"  # Mszana Dolna
+    text_pl: >-
+      Były partner zabrał dziecko do swojego kraju i nie chce go przywieźć.
+      Czy są rozwiązania pomagające rodzicom dojść do porozumienia w takiej
+      sytuacji?
+  - id: MIGP07
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-dialog-ponad-kulturami]
+    topic_pl: Wsparcie rodziny
+    role: pracownik-instytucji
+    place_terc: "1204023"  # Dąbrowa Tarnowska
+    text_pl: >-
+      Pomagam rodzinie, w której rodzice pochodzą z różnych kultur i pojawiło
+      się ryzyko wywiezienia dziecka. Czy jest gotowy model prowadzenia
+      mediacji?
+  - id: MIGP08
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-wortal-informacyjny]
+    topic_pl: Informacje w języku dari
+    role: mieszkaniec
+    place_terc: "1201042"  # Lipnica Murowana
+    text_pl: >-
+      Jestem z Afganistanu i najlepiej rozumiem dari. Gdzie znajdę informacje
+      o życiu w Polsce w tym języku?
+  - id: MIGP09
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-wortal-informacyjny]
+    topic_pl: Pomoc dla bliskiej osoby
+    role: mieszkaniec
+    place_terc: "1210022"  # Chełmiec
+    text_pl: >-
+      Pomagam znajomemu z Afganistanu, który jeszcze nie zna polskiego. Czy
+      jest strona z przydatnymi informacjami w dari?
+  - id: MIGP10
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-wortal-informacyjny]
+    topic_pl: Sprawdzone informacje
+    role: mieszkaniec
+    place_terc: "1218013"  # Andrychów
+    text_pl: >-
+      Moja mama mówi w dari i trudno jej szukać informacji o Polsce. Czy mogę
+      pokazać jej jakiś portal w jej języku?
+  - id: MIGP11
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-dialog-ponad-kulturami-1]
+    topic_pl: Porozumiewanie się
+    role: mieszkaniec
+    place_terc: "1213052"  # Osiek
+    text_pl: >-
+      Jestem z Afganistanu i słabo mówię po polsku. Czy jest aplikacja, która
+      pomoże mi dogadać się w codziennych sprawach?
+  - id: MIGP12
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-dialog-ponad-kulturami-1]
+    topic_pl: Rozmowa z mieszkańcem
+    role: pracownik-instytucji
+    place_terc: "1211092"  # Nowy Targ
+    text_pl: >-
+      Przychodzi do nas mieszkaniec z Afganistanu i trudno nam się porozumieć.
+      Czy jest narzędzie przygotowane do takich rozmów?
+  - id: MIGP13
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-dialog-ponad-kulturami-1]
+    topic_pl: Pomoc przez telefon
+    role: mieszkaniec
+    place_terc: "1206113"  # Skawina
+    text_pl: >-
+      Szukam dla znajomej z Afganistanu aplikacji do porozumiewania się z
+      Polakami. Co mogę jej pokazać?
+  - id: MIGP14
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-health-guide-pl]
+    topic_pl: Korzystanie z lekarza
+    role: mieszkaniec
+    place_terc: "1212042"  # Klucze
+    text_pl: >-
+      Przyjechałem do pracy w Polsce i nie wiem, jak korzystać z publicznej
+      przychodni. Czy jest prosty poradnik dla obcokrajowców?
+  - id: MIGP15
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-health-guide-pl]
+    topic_pl: Poradnik po ukraińsku
+    role: mieszkaniec
+    place_terc: "1213043"  # Kęty
+    text_pl: >-
+      Pracuję w Polsce, ale informacje o lekarzach rozumiem lepiej po
+      ukraińsku. Czy jest poradnik w tym języku?
+  - id: MIGP16
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-health-guide-pl]
+    topic_pl: Poradnik po angielsku
+    role: mieszkaniec
+    place_terc: "1207102"  # Niedźwiedź
+    text_pl: >-
+      Mój kolega z zagranicy pracuje w Polsce i szuka informacji o publicznej
+      opiece zdrowotnej po angielsku. Gdzie może zacząć?
+  - id: MIGP17
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-health-guide-pl]
+    topic_pl: Wyjaśnienie zasad opieki
+    role: mieszkaniec
+    place_terc: "1211092"  # Nowy Targ
+    text_pl: >-
+      Nie rozumiem, czym różni się lekarz rodzinny od specjalisty i jak się do
+      nich zgłosić. Czy jest przewodnik dla osób, które dopiero przyjechały do
+      Polski?
+  - id: MIGP18
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-zrozum-moja-kulture-zrozum-mnie]
+    topic_pl: Poznawanie się w grupie
+    role: organizacja-spoleczna
+    place_terc: "1215052"  # Jordanów
+    text_pl: >-
+      Na naszych spotkaniach są ludzie z różnych krajów i mało ze sobą
+      rozmawiają. Czy jest gra, która pomoże im się poznać?
+  - id: MIGP19
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-zrozum-moja-kulture-zrozum-mnie]
+    topic_pl: Rozmowa o kulturze
+    role: organizacja-spoleczna
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Chcemy w świetlicy porozmawiać o różnych zwyczajach bez oceniania
+      innych. Czy są gotowe gry do takich spotkań?
+  - id: MIGP20
+    scope: catalogue
+    category: cudzoziemcy
+    expected: [inn-rops-zrozum-moja-kulture-zrozum-mnie]
+    topic_pl: Integracja mieszkańców
+    role: organizacja-spoleczna
+    place_terc: "1219053"  # Wieliczka
+    text_pl: >-
+      Organizuję spotkanie polskich mieszkańców i nowych sąsiadów z zagranicy.
+      Jaką prostą zabawę mogę wykorzystać, żeby łatwiej było zacząć rozmowę?
+  - id: INTP01
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-urzedowy-ambaras]
+    topic_pl: Nauka spraw urzędowych
+    role: mieszkaniec
+    place_terc: "1219043"  # Niepołomice
+    text_pl: >-
+      Mam niepełnosprawność intelektualną i stresuję się wizytą w urzędzie.
+      Czy jest gra, na której mogę poćwiczyć załatwianie spraw?
+  - id: INTP02
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-stop-otylosci-innowacyjna-metoda-pracy-z-osobami-niepelnosprawnymi-intelektualnie]
+    topic_pl: Wsparcie przy otyłości
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Mój dorosły syn ma niepełnosprawność intelektualną i dużą otyłość. Czy
+      jest sposób pracy nad tym problemem dostosowany do jego potrzeb?
+  - id: INTP03
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-pelna-wokanda]
+    topic_pl: Zrozumienie sądu
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Trudno mi zrozumieć, kto co robi w sądzie. Czy jest prosta gra, która mi
+      to wyjaśni?
+  - id: INTP04
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-pelnia-zdrowia]
+    topic_pl: Przygotowanie do lekarza
+    role: mieszkaniec
+    place_terc: "1211023"  # Szczawnica
+    text_pl: >-
+      Moja córka ma niepełnosprawność intelektualną i nie wie, jak wygląda
+      wizyta u lekarza. Czy są materiały, które pomogą ją przygotować?
+  - id: INTP05
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-niepelnosprawnosc-szansa-na-pelnosprawnosc-w-pracy-i-zyciu]
+    topic_pl: Przygotowanie do pracy
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Mój syn kończy szkołę i ma umiarkowaną niepełnosprawność intelektualną.
+      Jak można przygotować go do pracy i większej samodzielności?
+  - id: INTP06
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-dostepna-polska]
+    topic_pl: Prosty przewodnik po mieście
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Chcę zwiedzić polskie miasto, ale zwykłe przewodniki są dla mnie za
+      trudne. Czy są takie napisane prościej, dla osób z niepełnosprawnością
+      intelektualną?
+  - id: INTP07
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-zalatw-to-sam]
+    topic_pl: Ćwiczenie samodzielności
+    role: pracownik-instytucji
+    place_terc: "1218093"  # Wadowice
+    text_pl: >-
+      Prowadzę zajęcia dla osób z niepełnosprawnością intelektualną. Czy jest
+      planszówka do ćwiczenia załatwiania spraw w urzędach i innych
+      instytucjach?
+  - id: INTP08
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-go-ahead-mow-smialo]
+    topic_pl: Ćwiczenie rozmowy
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Mam niepełnosprawność intelektualną i czasem trudno mi powiedzieć, o co
+      mi chodzi. Czy jest aplikacja do ćwiczenia rozmowy?
+  - id: INTP09
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-autyzm-i-ja]
+    topic_pl: Wsparcie przedszkolaka
+    role: mieszkaniec
+    place_terc: "1218033"  # Kalwaria Zebrzydowska
+    text_pl: >-
+      Moje dziecko jest w spektrum autyzmu i zaczyna przedszkole. Czy są
+      wskazówki dla rodziców i nauczycieli, jak je wspierać?
+  - id: INTP10
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-podroz-poza-domem-w-wirtualnej-rzeczywistosci]
+    topic_pl: Lęk przed wyjściem
+    role: mieszkaniec
+    place_terc: "1218093"  # Wadowice
+    text_pl: >-
+      Boję się wychodzić z domu i szukam czegoś do omówienia z terapeutą. Czy
+      są rozwiązania, w których ćwiczy się różne sytuacje w wirtualnej
+      rzeczywistości?
+  - id: INTP11
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-ta-sciezka-terapeutyczna-sciezka-kulturowa-dla-dzieci-i-doroslych-z-autyzmem]
+    topic_pl: Spokojniejsze wyjścia
+    role: mieszkaniec
+    place_terc: "1210082"  # Łabowa
+    text_pl: >-
+      Jestem w spektrum autyzmu i trudno mi odnaleźć się w przestrzeni
+      publicznej. Czy jest aplikacja, która może ułatwić wyjścia do miasta?
+  - id: INTP12
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-osa-i-eco-puzzle]
+    topic_pl: Wsparcie rodzin
+    role: mieszkaniec
+    place_terc: "1207042"  # Jodłownik
+    text_pl: >-
+      Jesteśmy rodzicami dorosłej osoby w spektrum autyzmu i chcemy poznać
+      inne rodziny, żeby wspólnie organizować zajęcia. Czy jest gotowy pomysł
+      na taką grupę?
+  - id: INTP13
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-rodzinny-system-wzajemnej-pomocy]
+    topic_pl: Życie po szkole
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Mój syn ma 23 lata, jest w spektrum autyzmu, skończył szkołę i nie
+      pracuje. Czy są pomysły, żeby nie zostawał całymi dniami sam w domu?
+  - id: INTP14
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-mix-ar-i-vr-dla-koordynacji-ruchowej]
+    topic_pl: Ćwiczenie dłoni
+    role: mieszkaniec
+    place_terc: "1206113"  # Skawina
+    text_pl: >-
+      Moja córka jest w spektrum autyzmu i potrzebuje ćwiczeń sprawności
+      dłoni. Czy są do tego aplikacje z wirtualną lub rozszerzoną
+      rzeczywistością?
+  - id: INTP15
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-urzedowy-ambaras, inn-rops-zalatw-to-sam]
+    topic_pl: Nauka przez zabawę
+    role: mieszkaniec
+    place_terc: "1209013"  # Dobczyce
+    text_pl: >-
+      Chcę nauczyć się sam załatwiać swoje sprawy. Długie instrukcje są dla
+      mnie trudne. Czy mogę poćwiczyć na grze?
+  - id: INTP16
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-pelnia-zdrowia]
+    topic_pl: Samodzielna wizyta
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Chcemy, żeby brat z niepełnosprawnością intelektualną więcej spraw u
+      lekarza załatwiał sam. Jak możemy to wcześniej z nim przećwiczyć?
+  - id: INTP17
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-niepelnosprawnosc-szansa-na-pelnosprawnosc-w-pracy-i-zyciu]
+    topic_pl: Zajęcia w szkole
+    role: pracownik-instytucji
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Pracuję w szkole z uczniami z umiarkowaną niepełnosprawnością
+      intelektualną. Czy jest opracowany sposób przygotowywania ich do życia
+      zawodowego?
+  - id: INTP18
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-dostepna-polska, inn-rops-ta-sciezka-terapeutyczna-sciezka-kulturowa-dla-dzieci-i-doroslych-z-autyzmem]
+    topic_pl: Wyjście do miasta
+    role: organizacja-spoleczna
+    place_terc: "1206022"  # Igołomia-Wawrzeńczyce
+    text_pl: >-
+      Organizujemy wycieczkę dla osób o różnych potrzebach, w tym z
+      niepełnosprawnością intelektualną i w spektrum autyzmu. Czy są proste
+      przewodniki lub aplikacje, które mogą pomóc?
+  - id: INTP19
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-osa-i-eco-puzzle, inn-rops-rodzinny-system-wzajemnej-pomocy]
+    topic_pl: Wspólne działania rodzin
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Kilka rodzin z dorosłymi dziećmi w spektrum autyzmu chce pomagać sobie
+      nawzajem. Jak można zorganizować taką współpracę po zakończeniu szkoły?
+  - id: INTP20
+    scope: catalogue
+    category: niepelnosprawnosc-intelektualna
+    expected: [inn-rops-go-ahead-mow-smialo]
+    topic_pl: Pomoc w komunikacji
+    role: pracownik-instytucji
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Pracuję z dorosłymi z niepełnosprawnością intelektualną. Szukam
+      aplikacji do ćwiczenia wyrażania potrzeb i porozumiewania się. Co mogę
+      sprawdzić?
+  - id: HOMP01
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Dostęp do prysznica
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Nie mam gdzie mieszkać ani się umyć. Czy jest pomoc, dzięki której mogę
+      skorzystać z prysznica?
+  - id: HOMP02
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Czyste ubrania
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Śpię na ulicy i potrzebuję czystych ubrań na zmianę. Czy są miejsca lub
+      punkty, które pomagają w takich sprawach?
+  - id: HOMP03
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Higiena przed spotkaniem
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Chcę pójść na rozmowę o pracę, ale nie mam gdzie się umyć i przebrać.
+      Jakiej pomocy mogę szukać?
+  - id: HOMP04
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Pomoc dla znajomego
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Mój znajomy stracił mieszkanie i od kilku dni nie ma dostępu do
+      łazienki. Czy jest jakaś mobilna pomoc higieniczna?
+  - id: HOMP05
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Warunki korzystania
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Słyszałem o mobilnym prysznicu dla osób bez domu. Jak mogę sprawdzić,
+      gdzie działa i czy trzeba się wcześniej zgłosić?
+  - id: HOMP06
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Brak telefonu
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Nie mam domu ani smartfona. Jak mogę dowiedzieć się, gdzie skorzystać z
+      mobilnego punktu z prysznicem?
+  - id: HOMP07
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Pomoc bliżej ludzi
+    role: organizacja-spoleczna
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Pomagamy osobom nocującym poza schroniskami. Czy jest sposób, żeby
+      zapewnić im prysznic bliżej miejsca, w którym przebywają?
+  - id: HOMP08
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Pomysł dla gminy
+    role: urzad-gminy
+    place_terc: "1218082"  # Tomice
+    text_pl: >-
+      W naszej gminie brakuje miejsca, gdzie osoby bez domu mogłyby się umyć.
+      Czy jest gotowy pomysł na mobilny punkt higieniczny?
+  - id: HOMP09
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Prysznic i odzież
+    role: pracownik-instytucji
+    place_terc: "1203043"  # Libiąż
+    text_pl: >-
+      Czy mobilny punkt dla osób bezdomnych może obejmować zarówno możliwość
+      umycia się, jak i czyste ubranie na zmianę?
+  - id: HOMP10
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-szlakiem-ludzi-bezdomnych]
+    topic_pl: Uruchomienie wsparcia
+    role: organizacja-spoleczna
+    place_terc: "1209052"  # Raciechowice
+    text_pl: >-
+      Chcemy jako organizacja zapewnić osobom bez domu prysznic i odzież.
+      Gdzie znajdziemy opis takiego rozwiązania?
+  - id: HOMP11
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Wyjście z bezdomności
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Chciałbym wyjść z bezdomności i zacząć od nowa na wsi. Czy są programy,
+      które łączą miejsce do życia z pracą?
+  - id: HOMP12
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Powrót w rodzinne strony
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Pochodzę ze wsi, teraz nie mam domu i myślę o powrocie w rodzinne
+      strony. Czy jest pomysł na wsparcie w takiej sytuacji?
+  - id: HOMP13
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Spokojniejsze miejsce do życia
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Nie radzę sobie z życiem na ulicy w dużym mieście. Czy istnieje program,
+      w którym można zamieszkać na wsi i stopniowo się usamodzielnić?
+  - id: HOMP14
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Praca przy ośrodku
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Nie mam stałego miejsca zamieszkania, ale chcę pracować. Czy są
+      rozwiązania oparte na mieszkaniu i pomocy przy prowadzeniu ośrodka na
+      wsi?
+  - id: HOMP15
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Pomoc dla bliskiej osoby
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Mój brat jest w kryzysie bezdomności i chciałby spróbować życia poza
+      miastem. Jakiego programu możemy szukać?
+  - id: HOMP16
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Wsparcie na dłużej
+    role: pracownik-instytucji
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Szukam dla osoby bez domu czegoś więcej niż noclegu na kilka nocy. Czy
+      jest pomysł na dłuższe wsparcie z pracą i życiem na wsi?
+  - id: HOMP17
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Działanie fundacji
+    role: organizacja-spoleczna
+    place_terc: "1262011"  # Nowy Sącz
+    text_pl: >-
+      Nasza fundacja chce pomagać w wychodzeniu z bezdomności przez wspólną
+      pracę przy ośrodku ekologicznym. Czy istnieje podobny model?
+  - id: HOMP18
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Włączenie w życie wsi
+    role: urzad-gminy
+    place_terc: "1210163"  # Stary Sącz
+    text_pl: >-
+      Czy znacie rozwiązanie, w którym osoby wychodzące z bezdomności pracują
+      na rzecz ośrodka służącego też mieszkańcom wsi?
+  - id: HOMP19
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Informacje o programie
+    role: mieszkaniec
+    place_terc: "1212053"  # Olkusz
+    text_pl: >-
+      Słyszałem o Ścieżce Feniksa. Dla kogo jest ten pomysł i na czym polega?
+  - id: HOMP20
+    scope: catalogue
+    category: bezdomnosc
+    expected: [inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa]
+    topic_pl: Sprawdzenie dostępności
+    role: pracownik-instytucji
+    place_terc: "1206172"  # Zielonki
+    text_pl: >-
+      Zainteresował mnie program wychodzenia z bezdomności na wsi. Jak
+      sprawdzić, czy gdzieś rzeczywiście działa i przyjmuje nowe osoby?
+  - id: MEDP01
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-paszport-pacjenta-z-choroba-rzadka]
+    topic_pl: Informacje o chorobie
+    role: mieszkaniec
+    place_terc: "1213052"  # Osiek
+    text_pl: >-
+      Mam rzadką chorobę i przy każdej wizycie muszę wszystko tłumaczyć od
+      początku. Czy jest sposób, żeby najważniejsze informacje mieć zawsze
+      przy sobie?
+  - id: MEDP02
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-paszport-pacjenta-z-choroba-rzadka]
+    topic_pl: Dokumentacja w podróży
+    role: mieszkaniec
+    place_terc: "1219043"  # Niepołomice
+    text_pl: >-
+      Moje dziecko ma rzadką chorobę i często wyjeżdżamy. Jak mieć pod ręką
+      informacje o lekach i lekarzach, gdy trafimy do nowej placówki?
+  - id: MEDP03
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-himalaje-autyzmu]
+    topic_pl: Przygotowanie do wizyty
+    role: mieszkaniec
+    place_terc: "1213043"  # Kęty
+    text_pl: >-
+      Mój syn jest w spektrum autyzmu i bardzo źle znosi wizyty lekarskie. Czy
+      jest sposób, żeby wcześniej go do nich przygotować?
+  - id: MEDP04
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-himalaje-autyzmu]
+    topic_pl: Silny stres u lekarza
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Bliska osoba w spektrum autyzmu podczas badania wpada w panikę i nie
+      pozwala się zbadać. Czy jest opracowana metoda wsparcia w takiej
+      sytuacji?
+  - id: MEDP05
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-gra-o-zdrowie]
+    topic_pl: Powrót do pracy po kryzysie
+    role: mieszkaniec
+    place_terc: "1216032"  # Lisia Góra
+    text_pl: >-
+      Mam za sobą kryzys psychiczny i myślę o powrocie do pracy. Czy są
+      zajęcia albo gry, które pomagają oswoić ten temat?
+  - id: MEDP06
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-gra-o-zdrowie]
+    topic_pl: Zajęcia o pracy
+    role: organizacja-spoleczna
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Prowadzimy grupę dla osób po kryzysach psychicznych. Czy jest
+      planszówka, która pomoże nam rozmawiać o pracy i związanych z nią
+      trudnościach?
+  - id: MEDP07
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-telerehabilitacja-oddechowa]
+    topic_pl: Rehabilitacja bez dojazdów
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Mam zaleconą rehabilitację oddechową, ale trudno mi dojeżdżać. Czy są
+      rozwiązania pozwalające prowadzić ją na odległość?
+  - id: MEDP08
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-telerehabilitacja-oddechowa]
+    topic_pl: Ćwiczenia pod opieką
+    role: mieszkaniec
+    place_terc: "1201022"  # Bochnia
+    text_pl: >-
+      Chciałabym zapytać specjalistę o rehabilitację oddechową z domu. Czy
+      jest gotowy model takiej opieki, o którym mogę z nim porozmawiać?
+  - id: MEDP09
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-inteligentny-organizer-do-lekow]
+    topic_pl: Porządek w lekach
+    role: mieszkaniec
+    place_terc: "1205011"  # Gorlice
+    text_pl: >-
+      Biorę kilka leków i mylę się przy ich układaniu. Czy jest organizer
+      połączony z telefonem, który może mi pomóc?
+  - id: MEDP10
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-inteligentny-organizer-do-lekow]
+    topic_pl: Pomoc bliskiej osobie
+    role: mieszkaniec
+    place_terc: "1218013"  # Andrychów
+    text_pl: >-
+      Mama gubi się w pudełkach z lekami. Czy są rozwiązania łączące zwykły
+      pojemnik na tabletki z aplikacją?
+  - id: MEDP11
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-drogowskazy-ajkum]
+    topic_pl: Droga do gabinetu
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      W dużym szpitalu łatwo się gubię i nie wiem, jak dojść do gabinetu. Czy
+      jest narzędzie, które pomoże mi znaleźć drogę wewnątrz budynku?
+  - id: MEDP12
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-drogowskazy-ajkum]
+    topic_pl: Orientacja w placówce
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Tata leczy się onkologicznie i stresuje go szukanie właściwego oddziału.
+      Czy są rozwiązania ułatwiające poruszanie się po placówce?
+  - id: MEDP13
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-cold-box]
+    topic_pl: Przewożenie leków
+    role: mieszkaniec
+    place_terc: "1213033"  # Chełmek
+    text_pl: >-
+      Muszę zabierać ze sobą lek wymagający chłodzenia. Czy istnieje mały
+      pojemnik przeznaczony do przewożenia takich leków?
+  - id: MEDP14
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-cold-box]
+    topic_pl: Lek podczas wyjazdu
+    role: mieszkaniec
+    place_terc: "1218013"  # Andrychów
+    text_pl: >-
+      Wyjeżdżam na kilka godzin i muszę mieć przy sobie insulinę. Jakiego
+      rodzaju pojemnika do chłodzenia leków mogę szukać?
+  - id: MEDP15
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-pacjent-pro]
+    topic_pl: Pierwszy pobyt na oddziale
+    role: mieszkaniec
+    place_terc: "1210062"  # Korzenna
+    text_pl: >-
+      Czeka mnie pierwszy pobyt na oddziale psychiatrycznym i bardzo się boję.
+      Czy jest aplikacja, która pomaga odnaleźć się w takim miejscu?
+  - id: MEDP16
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-pacjent-pro]
+    topic_pl: Wsparcie pacjenta
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Bliska osoba trafiła na oddział psychiatryczny i czuje się zagubiona.
+      Czy jest jakieś narzędzie pomagające w codziennym funkcjonowaniu na
+      oddziale?
+  - id: MEDP17
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-oncotriada]
+    topic_pl: Wsparcie po diagnozie raka
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Właśnie dowiedziałam się, że mam nowotwór i trudno mi sobie z tym
+      poradzić. Czy są programy wsparcia z psychoonkologiem?
+  - id: MEDP18
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-oncotriada]
+    topic_pl: Rozmowa z innym pacjentem
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Chciałbym porozmawiać z kimś, kto przeszedł leczenie raka, ale w ramach
+      zorganizowanego wsparcia. Czy jest taki pomysł?
+  - id: MEDP19
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-oncotriada]
+    topic_pl: Pomoc dla bliskiej osoby
+    role: mieszkaniec
+    place_terc: "1219043"  # Niepołomice
+    text_pl: >-
+      Moja żona zaczyna leczenie onkologiczne. Szukamy wsparcia, które łączy
+      pomoc psychologa z rozmową z osobą po leczeniu. Co możemy sprawdzić?
+  - id: MEDP20
+    scope: catalogue
+    category: zdrowie
+    expected: [inn-rops-inteligentny-organizer-do-lekow, inn-rops-cold-box]
+    topic_pl: Organizacja a chłodzenie
+    role: mieszkaniec
+    place_terc: "1211092"  # Nowy Targ
+    text_pl: >-
+      Potrzebuję pomocy z układaniem tabletek, a osobno z przewożeniem leku w
+      chłodzie. Czy są rozwiązania na oba te problemy?
+  - id: OLDP01
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-bawita]
+    topic_pl: Zajęcia przy demencji
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Babcia ma demencję i trudno znaleźć dla niej zajęcie. Czy są proste
+      pomoce, przy których może coś przesuwać, dotykać i robić rękami?
+  - id: OLDP02
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-senior-cuder]
+    topic_pl: Wspólna gra
+    role: organizacja-spoleczna
+    place_terc: "1203013"  # Alwernia
+    text_pl: >-
+      Prowadzimy klub seniora i szukamy gry karcianej, przy której łatwiej
+      będzie zacząć rozmowę. Co możemy wykorzystać?
+  - id: OLDP03
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-merkury]
+    topic_pl: Bankomat i paczkomat
+    role: mieszkaniec
+    place_terc: "1219012"  # Biskupice
+    text_pl: >-
+      Boję się korzystać z bankomatu i paczkomatu, bo nie chcę niczego zepsuć.
+      Czy mogę gdzieś spokojnie poćwiczyć?
+  - id: OLDP04
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania]
+    topic_pl: Powrót ze szpitala
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Mama wraca ze szpitala i nie wiemy, jak zorganizować jej opiekę w domu.
+      Czy jest model, który pomaga poukładać pierwsze dni po wypisie?
+  - id: OLDP05
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-przenosne-modularne-lazienki]
+    topic_pl: Łazienka w domu
+    role: mieszkaniec
+    place_terc: "1262011"  # Nowy Sącz
+    text_pl: >-
+      Starszy sąsiad nie ma w domu normalnej łazienki i nie stać go na duży
+      remont. Czy są prostsze rozwiązania, które można u niego zamontować?
+  - id: OLDP06
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-terapeuta-przestrzeni]
+    topic_pl: Bezpieczne mieszkanie
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Tata chce dalej mieszkać sam, ale coraz trudniej mu poruszać się po
+      mieszkaniu. Czy ktoś może pomóc ocenić, co warto w nim zmienić?
+  - id: OLDP07
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-talerze-zdrowia]
+    topic_pl: Codzienne posiłki
+    role: mieszkaniec
+    place_terc: "1211011"  # Nowy Targ
+    text_pl: >-
+      Opiekuję się starszą osobą z niepełnosprawnością i nie wiem, jak układać
+      jej urozmaicone posiłki. Czy są proste materiały z podpowiedziami?
+  - id: OLDP08
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-therapy-set]
+    topic_pl: Aktywność osoby leżącej
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Dziadek większość dnia leży w łóżku. Czy są zestawy prostych pomocy do
+      zajęć i ćwiczeń dla takiej osoby?
+  - id: OLDP09
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-sciezka-treningu-umyslu]
+    topic_pl: Ćwiczenie pamięci
+    role: pracownik-instytucji
+    place_terc: "1211142"  # Szaflary
+    text_pl: >-
+      Chcemy w ośrodku urządzić miejsce do ćwiczenia pamięci dla seniorów z
+      demencją. Czy jest gotowy pomysł na taką przestrzeń?
+  - id: OLDP10
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-edu-gra-hahaha]
+    topic_pl: Wesołe zajęcia w grupie
+    role: organizacja-spoleczna
+    place_terc: "1210163"  # Stary Sącz
+    text_pl: >-
+      W naszym klubie seniora przydałoby się coś wesołego, co zachęci ludzi do
+      wspólnej zabawy i ruchu. Czy jest gra z ćwiczeniami opartymi na śmiechu?
+  - id: OLDP11
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-obu-obuwie-po-domu]
+    topic_pl: Obuwie domowe
+    role: mieszkaniec
+    place_terc: "1217032"  # Bukowina Tatrzańska
+    text_pl: >-
+      Mama kilka razy potknęła się w domu w kapciach. Czy są buty domowe
+      zaprojektowane z myślą o zmniejszeniu ryzyka upadku u starszych osób?
+  - id: OLDP12
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-centrum-antydepresyjne]
+    topic_pl: Obniżony nastrój
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Od przejścia na emeryturę tata jest stale przygnębiony i wycofał się z
+      kontaktów. Czy są rozwiązania wsparcia psychicznego skierowane do
+      seniorów?
+  - id: OLDP13
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-zeglowanie-w-wyobrazni-czyli-sposob-na-strachy-na-wodzie]
+    topic_pl: Żeglowanie z domu
+    role: mieszkaniec
+    place_terc: "1211142"  # Szaflary
+    text_pl: >-
+      Dziadek kiedyś żeglował, ale teraz prawie nie wychodzi z domu. Czy jest
+      sposób, żeby mógł choć wirtualnie wrócić na wodę?
+  - id: OLDP14
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-stworzenie-narzedzia-ulatwiajacego-seniorom-prawidlowe-regulowanie-spraw-spadkowych]
+    topic_pl: Sprawy spadkowe
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Chciałabym uporządkować sprawy spadkowe, ale nie rozumiem tych
+      wszystkich formalności. Czy jest proste narzędzie przygotowane dla
+      seniorów?
+  - id: OLDP15
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-mobilne-centrum-pomocy-dla-osob-starszych]
+    topic_pl: Pomoc na wsi
+    role: mieszkaniec
+    place_terc: "1203053"  # Trzebinia
+    text_pl: >-
+      Babcia mieszka sama na wsi i trudno jej dojechać po pomoc. Czy są
+      pomysły na wsparcie, które dociera do starszych osób do domu?
+  - id: OLDP16
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-kody-qr-na-pomoc-seniorom]
+    topic_pl: Pomoc przy zagubieniu
+    role: mieszkaniec
+    place_terc: "1211033"  # Czarny Dunajec
+    text_pl: >-
+      Tata ma problemy z pamięcią i czasem się gubi. Czy jest rozwiązanie z
+      kodem QR, które może ułatwić udzielenie mu pomocy?
+  - id: OLDP17
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-e-rzecznik-konsumenta-seniora]
+    topic_pl: Prawa konsumenta
+    role: mieszkaniec
+    place_terc: "1215082"  # Zawoja
+    text_pl: >-
+      Jestem na emeryturze i nie wiem, jak poradzić sobie z reklamacją
+      zakupionego towaru. Czy jest narzędzie, które wyjaśnia prawa konsumenta
+      prostym językiem?
+  - id: OLDP18
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-sciezka-motosensoryczna]
+    topic_pl: Ruch na co dzień
+    role: pracownik-instytucji
+    place_terc: "1210022"  # Chełmiec
+    text_pl: >-
+      Chcemy przy domu seniora stworzyć miejsce do prostych ćwiczeń ruchowych
+      i pobudzania zmysłów. Czy jest gotowy projekt takiej ścieżki?
+  - id: OLDP19
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-korytarz-wspomnien]
+    topic_pl: Przywoływanie wspomnień
+    role: mieszkaniec
+    place_terc: "1204032"  # Gręboszów
+    text_pl: >-
+      Babcia lubi stare zdjęcia i piosenki. Czy są rozwiązania, które
+      wykorzystują obraz i dźwięk do wspólnego wspominania dawnych lat?
+  - id: OLDP20
+    scope: catalogue
+    category: seniorzy
+    expected: [inn-rops-wirtualne-izby-pamieci]
+    topic_pl: Zachowanie lokalnych historii
+    role: organizacja-spoleczna
+    place_terc: "1205042"  # Gorlice
+    text_pl: >-
+      W naszym klubie starsi mieszkańcy mają mnóstwo wspomnień i starych
+      zdjęć. Jak zrobić z tego wspólny projekt, który zostanie też dla
+      młodszych?
+  - id: FAMP01
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-komix-zyciowy]
+    topic_pl: Rozmowa o emocjach
+    role: pracownik-instytucji
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Pracuję w placówce opiekuńczo-wychowawczej. Czy jest gra, która pomoże
+      młodym ludziom rozmawiać o trudnych sytuacjach i emocjach?
+  - id: FAMP02
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-patryk-i-kropka]
+    topic_pl: Proste opowiadania
+    role: mieszkaniec
+    place_terc: "1214023"  # Koszyce
+    text_pl: >-
+      Mój nastoletni syn ma niepełnosprawność intelektualną. Gdzie znajdę
+      opowiadania o sprawach młodzieży napisane tak, żeby łatwiej je rozumiał?
+  - id: FAMP03
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-edki-kredki-terapeutyczne]
+    topic_pl: Rysowanie przy trudnościach ruchowych
+    role: mieszkaniec
+    place_terc: "1203033"  # Chrzanów
+    text_pl: >-
+      Córka ma bardzo napięte mięśnie ręki i trudno jej utrzymać zwykłą
+      kredkę. Czy są kredki, które mogą jej ułatwić rysowanie?
+  - id: FAMP04
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-rodzina-adopcyjna-dorasta]
+    topic_pl: Rodzicielstwo adopcyjne
+    role: mieszkaniec
+    place_terc: "1205042"  # Gorlice
+    text_pl: >-
+      Nasze adoptowane dziecko wchodzi w wiek nastoletni i pojawiają się nowe
+      trudności. Czy są materiały, z którymi możemy jako rodzice sami
+      popracować?
+  - id: FAMP05
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-puzzle-3d]
+    topic_pl: Nauka Braille’a
+    role: mieszkaniec
+    place_terc: "1215092"  # Zembrzyce
+    text_pl: >-
+      Moje dziecko słabo widzi i zaczyna uczyć się Braille’a. Czy są puzzle
+      lub zabawki, które mogą mu w tym pomóc?
+  - id: FAMP06
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-hop-hop-mobilny-plac-zabaw]
+    topic_pl: Ruch w przedszkolu
+    role: pracownik-instytucji
+    place_terc: "1213043"  # Kęty
+    text_pl: >-
+      W przedszkolu mamy dzieci z trudnościami ruchowymi. Czy jest sprzęt,
+      który łączy zabawę z ćwiczeniem sprawności i nie wymaga dużego placu
+      zabaw?
+  - id: FAMP07
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-mobilny-pomocnik-dydaktyczno-sensoryczny-dla-uczniowstudentow-ze-spektrum-autyzmu]
+    topic_pl: Warunki do nauki
+    role: mieszkaniec
+    place_terc: "1215021"  # Sucha Beskidzka
+    text_pl: >-
+      Moje dziecko jest w spektrum autyzmu i trudno mu się uczyć w szkolnym
+      otoczeniu. Czy jest przenośny sprzęt, który może mu pomóc?
+  - id: FAMP08
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-przewodnik-dla-osob-z-asd-moje-potrzeby-gdzie-i-jak-je-realizowac]
+    topic_pl: Codzienne sprawy poza domem
+    role: mieszkaniec
+    place_terc: "1210022"  # Chełmiec
+    text_pl: >-
+      Mój nastoletni syn jest w spektrum autyzmu. Czy jest prosty poradnik z
+      obrazkami, jak radzić sobie w codziennych sytuacjach poza domem?
+  - id: FAMP09
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-bez-presji-z-depresji]
+    topic_pl: Wsparcie w kryzysie psychicznym
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Córka przechodzi kryzys psychiczny i trudno jej odnaleźć się w szkole.
+      Czy są materiały, które mogą pomóc jej i osobom, które ją wspierają?
+  - id: FAMP10
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-bez-stresu-do-sukcesu-terapia-neurologiczna-przyjazna-dziecku]
+    topic_pl: Przyjazna rehabilitacja
+    role: mieszkaniec
+    place_terc: "1218093"  # Wadowice
+    text_pl: >-
+      Moje dwuletnie dziecko potrzebuje rehabilitacji neurologicznej, ale
+      bardzo się jej boi. Czy są sposoby prowadzenia terapii bardziej
+      przyjazne maluchowi?
+  - id: FAMP11
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-uwaznione-rodzienstwo]
+    topic_pl: Potrzeby rodzeństwa
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Dużo uwagi poświęcamy dziecku z niepełnosprawnością, a jego siostra
+      czuje się pomijana. Czy są wskazówki, jak zadbać też o nią?
+  - id: FAMP12
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-brzuszkole-brzuszek-zostaje-w-przedszkolu]
+    topic_pl: Nawyki żywieniowe
+    role: mieszkaniec
+    place_terc: "1205092"  # Sękowa
+    text_pl: >-
+      Chcę uczyć przedszkolaka dobrych nawyków jedzenia bez ciągłych kłótni
+      przy stole. Czy są proste zabawy i zadania dla rodzica i dziecka?
+  - id: FAMP13
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-to-nie-koniec-swiata-to-poczatek-swiata, inn-rops-nasz-wspolny-rodzinny-swiat-poznaje-ucze-reaguje]
+    topic_pl: Wsparcie całej rodziny
+    role: mieszkaniec
+    place_terc: "1208053"  # Miechów
+    text_pl: >-
+      Niedawno dowiedzieliśmy się o niepełnosprawności intelektualnej naszego
+      dziecka. Czy są materiały albo gry, które pomogą całej rodzinie lepiej
+      zrozumieć tę sytuację?
+  - id: FAMP14
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-jezykolamacz]
+    topic_pl: Rozwój mowy
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Mój pięcioletni syn jest w spektrum autyzmu, słyszy, ale ma trudności z
+      mową. Czy jest aplikacja, która może wspierać ćwiczenie polskiego?
+  - id: FAMP15
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-piosenki-uczestniczace]
+    topic_pl: Komunikacja przez muzykę
+    role: mieszkaniec
+    place_terc: "1210022"  # Chełmiec
+    text_pl: >-
+      Dziecko ma trudności z mówieniem, ale bardzo lubi muzykę. Czy są
+      piosenki, które pomagają mu włączać się do wspólnej zabawy i
+      komunikować?
+  - id: FAMP16
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-moj-pomocny-virtual-world]
+    topic_pl: Nowa szkoła w Polsce
+    role: pracownik-instytucji
+    place_terc: "1201042"  # Lipnica Murowana
+    text_pl: >-
+      Do naszej klasy dołączyło dziecko z Ukrainy. Czy jest aplikacja, która
+      pomoże mu oswoić się z polską szkołą?
+  - id: FAMP17
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-mobilna-pomoc-terapeutyczna]
+    topic_pl: Wsparcie rodziny po przemocy
+    role: mieszkaniec
+    place_terc: "1208053"  # Miechów
+    text_pl: >-
+      W naszej rodzinie dochodziło do przemocy, zgłosiliśmy to do pomocy
+      społecznej i czekamy na dalsze wsparcie. Czy są rozwiązania pomagające
+      rodzinie już na tym początkowym etapie?
+  - id: FAMP18
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-marimbaza]
+    topic_pl: Wspólny projekt muzyczny
+    role: organizacja-spoleczna
+    place_terc: "1216153"  # Żabno
+    text_pl: >-
+      Prowadzę świetlicę dla młodzieży. Czy jest pomysł na zajęcia, podczas
+      których młodzi sami budują instrumenty, a potem razem na nich grają?
+  - id: FAMP19
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-mpatyk]
+    topic_pl: Włączająca planszówka
+    role: mieszkaniec
+    place_terc: "1219053"  # Wieliczka
+    text_pl: >-
+      Szukam planszówki dla dzieci, z której będą mogły korzystać także dzieci
+      z niepełnosprawnościami. Czy jest coś pomyślanego o wspólnej zabawie
+      takiej grupy?
+  - id: FAMP20
+    scope: catalogue
+    category: dzieci-mlodziez-rodziny
+    expected: [inn-rops-czas-na-aktywnosc]
+    topic_pl: Zajęcia i kontakty z ludźmi
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Mój syn ma niepełnosprawność intelektualną i chciałby częściej wychodzić
+      do ludzi. Czy jest platforma, która może pomóc znaleźć pomysły na
+      aktywność?
+  - id: X01
+    scope: partial
+    related: [zdrowie, ograniczona-mobilnosc]
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Basen Korony jest zamknięty przez remont. Mam wrażenie, że od dwóch lat
+      nic się tam nie dzieje. Mam kontuzję nóg i pływanie było moją jedyną
+      aktywnością, a na innych basenach w centrum trudno o wolny tor. Jak
+      sprawdzić, co z remontem, i doprowadzić do tego, żeby ktoś zajął się tą
+      sprawą?
+  - id: X02
+    scope: partial
+    related: [ograniczona-mobilnosc]
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Słyszałem o planie przerobienia zabytkowych schodów w Podgórzu na
+      czerwone schody z windą, podobne do tych w Nowym Jorku. Ten pomysł mi
+      się nie podoba. Jak mogę wyrazić swoje zdanie i znaleźć innych
+      mieszkańców, którzy myślą podobnie?
+  - id: X03
+    scope: outside
+    related: []
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1205092"  # Sękowa
+    text_pl: >-
+      Obok mojego domu jest zarośnięte boisko do koszykówki, z popękaną
+      nawierzchnią i bez siatek. Szkoda, żeby tak stało. Jak zgłosić, że
+      chcemy jego remontu, i sprawdzić, kto za nie odpowiada?
+  - id: X04
+    scope: partial
+    related: [seniorzy, ograniczona-mobilnosc]
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1209033"  # Myślenice
+    text_pl: >-
+      Często spaceruję wzdłuż Raby, ale szybko się męczę i nie mam gdzie
+      usiąść. Jak doprowadzić do ustawienia kilku ławek przy ścieżce?
+  - id: X05
+    scope: partial
+    related: [dzieci-mlodziez-rodziny]
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1218033"  # Kalwaria Zebrzydowska
+    text_pl: >-
+      Dzieciaki z naszego osiedla bawią się na ulicy, a niedaleko jest pusta
+      łąka. Czy możemy zrobić tam plac zabaw i od czego zacząć, skoro nie
+      wiemy, do kogo należy teren?
+  - id: X06
+    scope: outside
+    related: []
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Przy naszym osiedlu ruchliwa droga ma przejście dla pieszych zaraz za
+      zakrętem. Samochody jadą za szybko i boimy się, że kogoś potrącą. Jak
+      zgłosić potrzebę zmiany, zanim dojdzie do tragedii?
+  - id: X07
+    scope: partial
+    related: [ograniczona-mobilnosc]
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1262011"  # Nowy Sącz
+    text_pl: >-
+      Samochody codziennie zastawiają cały chodnik i muszę zjeżdżać wózkiem na
+      jezdnię. Pojedyncze zgłoszenia nic nie zmieniają. Co można zrobić, żeby
+      rozwiązać to na stałe?
+  - id: X08
+    scope: partial
+    related: [seniorzy, ograniczona-mobilnosc]
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1206113"  # Skawina
+    text_pl: >-
+      Zlikwidowano autobus, którym moja mama dojeżdżała do przychodni. Nie ma
+      samochodu, a na przystanek innej linii ma bardzo daleko. Jak zawalczyć o
+      przywrócenie połączenia?
+  - id: X09
+    scope: outside
+    related: []
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1209073"  # Sułkowice
+    text_pl: >-
+      Na drodze do mojego domu jest wielka dziura. Zgłaszałem ją już kilka
+      razy, ale nikt nie naprawia, tylko odsyłają mnie od jednej instytucji do
+      drugiej. Jak ustalić, kto naprawdę ma się tym zająć?
+  - id: X10
+    scope: partial
+    related: [ograniczona-mobilnosc]
+    topic_pl: Przestrzeń publiczna i transport
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Na stacji kolejowej nie działa winda i nie mogę dostać się wózkiem na
+      peron. Chcę wiedzieć, jak podróżować teraz i gdzie zgłosić, że taka
+      sytuacja trwa tygodniami. Od czego zacząć?
+  - id: X11
+    scope: outside
+    related: []
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1218013"  # Andrychów
+    text_pl: >-
+      Sąsiedzi ciągle urządzają głośne imprezy, jest alkohol i podejrzewam też
+      narkotyki. Policja przyjeżdża, a następnego dnia wszystko zaczyna się od
+      nowa. Co jeszcze mogę zrobić, żeby normalnie mieszkać i nie narażać się
+      na odwet?
+  - id: X12
+    scope: partial
+    related: [zdrowie, dzieci-mlodziez-rodziny]
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Moja sąsiadka regularnie zamawia alkohol przez Uber Eats, a kurier
+      zostawia go pod drzwiami. Mam wrażenie, że od dłuższego czasu nie
+      trzeźwieje, mocno schudła i potrzebuje pomocy. Po klatce chodzą też
+      dzieci. Jak zareagować z troską o nią i bezpieczeństwo sąsiadów?
+  - id: X13
+    scope: outside
+    related: []
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1211112"  # Raba Wyżna
+    text_pl: >-
+      Sąsiad chyba pali śmieciami w piecu, bo wieczorami nad domami wisi
+      okropny smród. Nie chcę kłótni ani łatki donosiciela. Jak można to
+      sprawdzić i zareagować możliwie dyskretnie?
+  - id: X14
+    scope: partial
+    related: [bezdomnosc]
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1201011"  # Bochnia
+    text_pl: >-
+      Sąsiadki nie stać na ogrzewanie zimą. Nie znam jej sytuacji
+      mieszkaniowej i boję się, że zgłaszając sprawę, tylko narobię jej
+      problemów albo przyczynię się do eksmisji. Jak zaproponować pomoc i
+      najpierw dowiedzieć się, jakie ma możliwości?
+  - id: X15
+    scope: outside
+    related: []
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Od tygodnia kapie mi woda z sufitu, sąsiad z góry nie otwiera, a
+      administracja mówi, że to nie jej sprawa. Jak ustalić, co robić dalej,
+      zanim zniszczy mi mieszkanie?
+  - id: X16
+    scope: partial
+    related: [seniorzy, ograniczona-mobilnosc]
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1262011"  # Nowy Sącz
+    text_pl: >-
+      W naszym bloku ciągle psuje się winda. Starszy tata mieszka na szóstym
+      piętrze i czasem przez kilka dni nie wychodzi z domu. Jak zmobilizować
+      zarządcę do trwałej naprawy?
+  - id: X17
+    scope: partial
+    related: [zdrowie, dzieci-mlodziez-rodziny]
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      W wynajmowanym mieszkaniu mamy grzyb na ścianach, a dziecko ciągle
+      kaszle. Właściciel mówi, że mamy częściej otwierać okna. Gdzie szukać
+      pomocy, żeby ktoś ocenił warunki w mieszkaniu?
+  - id: X18
+    scope: partial
+    related: [bezdomnosc]
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1212053"  # Olkusz
+    text_pl: >-
+      Właściciel każe mi wyprowadzić się za tydzień, a nie mam dokąd pójść ani
+      pieniędzy na kaucję. Nie wiem, czy może tak zrobić. Gdzie mogę dostać
+      pomoc w mojej sytuacji?
+  - id: X19
+    scope: outside
+    related: []
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Sąsiad wierci i kuje od rana do późnego wieczora, również w weekendy.
+      Rozmowa nic nie dała. Jak ustalić rozsądne zasady remontu i do kogo
+      zwrócić się, jeśli dalej je ignoruje?
+  - id: X20
+    scope: outside
+    related: []
+    topic_pl: Sąsiedztwo i warunki mieszkaniowe
+    role: mieszkaniec
+    place_terc: "1213023"  # Brzeszcze
+    text_pl: >-
+      Dostaliśmy ogromną dopłatę za ogrzewanie, a administracja nie potrafi
+      jasno wyjaśnić wyliczeń. Jak sprawdzić, czy rachunek jest poprawny, i
+      wspólnie z sąsiadami poprosić o dokumenty?
+  - id: X21
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Podczas jazdy ptak uderzył w szybę mojego samochodu. Zatrzymałem się,
+      ptak żyje, ale jest ranny i nie odlatuje. Co mam teraz zrobić i do kogo
+      zadzwonić?
+  - id: X22
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Na Krzemionkach jest pełno śmieci. Sam chętnie pomogę posprzątać, ale
+      nie dam rady ogarnąć całego terenu. Jak znaleźć ludzi do pomocy i
+      załatwić odbiór zebranych worków?
+  - id: X23
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1262011"  # Nowy Sącz
+    text_pl: >-
+      Przy nowej ścieżce rowerowej jest dom z dwoma agresywnymi psami. Psy
+      wychodzą poza ogrodzenie i gonią rowerzystów. Jak zgłosić to tak, żeby
+      ktoś zareagował, zanim kogoś pogryzą?
+  - id: X24
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1206123"  # Słomniki
+    text_pl: >-
+      Od kilku dni pod blokiem siedzi wychudzony kot. Nie wiem, czy komuś
+      uciekł, czy został porzucony. Jak mu pomóc i sprawdzić, czy ma
+      właściciela?
+  - id: X25
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Na naszym osiedlu zaznaczono kilka starych drzew do wycinki. Nikt nam
+      nie wyjaśnił dlaczego. Jak sprawdzić powód i zareagować, jeśli chcemy je
+      zachować?
+  - id: X26
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1209013"  # Dobczyce
+    text_pl: >-
+      Podczas spaceru nad Rabą zobaczyłem dziwną pianę i kilka martwych ryb.
+      Nie wiem, czy to zanieczyszczenie. Komu to zgłosić i jakie informacje
+      zebrać na miejscu?
+  - id: X27
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1202033"  # Czchów
+    text_pl: >-
+      Na skraju lasu ktoś regularnie wyrzuca gruz i stare meble. Nie
+      widziałem, kto to robi. Jak zgłosić dzikie wysypisko i dopilnować, żeby
+      teren został posprzątany?
+  - id: X28
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1202023"  # Brzesko
+    text_pl: >-
+      Latarnia przy parku od niedawna świeci prosto w nasze okna przez całą
+      noc. Czy da się poprosić o zmianę ustawienia lampy bez wyłączania
+      oświetlenia całej alejki?
+  - id: X29
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Przed blokiem mamy wielki betonowy plac, który latem strasznie się
+      nagrzewa. Chcielibyśmy posadzić drzewa i zrobić trochę zieleni. Jak
+      sprawdzić, czy możemy to zmienić?
+  - id: X30
+    scope: outside
+    related: []
+    topic_pl: Przyroda zwierzęta i środowisko
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Przy wejściu do naszej klatki jest duże gniazdo os i boimy się tamtędy
+      chodzić. Nie wiem, czy odpowiada za to administracja, czy jakaś służba.
+      Kogo poprosić o pomoc?
+  - id: X31
+    scope: outside
+    related: []
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Miasto chce zamknąć naszą osiedlową bibliotekę, a wielu mieszkańców z
+      niej korzysta. Jak zebrać ludzi i pokazać, że chcemy ją zachować?
+  - id: X32
+    scope: outside
+    related: []
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Chcemy z sąsiadami założyć ogród społeczny na pustym terenie między
+      blokami. Jak sprawdzić zgodę właściciela i ustalić, kto później będzie
+      się nim opiekował?
+  - id: X33
+    scope: outside
+    related: []
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1213033"  # Chełmek
+    text_pl: >-
+      Mam pomysł na małą inicjatywę dla osiedla, ale nie mam stowarzyszenia
+      ani fundacji. Czy zwykła grupa mieszkańców może dostać na to pieniądze i
+      gdzie zacząć szukać?
+  - id: X34
+    scope: outside
+    related: []
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1212053"  # Olkusz
+    text_pl: >-
+      Podpisałem petycję w sprawie naszego osiedla i od kilku miesięcy nie ma
+      żadnej wiadomości. Jak sprawdzić, co się z nią dzieje i czy ktoś musi
+      nam odpowiedzieć?
+  - id: X35
+    scope: partial
+    related: [niepelnosprawnosc-sensoryczna]
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Chcę wziąć udział w spotkaniu o zmianach w naszej dzielnicy, ale jestem
+      osobą głuchą i nie zapowiedziano tłumacza. Jak poprosić o możliwość
+      uczestniczenia na równych zasadach?
+  - id: X36
+    scope: outside
+    related: []
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      O konsultacjach dotyczących parkingu dowiedzieliśmy się dzień po ich
+      zakończeniu. Czy możemy jeszcze przekazać uwagi i jak dopilnować, żeby
+      następnym razem informacja dotarła do mieszkańców?
+  - id: X37
+    scope: outside
+    related: []
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Chcę założyć grupę sąsiedzką do drobnej pomocy, na przykład podlewania
+      kwiatów czy pożyczania narzędzi. Jak zacząć, żeby nie skończyło się na
+      spamie i kłótniach?
+  - id: X38
+    scope: partial
+    related: [seniorzy]
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Kilka starszych osób z naszego bloku nie radzi sobie z telefonem.
+      Chcielibyśmy urządzać im bezpłatną pomoc raz w tygodniu. Jak znaleźć
+      chętnych do pomagania i miejsce na spotkania?
+  - id: X39
+    scope: outside
+    related: []
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1210022"  # Chełmiec
+    text_pl: >-
+      Po ulewie sąsiadom zalało piwnice i chcemy zorganizować wspólne
+      sprzątanie. Jak zebrać potrzebny sprzęt i wolontariuszy, żeby każdy
+      wiedział, gdzie jest potrzebny?
+  - id: X40
+    scope: outside
+    related: []
+    topic_pl: Wspólne działania i głos mieszkańców
+    role: mieszkaniec
+    place_terc: "1211011"  # Nowy Targ
+    text_pl: >-
+      Połowa mieszkańców chce więcej miejsc parkingowych, a druga połowa woli
+      drzewa i ławki. Każde zebranie kończy się awanturą. Jak zorganizować
+      rozmowę, żeby spróbować dojść do porozumienia?
+  - id: X41
+    scope: partial
+    related: [rynek-pracy]
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1216032"  # Lisia Góra
+    text_pl: >-
+      Pracodawca od dwóch miesięcy nie wypłaca mi pensji i ciągle obiecuje, że
+      zrobi to za tydzień. Boję się stracić pracę. Gdzie mogę zapytać o swoje
+      możliwości i dostać pomoc?
+  - id: X42
+    scope: partial
+    related: [cudzoziemcy]
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1216092"  # Tarnów
+    text_pl: >-
+      Przyjechałem do Polski i dostałem pismo z urzędu dotyczące mojego
+      pobytu. Nie rozumiem, co mam dostarczyć i ile mam na to czasu. Gdzie
+      znaleźć kogoś, kto spokojnie mi to wyjaśni?
+  - id: X43
+    scope: partial
+    related: [seniorzy]
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1209092"  # Wiśniowa
+    text_pl: >-
+      Babcia podała przez telefon dane komuś, kto twierdził, że dzwoni z
+      banku. Teraz boi się, że straci oszczędności. Co powinniśmy zrobić w
+      pierwszej kolejności?
+  - id: X44
+    scope: partial
+    related: [dzieci-mlodziez-rodziny]
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Koledzy wrzucają do internetu ośmieszające filmiki z moim dzieckiem.
+      Szkoła mówi, że to dzieje się po lekcjach. Gdzie szukać pomocy i jak
+      zgłosić problem, żeby ktoś potraktował go poważnie?
+  - id: X45
+    scope: partial
+    related: [zdrowie]
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1218033"  # Kalwaria Zebrzydowska
+    text_pl: >-
+      Termin badania przesunięto mi już trzeci raz, a objawy się nasilają. Nie
+      wiem, gdzie uzyskać szybszą ocenę stanu zdrowia ani komu zgłosić problem
+      z terminami. Od czego zacząć?
+  - id: X46
+    scope: partial
+    related: [zdrowie]
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Właśnie wyłączyli prąd, a bliska osoba korzysta w domu z urządzenia
+      podtrzymującego oddychanie. Zapasowa bateria niedługo się skończy. Gdzie
+      natychmiast szukać pomocy?
+  - id: X47
+    scope: outside
+    related: []
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1263011"  # Tarnów
+    text_pl: >-
+      Uczelnia naliczyła mi opłatę, o której wcześniej nikt nie mówił. Nie
+      potrafię znaleźć jej w umowie. Jak poprosić o wyjaśnienie i sprawdzić,
+      czy mogę się odwołać?
+  - id: X48
+    scope: outside
+    related: []
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Zgubiłem klucze do mieszkania i nie mogę dostać się do środka. Jak
+      znaleźć uczciwego ślusarza i ustalić cenę, zanim ktoś przyjedzie?
+  - id: X49
+    scope: outside
+    related: []
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1204052"  # Olesno
+    text_pl: >-
+      Zapłaciłem za używany telefon przez ogłoszenie, sprzedawca przestał
+      odpowiadać, a paczka nie przyszła. Jak zebrać dowody i zgłosić, że
+      mogłem zostać oszukany?
+  - id: X50
+    scope: outside
+    related: []
+    topic_pl: Codzienne sprawy i trudne sytuacje
+    role: mieszkaniec
+    place_terc: "1261011"  # Kraków
+    text_pl: >-
+      Pociąg miał duże opóźnienie i nie zdążyłem na dalsze połączenie.
+      Musiałem kupić nowy bilet. Jak sprawdzić, czy mogę odzyskać te pieniądze
+      i gdzie złożyć reklamację?
