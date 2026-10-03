@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 
-/** Every screen of section 10 the prototype has, with a path that shows it filled. */
-export const screens: { name: string; path: string }[] = [
+/** Every screen of section 10 the prototype has, with a path that shows it filled; `admin` screens are seen signed in to the panel. */
+export const screens: { name: string; path: string; admin?: boolean }[] = [
   { name: "s1-start", path: "/" },
   { name: "s2-droga", path: "/droga/przyklad-seniorzy" },
   { name: "s2-przemoc", path: "/droga/przyklad-przemoc" },
@@ -32,6 +32,19 @@ export const screens: { name: string; path: string }[] = [
   { name: "m3-zglos-pomysl", path: "/zglos-pomysl" },
   { name: "m3-fiszka-pomyslu", path: "/pomysl/pm-przyklad-1" },
   { name: "m4-tester", path: "/innowacja/inn-nat-649/testuj" },
+  { name: "m6-logowanie", path: "/rops" },
+  { name: "m6-pulpit", path: "/rops", admin: true },
+  { name: "m6-pomysly", path: "/rops/pomysly", admin: true },
+  { name: "m6-fiszka", path: "/rops/pomysly/pm-przyklad-1", admin: true },
+  { name: "m6-opinie", path: "/rops/opinie", admin: true },
+  { name: "m6-potrzeby", path: "/rops/potrzeby", admin: true },
+  { name: "m6-kontakty", path: "/rops/kontakty", admin: true },
+  { name: "m6-gotowosc", path: "/rops/gotowosc", admin: true },
+  { name: "m6-zgloszenia", path: "/rops/zgloszenia", admin: true },
+  { name: "m6-trendy", path: "/rops/trendy", admin: true },
+  { name: "m6-wiedza", path: "/rops/wiedza?q=senior", admin: true },
+  { name: "m6-wiedza-edycja", path: "/rops/wiedza/nowy", admin: true },
+  { name: "m6-innowacja", path: "/rops/innowacje/inn-nat-649", admin: true },
   { name: "404", path: "/nie-ma-takiej-strony" },
 ];
 

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { enterPanel } from "./admin";
 import { screens } from "./screens";
 
 /*
@@ -19,7 +20,8 @@ for (const size of sizes) {
     test.use({ viewport: size.viewport, deviceScaleFactor: size.deviceScaleFactor });
 
     for (const screen of screens) {
-      test(screen.name, async ({ page }) => {
+      test(screen.name, async ({ page, context, baseURL }) => {
+        if (screen.admin) await enterPanel(context, baseURL ?? "http://localhost:3100");
         await page.goto(screen.path);
         await page.evaluate(() => document.fonts.ready);
         // The map loads and draws in a worker; on a phone the table comes first and no map loads.

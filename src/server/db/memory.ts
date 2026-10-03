@@ -1,4 +1,4 @@
-import type { ContactRequest, ContentReport, Evaluation, Feedback, Idea, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
+import type { ContactRequest, ContentReport, Evaluation, Feedback, Idea, InnovationOverride, KnowledgeEntry, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
 import { exampleIdeas, exampleNeeds, exampleReadiness } from "./examples";
 import {
   SCREENING_LOG_RETENTION_MS,
@@ -27,6 +27,10 @@ export interface MemoryState {
   readiness: Readiness[];
   ideas: Idea[];
   evaluations: Evaluation[];
+  /** The panel's knowledge items (module VI), by id. */
+  knowledgeEntries: Map<string, KnowledgeEntry>;
+  /** The panel's word on innovations (module VI), by innovation id. */
+  innovationOverrides: Map<string, InnovationOverride>;
   feedback: Feedback[];
   reports: ContentReport[];
   log: ModerationLogEntry[];
@@ -51,6 +55,8 @@ export function createMemoryState(): MemoryState {
     readiness: exampleReadiness(),
     ideas: exampleIdeas(),
     evaluations: [],
+    knowledgeEntries: new Map(),
+    innovationOverrides: new Map(),
     feedback: [],
     reports: [],
     log: [],
@@ -290,6 +296,22 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       onChange();
       return copy(found);
     },
+    async moderateIdea(id, moderation) {
+      const found = state.ideas.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.moderation = { ...moderation };
+      onChange();
+      return copy(found);
+    },
+    async updateIdea(id, change) {
+      const found = state.ideas.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.status = change.status;
+      found.note_pl = change.note_pl;
+      if (change.reply !== undefined) found.reply = change.reply && { ...change.reply };
+      onChange();
+      return copy(found);
+    },
 
     async addEvaluation(evaluation) {
       insertNewestFirst(state.evaluations, evaluation, createdAt);
@@ -297,6 +319,44 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
     },
     async listEvaluations(innovationId) {
       return state.evaluations.filter((item) => !innovationId || item.innovation_id === innovationId).map(copy);
+    },
+    async getEvaluation(id) {
+      const found = state.evaluations.find((item) => item.id === id);
+      return found && copy(found);
+    },
+    async moderateEvaluation(id, moderation) {
+      const found = state.evaluations.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.moderation = { ...moderation };
+      onChange();
+      return copy(found);
+    },
+    async forwardEvaluation(id, change) {
+      const found = state.evaluations.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.forwarded_at = change.at;
+      found.note_pl = change.note_pl;
+      onChange();
+      return copy(found);
+    },
+
+    async listKnowledgeEntries() {
+      return [...state.knowledgeEntries.values()].sort((a, b) => b.updated_at.localeCompare(a.updated_at)).map(copy);
+    },
+    async saveKnowledgeEntry(entry) {
+      state.knowledgeEntries.set(entry.id, copy(entry));
+      onChange();
+    },
+    async listInnovationOverrides() {
+      return [...state.innovationOverrides.values()].sort((a, b) => b.updated_at.localeCompare(a.updated_at)).map(copy);
+    },
+    async getInnovationOverride(innovationId) {
+      const found = state.innovationOverrides.get(innovationId);
+      return found && copy(found);
+    },
+    async saveInnovationOverride(override) {
+      state.innovationOverrides.set(override.innovation_id, copy(override));
+      onChange();
     },
 
     async addFeedback(entry) {

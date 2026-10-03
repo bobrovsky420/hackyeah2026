@@ -135,6 +135,8 @@ function idea(id: string, over: Partial<Idea> = {}): Idea {
     consents: { store: true, publish: false, text_version: "v1", timestamp: at(0) },
     moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
     similar: null,
+    status: "nowy",
+    reply: null,
     retention_until: "2027-10-03",
     note_pl: null,
     ...over,
@@ -154,6 +156,7 @@ function evaluation(id: string, over: Partial<Evaluation> = {}): Evaluation {
     author: { display_name: null, email: null },
     consents: { store: true, contact: false, text_version: "v1", timestamp: at(0) },
     moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
+    forwarded_at: null,
     retention_until: "2027-10-03",
     note_pl: null,
     ...over,
@@ -394,6 +397,43 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
       expect((await repo.listEvaluations()).map((item) => item.id)).toEqual(["oc-3", "oc-2", "oc-1"]);
       expect(await repo.listEvaluations("inn-1")).toEqual([evaluation("oc-3"), evaluation("oc-1", { created_at: at(-DAY) })]);
       expect(await repo.listEvaluations("inn-9")).toEqual([]);
+    });
+  });
+
+  describe("the panel's store (module VI)", () => {
+    it("moderates and answers an idea card, keeping the reply when none is given", async () => {
+      await repo.addIdea(idea("pm-1"));
+      const decided = { status: "zatwierdzone" as const, reviewer: "AT", decided_at: at(0), reason_pl: null };
+      expect((await repo.moderateIdea("pm-1", decided))?.moderation).toEqual(decided);
+      const reply = { text_pl: "Dziękujemy.", at: at(0), by: "AT" };
+      expect(await repo.updateIdea("pm-1", { status: "w-analizie", note_pl: "notatka", reply })).toMatchObject({ status: "w-analizie", reply, note_pl: "notatka" });
+      expect((await repo.updateIdea("pm-1", { status: "przyjety", note_pl: null }))?.reply).toEqual(reply);
+      expect((await repo.updateIdea("pm-1", { status: "przyjety", note_pl: null, reply: null }))?.reply).toBeNull();
+      expect(await repo.moderateIdea("pm-9", decided)).toBeUndefined();
+    });
+
+    it("moderates and forwards an evaluation", async () => {
+      await repo.addEvaluation(evaluation("oc-1"));
+      const rejected = { status: "odrzucone" as const, reviewer: "AT", decided_at: at(0), reason_pl: "Inny powód" };
+      expect((await repo.moderateEvaluation("oc-1", rejected))?.moderation).toEqual(rejected);
+      expect(await repo.forwardEvaluation("oc-1", { at: at(DAY), note_pl: "Mailem do autorów." })).toMatchObject({ forwarded_at: at(DAY), note_pl: "Mailem do autorów." });
+      expect((await repo.getEvaluation("oc-1"))?.forwarded_at).toBe(at(DAY));
+    });
+
+    it("keeps one knowledge entry per id and one word per innovation, newest first", async () => {
+      const entry = {
+        id: "wz-1", base_id: null, title_pl: "Film", description_pl: "", url: "https://v/1", type: "video" as const,
+        target_groups: ["any"], always_show: false, hidden: false, updated_at: at(0), updated_by: "AT",
+      };
+      await repo.saveKnowledgeEntry(entry);
+      await repo.saveKnowledgeEntry({ ...entry, id: "wz-2", updated_at: at(DAY) });
+      await repo.saveKnowledgeEntry({ ...entry, hidden: true });
+      expect((await repo.listKnowledgeEntries()).map((item) => [item.id, item.hidden])).toEqual([["wz-2", false], ["wz-1", true]]);
+      const word = { innovation_id: "inn-1", status: "zweryfikowane" as const, summary_pl: null, extra_materials: [], note_pl: null, updated_at: at(0), updated_by: "AT" };
+      await repo.saveInnovationOverride(word);
+      await repo.saveInnovationOverride({ ...word, status: "ukryte" });
+      expect(await repo.listInnovationOverrides()).toHaveLength(1);
+      expect((await repo.getInnovationOverride("inn-1"))?.status).toBe("ukryte");
     });
   });
 
@@ -704,6 +744,11 @@ describe("the store file", () => {
     await first.addReadiness(registration("gt-1"));
     await first.addIdea(idea("pm-1"));
     await first.addEvaluation(evaluation("oc-1"));
+    await first.saveKnowledgeEntry({
+      id: "wz-1", base_id: null, title_pl: "Film", description_pl: "", url: "https://v/1", type: "video",
+      target_groups: ["any"], always_show: false, hidden: false, updated_at: at(0), updated_by: "AT",
+    });
+    await first.saveInnovationOverride({ innovation_id: "inn-1", status: "zweryfikowane", summary_pl: null, extra_materials: [], note_pl: null, updated_at: at(0), updated_by: "AT" });
     await first.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) });
     await first.addReport(report("zg-1"));
     await first.appendModerationLog(entry);
@@ -722,6 +767,8 @@ describe("the store file", () => {
     expect(await second.listReadiness()).toEqual([registration("gt-1")]);
     expect(await second.listIdeas()).toEqual([idea("pm-1")]);
     expect(await second.listEvaluations()).toEqual([evaluation("oc-1")]);
+    expect(await second.listKnowledgeEntries()).toHaveLength(1);
+    expect((await second.getInnovationOverride("inn-1"))?.status).toBe("zweryfikowane");
     expect(await second.listFeedback()).toEqual([{ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) }]);
     expect(await second.listReports()).toEqual([report("zg-1")]);
     expect(await second.listModerationLog(10)).toEqual([entry]);
@@ -761,6 +808,30 @@ describe("the store file", () => {
     expect((await second.listContacts()).map((item) => item.id)).toEqual(["kt-new"]);
     await second.close();
     expect(JSON.parse(fs.readFileSync(file, "utf8")).state.contacts.map((item: ContactRequest) => item.id)).toEqual(["kt-new"]);
+  });
+
+  it("opens a file saved before the idea cards' panel fields, the evaluations and the panel's knowledge existed", async () => {
+    const file = fileOf("older");
+    const first = createFileRepository(file, { fresh: empty, now: clock });
+    await first.addIdea(idea("pm-1"));
+    await first.close();
+    const saved = JSON.parse(fs.readFileSync(file, "utf8"));
+    for (const card of saved.state.ideas) {
+      delete card.status;
+      delete card.reply;
+    }
+    delete saved.state.evaluations;
+    delete saved.state.knowledgeEntries;
+    delete saved.state.innovationOverrides;
+    fs.writeFileSync(file, JSON.stringify(saved));
+
+    const second = createFileRepository(file, { fresh: empty, now: clock });
+    expect(await second.getIdea("pm-1")).toMatchObject({ status: "nowy", reply: null });
+    expect(await second.listEvaluations()).toEqual([]);
+    expect(await second.listKnowledgeEntries()).toEqual([]);
+    expect(await second.listInnovationOverrides()).toEqual([]);
+    expect(fs.readdirSync(path.dirname(file)).some((name) => name.includes("unreadable"))).toBe(false);
+    await second.close();
   });
 
   it("moves a file that is not a store aside and starts with the examples", async () => {

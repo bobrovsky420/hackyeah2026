@@ -1,11 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
+import { E2E_ROPS_TOKEN } from "./admin";
 
 /*
  * The MUST requirements of section 7 around the journeys: the gate's
  * redaction and crisis banner, the quick exit, the clarification, the rate
  * limit, the path selection, the recompute, the content report, the MIIS
  * attribution, the accessibility statement, the register card, the map
- * table, the idea card of module III and the tester of module IV.
+ * table, the idea card of module III, the tester of module IV and the
+ * panel of module VI.
  */
 
 const problem = (page: Page) => page.getByLabel("Co się dzieje i kogo dotyczy?");
@@ -260,4 +262,72 @@ test("module IV: an anonymous rating needs no name or e-mail address", async ({ 
   await page.getByRole("checkbox", { name: /przechowywał moją opinię/ }).check();
   await page.getByRole("button", { name: "Wyślij opinię" }).click();
   await expect(page.getByText("Dziękujemy za opinię")).toBeVisible();
+});
+
+test("module VI: the panel opens with the code, and the reply reaches the author's card", async ({ page }) => {
+  await page.goto("/rops");
+  await page.getByLabel("Twoje imię i nazwisko lub inicjały").fill("Anna Testowa");
+  await page.getByLabel("Kod dostępu").fill("zly-kod");
+  await page.getByRole("button", { name: "Wejdź do panelu" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "Nie udało się zalogować" })).toContainText("Kod dostępu jest nieprawidłowy.");
+
+  await page.getByLabel("Twoje imię i nazwisko lub inicjały").fill("Anna Testowa");
+  await page.getByLabel("Kod dostępu").fill(E2E_ROPS_TOKEN);
+  await page.getByRole("button", { name: "Wejdź do panelu" }).click();
+  await expect(page.getByText("Zalogowano jako Anna Testowa")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Fiszki pomysłów" }).first()).toBeVisible();
+
+  await page.goto("/rops/pomysly/pm-przyklad-1");
+  await page.getByRole("combobox", { name: "Status fiszki", exact: true }).selectOption("przyjety");
+  await page.getByRole("textbox", { name: "Odpowiedź dla autora", exact: true }).fill("Pomysł przyjęty do najbliższego naboru inkubatora.");
+  await page.getByRole("button", { name: "Zapisz status i odpowiedź" }).click();
+  await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
+
+  await page.goto("/pomysl/pm-przyklad-1");
+  const reply = page.getByRole("region", { name: "Status i odpowiedź ROPS" });
+  await expect(reply.getByText("Przyjęty do dalszej pracy")).toBeVisible();
+  await expect(reply.getByText("Pomysł przyjęty do najbliższego naboru inkubatora.")).toBeVisible();
+
+  await page.goto("/rops");
+  await expect(page.getByText(/Anna Testowa, odpowiedz, idea pm-przyklad-1/)).toBeVisible();
+  await page.getByRole("button", { name: "Wyloguj" }).click();
+  await expect(page.getByRole("button", { name: "Wejdź do panelu" })).toBeVisible();
+});
+
+test("module VI: a verified innovation with a film shows on the route at once, a hidden one leaves it", async ({ page }) => {
+  await page.goto("/rops");
+  await page.getByLabel("Twoje imię i nazwisko lub inicjały").fill("Anna Testowa");
+  await page.getByLabel("Kod dostępu").fill(E2E_ROPS_TOKEN);
+  await page.getByRole("button", { name: "Wejdź do panelu" }).click();
+  await expect(page.getByText("Zalogowano jako Anna Testowa")).toBeVisible();
+
+  // An innovation of the example route "przyklad-mlodziez", which no other journey reads.
+  await page.goto("/rops/wiedza?q=pomosty");
+  await page.getByRole("status").getByRole("link").first().click();
+  await page.getByRole("radio", { name: "Sprawdzone przez ROPS" }).check();
+  await page.getByLabel("Tytuł").fill("Film o rozwiązaniu");
+  await page.getByLabel("Adres strony lub pliku").fill("https://www.youtube.com/watch?v=e2e");
+  await page.getByRole("button", { name: "Zapisz", exact: true }).click();
+  await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
+
+  await page.goto("/droga/przyklad-mlodziez");
+  await expect(page.getByRole("article").filter({ hasText: "PoMOSty" }).getByText("Sprawdzone przez ROPS")).toBeVisible();
+  await page.goto("/innowacja/inn-nat-pomosty");
+  await expect(page.getByText("Sprawdzone przez ROPS")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Film o rozwiązaniu" })).toHaveAttribute("href", "https://www.youtube.com/watch?v=e2e");
+
+  await page.goto("/rops/innowacje/inn-nat-pomosty");
+  await page.getByRole("radio", { name: "Ukryj w drogach i na stronie rozwiązania" }).check();
+  await page.getByRole("button", { name: "Zapisz", exact: true }).click();
+  await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
+  await page.goto("/droga/przyklad-mlodziez");
+  await expect(page.getByRole("article").filter({ hasText: "PoMOSty" })).toHaveCount(0);
+  expect((await page.goto("/innowacja/inn-nat-pomosty"))?.status()).toBe(404);
+});
+
+test("module VI: the panel and its export stay closed without a session", async ({ page, request }) => {
+  await page.goto("/rops/pomysly/pm-przyklad-1");
+  await expect(page.getByRole("button", { name: "Wejdź do panelu" })).toBeVisible();
+  await expect(page.getByText("pm-przyklad-1@example.org")).toHaveCount(0);
+  expect((await request.get("/api/admin/export/ideas")).status()).toBe(401);
 });

@@ -134,8 +134,8 @@ export function exampleIdeas(): Idea[] {
         {
           innovation_id: "inn-nat-649",
           fit_score: 74,
-          what_fits_pl: "Odpowiada na samotność osób starszych i daje powód do regularnych spotkań w świetlicy.",
-          what_lacks_pl: "Nie łączy seniorów z młodzieżą i nie obejmuje wspólnego gotowania.",
+          what_fits_pl: "Łączy samotnych seniorów z uczniami w regularnych spotkaniach, które prowadzi młodzież.",
+          what_lacks_pl: "Spotkania dotyczą nauki obsługi komputera, nie wspólnego gotowania.",
         },
         {
           innovation_id: "inn-nat-biblioteka-senior-dla-seniora",
@@ -144,6 +144,13 @@ export function exampleIdeas(): Idea[] {
           what_lacks_pl: "Dotyczy wypożyczania książek, nie wspólnych posiłków.",
         },
       ],
+      status: "w-analizie",
+      reply: {
+        text_pl:
+          "Dziękujemy za fiszkę. Pomysł pasuje do tematu najbliższego naboru inkubatora. Zapraszamy na konsultację z opiekunem kategorii seniorzy.",
+        at: SEEDED_AT,
+        by: "Dział Innowacji Społecznych ROPS (wpis przykładowy)",
+      },
       retention_until: "2027-10-03",
       note_pl: null,
       example: true,

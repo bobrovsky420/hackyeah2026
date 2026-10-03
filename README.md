@@ -4,8 +4,9 @@ A working pilot of the end-user side of HubMI.pl, the digital core that
 ROPS Kraków plans for the Małopolska Social Innovation Hub, built for the
 HubMI.pl partner task of HackYeah 2026. It answers the partner's
 question: how do proven solutions to social problems reach the places
-that need them? The service around the pilot, the roles at ROPS and the
-moderation console, is a proposed roadmap, not yet built.
+that need them? Around the pilot, the ROPS panel at `/rops` is built:
+moderation, replies to authors, live knowledge edits and the trends of
+the needs. The roles at ROPS remain a proposed roadmap.
 
 ## What it is
 
@@ -46,14 +47,18 @@ identifier it returns is checked, and the route itself is assembled from
 structured data (people, legal vehicles, funding calls, next steps) that
 the model never writes.
 
-The concept goes beyond the software, and that part is the proposed
-roadmap, not implemented: ROPS would run the service in three roles
-(category advisor, catalogue editor, needs-bank coordinator), moderate
-every contact, need and registration in a console, and close three
-loops: need to implementation, need to new innovation, innovation to
-places. The tool already counts what ROPS would report (routes, contact
-requests, needs filed, briefs generated); the console that would show
-the numbers is part of the roadmap.
+The concept goes beyond the software: ROPS would run the service in
+three roles (category advisor, catalogue editor, needs-bank coordinator)
+and close three loops: need to implementation, need to new innovation,
+innovation to places. The roles are the proposed roadmap; the panel
+they would work in is built (decision R.3). It moderates every idea
+card, evaluation, need, contact request, registration and content
+report, answers the author of an idea on the card's own page, edits
+the knowledge of the routes without a data release (verified or hidden
+innovations, a corrected summary, an added film, new or edited
+knowledge items), shows the trends of the needs and exports every
+queue as CSV for Excel. It opens with the shared code of `ROPS_TOKEN`;
+a production server without it keeps the panel locked.
 
 Built for everyone: a Polish interface in Atkinson Hyperlegible, a
 typeface designed for readers with low vision, 7:1 text contrast, three
@@ -134,11 +139,11 @@ already decide, and the composer's when nothing is shortlisted.
    with consent and after ROPS verification), the implementation paths
    (legal vehicle, funding calls) and three next steps.
 5. **What is stored waits for ROPS.** Contact requests, saved needs,
-   registrations and content reports are stored, and the tool sends
-   nothing to anyone. The ROPS console that would relay contacts, verify
-   registrations, publish needs and review declined texts is the proposed
-   roadmap (S7 of the specification), not built. The tool never decides
-   anything about an individual.
+   registrations, idea cards, evaluations and content reports are
+   stored, and the tool sends nothing to anyone. A person at ROPS
+   decides each of them in the panel at `/rops`, and every decision is
+   logged with the reviewer's name. The tool never decides anything
+   about an individual.
 
 The ten ethics principles behind this (dignity, do no harm, a person in
 crisis gets a person, no decisions about individuals, privacy by design,

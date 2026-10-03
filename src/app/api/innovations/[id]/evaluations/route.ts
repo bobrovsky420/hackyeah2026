@@ -89,6 +89,7 @@ export async function POST(request: Request, { params }: RouteContext<"/api/inno
     author: { display_name: displayName, email },
     consents: { store: true, contact: Boolean(email), text_version: CONSENT_VERSION, timestamp: nowIso() },
     moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
+    forwarded_at: null,
     retention_until: retention.toISOString().slice(0, 10),
     note_pl: null,
   };
