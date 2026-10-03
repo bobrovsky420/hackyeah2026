@@ -16,7 +16,7 @@ test("J1: the seniors example leads to a route with three solutions", async ({ p
   await expect(page.getByRole("combobox", { name: "Miejscowość lub gmina" })).toHaveValue("Laskowa, powiat limanowski");
   await expect(page.getByRole("radio", { name: "Pracuję w instytucji" })).toBeChecked();
 
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Szukamy drogi" })).toBeFocused();
 
   const heading = page.getByRole("heading", { level: 1, name: /Samotni seniorzy/ });
@@ -47,7 +47,7 @@ test("J1: the seniors example leads to a route with three solutions", async ({ p
 test("J2: a need without a proven solution goes to the needs bank", async ({ page }) => {
   await page.goto("/");
   await problem(page).fill("Brakuje transportu do przychodni dla osób z naszej wsi.");
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(
     page.getByRole("heading", { level: 1, name: "Nie znaleźliśmy sprawdzonego rozwiązania dla tej potrzeby." }),
   ).toBeVisible({ timeout: 20_000 });
@@ -111,7 +111,7 @@ test("J5: a gmina shows its indicators, what runs there and the gminas nearby", 
 test("J10: a sentence about a crisis shows human help, not innovations", async ({ page }) => {
   await page.goto("/");
   await problem(page).fill("Nie daję już rady, nie chcę żyć, proszę o pomoc.");
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Nie jesteś z tym sam ani sama" })).toBeVisible({
     timeout: 20_000,
   });
@@ -122,7 +122,7 @@ test("J10: a sentence about a crisis shows human help, not innovations", async (
 test("the short text is refused with an error linked to the field", async ({ page }) => {
   await page.goto("/");
   await problem(page).fill("Za krótko");
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByRole("group", { name: "Sprawdź formularz" })).toBeFocused();
   await page.getByRole("link", { name: "Opisz problem w co najmniej 20 znakach" }).click();
   await expect(problem(page)).toBeFocused();

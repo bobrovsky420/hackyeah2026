@@ -40,7 +40,7 @@ for (const size of sizes) {
     test("s1-czekanie", async ({ page }) => {
       await page.goto("/");
       await page.getByRole("button", { name: "Samotni seniorzy na wsi" }).click();
-      await page.getByRole("button", { name: "Znajdź drogę" }).click();
+      await page.getByRole("button", { name: "Pokaż możliwości" }).click();
       await expect(page.getByRole("heading", { level: 1, name: "Szukamy drogi" })).toBeVisible();
       await page.screenshot({ path: `${OUT}/s1-czekanie-${size.name}.png`, fullPage: true });
     });
