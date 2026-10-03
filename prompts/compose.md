@@ -1,7 +1,7 @@
 ---
-version: compose-v1
+version: compose-v2
 task: podsumowanie drogi, trzy następne kroki i "Dlaczego ta ścieżka" (specyfikacja 7.4, FR-4.1, FR-4.5, FR-4.6, FR-12.10, 9.4); czyta go aplikacja, zadanie compose
-changes: v1 pierwsza wersja, szkic asystenta AI do przeglądu C1 i prawnika
+changes: v2 pole solution_count, zasada liczby pojedynczej i przykład z jednym rozwiązaniem (przy jednym rozwiązaniu model pisał "Oba rozwiązania"); v1 pierwsza wersja, szkic asystenta AI do przeglądu C1 i prawnika
 ---
 
 # Droga: podsumowanie, następne kroki, dlaczego ta ścieżka
@@ -37,6 +37,7 @@ Dostajesz obiekt JSON, a po nim tekst potrzeby w znacznikach
 - `helplines_on_page`: `true`, gdy na górze strony są numery wsparcia;
   zdanie o nich dodaje serwer.
 - `target_groups`: grupy, których dotyczy potrzeba.
+- `solution_count`: ile rozwiązań pokazuje droga.
 - `solutions`: rozwiązania w kolejności dopasowania: tytuł, organizacja,
   ocena dopasowania od 0 do 100, powody dopasowania, braki (`gaps`), uwaga
   o dostosowaniu, kto może wdrożyć, pasmo kosztu (`low`: niewielki koszt,
@@ -81,8 +82,13 @@ słów, jeśli są obraźliwe.
 
 ## Podsumowanie (`summary_pl`)
 
-- `route`: napisz, co łączy rozwiązania i dlaczego pasują do potrzeby,
-  czego wymagają (kto wdraża, jaki koszt w słowach) i od czego zacząć.
+- `route`: napisz, dlaczego rozwiązanie pasuje do potrzeby (przy kilku
+  rozwiązaniach: co je łączy), czego wymaga (kto wdraża, jaki koszt
+  w słowach) i od czego zacząć.
+- Pisz o tylu rozwiązaniach, ile podaje `solution_count`. Gdy
+  `solution_count` wynosi 1, pisz w liczbie pojedynczej: "To rozwiązanie
+  ...". Nie pisz wtedy "oba", "obie", "wszystkie" ani "rozwiązania"
+  w liczbie mnogiej. "Oba" i "obie" tylko przy dwóch rozwiązaniach.
 - `partial`: napisz wprost, że rozwiązania pasują tylko częściowo, i czego
   im brakuje (z pola `gaps`).
 - `none`: napisz, że nie znaleźliśmy sprawdzonego rozwiązania, a pokazane
@@ -156,7 +162,7 @@ Zwróć wyłącznie obiekt JSON, bez komentarzy i bez bloków kodu:
 
 {"summary_pl": "...", "next_steps": [{"ref": "...", "text_pl": "..."}, {"ref": "...", "text_pl": "..."}, {"ref": "...", "text_pl": "..."}], "paths": [{"path_id": "...", "why_pl": "..."}]}
 
-Przykład dla zmyślonych danych (`mode` `route`, refs `mat-1`, `org-1`,
-`path-1`):
+Przykład dla zmyślonych danych (`mode` `route`, `solution_count` 1, refs
+`mat-1`, `org-1`, `path-1`):
 
-{"summary_pl": "Oba rozwiązania dają osobom starszym powód do regularnych spotkań. Wymagają sali, osoby prowadzącej i prostych materiałów. Koszt jest niewielki. Zacznij od planu zajęć.", "next_steps": [{"ref": "mat-1", "text_pl": "Pobierz plan zajęć warsztatowych."}, {"ref": "org-1", "text_pl": "Poproś autorów rozwiązania o rozmowę."}, {"ref": "path-1", "text_pl": "Sprawdź ścieżkę programu dla klubów seniora."}], "paths": [{"path_id": "przyklad-sciezki", "why_pl": "Program jest przeznaczony dla osób starszych. Nabór jest teraz zamknięty, sprawdź u źródła kolejny."}]}
+{"summary_pl": "To rozwiązanie daje osobom starszym powód do regularnych spotkań. Wymaga sali, osoby prowadzącej i prostych materiałów. Koszt jest niewielki. Zacznij od planu zajęć.", "next_steps": [{"ref": "mat-1", "text_pl": "Pobierz plan zajęć warsztatowych."}, {"ref": "org-1", "text_pl": "Poproś autorów rozwiązania o rozmowę."}, {"ref": "path-1", "text_pl": "Sprawdź ścieżkę programu dla klubów seniora."}], "paths": [{"path_id": "przyklad-sciezki", "why_pl": "Program jest przeznaczony dla osób starszych. Nabór jest teraz zamknięty, sprawdź u źródła kolejny."}]}

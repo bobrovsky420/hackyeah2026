@@ -100,7 +100,7 @@ export class OpenAiCompatProvider implements LlmProvider {
       model: this.model,
       messages,
       max_tokens: call.maxTokens,
-      temperature: 0.2,
+      temperature: call.temperature ?? 0.2,
       ...(this.jsonMode ? { response_format: { type: "json_object" as const } } : {}),
     };
     try {

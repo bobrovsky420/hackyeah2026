@@ -597,7 +597,7 @@ export interface MatchInput {
   targetGroups: string[];
 }
 
-/** Stage 1 (8.3), after validation: only known ids, at most 8. */
+/** Stage 1 (8.3), after validation: only known ids, at most 8; a nearest card the server added (M.9) has fit 0 and no reason. */
 export interface ShortlistCandidate {
   id: string;
   prelim_fit: number;

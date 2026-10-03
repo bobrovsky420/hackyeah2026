@@ -197,6 +197,19 @@ export function contradictsReasons(text: string, reasons: PathReasons): boolean 
   return false;
 }
 
+/**
+ * A summary that speaks of several solutions when the route shows one
+ * ("Oba rozwiązania", "Rozwiązania skupiają się"), which Bielik writes after
+ * the plural of the prompt. "rozwiązania" inside a sentence is often the
+ * genitive singular ("autorzy rozwiązania"), so only a plural word before it
+ * or "Rozwiązania" opening a sentence counts.
+ */
+export function pluralForOne(text: string, solutionCount: number): boolean {
+  if (solutionCount !== 1) return false;
+  const lower = text.toLocaleLowerCase("pl");
+  return /(^|[^\p{L}])(oba|obie|obu|obydwa|wszystkie|te|tych|tymi)\s+rozwiąza/u.test(lower) || /(^|[.!?]\s+)rozwiązania\s/u.test(lower);
+}
+
 export interface ComposeFacts {
   mode: RouteParts["mode"];
   role: string | null;
@@ -219,6 +232,7 @@ export function buildUserPart(dataset: Dataset, facts: ComposeFacts, parts: Rout
     sensitive_topics: facts.sensitiveTopics,
     helplines_on_page: facts.helplinesOnPage,
     target_groups: facts.targetGroups.map(targetGroupLabel),
+    solution_count: parts.solutions.length,
     solutions: parts.solutions.map((solution) => {
       const innovation = dataset.innovationById.get(solution.innovation_id);
       return {
@@ -272,7 +286,9 @@ export function finishText(
   let summary: string | null = null;
   if (output) {
     const text = clean(output.summary_pl);
-    const problem = text ? lineProblem(text, MAX_SUMMARY_CHARS, banned) : "empty";
+    const problem = text
+      ? (lineProblem(text, MAX_SUMMARY_CHARS, banned) ?? (pluralForOne(text, parts.solutions.length) ? "plural-for-one-solution" : null))
+      : "empty";
     if (problem) notes.push(`summary dropped: ${problem}`);
     else summary = text;
   }

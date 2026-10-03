@@ -74,5 +74,5 @@ decision, all data sources and licences are documented in the
 repository.
 
 **Team:** Alexander Bobrovsky (bobrovsky@seznam.cz), Anton Myshelov
-([e-mail]), Dmytro Chernikov (me41st0@gmail.com), Dmytro Ushakov ([e-mail]),
+(omgkennyno@gmail.com), Dmytro Chernikov (me41st0@gmail.com), Dmytro Ushakov (ushakov_d@hotmail.com),
 Krzysztof Zajac (zajkrz@gmail.com).

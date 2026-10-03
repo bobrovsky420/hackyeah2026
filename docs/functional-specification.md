@@ -647,8 +647,8 @@ first far more often than the multilingual ones.
 
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
-| FR-3.1 | MUST | Stage 1, shortlist: the model reads the forty index cards the retriever of FR-3.7 selected (every innovation as an index card of at most 80 tokens: id, title, one-line problem, one-line mechanism, target groups, implementer types) and the need, and returns up to 8 candidate ids with a preliminary fit 0-100 and a one-sentence reason each, as structured output (schema 8.3). Forty cards are about 3 500 tokens, so the prompt fits Bielik with room to spare; the full index is never sent. | p95 latency 5 s on Bielik with the real cards |
-| FR-3.2 | MUST | Stage 2, assessment: the model receives the full derived records of the candidates, the need, the place context (indicators of the gmina, implementations nearby) and returns per candidate: `fit_score` 0-100, `fit_reasons[]` (each names a field and quotes at most 15 words from it), `gaps[]`, `adaptation_note`; and overall `mode` (route, partial, none) with the top three in order (schema 8.3). | p95 latency 8 s; every quote found in the record |
+| FR-3.1 | MUST | Stage 1, shortlist: the model reads the forty index cards the retriever of FR-3.7 selected (every innovation as an index card of at most 80 tokens: id, title, one-line problem, one-line mechanism, target groups, implementer types) and the need, and returns up to 8 candidate ids with a preliminary fit 0-100 and a one-sentence reason each, as structured output (schema 8.3). Forty cards are about 3 500 tokens, so the prompt fits Bielik with room to spare; the full index is never sent. The cards carry the labels K01 to K40, which the server maps back to the ids, and the three nearest cards join the candidates whether the model picked them or not (decision M.9). | p95 latency 5 s on Bielik with the real cards |
+| FR-3.2 | MUST | Stage 2, assessment: the model receives the full derived records of the candidates, the need, the place context (indicators of the gmina, implementations nearby) and returns per candidate: `fit_score` 0-100, `fit_reasons[]` (each names a field and quotes at most 15 words from it), `gaps[]`, `adaptation_note`; and overall `mode` (route, partial, none) with the top three in order (schema 8.3). Each candidate is assessed in a call of its own, all sent at once, and the server merges the answers (decision M.9). | p95 latency 8 s; every quote found in the record |
 | FR-3.3 | MUST | Thresholds: `route` when the best fit is at least 70; `partial` when the best fit is 45 to 69; `none` below 45. The values are constants in one file, calibrated on the test problems. | The ten test problems produce the expected mode |
 | FR-3.4 | MUST | Grounding validation on the server: unknown ids are dropped and logged; a reason whose quote is not found in the record (normalised, fuzzy ratio at least 0.8) is dropped; a candidate with no remaining reason is dropped. | Unit tests with a fabricated id and a fabricated quote |
 | FR-3.5 | MUST | Replay cache: results are cached by a hash of (problem text, place, role, data version, prompt version). The eval harness and the demo path hit the cache; a "Policz ponownie" action bypasses it. | The demo path runs without a live model call if the provider is down |
@@ -2183,7 +2183,7 @@ problem_text_pl: >
   wolną trzy dni w tygodniu.
 expected:
   mode: route
-  any_of_innovations: [inn-rops-senior-cuder, inn-rops-organizator-kompleksowej-opieki]
+  any_of_innovations: [inn-rops-senior-cuder, inn-rops-organizator-kompleksowej-opieki-w-miejscu-zamieszkania]
   none_of_innovations: []
   target_groups: [seniorzy]
   paths_any_of: [asy-priorytet-v, usluga-wrazliwa-b, cus-program-uslug]
