@@ -200,9 +200,9 @@ test("module III: an idea card is checked field by field, stored, and its page s
   await page.getByLabel("E-mail", { exact: true }).fill("kgw@example.org");
   await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
   await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
-  await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toBeVisible();
+  await expect(page.getByText("Zapisaliśmy zgłoszenie pomysłu")).toBeVisible();
 
-  await page.getByRole("link", { name: "Zobacz fiszkę" }).click();
+  await page.getByRole("link", { name: "Zobacz zgłoszenie" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Wspólne gotowanie seniorów i młodzieży" })).toBeFocused();
   await expect(page.getByText("Testowany w małej skali")).toBeVisible();
   const similar = page.getByRole("region", { name: "Podobne sprawdzone rozwiązania" });
@@ -224,7 +224,7 @@ test("module III: a crisis text in an idea card shows human help, and nothing is
   await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
   await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
   await expect(page.getByRole("link", { name: /^112/ })).toHaveAttribute("href", "tel:112");
-  await expect(page.getByText("Zapisaliśmy fiszkę pomysłu")).toHaveCount(0);
+  await expect(page.getByText("Zapisaliśmy zgłoszenie pomysłu")).toHaveCount(0);
 });
 
 test("module IV: an evaluation with a test sign-up is stored and the innovation shows only the numbers", async ({ page }) => {
@@ -278,10 +278,10 @@ test("module VI: the panel opens with the code, and the reply reaches the author
   await page.getByLabel("Kod dostępu").fill(E2E_ROPS_TOKEN);
   await page.getByRole("button", { name: "Wejdź do panelu" }).click();
   await expect(page.getByText("Zalogowano jako Anna Testowa")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Fiszki pomysłów" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Zgłoszenia pomysłów" }).first()).toBeVisible();
 
   await page.goto("/rops/pomysly/pm-przyklad-1");
-  await page.getByRole("combobox", { name: "Status fiszki", exact: true }).selectOption("przyjety");
+  await page.getByRole("combobox", { name: "Status zgłoszenia", exact: true }).selectOption("przyjety");
   await page.getByRole("textbox", { name: "Odpowiedź dla autora", exact: true }).fill("Pomysł przyjęty do najbliższego naboru inkubatora.");
   await page.getByRole("button", { name: "Zapisz status i odpowiedź" }).click();
   await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
