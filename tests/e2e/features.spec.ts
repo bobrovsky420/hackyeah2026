@@ -26,7 +26,7 @@ test("FR-2.5: personal data is removed before the route is stored, and the reade
   await problem(page).fill(
     "Samotni seniorzy w naszej gminie potrzebują klubu. Mój PESEL 44051401359, telefon 600 123 456, adres ul. Kwiatowa 5.",
   );
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByText("Usunęliśmy dane osobowe (3 fragmenty)")).toBeVisible({ timeout: 20_000 });
 
   // The stored text is what the needs form is prefilled with.
@@ -45,7 +45,7 @@ test("S02 (13.1): a community need about violence keeps its route, with the cris
   await problem(page).fill(
     "Pracuję w ośrodku pomocy społecznej. W gminie przybywa przemocy domowej, a zespół interdyscyplinarny nie nadąża.",
   );
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByRole("heading", { level: 1, name: /Przemoc domowa w gminie wiejskiej/ })).toBeVisible({
     timeout: 20_000,
   });
@@ -84,7 +84,7 @@ test("FR-2.4: a refused request says so and keeps the text", async ({ page }) =>
   );
   await page.goto("/");
   await problem(page).fill("Samotni seniorzy w naszej gminie nie mają gdzie się spotkać.");
-  await page.getByRole("button", { name: "Znajdź drogę" }).click();
+  await page.getByRole("button", { name: "Pokaż możliwości" }).click();
   await expect(page.getByText("Za dużo zapytań. Spróbuj za minutę.")).toBeVisible();
   await expect(problem(page)).toHaveValue(/Samotni seniorzy/);
 });
