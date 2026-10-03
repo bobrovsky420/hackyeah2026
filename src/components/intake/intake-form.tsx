@@ -194,7 +194,6 @@ export function IntakeForm({
       <div className="grid max-w-[40rem] gap-7">
         {live}
         <div className="grid gap-2">
-          <p className="font-bold text-muted-foreground">{t("route.eyebrow")}</p>
           <h1 ref={waitingHeadingRef} tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
             {t("s1.waiting.title")}
           </h1>
