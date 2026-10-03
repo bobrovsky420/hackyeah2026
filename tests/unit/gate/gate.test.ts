@@ -181,10 +181,22 @@ describe("redaction (FR-12.4)", () => {
   });
 });
 
+describe("an individual case without a sensitive topic (E.4)", () => {
+  it("is routed, and the person's identifying data is still removed before storage", async () => {
+    const { llm } = fakeLlm(answer({ category: "individual_case", confidence: 0.9, person_names: ["Jan Wiśniewski"] }));
+    const text = "Nazywam się Jan Wiśniewski, mieszkam przy ul. Długiej 5 w Bochni. Straciłem wzrok i szukam zajęć ruchowych dla niewidomych.";
+    const out = await screenText(need(text), { llm });
+    expect(out.screening.outcome).toBe("need");
+    expect(out.screening.crisis_banner).toBe(false);
+    expect(out.redactedText).not.toContain("Wiśniewski");
+    expect(out.redactedText).not.toContain("Długiej 5");
+  });
+});
+
 describe("the screening log (FR-12.7)", () => {
   it("never holds the text of a redirected case, nor an identity", async () => {
-    const { llm } = fakeLlm(answer({ category: "individual_case", confidence: 0.9, person_names: ["Jan Kowalski"] }));
-    const text = "Mój sąsiad Jan Kowalski z ul. Długiej 5 nie dostał zasiłku, pomóżcie mu.";
+    const { llm } = fakeLlm(answer({ category: "individual_case", confidence: 0.9, sensitive_topics: ["child_abuse"], person_names: ["Jan Kowalski"] }));
+    const text = "Mój sąsiad Jan Kowalski z ul. Długiej 5 bije swoje dziecko po zasiłku, pomóżcie.";
     const out = await screenText(need(text, "203.0.113.7"), { llm });
     expect(out.screening.outcome).toBe("redirected");
     const log = await screeningLog();

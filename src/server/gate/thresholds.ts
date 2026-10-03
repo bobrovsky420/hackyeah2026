@@ -4,7 +4,7 @@
  * The decision rules in decide.ts read nothing else.
  */
 
-/** `crisis` or `individual_case` from the model at or above this gives `redirected`. */
+/** `crisis`, or `individual_case` with a sensitive topic (E.4), from the model at or above this gives `redirected`. */
 export const REDIRECT_MIN_CONFIDENCE = 0.6;
 
 /** `harm` from the model at or above this gives `declined`; below it the text is routed. */
