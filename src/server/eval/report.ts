@@ -5,7 +5,7 @@ import type { EvalSummary } from "./summary";
 import type { ProblemResult } from "./types";
 
 /*
- * The evaluation report of 13.2: reports/eval-<timestamp>.md for the team
+ * The evaluation report of 13.2: .local/reports/eval-<timestamp>.md for the team
  * (summary first, then the problems, latency, cost, fairness, the details
  * and the hashes) and a JSON file next to it with the same data, which
  * "Jak to działa" reads for the date of the last run (FR-11.7). A problem

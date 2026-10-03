@@ -33,7 +33,7 @@ export interface EvalArgs {
 export const EVAL_USAGE = `pnpm eval [options]
 
 Runs the test problems of tests/problems/ through the route pipeline and
-writes reports/eval-<timestamp>.md and .json (specification 13.2).
+writes .local/reports/eval-<timestamp>.md and .json (specification 13.2).
 
   --provider <p>        openai-compatible (default), anthropic or replay
   --problems <dir>      problem folder (default ${DEFAULT_PROBLEMS_DIR}), e.g. a draft set
@@ -43,7 +43,7 @@ writes reports/eval-<timestamp>.md and .json (specification 13.2).
   --except <ids>        final: test problems whose failure the report records as an exception
   --fairness-all        also the role and place pairs of every route case (diagnostics)
   --only <ids>          run only these problems (comma-separated)
-  --out <dir>           report folder (default reports)
+  --out <dir>           report folder (default .local/reports)
   --no-run-id           no run id in live prompts
   --verbose             keep the pipeline's log lines
 Exit code 0 when every checked MUST item of 13.5 holds, 1 when one fails, 2 on a usage error.`;
@@ -83,7 +83,7 @@ export function parseArgs(argv: readonly string[], command: EvalArgs["command"])
     exceptions: [],
     fairnessAll: false,
     only: [],
-    outDir: "reports",
+    outDir: ".local/reports",
     runTag: true,
     verbose: false,
     help: false,
