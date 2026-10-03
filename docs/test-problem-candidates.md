@@ -9,15 +9,14 @@ its own writing. Use the sheet to see where the catalogue can carry a
 route, which records a need can reach, and which paths the rules of 8.7
 would pick; then write the YAML files yourself.
 
-Data: the built catalogue of 29 September 2026 (data version
-`2026-10-03-f3d93b5c`, 381 records: 266 from the national base, 115 from
-the ROPS library), `data/implementations.yaml` (24 seeded
-implementations) and `data/implementations-derived.json` (104 places of
+Data: the built catalogue (381 records: 266 from the national base, 115 from
+the ROPS library), `data/curated/implementations.yaml` (24 seeded
+implementations) and `data/built/implementations-derived.json` (104 places of
 origin).
 
 ## 1. Catalogue coverage by target group
 
-Per target-group code of `data/taxonomies.json`: the built records whose
+Per target-group code of `data/curated/taxonomies.json`: the built records whose
 `derived.target_groups` contains the code (a record can carry several
 codes, so the rows add up to more than 381), split by `derived.setting`,
 and the records with at least one implementation in Małopolska (a TERC
@@ -70,7 +69,7 @@ Composition of 13.1: C01 to C07 are the seven route cases (seven target
 groups; rural C01, C05, C07; urban C02, C03, C04, C06), C08 the partial
 case, C09 the none case, C10 the clarification case. C11 and C12 are
 spare route cases, for a group the lawyer prefers or for a route case
-that fails the calibration on Thursday 1 October.
+that fails the calibration.
 
 | Cand. | Working title | Role | Place (TERC) | Main target group | Mode | Retrieval rank of the expected innovations (of 381) |
 |---|---|---|---|---|---|---|
@@ -97,7 +96,7 @@ words and without the catalogue's titles or keywords. Rewrite it in your
 own words before it goes into `tests/problems/`. Paths follow the rules
 of 8.7 (applicant type from the role, then the target group, deadlines
 and the regional bonus, and a non-monetary vehicle for `jst` when the best
-solution is a service model) with the facts of 14.4; `data/paths/` is not
+solution is a service model) with the facts of 14.4; `data/built/paths/` is not
 built yet, so the choice was made by hand.
 
 ### C01 Samotni seniorzy w przygnębieniu na wsi (route, rural)
@@ -404,7 +403,7 @@ Method: each sketch above, prefixed with `[query]: `, was encoded with
 PolDense-400M (`OPI-PIB/PolDense-400M` through sentence-transformers in
 `.venv`, `normalize_embeddings=True`, `HF_HUB_OFFLINE=1`) and
 compared by dot product with the 381 unit vectors of
-`data/index-vectors.json` (data version `2026-10-03-f3d93b5c`). The rank
+`data/built/index-vectors.json`. The rank
 is the position of the expected innovation in that list. A throwaway
 script outside the repository did it; nothing under `scripts/` changed.
 
@@ -447,7 +446,7 @@ Reading the numbers:
 
 - The ranks belong to these sketches. The lawyer's own text will rank
   differently; ask Developer 1 to run it through the embedding service
-  (`scripts/embedding-service.py`) before the calibration on Thursday.
+  (`scripts/embedding-service.py`) before the calibration.
   A rank above 40 for the expectation you chose means either the
   expectation or the retriever is wrong, and the report should say
   which.
@@ -475,19 +474,18 @@ Reading the numbers:
    (record titles, `keywords_pl`), so that the retriever has to earn the
    match.
 3. Choose the expected innovations yourself by reading the record in
-   `data/innovations/<id>.json` (`derived.problem_pl`,
+   `data/built/innovations/<id>.json` (`derived.problem_pl`,
    `derived.mechanism_pl`, `source_fields`), and name the fields in
    `notes`. Add to `none_of_innovations` a record that would be a wrong
    answer.
 4. `summary_must_mention_pl`: a word stem from your own text, such as
    "świetlic" in the example of 13.1.
-5. Check every TERC in `data/places/pl-register.json`. The example in 8.4
+5. Check every TERC in `data/built/places/pl-register.json`. The example in 8.4
    pairs Kamienica with `1206072`, which is Liszki; Kamienica is
    `1207052`, and the example `1207062` in 13.1 is Laskowa.
 6. Agree with Developer 1 on the `mode` value of the clarification case
    (see C10) and on the people roles the harness checks.
-7. Hashes: the harness of 13.2 (`pnpm eval`, not built yet: there is no
-   `eval` script in `package.json` on 29 September) prints a hash of each
+7. Hashes: the harness of 13.2 (`pnpm eval`) prints a hash of each
    problem file in the evaluation report. Any later change to a file,
    including one by an AI assistant, changes its hash. After you commit
    the ten files, keep the output of `sha256sum tests/problems/*.yaml`

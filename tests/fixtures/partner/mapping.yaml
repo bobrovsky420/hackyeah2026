@@ -7,7 +7,7 @@
 source:
   name: partner-rops                 # sources[].name and the record's source
   retrieved_at: "2026-10-03"         # the day of the hand-over
-  licence: CC BY 4.0                 # confirm with ROPS at the hand-over (OP-17); a licence column overrides it per row
+  licence: CC BY 4.0                 # confirm with ROPS at the hand-over; a licence column overrides it per row
   licence_url: https://creativecommons.org/licenses/by/4.0/deed.pl
 
 file:
@@ -21,7 +21,7 @@ columns:                             # role: column header
   intro: null
   url: Link do opisu                 # the entry on the partner's site (https), or empty
   licence: null
-  category: Kategoria                # ROPS category label or slug -> mapped.target_groups (data/taxonomies.json)
+  category: Kategoria                # ROPS category label or slug -> mapped.target_groups (data/curated/taxonomies.json)
   implementer: Kto może wdrożyć      # code, label or national-base value -> mapped.implementer_types
   organisation: null                 # null: the first organisation among the authors
   organisation_website: null

@@ -7,7 +7,7 @@ import { createMemoryRepository, createMemoryState, type MemoryState } from "./m
 import type { Repository, StoredScreeningLogEntry } from "./repository";
 
 /*
- * The store of the running app (decided 29 September 2026, docs/storage.md):
+ * The store of the running app (decision A.6, docs/storage.md):
  * the memory repository, loaded from one JSON file at start and saved to
  * it after every change. The file is written whole and renamed into
  * place, so a reader never sees half of it; the saves of one request are

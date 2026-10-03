@@ -10,7 +10,7 @@ import { RadioList } from "@/components/ui/choice";
 import { ErrorSummary, type FormError } from "@/components/ui/error-summary";
 import { describedBy, Field, Hint, Label, TextArea } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
-import { reportReasons } from "@/lib/console";
+import { reportReasons } from "@/lib/reports";
 import type { ContentReport } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 

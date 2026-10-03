@@ -66,7 +66,7 @@ function envNumber(name: string, fallback: number): number {
 
 export type LlmProviderName = "openai-compatible" | "anthropic" | "replay";
 
-/** Hugging Face router defaults, verified live on 28 September 2026 (model-evaluation.md). */
+/** Hugging Face router defaults, verified live (model-evaluation.md). */
 export const HF_ROUTER_URL = "https://router.huggingface.co/v1";
 export const DEFAULT_BIELIK_MODEL = "speakleash/Bielik-11B-v3.0-Instruct:publicai";
 export const DEFAULT_ANTHROPIC_MODEL = "claude-opus-5";

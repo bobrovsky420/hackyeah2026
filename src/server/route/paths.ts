@@ -51,7 +51,7 @@ export function applicantTypesForRole(role: RoleCode | null): PathApplicantType[
   }
 }
 
-/** Lower bounds of the cost bands of data/taxonomies.json (low up to 10 000 zł, medium to 100 000 zł, high above). */
+/** Lower bounds of the cost bands of data/curated/taxonomies.json (low up to 10 000 zł, medium to 100 000 zł, high above). */
 const BAND_LOWER_PLN: Record<Exclude<CostBand, "unknown">, number> = { low: 0, medium: 10_000, high: 100_000 };
 
 export interface PathContext {

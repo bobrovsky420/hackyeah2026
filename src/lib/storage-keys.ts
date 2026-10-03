@@ -1,7 +1,7 @@
 /*
  * Keys of what the prototype keeps in the browser. The specification allows
- * no cookie apart from the console token (12.6): the view settings live in
- * localStorage and are applied by an inline script before the first paint.
+ * no cookies (12.6): the view settings live in localStorage and are applied
+ * by an inline script before the first paint.
  */
 export const TEXT_SIZE_KEY = "view:text-size";
 export const CONTRAST_KEY = "view:contrast";

@@ -48,7 +48,7 @@ const LIMITS: Record<BriefProsePart, ProseLimits> = {
 /** The direction is a hypothesis (FR-5.5): it has to say so or speak conditionally. */
 const HYPOTHESIS = /hipotez|sprawdzi|sprawdzeni|przetestow|testow|może|mogł|można|warto|czy\s/iu;
 
-/** Helplines per sensitive topic (FR-12.10), in the order of data/helplines.yaml; at most three on a brief. */
+/** Helplines per sensitive topic (FR-12.10), in the order of data/curated/helplines.yaml; at most three on a brief. */
 const HELPLINES_BY_TOPIC: Record<SensitiveTopic, string[]> = {
   suicide: ["hl-116123", "hl-800702222", "hl-116111"],
   self_harm: ["hl-116123", "hl-800702222", "hl-116111"],

@@ -1,13 +1,13 @@
 """Pack the data of this machine into one bundle, a data release, for another machine (docs/data-setup.md).
 
 Build outputs are git-ignored and a rebuild needs the raw snapshot and the
-extraction run, so the data travels as a bundle instead: every file under data/ (whatever exists at pack time,
-subfolders and hand-written files included), the pipeline's working files .local/pipeline/{sources, derived,
+extraction run, so the data travels as a bundle instead: every file under data/ (whatever exists at pack time:
+data/built/ and the hand-written data/curated/), the pipeline's working files .local/pipeline/{sources, derived,
 manifest.json, duplicates.json, link-check.json}, so that the extraction does not rerun on the other machine, and,
 unless --no-cache, the demo's replay files .local/route-cache/ and .local/llm-replay/ (specification 12.4).
 
 A release: --release X.Y.Z names the bundle data-X.Y.Z.zip and writes the label into the manifest. The internal data
-version (date and content hash, data/data-version.json) stays the key of the load-time checks and of the replay
+version (date and content hash, data/built/data-version.json) stays the key of the load-time checks and of the replay
 cache; the release label is the name people use. Refused when that zip exists or when X.Y.Z is not above the
 releases already in .local/bundles/ (--force overrides both).
 
@@ -20,15 +20,15 @@ type-checks the data files (unless --no-typecheck), the consistency checks run, 
 
 Output: .local/bundles/data-X.Y.Z.zip (data-<data version>.zip without --release; or --out), with the files under
 their paths from the repository root and a manifest.json at the zip root: the release label, the data version, the
-record and merged counts (data/data-version.json), the parser, prompt and taxonomy versions, the embedding model and
-dims of data/index-vectors.json, created_at, the git commit (git rev-parse HEAD) and a dirty flag (uncommitted
+record and merged counts (data/built/data-version.json), the parser, prompt and taxonomy versions, the embedding
+model and dims of data/built/index-vectors.json, created_at, the git commit (git rev-parse HEAD) and a dirty flag (uncommitted
 changes anywhere in the working tree), the comparison with the previous release in .local/bundles/ (records added
 and removed, files changed), and path, size and sha256 per file. Entries are in sorted path order with a fixed
 timestamp. A note with the same summary, data-X.Y.Z.md, is written beside the zip for whoever shares it.
 
-Refuses to pack (exit 1) when data/data-version.json, data/index-cards.json, data/index-vectors.json and
-data/innovations/ disagree on the data version or on the record ids, when data/implementations-derived.json (if
-present) carries another data version, when index-vectors.json names no embedding model, or when the last build
+Refuses to pack (exit 1) when data/built/data-version.json, data/built/index-cards.json,
+data/built/index-vectors.json and data/built/innovations/ disagree on the data version or on the record ids, when
+data/built/implementations-derived.json (if present) carries another data version, when index-vectors.json names no embedding model, or when the last build
 skipped source records without a valid derived record (--force packs without them): the app would refuse to serve
 such a set anyway (data/README.md, load-time checks).
 
@@ -38,10 +38,10 @@ Usage (from the repository root, with the project venv):
 --root packs the data/ and .local/ files of another directory tree (used for testing); the default is this
 repository, and --rebuild and the type check run only for this repository. unpack-data.py is the counterpart.
 """
-import argparse, datetime, hashlib, json, os, re, shutil, subprocess, sys, zipfile
+import argparse, datetime, hashlib, importlib.util, json, os, re, shutil, subprocess, sys, zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BUNDLE_FORMAT = 2                                                         # 2: release label, previous, replay folders
+BUNDLE_FORMAT = 4                                                         # 4: the paths in data/built/paths/
 PIPELINE_DIRS = ["sources", "derived"]                                   # required
 PIPELINE_FILES = ["manifest.json", "duplicates.json", "link-check.json"]  # manifest.json required, the others optional
 CACHE_DIRS = [".local/route-cache", ".local/llm-replay"]                 # the demo's replay files, optional
@@ -92,42 +92,50 @@ def load_json(root, path):
         fail(f"{path} is not valid JSON ({e})")
 
 
+def unpack_module():
+    """scripts/unpack-data.py, for current_path(): the paths of an older bundle in the layout of today."""
+    spec = importlib.util.spec_from_file_location("unpack_data", os.path.join(os.path.dirname(__file__), "unpack-data.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def check_consistency(root):
     """The versions of the bundle, or exit 1 with the first disagreement."""
-    dv = load_json(root, "data/data-version.json")
+    dv = load_json(root, "data/built/data-version.json")
     version, records = dv.get("version"), dv.get("records")
     if not version or not isinstance(records, int):
-        fail("data/data-version.json has no version or no records count")
-    cards = load_json(root, "data/index-cards.json")
+        fail("data/built/data-version.json has no version or no records count")
+    cards = load_json(root, "data/built/index-cards.json")
     card_ids = [c.get("id") for c in cards]
     if len(card_ids) != len(set(card_ids)):
-        fail("data/index-cards.json has duplicate ids")
+        fail("data/built/index-cards.json has duplicate ids")
     if len(card_ids) != records:
-        fail(f"data/index-cards.json has {len(card_ids)} cards, data/data-version.json says {records} records")
-    vec = load_json(root, "data/index-vectors.json")
+        fail(f"data/built/index-cards.json has {len(card_ids)} cards, data/built/data-version.json says {records} records")
+    vec = load_json(root, "data/built/index-vectors.json")
     if not vec.get("model"):
-        fail("data/index-vectors.json names no embedding model")
+        fail("data/built/index-vectors.json names no embedding model")
     if vec.get("data_version") != version:
-        fail(f"data/index-vectors.json is of data version {vec.get('data_version')}, data/data-version.json of "
+        fail(f"data/built/index-vectors.json is of data version {vec.get('data_version')}, data/built/data-version.json of "
              f"{version}: rerun build-index-vectors.py")
     if vec.get("records_count") != records:
-        fail(f"data/index-vectors.json counts {vec.get('records_count')} records, data/data-version.json {records}")
+        fail(f"data/built/index-vectors.json counts {vec.get('records_count')} records, data/built/data-version.json {records}")
     ids = set(card_ids)
     if set(vec.get("vectors", {})) != ids:
-        fail(f"the vector keys of data/index-vectors.json differ from the ids of data/index-cards.json "
+        fail(f"the vector keys of data/built/index-vectors.json differ from the ids of data/built/index-cards.json "
              f"({len(set(vec.get('vectors', {})) ^ ids)} ids in only one of them)")
-    inn_dir = os.path.join(root, "data", "innovations")
+    inn_dir = os.path.join(root, "data", "built", "innovations")
     inn_ids = {n[:-5] for n in os.listdir(inn_dir) if n.endswith(".json")} if os.path.isdir(inn_dir) else set()
     if inn_ids != ids:
-        fail(f"data/innovations/ holds {len(inn_ids)} records, {len(inn_ids ^ ids)} of them or of the index cards "
+        fail(f"data/built/innovations/ holds {len(inn_ids)} records, {len(inn_ids ^ ids)} of them or of the index cards "
              f"without a partner: rerun derive-records.py build")
-    if os.path.exists(os.path.join(root, "data", "implementations-derived.json")):
-        derived = load_json(root, "data/implementations-derived.json")
+    if os.path.exists(os.path.join(root, "data", "built", "implementations-derived.json")):
+        derived = load_json(root, "data/built/implementations-derived.json")
         if derived.get("data_version") != version:
-            fail(f"data/implementations-derived.json is of data version {derived.get('data_version')}, not "
+            fail(f"data/built/implementations-derived.json is of data version {derived.get('data_version')}, not "
                  f"{version}: rerun build-static-data.py --only origins")
-    tax = os.path.join(root, "data", "taxonomies.json")
-    taxonomy = load_json(root, "data/taxonomies.json").get("version") if os.path.exists(tax) else None
+    tax = os.path.join(root, "data", "curated", "taxonomies.json")
+    taxonomy = load_json(root, "data/curated/taxonomies.json").get("version") if os.path.exists(tax) else None
     return {"data_version": version, "records": records, "merged": dv.get("merged"),
             "skipped_without_valid_derived": dv.get("skipped_without_valid_derived") or 0,
             "parser_version": dv.get("parser_version"), "prompt_version": dv.get("prompt_version"),
@@ -179,15 +187,16 @@ def read_manifest(zip_path):
 
 def compare(previous, entries):
     """What changed since the previous release: records added and removed, files added, removed and changed."""
-    before = {e["path"]: e["sha256"] for e in previous.get("files", [])}
+    current_path, fmt = unpack_module().current_path, previous.get("bundle_format", 1)
+    before = {current_path(e["path"], fmt): e["sha256"] for e in previous.get("files", [])}
     after = {e["path"]: e["sha256"] for e in entries}
-    record = lambda p: p.startswith("data/innovations/") and p.endswith(".json")
+    record = lambda p: p.startswith("data/built/innovations/") and p.endswith(".json")
     added, removed = sorted(set(after) - set(before)), sorted(set(before) - set(after))
     changed = sorted(p for p in after if p in before and before[p] != after[p])
     return {"release_version": previous.get("release_version"), "data_version": previous.get("data_version"),
             "records": previous.get("records"),
-            "records_added": [p[len("data/innovations/"):-5] for p in added if record(p)],
-            "records_removed": [p[len("data/innovations/"):-5] for p in removed if record(p)],
+            "records_added": [p[len("data/built/innovations/"):-5] for p in added if record(p)],
+            "records_removed": [p[len("data/built/innovations/"):-5] for p in removed if record(p)],
             "records_changed": sum(1 for p in changed if record(p)),
             "files_added": len(added), "files_removed": len(removed), "files_changed": len(changed)}
 

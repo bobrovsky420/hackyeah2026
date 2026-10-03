@@ -13,7 +13,7 @@ import type { Llm } from "@/lib/llm/types";
 // ------------------------------------------------------------- catalogue
 
 /*
- * Codes of the record contract (docs/innovation-record.md, data/taxonomies.json)
+ * Codes of the record contract (docs/innovation-record.md, data/curated/taxonomies.json)
  * and the parts of the built records and the place register the screens use.
  */
 
@@ -98,7 +98,7 @@ export interface Implementation {
 /*
  * The helplines of S10 and the crisis banner (FR-12.5, 12.6), and the ROPS
  * department named on the info pages and in the brief. Mapped from
- * data/helplines.yaml and data/advisors.yaml.
+ * data/curated/helplines.yaml and data/curated/advisors.yaml.
  */
 
 export interface Helpline {
@@ -133,7 +133,7 @@ export interface Department {
 /*
  * The map data of S4 (8.8, FR-7.1 to FR-7.4): the GUS indicators per gmina
  * and the gmina boundaries as the app serves them. src/lib/data/to-contracts.ts
- * maps data/indicators.json and data/map/malopolska-gminy.geojson onto these.
+ * maps data/built/indicators.json and data/built/map/malopolska-gminy.geojson onto these.
  */
 
 export type IndicatorKey = "social-assistance" | "ageing" | "unemployment" | "civic-density";
@@ -187,7 +187,7 @@ export interface GminaBoundaries {
 
 // ------------------------------------------------------------- paths (8.7)
 
-/** A legal or funding path, schema 8.7 (one YAML file per path in data/paths/). */
+/** A legal or funding path, schema 8.7 (one YAML file per path in data/built/paths/). */
 export interface ImplementationPath {
   id: string;
   name_pl: string;
@@ -207,10 +207,11 @@ export interface ImplementationPath {
 // -------------------------------------------------------- stored records
 
 /*
- * What the forms store and the ROPS console works on: the need (8.5), the
- * contact request, the readiness registration and the feedback (8.6).
- * `note_pl` is the console's note field (S7); `example` marks seed entries.
- * The records are kept by the repository of src/server/db/.
+ * What the forms store: the need (8.5), the contact request, the readiness
+ * registration and the feedback (8.6). The status, moderation and `note_pl`
+ * fields are kept for the ROPS console of the roadmap (S7, not built);
+ * `example` marks seed entries. The records are kept by the repository of
+ * src/server/db/.
  */
 
 export type ModerationStatus = "do-weryfikacji" | "zatwierdzone" | "odrzucone";
@@ -493,7 +494,7 @@ export interface BriefSection {
   text: string;
 }
 
-/** The brief as stored (8.5): generated once per need, again only on the console's request. */
+/** The brief as stored (8.5): generated once per need and returned as stored after that. */
 export interface StoredBrief {
   /** "br-" and the date, like the other ids. */
   id: string;
@@ -524,7 +525,7 @@ export interface NeedCluster {
 
 /** Per stage, for the request log and the counters (FR-3.6). */
 export interface StageLog {
-  stage: "screen" | "retrieve" | "shortlist" | "assess" | "compose" | "brief" | "cluster";
+  stage: "screen" | "retrieve" | "shortlist" | "assess" | "compose" | "brief";
   provider: string;
   model: string;
   promptVersion: string | null;

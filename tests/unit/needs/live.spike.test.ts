@@ -6,15 +6,15 @@ import { loadDataset } from "@/lib/data/load";
 import { getLlm } from "@/lib/llm";
 import { fromDataset } from "@/lib/catalogue";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
-import { briefForNeed, clusterNeeds, generateBrief, nearestMatches } from "@/server/needs";
+import { briefForNeed, generateBrief, nearestMatches } from "@/server/needs";
 import { assessment, matchResult, need } from "./fixtures";
 
 /*
- * Live spike of the brief and the clustering on the none case C09 of
+ * Live spike of the brief on the none case C09 of
  * docs/test-problem-candidates.md, through the configured model chain.
  * Skipped unless NEEDS_SPIKE=1. The match result is built by hand from the
- * retriever's nearest records of C09, so the matcher makes no call: two
- * model calls in all (brief, cluster), plus the adapter's repair retries.
+ * retriever's nearest records of C09, so the matcher makes no call: one
+ * model call in all (brief), plus the adapter's repair retries.
  *
  *   NEEDS_SPIKE=1 npx vitest run tests/unit/needs/live.spike.test.ts
  *
@@ -39,7 +39,7 @@ describe.skipIf(process.env.NEEDS_SPIKE !== "service")("live spike of the endpoi
     const repo = createMemoryRepository({ ...createMemoryState(), needs: [] });
     await repo.addNeed(need({ problem_text: C09, summary_pl: null, target_groups: [] }));
     const started = Date.now();
-    const stored = await briefForNeed("nd-test-1", {}, { repo, llm: getLlm(), catalogue: fromDataset(dataset), embed: noEmbed });
+    const stored = await briefForNeed("nd-test-1", { repo, llm: getLlm(), catalogue: fromDataset(dataset), embed: noEmbed });
     const report = {
       ms: Date.now() - started,
       nearest: (await repo.getNeed("nd-test-1"))?.nearest_matches,
@@ -102,19 +102,10 @@ describe.skipIf(process.env.NEEDS_SPIKE !== "1")("live spike", () => {
     const { brief, stage } = await generateBrief(record, { llm, dataset, template });
     const briefMs = Date.now() - started;
 
-    const others = [
-      need({ id: "nd-s1", summary_pl: "Seniorzy ze wsi nie mają jak dojechać na rehabilitację" }),
-      need({ id: "nd-s2", summary_pl: "Brak zajęć dla młodzieży po szkole w małej gminie" }),
-      need({ id: "nd-s3", summary_pl: "Osoby starsze nie docierają do przychodni, autobus kursuje rzadko" }),
-      need({ id: "nd-s4", summary_pl: "Po powodzi mieszkańcy zostali sami z osuszaniem domów" }),
-      record,
-    ];
-    const clustered = await clusterNeeds(others, { llm });
 
     const report = {
       brief: { ms: briefMs, stage, title: brief.title, problem: brief.problem, gap: brief.gapText, direction: brief.direction, generation: brief.generation },
       nearest: record.nearest_matches,
-      cluster: clustered,
     };
     const dir = path.join(process.cwd(), ".local", "needs-spike");
     fs.mkdirSync(dir, { recursive: true });

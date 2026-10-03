@@ -11,7 +11,7 @@ import { MAX_CANDIDATES, MAX_REASON_CHARS } from "./thresholds";
  * and returns up to eight candidates (schema 8.3). The schema is loose on
  * purpose (a longer list or a long reason is trimmed here, not rejected by
  * the provider); the validation below keeps only ids among the cards the
- * model was given and codes of data/taxonomies.json.
+ * model was given and codes of data/curated/taxonomies.json.
  */
 
 export const shortlistSchema = z.object({

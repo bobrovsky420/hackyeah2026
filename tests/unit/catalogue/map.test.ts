@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 /* The places ranking of FR-7.4 and the suppression of small counts, on the fixtures and on data/. */
 
-const hasData = fs.existsSync(path.join(process.cwd(), "data", "data-version.json"));
+const hasData = fs.existsSync(path.join(process.cwd(), "data", "built", "data-version.json"));
 
 /** The map module over a fresh catalogue of the given source. */
 async function mapOn(source: "data" | "mock") {

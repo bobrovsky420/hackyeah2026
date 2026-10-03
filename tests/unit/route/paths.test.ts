@@ -12,7 +12,7 @@ import {
 
 /* The selection rules of 8.7 (FR-8.2), one by one, on hand-built paths; then a check on the real files. */
 
-const TODAY = "2026-09-29";
+const TODAY = "2026-10-03";
 
 function makePath(id: string, over: Partial<Path> = {}): Path {
   return {
@@ -134,8 +134,8 @@ describe("rule 3: score", () => {
       note_pl: "",
       calls: [{ label_pl: "", applicant_types: applicants, opens_on: null, closes_on: closes }],
     });
-    const soon = makePath("soon", { timing: call("2026-12-28") });
-    const late = makePath("late", { timing: call("2026-12-29") });
+    const soon = makePath("soon", { timing: call("2027-01-01") });
+    const late = makePath("late", { timing: call("2027-01-02") });
     const other = makePath("other", { applicant_types: ["jst", "ngo"], timing: call("2026-10-10", ["ngo"]) });
     const scores = Object.fromEntries(selectPaths([soon, late, other], ctx()).paths.map((item) => [item.path.id, item.score]));
     expect(scores).toEqual({ soon: 2, late: 0, other: 0 });
@@ -207,7 +207,7 @@ describe("rule 4: at most three, and the gmina's vehicle for a service model", (
   });
 });
 
-describe("the real paths of data/paths", () => {
+describe("the real paths of data/built/paths", () => {
   const dataset = loadDataset({ today: TODAY });
 
   test("a gmina with a low-cost senior service gets the senior programme and the CUS programme", () => {

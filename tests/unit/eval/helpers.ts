@@ -16,7 +16,7 @@ export function problem(overrides: Partial<Omit<Problem, "expected">> & { expect
     sha256: "0".repeat(64),
     title: "Samotni seniorzy",
     author: "lawyer",
-    writtenOn: "2026-09-30",
+    writtenOn: "2026-10-03",
     role: "pracownik-instytucji",
     placeTerc: "1214062",
     text: "Tekst problemu.",

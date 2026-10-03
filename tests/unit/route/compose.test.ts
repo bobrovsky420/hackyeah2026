@@ -9,7 +9,7 @@ import { contradictsReasons, type ComposeOutput } from "@/server/route/text";
 
 /* The composer end to end on a small real slice: model output checks, the templates, the screened outcomes. */
 
-const TODAY = "2026-09-29";
+const TODAY = "2026-10-03";
 const dataset = loadDataset({ today: TODAY });
 const BATHROOMS = "inn-rops-przenosne-modularne-lazienki";
 const SENIORS = "inn-nat-649";
@@ -80,7 +80,7 @@ function match(over: Partial<MatchResult> = {}): MatchResult {
 function input(over: Partial<ComposeInput> = {}): ComposeInput {
   return {
     routeId: "rt-test",
-    createdAt: "2026-09-29T10:00:00+02:00",
+    createdAt: "2026-10-03T10:00:00+02:00",
     input: {
       problem_text: "W gminie brakuje łazienek dostosowanych do potrzeb osób starszych.",
       place_terc: "1261011",
@@ -233,7 +233,7 @@ describe("model output checks", () => {
       consent_display_name: true,
       consent: { text_version: "v1", timestamp: TODAY },
       verification: { status: "zweryfikowane", reviewer: "rops", decided_at: TODAY },
-      retention_until: "2027-09-29",
+      retention_until: "2027-10-03",
       note_pl: null,
     };
     const calls: LlmCall<unknown>[] = [];
@@ -289,7 +289,7 @@ describe("buildScreenedRoute", () => {
     ["declined", "declined", true],
     ["off_topic", "off_topic", false],
   ] as const)("%s", (outcome, mode, hasCode) => {
-    const route = buildScreenedRoute("rt-x", "2026-09-29T10:00:00+02:00", base, gate(outcome), dataset);
+    const route = buildScreenedRoute("rt-x", "2026-10-03T10:00:00+02:00", base, gate(outcome), dataset);
     expect(route.mode).toBe(mode);
     expect(route.input.problem_text).toBeNull();
     expect(route.input.place_name).toBe("Kraków");
@@ -302,7 +302,7 @@ describe("buildScreenedRoute", () => {
   });
 
   test("the mild declined of FR-12.12 (the gate passed the text, the model refused)", () => {
-    const route = buildScreenedRoute("rt-x", "2026-09-29T10:00:00+02:00", base, gate("need"));
+    const route = buildScreenedRoute("rt-x", "2026-10-03T10:00:00+02:00", base, gate("need"));
     expect(route.mode).toBe("declined");
     expect(route.screening.category).toBe("need");
     expect(route.mode_reason_pl).toBe(t("route.declined.mild"));

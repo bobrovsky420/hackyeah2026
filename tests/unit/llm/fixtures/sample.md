@@ -1,7 +1,7 @@
 ---
 version: sample-v2
 task: fixture for the prompt loader tests
-changes: v2: a colon inside a value: kept
+changes: v2 (second draft): a colon inside a value: kept
 ---
 
 # Fixture

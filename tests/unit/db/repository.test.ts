@@ -224,7 +224,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
   });
 
-  describe("needs and the console's filters (FR-9.2, FR-5.6)", () => {
+  describe("needs and their filters (FR-5.6; FR-9.2 of the roadmap)", () => {
     beforeEach(async () => {
       await repo.addNeed(need("nd-1", { created_at: at(-2 * DAY), target_groups: ["seniorzy", "zdrowie"] }));
       await repo.addNeed(
@@ -436,7 +436,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
   });
 
-  describe("retention (12.6, OP-18)", () => {
+  describe("retention (12.6)", () => {
     const cutoffs = {
       routesBefore: at(-10 * DAY),
       contactsBefore: at(-90 * DAY),

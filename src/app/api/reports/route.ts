@@ -1,4 +1,4 @@
-import { isOneOf, reportReasons } from "@/lib/console";
+import { isOneOf, reportReasons } from "@/lib/reports";
 import type { ContentReport } from "@/lib/contracts";
 import { getInnovation } from "@/lib/catalogue";
 import { redact, honeypotFilled, publicWritesClosed } from "@/server/gate";

@@ -132,16 +132,16 @@ describe("runPipeline", () => {
 describe("the readiness registry (FR-6.5)", () => {
   const entry: Readiness = {
     id: "gt-1",
-    created_at: "2026-10-01T10:00:00.000Z",
+    created_at: "2026-10-03T10:00:00.000Z",
     display_name: "Stowarzyszenie Seniorzy Razem",
     is_organisation: true,
     place_terc: "1207062",
     topics: ["seniorzy"],
     channel: { type: "email", value: "kontakt@example.org" },
     consent_display_name: true,
-    consent: { text_version: "v1", timestamp: "2026-10-01T10:00:00.000Z" },
-    verification: { status: "zweryfikowane", reviewer: "rops", decided_at: "2026-10-01T11:00:00.000Z" },
-    retention_until: "2027-10-01",
+    consent: { text_version: "v1", timestamp: "2026-10-03T10:00:00.000Z" },
+    verification: { status: "zweryfikowane", reviewer: "rops", decided_at: "2026-10-03T11:00:00.000Z" },
+    retention_until: "2027-10-03",
     note_pl: null,
   };
 

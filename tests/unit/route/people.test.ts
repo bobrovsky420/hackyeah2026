@@ -12,16 +12,16 @@ const LASKOWA = "1207062";
 function registration(id: string, over: Partial<Readiness> = {}): Readiness {
   return {
     id,
-    created_at: "2026-09-29T10:00:00+02:00",
+    created_at: "2026-10-03T10:00:00+02:00",
     display_name: `Osoba ${id}`,
     is_organisation: false,
     place_terc: KRAKOW,
     topics: ["rynek-pracy"],
     channel: { type: "email", value: `${id}@example.org` },
     consent_display_name: true,
-    consent: { text_version: "zgoda-prototyp-v1", timestamp: "2026-09-29T10:00:00+02:00" },
-    verification: { status: "zweryfikowane", reviewer: "rops", decided_at: "2026-09-29T11:00:00+02:00" },
-    retention_until: "2027-09-29",
+    consent: { text_version: "zgoda-prototyp-v1", timestamp: "2026-10-03T10:00:00+02:00" },
+    verification: { status: "zweryfikowane", reviewer: "rops", decided_at: "2026-10-03T11:00:00+02:00" },
+    retention_until: "2027-10-03",
     note_pl: null,
     ...over,
   } as Readiness;
@@ -63,7 +63,7 @@ describe("readiness (FR-6.5)", () => {
 });
 
 describe("implementers, innovators, advisor (FR-4.4)", () => {
-  const dataset = loadDataset({ today: "2026-09-29" });
+  const dataset = loadDataset({ today: "2026-10-03" });
   const bathrooms = "inn-rops-przenosne-modularne-lazienki";
 
   test("implementers within 50 km, nearest first", () => {

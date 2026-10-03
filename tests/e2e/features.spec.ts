@@ -1,5 +1,4 @@
 import { expect, test, type Page } from "@playwright/test";
-import { signIn } from "./screens";
 
 /*
  * The MUST requirements of section 7 around the journeys: the gate's
@@ -104,7 +103,7 @@ test("FR-3.5: Policz ponownie runs the route again", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: /Samotni seniorzy/ })).toBeVisible();
 });
 
-test("FR-12.9: a content report reaches the moderation queue and is decided there", async ({ page, baseURL }) => {
+test("FR-12.9: a content report is stored for ROPS", async ({ page }) => {
   const comment = `Zgłoszenie testowe ${Date.now()}`;
   await page.goto("/droga/przyklad-seniorzy");
   await page.getByRole("link", { name: "Zgłoś problem z tą treścią" }).click();
@@ -115,14 +114,6 @@ test("FR-12.9: a content report reaches the moderation queue and is decided ther
   await page.getByLabel(/Opisz krótko problem/).fill(comment);
   await page.getByRole("button", { name: "Wyślij zgłoszenie" }).click();
   await expect(page.getByText("Dziękujemy. Zgłoszenie trafiło do ROPS.")).toBeVisible();
-
-  await signIn(page, baseURL);
-  await page.goto("/rops");
-  const queue = page.getByRole("region", { name: /^Zgłoszenia treści: \d+$/ });
-  const row = queue.getByRole("row").filter({ hasText: comment });
-  await expect(row).toContainText("Nieprawdziwe informacje");
-  await row.getByRole("button", { name: "Uwzględnij" }).click();
-  await expect(queue.getByRole("status")).toHaveText("Uwzględniono zgłoszenie treści.");
 });
 
 test("FR-1.8: a MIIS item is shown like every ROPS item, its terms named in the attribution", async ({ page }) => {

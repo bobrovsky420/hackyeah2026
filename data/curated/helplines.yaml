@@ -1,0 +1,109 @@
+# Helplines for the crisis screen S10 and the page "Zasady" (S12)
+# (specification S10, 7.12 FR-12.5, 12.6).
+# Hand-written reference data, committed to git.
+#
+# Only the free national helplines listed in the specification 12.6. Each
+# number, its hours and that it is free were checked against the operator's
+# own page (source_url); the reference list 116sos.pl (NASK) matches, except
+# where a comment says otherwise.
+# The lawyer confirms the list and then fills reviewer.
+# order: 112 first; group: alarm ("Numery alarmowe") or support
+# ("Pomoc i rozmowa"), the two groups of FR-12.5.
+version: "2026-10-03"
+verified_on: "2026-10-03"
+note_pl: Numery, godziny i bezpłatność tych telefonów sprawdziliśmy na stronach instytucji, które je prowadzą.
+reviewer: null
+
+helplines:
+  # Hours: the operator's pages (gov.pl, MSWiA) state that 112 is free and
+  # works without a SIM card, but give no hours; 24/7 is from 116sos.pl.
+  - id: hl-112
+    order: 1
+    group: alarm
+    name_pl: Numer alarmowy 112
+    number: "112"
+    hours_pl: całą dobę, 7 dni w tygodniu
+    who_for_pl: Dla każdego, gdy zagrożone jest życie, zdrowie lub bezpieczeństwo i potrzebna jest natychmiastowa pomoc służb.
+    free: true
+    url: https://www.gov.pl/web/numer-alarmowy-112
+    source_url: https://www.gov.pl/web/numer-alarmowy-112/numeralarmowy112
+    verified_on: "2026-10-03"
+
+  # The operator's page still carries the old line "codziennie od 14.00 do
+  # 22.00" next to "24 godziny na dobę, 7 dni w tygodniu"; the operator's other
+  # site (niebieskalinia.pl, Instytut Psychologii Zdrowia) and 116sos.pl both
+  # say 24/7. For the lawyer to confirm.
+  - id: hl-116123
+    order: 2
+    group: support
+    name_pl: Kryzysowy Telefon Zaufania 116 123 (Instytut Psychologii Zdrowia PTP)
+    number: "116 123"
+    hours_pl: całą dobę, 7 dni w tygodniu
+    who_for_pl: Dla osób dorosłych w kryzysie emocjonalnym, które potrzebują rozmowy i wsparcia psychologa.
+    free: true
+    url: https://116sos.pl/
+    source_url: https://psychologia.edu.pl/kryzysy-osobiste/telefon-kryzysowy-116123.html
+    verified_on: "2026-10-03"
+
+  - id: hl-116111
+    order: 3
+    group: support
+    name_pl: Telefon zaufania dla dzieci i młodzieży 116 111 (Fundacja Dajemy Dzieciom Siłę)
+    number: "116 111"
+    hours_pl: całą dobę, 7 dni w tygodniu
+    who_for_pl: Dla dzieci i młodzieży, które chcą anonimowo porozmawiać o tym, co je martwi.
+    free: true
+    url: https://116111.pl/
+    source_url: https://116111.pl/o-116111/
+    verified_on: "2026-10-03"
+
+  - id: hl-800120002
+    order: 4
+    group: support
+    name_pl: Ogólnopolskie Pogotowie dla Osób Doznających Przemocy Domowej „Niebieska Linia”
+    number: "800 120 002"
+    hours_pl: całą dobę, 7 dni w tygodniu
+    who_for_pl: Dla osób doznających przemocy domowej i dla świadków przemocy.
+    free: true
+    url: https://niebieskalinia.info/
+    source_url: https://niebieskalinia.info/
+    verified_on: "2026-10-03"
+
+  - id: hl-800702222
+    order: 5
+    group: support
+    name_pl: Centrum Wsparcia dla osób w kryzysie psychicznym
+    number: "800 702 222"
+    hours_pl: całą dobę, 7 dni w tygodniu
+    who_for_pl: Dla osób dorosłych w kryzysie psychicznym, które potrzebują rozmowy z psychologiem.
+    free: true
+    url: https://centrumwsparcia.pl/
+    source_url: https://centrumwsparcia.pl/centrum-wsparcia/
+    verified_on: "2026-10-03"
+
+  - id: hl-800121212
+    order: 6
+    group: support
+    name_pl: Dziecięcy Telefon Zaufania Rzecznika Praw Dziecka
+    number: "800 121 212"
+    hours_pl: całą dobę, 7 dni w tygodniu
+    who_for_pl: Dla dzieci i młodzieży, które potrzebują wsparcia lub chcą porozmawiać o swoich problemach.
+    free: true
+    url: https://brpd.gov.pl/telefon-zaufania-rzecznika-praw-dziecka-800-12-12-12/
+    source_url: https://brpd.gov.pl/telefon-zaufania-rzecznika-praw-dziecka-800-12-12-12/
+    verified_on: "2026-10-03"
+
+  # Hours: the operator's duty schedule; the specification 12.6 and 116sos.pl
+  # say "Pn - Pt 12:00 - 15:00", the operator lists 10:00-14:00 from Monday
+  # to Thursday and 12:00-15:00 on Friday.
+  - id: hl-800100100
+    order: 7
+    group: support
+    name_pl: Telefon dla rodziców i nauczycieli w sprawie bezpieczeństwa dzieci 800 100 100 (Fundacja Dajemy Dzieciom Siłę)
+    number: "800 100 100"
+    hours_pl: poniedziałek - czwartek 10:00-14:00, piątek 12:00-15:00
+    who_for_pl: Dla dorosłych, w tym rodziców i nauczycieli, którzy martwią się o bezpieczeństwo dziecka poniżej 18 lat.
+    free: true
+    url: https://800100100.pl/
+    source_url: https://800100100.pl/
+    verified_on: "2026-10-03"

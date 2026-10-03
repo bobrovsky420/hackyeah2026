@@ -14,7 +14,7 @@ describe("loadPrompt", () => {
     const prompt = loadPrompt("sample", { dir: FIXTURES });
     expect(prompt.version).toBe("sample-v2");
     expect(prompt.body).toBe("# Fixture\n\nZwróć obiekt JSON.");
-    expect(prompt.meta.changes).toBe("v2 (29 September 2026): a colon inside a value: kept");
+    expect(prompt.meta.changes).toBe("v2 (second draft): a colon inside a value: kept");
   });
 
   it("caches per process", () => {

@@ -31,7 +31,7 @@ DEFAULT_MODEL = "speakleash/Bielik-11B-v3.0-Instruct:publicai"
 PILOT = os.path.join(ROOT, ".claude", "skills", "extract-innovations", "pilot.json")
 PROMPT_FILE = os.path.join(ROOT, "prompts", "extract.md")
 EXAMPLE_FILE = os.path.join(ROOT, "prompts", "extract-example.json")
-TAXONOMIES_FILE = os.path.join(ROOT, "data", "taxonomies.json")
+TAXONOMIES_FILE = os.path.join(ROOT, "data", "curated", "taxonomies.json")
 
 spec = importlib.util.spec_from_file_location("referee", os.path.join(ROOT, "scripts", "derive-records.py"))
 referee = importlib.util.module_from_spec(spec)

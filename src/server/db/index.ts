@@ -6,7 +6,7 @@ import type { Repository } from "./repository";
 export type * from "./repository";
 
 /*
- * The one store of the running app (decided 29 September 2026): the memory
+ * The one store of the running app (decision A.6): the memory
  * repository saved to the file of STORE_FILE (.local/store/records.json by
  * default, docs/storage.md), or memory alone under STORE_FILE=memory (the
  * Playwright server, the pipeline scripts, a throwaway server). It sits on

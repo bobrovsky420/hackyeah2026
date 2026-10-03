@@ -1,6 +1,6 @@
 ---
 name: extract-innovations
-description: Run the extraction of derived fields for the innovation catalogue (.local/pipeline/sources to .local/pipeline/derived) with cheap worker subagents, validate every record with scripts/derive-records.py, build data/innovations and prepare the human check. Use when the user asks to run, resume, pilot or rebuild the ingestion or extraction pipeline, or to derive fields for new source records (including a partner hand-over on 3 October 2026).
+description: Run the extraction of derived fields for the innovation catalogue (.local/pipeline/sources to .local/pipeline/derived) with cheap worker subagents, validate every record with scripts/derive-records.py, build data/built/innovations and prepare the human check. Use when the user asks to run, resume, pilot or rebuild the ingestion or extraction pipeline, or to derive fields for new source records (including a partner hand-over on 3 October 2026).
 ---
 
 # Extract innovations: the coordinator playbook
@@ -15,7 +15,7 @@ Rules for the coordinator:
 
 - You never write or edit a derived record yourself. A record that fails
   goes back to a worker with the validator's error lines.
-- You never change `prompts/extract.md`, `data/taxonomies.json` or the
+- You never change `prompts/extract.md`, `data/curated/taxonomies.json` or the
   schemas during a run. A needed change is reported to the user; it is a
   new prompt or taxonomy version and a rerun.
 - You never mark a record valid by hand. Only the validator does.
@@ -125,7 +125,7 @@ with their errors, the count of warnings by kind (wording, inferred cost,
 domain `inne`), and the path of `docs/review-sample.md` for the human
 check (committed, so the reviewer on another machine can read and mark
 it). Propose a one-line commit message covering `docs/review-sample.md`;
-the build outputs in `data/` are git-ignored.
+the build outputs in `data/built/` are git-ignored.
 
 ## 6. Resuming and reruns
 

@@ -39,7 +39,7 @@ export function HumanHelp({
   titleAs: Title = "h1",
 }: {
   placeName: string | null;
-  /** From the server page: data/helplines.yaml or the fixtures. */
+  /** From the server page: data/curated/helplines.yaml or the fixtures. */
   helplines: { alarm: Helpline[]; support: Helpline[] };
   /** "h2" inside a page that has its own h1, such as the needs form (S9c). */
   titleAs?: "h1" | "h2";

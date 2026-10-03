@@ -106,7 +106,7 @@ export interface SourceRecord {
      */
     local_path: string | null;
     /**
-     * e.g. dead-2026-09-28 for an empty download
+     * dead-2026-10-03 for an empty download
      */
     status?: string;
   }[];
@@ -131,7 +131,7 @@ export interface SourceRecord {
 }
 
 /**
- * What an extraction worker writes to .local/pipeline/derived/<id>.json. Closed lists (target_groups, domains, implementer_types, setting, scale, cost_band, time_to_implement, evidence_level) are enforced by scripts/derive-records.py from data/taxonomies.json, the single source of truth; word limits, grounding and personal-data rules are enforced there too. See docs/innovation-record.md.
+ * What an extraction worker writes to .local/pipeline/derived/<id>.json. Closed lists (target_groups, domains, implementer_types, setting, scale, cost_band, time_to_implement, evidence_level) are enforced by scripts/derive-records.py from data/curated/taxonomies.json, the single source of truth; word limits, grounding and personal-data rules are enforced there too. See docs/innovation-record.md.
  */
 export interface DerivedRecord {
   id: string;

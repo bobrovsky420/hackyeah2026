@@ -10,11 +10,11 @@ import { sourceBadge, sourceName } from "@/lib/labels";
 
 /* The mappings of the gaps in docs/data-to-contracts.md: indicators, boundaries, helplines, attribution. */
 
-const hasData = fs.existsSync(path.join(process.cwd(), "data", "data-version.json"));
+const hasData = fs.existsSync(path.join(process.cwd(), "data", "built", "data-version.json"));
 
 function indicatorsFile(overrides: Partial<IndicatorsFile> = {}): IndicatorsFile {
   return {
-    source: { name: "GUS BDL", url: "https://bdl.stat.gov.pl/", licence: "CC BY 4.0", retrieved_at: "2026-09-29", unit_parent_id: "0", unit_level: 6 },
+    source: { name: "GUS BDL", url: "https://bdl.stat.gov.pl/", licence: "CC BY 4.0", retrieved_at: "2026-10-03", unit_parent_id: "0", unit_level: 6 },
     note: "",
     indicators: [
       { key: "ageing", variable_id: 634989, name_pl: null, unit_pl: null, subject_id: null, year: 2024, years_used: [2024], gminas_with_value: 2, median: 17, min: 11, max: 26 },
@@ -96,7 +96,7 @@ describe("boundaries", () => {
 describe("helplines", () => {
   const file: HelplinesFile = {
     version: "1",
-    verified_on: "2026-09-29",
+    verified_on: "2026-10-03",
     note_pl: "",
     reviewer: null,
     helplines: [
@@ -127,7 +127,7 @@ describe("attribution (FR-1.8)", () => {
     source: "rops-biblioteka",
     sourceUrl: "https://rops.krakow.pl/",
     licence: "MIIS-agreement",
-    retrievedAt: "2026-09-28",
+    retrievedAt: "2026-10-03",
     summary: "",
     problem: "",
     mechanism: "",

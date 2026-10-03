@@ -43,7 +43,6 @@ describe("anthropicRequest", () => {
     expect(anthropicRequest(call("screen"), "m").output_config?.effort).toBe("low");
     expect(anthropicRequest(call("shortlist"), "m").output_config?.effort).toBe("medium");
     expect(anthropicRequest(call("assess"), "m").output_config?.effort).toBe("high");
-    expect(anthropicRequest(call("cluster"), "m").output_config?.effort).toBe("low");
     expect(anthropicRequest(call("screen"), "m").max_tokens).toBe(1000);
     expect(anthropicRequest(call("brief"), "m").max_tokens).toBe(8000);
     expect(anthropicRequest(call("compose"), "m").max_tokens).toBe(500);

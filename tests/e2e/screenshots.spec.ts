@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { screens, signIn } from "./screens";
+import { screens } from "./screens";
 
 /*
  * `pnpm screenshots`: every screen at the three widths of section 10, for
@@ -19,8 +19,7 @@ for (const size of sizes) {
     test.use({ viewport: size.viewport, deviceScaleFactor: size.deviceScaleFactor });
 
     for (const screen of screens) {
-      test(screen.name, async ({ page, baseURL }) => {
-        if (screen.console) await signIn(page, baseURL);
+      test(screen.name, async ({ page }) => {
         await page.goto(screen.path);
         await page.evaluate(() => document.fonts.ready);
         // The map loads and draws in a worker; on a phone the table comes first and no map loads.
@@ -44,14 +43,6 @@ for (const size of sizes) {
       await page.screenshot({ path: `${OUT}/s1-czekanie-${size.name}.png`, fullPage: true });
     });
 
-    test("s7-moderacja-blad", async ({ page, baseURL }) => {
-      await signIn(page, baseURL);
-      await page.goto("/rops");
-      await page.getByRole("button", { name: "Odrzuć" }).first().click();
-      await expect(page.getByText("Wybierz powód odrzucenia.")).toBeVisible();
-      await page.evaluate(() => document.fonts.ready);
-      await page.screenshot({ path: `${OUT}/s7-moderacja-blad-${size.name}.png`, fullPage: true });
-    });
   });
 }
 

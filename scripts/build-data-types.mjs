@@ -37,7 +37,7 @@ const SCHEMAS = [
   ["derived-record.schema.json", "DerivedRecord"],
 ];
 const HEADER = "// generated from schemas/*.schema.json by scripts/build-data-types.mjs, do not edit\n";
-// Closed lists of data/taxonomies.json and the union of src/lib/data/types.ts that mirrors each.
+// Closed lists of data/curated/taxonomies.json and the union of src/lib/data/types.ts that mirrors each.
 const TAXONOMY_UNIONS = {
   target_groups: "TargetGroup",
   domains: "Domain",
@@ -117,7 +117,7 @@ function check() {
     return value;
   };
 
-  const tax = checkFile("taxonomies.json", "TaxonomiesFile");
+  const tax = checkFile("curated/taxonomies.json", "TaxonomiesFile");
   if (tax) {
     // The other direction: every member of a union is a code of the taxonomies.
     for (const [key, union] of Object.entries(TAXONOMY_UNIONS)) {
@@ -129,33 +129,33 @@ function check() {
       );
     }
   }
-  const pathsDir = file("paths");
+  const pathsDir = file("built/paths");
   const paths = fs.existsSync(pathsDir) ? fs.readdirSync(pathsDir).filter((f) => f.endsWith(".yaml")).sort() : [];
   const yaml = (rel) => YAML.parse(fs.readFileSync(file(rel), "utf8"));
-  checkFile("duplicates-decisions.json", "DuplicateDecisionsFile");
-  checkFile("advisors.yaml", "AdvisorsFile", yaml);
-  checkFile("implementations.yaml", "ImplementationsFile", yaml);
-  checkFile("incubators.json", "IncubatorsFile");
-  checkFile("data-version.json", "DataVersion");
-  checkFile("index-cards.json", "IndexCard[]");
-  checkFile("index-vectors.json", "IndexVectorsFile", (rel) => {
+  checkFile("curated/duplicates-decisions.json", "DuplicateDecisionsFile");
+  checkFile("curated/advisors.yaml", "AdvisorsFile", yaml);
+  checkFile("curated/implementations.yaml", "ImplementationsFile", yaml);
+  checkFile("built/incubators.json", "IncubatorsFile");
+  checkFile("built/data-version.json", "DataVersion");
+  checkFile("built/index-cards.json", "IndexCard[]");
+  checkFile("built/index-vectors.json", "IndexVectorsFile", (rel) => {
     const v = json(rel);
     return { ...v, vectors: Object.fromEntries(Object.entries(v.vectors).slice(0, 3)) };
   });
-  checkFile("places/pl-register.json", "PlacesRegister");
-  checkFile("map/malopolska-gminy.geojson", "GminaBoundaries");
-  checkFile("indicators.json", "IndicatorsFile");
-  checkFile("implementations-derived.json", "ImplementationsDerivedFile");
-  checkFile("organisations.json", "OrganisationsFile");
-  checkFile("implementations-merged.json", "ImplementationsMergedFile");
-  checkFile("knowledge.yaml", "KnowledgeFile", yaml);
-  checkFile("helplines.yaml", "HelplinesFile", yaml);
-  if (!paths.length) missing.push("paths/");
-  for (const f of paths) checkFile(`paths/${f}`, "Path", yaml);
-  const dir = file("innovations");
+  checkFile("built/places/pl-register.json", "PlacesRegister");
+  checkFile("built/map/malopolska-gminy.geojson", "GminaBoundaries");
+  checkFile("built/indicators.json", "IndicatorsFile");
+  checkFile("built/implementations-derived.json", "ImplementationsDerivedFile");
+  checkFile("built/organisations.json", "OrganisationsFile");
+  checkFile("built/implementations-merged.json", "ImplementationsMergedFile");
+  checkFile("curated/knowledge.yaml", "KnowledgeFile", yaml);
+  checkFile("curated/helplines.yaml", "HelplinesFile", yaml);
+  if (!paths.length) missing.push("built/paths/");
+  for (const f of paths) checkFile(`built/paths/${f}`, "Path", yaml);
+  const dir = file("built/innovations");
   const records = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith(".json")).sort() : [];
-  if (!records.length) missing.push("innovations/");
-  for (const f of records) checkFile(`innovations/${f}`, "BuiltInnovation");
+  if (!records.length) missing.push("built/innovations/");
+  for (const f of records) checkFile(`built/innovations/${f}`, "BuiltInnovation");
 
   fs.mkdirSync(CHECK_DIR, { recursive: true });
   fs.writeFileSync(path.join(CHECK_DIR, "check-data.ts"), lines.join("\n") + "\n");

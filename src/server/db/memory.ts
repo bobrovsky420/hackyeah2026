@@ -15,8 +15,7 @@ import {
  * The repository in the server's memory: the whole store, calling
  * `onChange` after every change so that file.ts can save it. On its own it
  * is gone after a restart (STORE_FILE=memory: the Playwright journeys, the
- * pipeline scripts). Lists are kept newest first, like the console shows
- * them.
+ * pipeline scripts). Lists are kept newest first.
  */
 
 export interface MemoryState {

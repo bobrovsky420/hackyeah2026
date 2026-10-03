@@ -21,10 +21,6 @@ export const PAGE_ROUTES: readonly { folder: string; url: string }[] = [
   { folder: "/offer-help", url: "/chce-pomoc" },
   { folder: "/save-need", url: "/zapisz-potrzebe" },
   { folder: "/report", url: "/zglos" },
-  { folder: "/rops/needs", url: "/rops/potrzeby" },
-  { folder: "/rops/contacts", url: "/rops/kontakty" },
-  { folder: "/rops/readiness", url: "/rops/gotowosc" },
-  { folder: "/rops/stats", url: "/rops/miary" },
 ];
 
 const folderPatterns = PAGE_ROUTES.map(({ folder, url }) => ({

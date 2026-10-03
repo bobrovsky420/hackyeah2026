@@ -9,14 +9,14 @@ describe("the lexicon file", () => {
   it("has an owner and a date (FR-12.1) and entries in both groups", () => {
     const lexicon = loadLexicon();
     expect(lexicon.owner).toBeTruthy();
-    expect(lexicon.date).toBe("2026-09-29");
+    expect(lexicon.date).toBe("2026-10-03");
     expect(lexicon.crisis.length).toBeGreaterThan(20);
     expect(lexicon.community.length).toBeGreaterThan(10);
   });
 
   it("rejects a file without an owner or with an unknown topic", () => {
-    expect(() => compileLexicon({ date: "2026-09-29", crisis: {}, community: {} })).toThrow(LexiconError);
-    expect(() => compileLexicon({ owner: "x", date: "2026-09-29", crisis: { hunger: ["a"] }, community: {} })).toThrow(LexiconError);
+    expect(() => compileLexicon({ date: "2026-10-03", crisis: {}, community: {} })).toThrow(LexiconError);
+    expect(() => compileLexicon({ owner: "x", date: "2026-10-03", crisis: { hunger: ["a"] }, community: {} })).toThrow(LexiconError);
   });
 });
 

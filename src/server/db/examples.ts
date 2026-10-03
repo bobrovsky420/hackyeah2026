@@ -2,7 +2,7 @@ import type { RoleCode, Need, Readiness } from "@/lib/contracts";
 
 /*
  * The example entries every fresh store starts with (memory.ts): three
- * needs for the console and the map (the prototype's store had them from
+ * needs for the map and the brief (the prototype's store had them from
  * the start), and the two consented and verified team entries of the
  * readiness registry (FR-6.5). All are marked `example`. A store that
  * exists already keeps what it has; deleting its file starts again from
@@ -12,7 +12,7 @@ import type { RoleCode, Need, Readiness } from "@/lib/contracts";
 /** The version of the consent texts the forms record (12.6). */
 export const CONSENT_VERSION = "zgoda-prototyp-v1";
 
-const SEEDED_AT = "2026-09-29T09:00:00+02:00";
+const SEEDED_AT = "2026-10-03T09:00:00+02:00";
 
 function exampleNeed(
   id: string,
@@ -96,7 +96,7 @@ function teamEntry(id: string, name: string, placeTerc: string, topics: string[]
     consent_display_name: true,
     consent: { text_version: CONSENT_VERSION, timestamp: SEEDED_AT },
     verification: { status: "zweryfikowane", reviewer: "zespół HubMI.pl", decided_at: SEEDED_AT },
-    retention_until: "2027-09-29",
+    retention_until: "2027-10-03",
     note_pl: null,
     example: true,
   };

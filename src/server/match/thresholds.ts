@@ -2,7 +2,7 @@ import type { MatchMode } from "@/lib/contracts";
 
 /*
  * The mode thresholds of FR-3.3, in one place. Calibrated on the ten test
- * problems on Thursday 1 October; prompts/assess.md gets the same numbers
+ * problems; prompts/assess.md gets the same numbers
  * through its placeholders ROUTE_MIN, PARTIAL_MIN and PARTIAL_MAX.
  */
 

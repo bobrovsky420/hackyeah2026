@@ -2,8 +2,7 @@ import { envValue } from "@/lib/env";
 import type { Repository, RetentionCounts, RetentionCutoffs } from "@/server/db/repository";
 
 /*
- * The retention defaults of 12.6 (OP-18, the lawyer's call by 1 October
- * 2026) as the cut-offs of one run, which the store makes when it opens
+ * The retention defaults of 12.6 as the cut-offs of one run, which the store makes when it opens
  * and once a day after that (src/server/db/file.ts):
  * - routes: 30 days after the event (HackYeah ends on 4 October 2026), so
  *   from ROUTES_UNTIL on, every route created before it goes with its

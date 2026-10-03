@@ -20,7 +20,7 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-/** The screening log as the moderation tab reads it, newest first. */
+/** The screening log (FR-12.7), newest first. */
 const screeningLog = (): Promise<ScreeningLogEntry[]> => repo.listScreeningLog(Date.now());
 
 const need = (text: string, client = "10.0.0.1") => ({ text, kind: "need" as const, placeName: "Gmina Zabierzów", client });

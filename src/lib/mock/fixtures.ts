@@ -10,14 +10,14 @@ import { allPaths } from "./paths";
 
 /*
  * The catalogue from the committed fixtures, for a clone without data/ or
- * with DATA_SOURCE=mock (decided 29 September 2026). The fixtures were
- * extracted from the data build of that day in their own shapes; this
+ * with DATA_SOURCE=mock (decided). The fixtures were
+ * extracted from a data build in their own shapes; this
  * module turns them into the contracts the facade (src/lib/catalogue.ts)
  * serves. No knowledge links and no named advisors: the facade falls back
  * to the ROPS department.
  */
 
-export const FIXTURES_VERSION = "fixtures-2026-09-29";
+export const FIXTURES_VERSION = "fixtures-v1";
 
 function indicatorSet(): IndicatorSet {
   const facts = indicatorsData.indicators.map((item) => ({ ...item, key: item.key as IndicatorKey }));

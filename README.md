@@ -1,9 +1,11 @@
 # HubMI.pl: from need to solution
 
-A working prototype of HubMI.pl, the digital core that ROPS Kraków plans
-for the Małopolska Social Innovation Hub, built for the HubMI.pl partner
-task of HackYeah 2026. It answers the partner's question: how do proven
-solutions to social problems reach the places that need them?
+A working pilot of the end-user side of HubMI.pl, the digital core that
+ROPS Kraków plans for the Małopolska Social Innovation Hub, built for the
+HubMI.pl partner task of HackYeah 2026. It answers the partner's
+question: how do proven solutions to social problems reach the places
+that need them? The service around the pilot, the roles at ROPS and the
+moderation console, is a proposed roadmap, not yet built.
 
 ## What it is
 
@@ -34,12 +36,14 @@ identifier it returns is checked, and the route itself is assembled from
 structured data (people, legal vehicles, funding calls, next steps) that
 the model never writes.
 
-The concept goes beyond the software: ROPS runs the service in three
-roles (category advisor, catalogue editor, needs-bank coordinator) and
-closes three loops: need to implementation, need to new innovation,
-innovation to places. From day one the tool counts what ROPS would
-report: routes, contact requests, needs turned into call topics, new
-implementations.
+The concept goes beyond the software, and that part is the proposed
+roadmap, not implemented: ROPS would run the service in three roles
+(category advisor, catalogue editor, needs-bank coordinator), moderate
+every contact, need and registration in a console, and close three
+loops: need to implementation, need to new innovation, innovation to
+places. The tool already counts what ROPS would report (routes, contact
+requests, needs filed, briefs generated); the console that would show
+the numbers is part of the roadmap.
 
 Built for everyone: a Polish interface in Atkinson Hyperlegible, a
 typeface designed for readers with low vision, 7:1 text contrast, three
@@ -119,10 +123,12 @@ already decide, and the composer's when nothing is shortlisted.
    implementers nearby, the ROPS advisor, people ready to act, shown only
    with consent and after ROPS verification), the implementation paths
    (legal vehicle, funding calls) and three next steps.
-5. **The ROPS console** moderates everything that involves a person:
-   published needs, relayed contact requests, verified registrations,
-   declined texts and content reports, each action logged. The tool never
-   decides anything about an individual.
+5. **What is stored waits for ROPS.** Contact requests, saved needs,
+   registrations and content reports are stored, and the tool sends
+   nothing to anyone. The ROPS console that would relay contacts, verify
+   registrations, publish needs and review declined texts is the proposed
+   roadmap (S7 of the specification), not built. The tool never decides
+   anything about an individual.
 
 The ten ethics principles behind this (dignity, do no harm, a person in
 crisis gets a person, no decisions about individuals, privacy by design,
@@ -143,7 +149,7 @@ flowchart TD
         pages["<b>Pages and /api/*</b>"] --> gate["<b>Gate</b>"] --> matcher["<b>Matcher</b>"] --> composer["<b>Composer</b>"] --> needs["<b>Needs bank</b>"]
     end
 
-    entries[("<b>Entries store</b><br>one JSON file: needs, contacts,<br>registrations, moderation log")]
+    entries[("<b>Entries store</b><br>one JSON file: needs, contacts,<br>registrations, reports, logs")]
     llm["<b>Model adapter</b><br>Bielik on the HF router, then Claude,<br>then the replay recording"]
     embed["<b>Embedding service</b><br>PolDense-400M, Python"]
     catalogue[("<b>Catalogue</b><br>data/, JSON, read-only")]
@@ -183,7 +189,7 @@ flowchart TD
   versioned data release and read by the app through one facade. The
   record contract is [docs/innovation-record.md](docs/innovation-record.md).
 - **Storage**: no database; the entries (needs, contact requests,
-  registrations, moderation log) are kept in memory and saved to one
+  registrations, reports, logs) are kept in memory and saved to one
   JSON file after every change, with retention run by the server.
 - **Deployment**: one Ubuntu server on AWS Lightsail, the
   app and the embedding service as two systemd services behind Caddy
@@ -231,10 +237,11 @@ distress.
 ## Team, credits and licence
 
 The team: Alexander Bobrovský, Anton Myshelov, Dmytro Chernikov, Dmytro
-Ushakov and Krzysztof Zając. AI coding assistants (Claude Code) wrote
-code, texts and tests under the team's direction; every Polish text the
-public sees is reviewed by the team's Polish speakers, and the idea and
-every decision are the team's own.
+Ushakov and Krzysztof Zając. AI coding agents (Claude Code, Anthropic)
+wrote code, texts and tests under the team's direction; every Polish
+text the public sees is reviewed by the team's Polish speakers, and the
+idea and every decision are the team's own, recorded for review in the
+[decision log](docs/decision-log.md).
 
 The code is under the Apache License 2.0 ([LICENSE](LICENSE)); copyright
 2026 the team members named above. The rules of the partner task may

@@ -13,8 +13,10 @@ HubMI: From Need to Solution
 
 ## Description
 
-A working prototype of HubMI.pl, the digital core that ROPS Krakow plans
-for the Malopolska Social Innovation Hub.
+A working pilot of the end-user side of HubMI.pl, the digital core ROPS
+Krakow plans for the Malopolska Social Innovation Hub: a person with a
+need finds a solution. The service around it is a proposed roadmap, not
+yet built.
 
 **A route, not a catalogue.** A resident, a social worker, an NGO leader
 or a municipal official describes a need in plain Polish and picks their
@@ -25,8 +27,8 @@ municipality. It returns a route in four blocks:
   band and time.
 - **Knowledge:** the manuals, models and videos that come with them.
 - **People:** the innovator, implementers nearby, the ROPS category
-  advisor, and residents and organisations who offered to help. ROPS
-  relays every contact, with consent.
+  advisor, and residents and organisations who offered to help. Contact
+  requests are stored, with consent, for ROPS to relay.
 - **Implementation path:** the legal vehicle, the funding calls and three
   next steps.
 
@@ -54,20 +56,22 @@ innowacjespoleczne.pl and the ROPS library, each linked to its source.
 A person in crisis gets helplines and the local social assistance
 centre, not innovations. A discriminatory request is declined with
 respect. Personal data is removed before storage and before any prompt.
-Nothing reaches a real person without a ROPS moderator, and the tool
-decides nothing about an individual.
+The tool sends nothing to anyone and decides nothing about an individual.
 
-**A concept, not only software.** ROPS runs it as a service that closes
-three loops: need to implementation, need to new innovation, innovation to
-places. From day one it counts what ROPS would report: routes, contact
-requests, needs turned into call topics, new implementations.
+**A pilot now, a service next.** The roadmap, proposed and not yet
+implemented: ROPS runs HubMI as a service with three roles (category
+advisor, catalogue editor, needs-bank coordinator) and a console where
+every contact, need and registration waits for a person. It closes three
+loops: need to implementation, need to new innovation, innovation to
+places.
 
 **Built for everyone.** Polish interface in Atkinson Hyperlegible, a
 typeface for readers with low vision, full keyboard use and a phone
 layout.
 
-The AI coding assistant Claude Code was used and is credited in the
-repository, with all data sources and licences.
+The AI coding agent Claude Code (Anthropic) was used; every human
+decision, all data sources and licences are documented in the
+repository.
 
 **Team:** Alexander Bobrovsky (bobrovsky@seznam.cz), Anton Myshelov
 ([e-mail]), Dmytro Chernikov (me41st0@gmail.com), Dmytro Ushakov ([e-mail]),

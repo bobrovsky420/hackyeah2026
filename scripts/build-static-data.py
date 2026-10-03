@@ -8,27 +8,27 @@ Inputs (.local/, git-ignored, written by scripts/fetch-static-data.py):
   .local/bdl/var-<id>-<key>.json, .meta.json            the four indicator variables of spec 8.8
 
 Outputs (data/, build outputs, git-ignored; spec 8.8 and 8.9):
-  data/places/pl-register.json        every voivodeship, powiat and gmina of Poland: code PL-12,
+  data/built/places/pl-register.json        every voivodeship, powiat and gmina of Poland: code PL-12,
                                       PL-12-07, PL-12-07-132, the seven-digit TERC, names, the
                                       picker label of the gminas and their centroid (lon, lat)
-  data/places/malopolska-localities.json  towns, villages and the delegatury of Krakow in Malopolska
+  data/built/places/malopolska-localities.json  towns, villages and the delegatury of Krakow in Malopolska
                                       from the SIMC register, each with the TERC of its gmina: the
                                       picker finds a gmina by any of its localities (FR-2.2)
-  data/map/malopolska-gminy.geojson   the 183 gminas of Malopolska simplified with mapshaper
+  data/built/map/malopolska-gminy.geojson   the 183 gminas of Malopolska simplified with mapshaper
                                       (spec 8.8), properties JPT_KOD_JE, JPT_NAZWA_, kind, powiat
-  data/indicators.json                the four indicators per gmina of Malopolska, the latest year
+  data/built/indicators.json                the four indicators per gmina of Malopolska, the latest year
                                       with a value, the BDL flag, the Malopolska median per indicator
-  data/implementations-derived.json   place-of-origin implementations (spec 8.6, source catalogue-origin):
-                                      origin_place_pl of every built record in data/innovations matched to
+  data/built/implementations-derived.json   place-of-origin implementations (spec 8.6, source catalogue-origin):
+                                      origin_place_pl of every built record in data/built/innovations matched to
                                       a gmina of the register (town preferred among namesakes) or to a
                                       unique SIMC locality; unmatched places listed. Needs the records built
                                       by derive-records.py build and the SIMC register in .local/teryt.
-  data/organisations.json             innovator organisations of the built records (source catalogue) and the
-                                      implementers of data/implementations.yaml (source seed): id, name, type
+  data/built/organisations.json             innovator organisations of the built records (source catalogue) and the
+                                      implementers of data/curated/implementations.yaml (source seed): id, name, type
                                       (implementer_types, from the name), website, seat, innovation and
                                       implementation ids; natural persons listed by innovation id only, no names;
                                       no contact data (spec FR-6.1, R6).
-  data/implementations-merged.json    the seeds of data/implementations.yaml and the origins of
+  data/built/implementations-merged.json    the seeds of data/curated/implementations.yaml and the origins of
                                       implementations-derived.json with organisation_id and origin_file; an
                                       origin covered by a seed for the same innovation and gmina is dropped
                                       (spec 8.6, FR-6.3). Needs PyYAML.
@@ -42,7 +42,8 @@ import argparse, collections, csv, datetime, difflib, glob, io, json, os, re, sh
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOCAL = os.path.join(ROOT, ".local")
-DATA = os.path.join(ROOT, "data")
+BUILT = os.path.join(ROOT, "data", "built")       # build outputs, git-ignored
+CURATED = os.path.join(ROOT, "data", "curated")   # hand-written, committed
 
 MAPSHAPER = "mapshaper@0.7.70"
 MALOPOLSKA = "12"
@@ -207,7 +208,7 @@ def build_places(rows, retrieved, centroids):
         "codes": "PL-<woj>, PL-<woj>-<pow>, PL-<woj>-<pow>-<gmi><rodz>; TERC = kod bez PL- i myślników",
         "counts": counts,
     }
-    write_json_lines(os.path.join(DATA, "places", "pl-register.json"), head, "places", places)
+    write_json_lines(os.path.join(BUILT, "places", "pl-register.json"), head, "places", places)
     mal = [p for p in places if p["terc"].startswith(MALOPOLSKA)]
     no_centroid = [p["terc"] for p in places if p["level"] == "gmina" and "centroid" not in p]
     log(f"places: {len(places)} places ({counts}), {len(mal)} in Malopolska, "
@@ -243,7 +244,7 @@ def build_localities(gmi):
                  "bez miejscowości o nazwie swojej gminy; terc = gmina, do której należy miejscowość",
         "counts": dict(collections.Counter(x["kind"] for x in localities)),
     }
-    write_json_lines(os.path.join(DATA, "places", "malopolska-localities.json"), head, "localities", localities)
+    write_json_lines(os.path.join(BUILT, "places", "malopolska-localities.json"), head, "localities", localities)
     log(f"localities: {len(localities)} in Malopolska ({head['counts']}), {dropped} named like their gmina left out")
 
 
@@ -285,7 +286,7 @@ def build_map(geojson, gmi, pow_, simplify):
             props["kind"] = GMINA_KINDS[r["RODZ"]]
             props["powiat"] = pow_[code[:4]]["NAZWA"]
         features.append({"type": "Feature", "properties": props, "geometry": f["geometry"]})
-    path = os.path.join(DATA, "map", "malopolska-gminy.geojson")
+    path = os.path.join(BUILT, "map", "malopolska-gminy.geojson")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     dumps = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"))
     with open(path, "w", encoding="utf-8", newline="\n") as f:
@@ -377,7 +378,7 @@ def build_indicators(gmi, pow_):
         "need_by_target_group": NEED_BY_TARGET_GROUP,
     }
     tail = {"missing": {t: sorted(ks) for t, ks in sorted(missing.items())}}
-    write_json_lines(os.path.join(DATA, "indicators.json"), head, "gminas", gminas, tail, keyed_by="terc")
+    write_json_lines(os.path.join(BUILT, "indicators.json"), head, "gminas", gminas, tail, keyed_by="terc")
     summary = ", ".join(f"{i['key']} {i['gminas_with_value']}/{len(region)} (year {i['year']}, median {i['median']})" for i in indicators)
     log(f"indicators: {summary}")
     for terc, ks in sorted(missing.items()):
@@ -441,13 +442,13 @@ def match_place(name, gminas_by_name, simc):
 
 
 def build_origins():
-    files = sorted(glob.glob(os.path.join(DATA, "innovations", "*.json")))
+    files = sorted(glob.glob(os.path.join(BUILT, "innovations", "*.json")))
     if not files:
-        log("origins: skipped, no data/innovations (run derive-records.py build first)")
+        log("origins: skipped, no data/built/innovations (run derive-records.py build first)")
         return
     register, by_name = read_register()
     simc = read_simc()
-    version_path = os.path.join(DATA, "data-version.json")
+    version_path = os.path.join(BUILT, "data-version.json")
     version = json.load(open(version_path, encoding="utf-8"))["version"] if os.path.exists(version_path) else None
     items, unmatched = [], []
     for path in files:
@@ -472,11 +473,11 @@ def build_origins():
             })
     head = {
         "note": "Implementations derived from the place of origin named in the catalogue (spec 8.6, source catalogue-origin); "
-                "hand-written seeds are in data/implementations.yaml. match: how the place was resolved.",
+                "hand-written seeds are in data/curated/implementations.yaml. match: how the place was resolved.",
         "data_version": version,
         "matching": "gmina name of the TERC register (the town preferred among namesakes), else a unique SIMC locality",
     }
-    write_json_lines(os.path.join(DATA, "implementations-derived.json"), head, "implementations", items,
+    write_json_lines(os.path.join(BUILT, "implementations-derived.json"), head, "implementations", items,
                      {"unmatched": unmatched})
     inns = {i["innovation_id"] for i in items}
     mal = {i["innovation_id"] for i in items if i["place_terc"].startswith(MALOPOLSKA)}
@@ -491,7 +492,7 @@ def build_origins():
 ORG_QUOTES = re.compile(r"[„”“\"«»‘’'`]")
 LEGAL_FORMS = re.compile(r"\bsp\.?\s*z\.?\s*o\.?\s*o\b\.?|\bspółka z ograniczoną odpowiedzialnością\b|"
                          r"\bs\.\s?a\b\.?(?=\s|$)|\bs\.\s?c\b\.?(?=\s|$)", re.I)
-# Implementer type from the organisation's name (data/taxonomies.json implementer_types). First match wins:
+# Implementer type from the organisation's name (data/curated/taxonomies.json implementer_types). First match wins:
 # the legal form of a company first, then the association words, then social assistance, then local government.
 ORG_TYPE_RULES = [
     ("firma-pes", re.compile(r"\bsp\.?\s*z\.?\s*o\.?\s*o\b|\bs\.\s?a\b\.?(?=\s|$)|\bs\.\s?c\b\.?(?=\s|$)|\bspółk|"
@@ -629,9 +630,9 @@ def contact_findings(obj, skip_urls=True):
 
 
 def read_register():
-    reg_path = os.path.join(DATA, "places", "pl-register.json")
+    reg_path = os.path.join(BUILT, "places", "pl-register.json")
     if not os.path.exists(reg_path):
-        sys.exit("no data/places/pl-register.json; run the places step first")
+        sys.exit("no data/built/places/pl-register.json; run the places step first")
     with open(reg_path, encoding="utf-8") as f:
         register = json.load(f)["places"]
     by_name = collections.defaultdict(list)
@@ -643,16 +644,16 @@ def read_register():
 
 def build_organisations():
     import yaml
-    files = sorted(glob.glob(os.path.join(DATA, "innovations", "*.json")))
+    files = sorted(glob.glob(os.path.join(BUILT, "innovations", "*.json")))
     if not files:
-        log("organisations: skipped, no data/innovations (run derive-records.py build first)")
+        log("organisations: skipped, no data/built/innovations (run derive-records.py build first)")
         return
     register, by_name = read_register()
     tercs = {p["terc"] for p in register}
     simc = read_simc()
-    with open(os.path.join(DATA, "taxonomies.json"), encoding="utf-8") as f:
+    with open(os.path.join(CURATED, "taxonomies.json"), encoding="utf-8") as f:
         type_codes = {t["code"] for t in json.load(f)["implementer_types"]}
-    version_path = os.path.join(DATA, "data-version.json")
+    version_path = os.path.join(BUILT, "data-version.json")
     version = json.load(open(version_path, encoding="utf-8"))["version"] if os.path.exists(version_path) else None
     records = {}
     for path in files:
@@ -731,8 +732,8 @@ def build_organisations():
         })
     by_key = {row["key"]: row for row in rows}
 
-    # Seeds: organisations of data/implementations.yaml (legal entities from public ranking lists).
-    seeds_path = os.path.join(DATA, "implementations.yaml")
+    # Seeds: organisations of data/curated/implementations.yaml (legal entities from public ranking lists).
+    seeds_path = os.path.join(CURATED, "implementations.yaml")
     with open(seeds_path, encoding="utf-8") as f:
         seeds = yaml.safe_load(f)
     seed_org_key = {}
@@ -748,7 +749,7 @@ def build_organisations():
         if row is None:
             row = by_key[key] = {
                 "key": key, "name": clean, "type": o.get("type"),
-                "type_note": None if o.get("type") else "typ nie podany w data/implementations.yaml",
+                "type_note": None if o.get("type") else "typ nie podany w data/curated/implementations.yaml",
                 "website": None, "place_terc": s.get("place_terc"), "place_name": s.get("place_name"),
                 "place_match": "seed" if s.get("place_terc") else None,
                 "innovation_ids": [], "implementation_ids": [], "source": "seed",
@@ -759,7 +760,7 @@ def build_organisations():
         if o.get("type") and row["type"] != o["type"]:
             review["type_notes"].append({"name": row["name"], "type": row["type"], "seed_type": o["type"]})
             if row["type"] is None:
-                row["type"], row["type_note"] = o["type"], "typ z data/implementations.yaml"
+                row["type"], row["type_note"] = o["type"], "typ z data/curated/implementations.yaml"
         if o.get("source_url"):
             row["source_urls"] = sorted(set(row["source_urls"]) | {o["source_url"]})
 
@@ -784,16 +785,16 @@ def build_organisations():
     for s in seeds["implementations"]:
         item = dict(s)
         item["organisation_id"] = id_of_key.get(seed_org_key.get(s["id"]))
-        item["origin_file"] = "data/implementations.yaml"
+        item["origin_file"] = "data/curated/implementations.yaml"
         merged.append(item)
     covered = {(s["innovation_id"], s.get("place_terc")): s["id"] for s in seeds["implementations"] if s.get("place_terc")}
-    derived_path = os.path.join(DATA, "implementations-derived.json")
+    derived_path = os.path.join(BUILT, "implementations-derived.json")
     if os.path.exists(derived_path):
         with open(derived_path, encoding="utf-8") as f:
             derived = json.load(f)["implementations"]
     else:
         derived = []
-        log("organisations: WARNING no data/implementations-derived.json (run the origins step); seeds only")
+        log("organisations: WARNING no data/built/implementations-derived.json (run the origins step); seeds only")
     for d in derived:
         hit = covered.get((d["innovation_id"], d.get("place_terc")))
         if hit:
@@ -801,7 +802,7 @@ def build_organisations():
             continue
         item = dict(d)
         item["organisation_id"] = org_of_innovation.get(d["innovation_id"])
-        item["origin_file"] = "data/implementations-derived.json"
+        item["origin_file"] = "data/built/implementations-derived.json"
         merged.append(item)
     row_by_id = {row["id"]: row for row in rows}
     for item in merged:
@@ -842,9 +843,9 @@ def build_organisations():
                   "without_organisation": len(without)}
     head = {
         "note": "Innovator organisations of the built records (source catalogue) and the implementers named in "
-                "data/implementations.yaml (source seed); spec FR-6.1, FR-6.3 and 8.6. No contact data: the app "
+                "data/curated/implementations.yaml (source seed); spec FR-6.1, FR-6.3 and 8.6. No contact data: the app "
                 "links the source entry. innovation_ids: records the organisation authored; implementation_ids: "
-                "rows of data/implementations-merged.json.",
+                "rows of data/built/implementations-merged.json.",
         "data_version": version,
         "privacy": "Natural persons (innovator.type Osoba fizyczna or Grupa nieformalna, a person's name as the "
                    "organisation, or people as the only authors) are not organisations: only their innovation ids "
@@ -863,7 +864,7 @@ def build_organisations():
     }
     tail = {"natural_person_innovations": natural, "without_organisation": without, "review": review}
     rows = [{"id": row["id"], **{k: v for k, v in row.items() if k != "id"}} for row in rows]
-    write_json_lines(os.path.join(DATA, "organisations.json"), head, "organisations", rows, tail)
+    write_json_lines(os.path.join(BUILT, "organisations.json"), head, "organisations", rows, tail)
 
     inns = {i["innovation_id"] for i in merged}
     mal = {i["innovation_id"] for i in merged if (i.get("place_terc") or "").startswith(MALOPOLSKA)}
@@ -875,8 +876,8 @@ def build_organisations():
                    "deduplicated": len(dedup),
                    "organisations_by_type": by_type}
     head = {
-        "note": "Union of data/implementations.yaml (hand-written seeds) and data/implementations-derived.json "
-                "(places of origin); spec 8.6 and FR-6.3. organisation_id: the row of data/organisations.json "
+        "note": "Union of data/curated/implementations.yaml (hand-written seeds) and data/built/implementations-derived.json "
+                "(places of origin); spec 8.6 and FR-6.3. organisation_id: the row of data/built/organisations.json "
                 "(for an origin, the innovator's organisation; null for natural persons). origin_file: where "
                 "the row comes from. An origin already covered by a seed for the same innovation and gmina is "
                 "dropped (deduplicated).",
@@ -885,7 +886,7 @@ def build_organisations():
         "sources": seeds.get("sources"),
         "counts": impl_counts,
     }
-    write_json_lines(os.path.join(DATA, "implementations-merged.json"), head, "implementations", merged,
+    write_json_lines(os.path.join(BUILT, "implementations-merged.json"), head, "implementations", merged,
                      {"deduplicated": dedup})
     log(f"organisations: {len(rows)} organisations {by_type} {by_source}; natural persons excluded: {len(natural)} "
         f"{org_counts['natural_person_by_reason']}; without organisation: {len(without)}")

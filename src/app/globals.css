@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Design tokens of the interface proposal (OP-15): every text colour reaches
+ * Design tokens of the interface proposal (decision U.1): every text colour reaches
  * 7:1 against its ground, control edges 3:1. Standard theme below; the dark
  * theme follows the device setting; "Wersja kontrastowa" sets
  * data-contrast="on" on <html>. Names follow the shadcn/ui variables.

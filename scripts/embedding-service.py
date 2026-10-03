@@ -1,12 +1,12 @@
 """Local HTTP service that embeds a need for the retriever of stage 1 (FR-3.7); the app calls it per request.
 
 Model:  --model or EMBEDDING_MODEL, default OPI-PIB/PolDense-400M; the fallback is OPI-PIB/PolDense-150M. Loaded once at
-        startup. If data/index-vectors.json (build-index-vectors.py) was built with another model, the service refuses
+        startup. If data/built/index-vectors.json (build-index-vectors.py) was built with another model, the service refuses
         to start (--allow-mismatch overrides), because the need and the records must come from the same model.
         With the model in the Hugging Face cache, HF_HUB_OFFLINE=1 starts it without contacting the Hub.
 Address: --host and --port, or EMBEDDING_HOST and EMBEDDING_PORT, default 127.0.0.1:8765.
 Endpoints:
-  GET  /health  model, dims, prefixes, the model and data version of data/index-vectors.json (null without the file),
+  GET  /health  model, dims, prefixes, the model and data version of data/built/index-vectors.json (null without the file),
                 uptime_s and requests_served (the /embed requests answered with vectors)
   POST /embed   {"texts": ["..."], "kind": "query" | "passage"} -> {"model": ..., "dims": ..., "vectors": [[...], ...]}
                 Unit-length vectors, so cosine is a dot product. "query" (the default) prefixes every text with
@@ -30,7 +30,7 @@ from dotenv import load_dotenv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
-VECTORS = os.path.join(ROOT, "data", "index-vectors.json")
+VECTORS = os.path.join(ROOT, "data", "built", "index-vectors.json")
 DEFAULT_MODEL = "OPI-PIB/PolDense-400M"
 PREFIX = {"query": "[query]: ", "passage": ""}
 MAX_TEXTS, MAX_CHARS = 64, 8000
@@ -39,7 +39,7 @@ log = logging.getLogger("embedding-service")
 
 
 def index_header():
-    """The header of data/index-vectors.json (every key before the vectors), or None without the file."""
+    """The header of data/built/index-vectors.json (every key before the vectors), or None without the file."""
     if not os.path.exists(VECTORS):
         return None
     with open(VECTORS, encoding="utf-8") as f:
@@ -154,7 +154,7 @@ def main():
     ap.add_argument("--host", default=os.environ.get("EMBEDDING_HOST", "127.0.0.1"))
     ap.add_argument("--port", type=int, default=int(os.environ.get("EMBEDDING_PORT", "8765")))
     ap.add_argument("--allow-mismatch", action="store_true",
-                    help="serve even if data/index-vectors.json was built with another model")
+                    help="serve even if data/built/index-vectors.json was built with another model")
     ap.add_argument("--self-test", action="store_true", help="embed three sample texts, print the cosines and exit")
     a = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -162,7 +162,7 @@ def main():
     log.setLevel(logging.INFO)  # this service's lines only; the libraries stay at warnings
     index = index_header()
     if not a.self_test and index and index.get("model") != a.model and not a.allow_mismatch:
-        sys.exit(f"data/index-vectors.json was built with {index.get('model')}, not {a.model}: serve that model "
+        sys.exit(f"data/built/index-vectors.json was built with {index.get('model')}, not {a.model}: serve that model "
                  "(--model or EMBEDDING_MODEL), rebuild the vectors with build-index-vectors.py "
                  "or pass --allow-mismatch")
     from sentence_transformers import SentenceTransformer

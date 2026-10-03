@@ -7,7 +7,7 @@ import { invalid, readJson, requiredText, stringList } from "@/server/validate";
 import { repository } from "@/server/db";
 import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesClosed, screenedResponse, screenText } from "@/server/gate";
 
-/** S9b: stores a readiness registration (8.6), kept for 12 months and verified by ROPS. */
+/** S9b: stores a readiness registration (8.6), kept for 12 months; a name is shown only once ROPS has verified it. */
 export async function POST(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;

@@ -1,4 +1,5 @@
-# Invalid: a plain scalar continued on the next line (not in the YAML subset).
+# Invalid: the same key twice.
 id: P03
-title: Tytuł, który
-  ciągnie się dalej
+title: Tytuł
+title: Drugi tytuł
+role: mieszkaniec

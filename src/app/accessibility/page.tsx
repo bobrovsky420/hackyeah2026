@@ -9,11 +9,11 @@ export const metadata: Metadata = { title: t("a11y.meta.title") };
 /*
  * Dates in the format the gov.pl template requires (rrrr-mm-dd). Publication
  * and update are the prototype's own; set them again on the first public
- * deployment (OP-06).
+ * deployment.
  */
-const PUBLISHED = "2026-09-29";
-const UPDATED = "2026-09-29";
-const PREPARED = "2026-09-29";
+const PUBLISHED = "2026-10-03";
+const UPDATED = "2026-10-03";
+const PREPARED = "2026-10-03";
 
 /**
  * S8: "Deklaracja dostępności" (FR-11.4) in the structure of the gov.pl

@@ -1,16 +1,20 @@
-"""Validate the legal and funding paths in data/paths/*.yaml (spec 8.7, FR-8.1).
+"""Validate the legal and funding paths in data/built/paths/*.yaml (spec 8.7, FR-8.1).
 
 Run from the repository root:
 
-    .venv/Scripts/python scripts/check-paths.py [--dir data/paths]
+    .venv/Scripts/python scripts/check-paths.py [--dir data/built/paths]
 
 Checks every file: the fields of schema 8.7 and nothing else, id equal to the
-file name, codes from data/taxonomies.json and from the closed lists below,
+file name, codes from data/curated/taxonomies.json and from the closed lists below,
 amounts numeric or null, dates ISO, the timing kind consistent with the
 calls, three short imperative steps, fit derived from the amounts and the
-applicant types, reviewer null and notes_pl opening with the prototype note of FR-1.8
+applicant types, reviewer null (no legal review in the hackathon, decided)
+and notes_pl opening with the prototype note of FR-1.8
 followed by "Sprawdź u źródła.". Prints one line per error and exits 1 when
-there is any.
+there is any. Warnings (prefix "warning:") do not change the exit code: an
+annual path whose latest call has passed (the app rolls it forward a year and
+shows a date no source gives), a home page as source_url, and Polish wording
+that spec 11 points 2 to 5 discourage.
 """
 
 from __future__ import annotations
@@ -25,7 +29,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-TAXONOMIES = json.loads((ROOT / "data" / "taxonomies.json").read_text(encoding="utf-8"))
+TAXONOMIES = json.loads((ROOT / "data" / "curated" / "taxonomies.json").read_text(encoding="utf-8"))
 
 # The prototype note of FR-1.8 (spec 7.1), then the fixed reminder of 14.4.
 PROTOTYPE_NOTE = (
@@ -75,6 +79,12 @@ CALL_FIELDS = {"label_pl", "applicant_types", "opens_on", "closes_on"}
 FIT_FIELDS = {"cost_bands", "roles", "boost_when_implementer_types"}
 MAX_STEP_WORDS = 12  # spec 11, rule 11
 DASHES = re.compile("[–—]")
+# Polish lint over the user-facing text (spec 11, points 2 to 5).
+NGO = re.compile(r"\bNGO\b(?! Generator)")   # "NGO Generator" is the name of an application
+# The noun "samorząd" alone; "jednostka samorządu terytorialnego", "samorząd województwa" and the adjective pass.
+SAMORZAD = re.compile(r"(?<!jednostka )(?<!jednostki )(?<!jednostce )(?<!jednostek )\bsamorz[aą]d(y|ów|om|ami|ach|u|owi|em|zie)?\b(?! terytorialn| województwa| gminy| powiatu)")
+SHORT_AMOUNT = re.compile(r"\d\s?(mln|mld|tys\.)\s?zł")
+ABOUT_SOURCE = re.compile(r"(?i)\b(źródł\w*|ogłoszeni\w*|stron\w*|regulamin\w*|program\w*) nie poda")
 
 
 def expected_cost_bands(lo: float | None, hi: float | None) -> list[str]:
@@ -125,8 +135,23 @@ def check_codes(values, allowed: set[str], where: str, errors: list[str], allow_
         errors.append(f"{where}: duplicate codes")
 
 
-def check_file(path: Path) -> list[str]:
+def user_texts(data: dict) -> list[tuple[str, str]]:
+    """The fields a user reads, with their names."""
+    texts = [(k, data[k]) for k in ("name_pl", "amount_note_pl", "decision_maker_pl", "notes_pl") if isinstance(data.get(k), str)]
+    timing = data.get("timing") if isinstance(data.get("timing"), dict) else {}
+    if isinstance(timing.get("note_pl"), str):
+        texts.append(("timing.note_pl", timing["note_pl"]))
+    for i, call in enumerate(timing.get("calls") or []):
+        if isinstance(call, dict) and isinstance(call.get("label_pl"), str):
+            texts.append((f"timing.calls[{i}].label_pl", call["label_pl"]))
+    texts += [(f"steps_pl[{i}]", s) for i, s in enumerate(data.get("steps_pl") or []) if isinstance(s, str)]
+    return texts
+
+
+def check_file(path: Path, warnings: list[str] | None = None) -> list[str]:
+    """The errors of one path file; warnings, if a list is given, are appended to it."""
     errors: list[str] = []
+    warnings = [] if warnings is None else warnings
     text = path.read_text(encoding="utf-8")
     if DASHES.search(text):
         errors.append("contains an en or em dash; write the ASCII hyphen")
@@ -206,6 +231,17 @@ def check_file(path: Path) -> list[str]:
             errors.append("timing.kind closed, but a call closes on or after verified_on")
         if kind == "annual" and not calls:
             errors.append("timing.kind annual needs the latest known call")
+        if kind == "rolling" and calls:
+            errors.append("timing.kind rolling must have calls: [] (a closing date makes it fixed)")
+        if kind == "annual" and calls and verified and not open_after_verified:
+            latest = max((as_date(c.get("closes_on"), "", []) for c in calls if isinstance(c, dict)), default=None, key=lambda d: d or dt.date.min)
+            if latest:
+                try:
+                    rolled = latest.replace(year=latest.year + 1)
+                except ValueError:   # 29 February
+                    rolled = latest + dt.timedelta(days=365)
+                warnings.append(f"timing.kind annual, latest call closed {latest}; the app shows {rolled} as the next "
+                                "deadline, a date no source gives (roll-forward, decision open)")
 
     steps = data["steps_pl"]
     if len(steps) != 3:
@@ -241,6 +277,17 @@ def check_file(path: Path) -> list[str]:
 
     if not re.fullmatch(r"https://\S+", data["source_url"]):
         errors.append(f"source_url: not an https URL: {data['source_url']!r}")
+    elif re.fullmatch(r"https://[^/?#]+/?", data["source_url"]):
+        warnings.append("source_url: a home page is not a source; name the programme, call or ELI page")
+    for where, text in user_texts(data):
+        if NGO.search(text):
+            errors.append(f'{where}: "NGO"; write "organizacja pozarządowa" (spec 11)')
+        if SAMORZAD.search(text):
+            warnings.append(f'{where}: "samorząd" alone; write gmina, powiat, województwo or jednostka samorządu terytorialnego')
+        if SHORT_AMOUNT.search(text):
+            warnings.append(f"{where}: write the full amount (spec 11 point 4); an approximate pool may keep it, say so in the evidence")
+        if ABOUT_SOURCE.search(text):
+            warnings.append(f"{where}: a sentence about the source in user text; name the gap in the evidence instead")
     if verified and verified > dt.date.today():
         errors.append("verified_on: in the future")
     if data["reviewer"] is not None:
@@ -252,7 +299,7 @@ def check_file(path: Path) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--dir", default=str(ROOT / "data" / "paths"), help="folder of the path files")
+    parser.add_argument("--dir", default=str(ROOT / "data" / "built" / "paths"), help="folder of the path files")
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     folder = Path(args.dir)
@@ -260,14 +307,18 @@ def main() -> int:
     if not files:
         print(f"no path files in {folder}")
         return 1
-    failed = 0
+    failed = warned = 0
     for path in files:
-        errors = check_file(path)
+        warnings: list[str] = []
+        errors = check_file(path, warnings)
         if errors:
             failed += 1
             for error in errors:
                 print(f"{path.name}: {error}")
-    print(f"{len(files)} paths checked, {failed} with errors")
+        warned += len(warnings)
+        for warning in warnings:
+            print(f"{path.name}: warning: {warning}")
+    print(f"{len(files)} paths checked, {failed} with errors, {warned} warnings")
     return 1 if failed else 0
 
 

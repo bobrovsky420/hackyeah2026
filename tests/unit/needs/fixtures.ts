@@ -4,7 +4,7 @@ import type { LlmCall, Llm } from "@/lib/llm/types";
 
 /* Shared fixtures of the needs-bank tests: the real dataset, a need, a template brief and a fake model. */
 
-export const TODAY = "2026-09-29";
+export const TODAY = "2026-10-03";
 export const dataset = loadDataset({ today: TODAY });
 export const BATHROOMS = "inn-rops-przenosne-modularne-lazienki";
 export const SENIORS = "inn-nat-649";
@@ -12,7 +12,7 @@ export const SENIORS = "inn-nat-649";
 export function need(over: Partial<Need> = {}): Need {
   return {
     id: "nd-test-1",
-    created_at: "2026-09-29T10:00:00+02:00",
+    created_at: "2026-10-03T10:00:00+02:00",
     route_id: null,
     problem_text:
       "Po ulewie woda weszła do kilkudziesięciu domów w dolinie. Ludzie suszą ściany, dzieci śpią u krewnych. Nikt tego nie koordynuje.",
@@ -22,9 +22,9 @@ export function need(over: Partial<Need> = {}): Need {
     target_groups: ["dzieci-mlodziez-rodziny"],
     domains: ["mieszkalnictwo"],
     reporter: { name: "Anna Nowak", organisation: "Stowarzyszenie Tajne", email: "anna.nowak@example.pl" },
-    consents: { store: true, publish_anonymised: true, contact: true, text_version: "consent-v1", timestamp: "2026-09-29T10:00:00+02:00" },
+    consents: { store: true, publish_anonymised: true, contact: true, text_version: "consent-v1", timestamp: "2026-10-03T10:00:00+02:00" },
     status: "nowa",
-    moderation: { status: "zatwierdzone", reviewer: "rops-1", decided_at: "2026-09-29T11:00:00+02:00", reason_pl: null },
+    moderation: { status: "zatwierdzone", reviewer: "rops-1", decided_at: "2026-10-03T11:00:00+02:00", reason_pl: null },
     cluster_id: null,
     nearest_matches: [],
     brief_id: null,
@@ -37,7 +37,7 @@ export function need(over: Partial<Need> = {}): Need {
 export function template(over: Partial<Brief> = {}): Brief {
   return {
     needId: "nd-test-1",
-    generatedAt: "2026-09-29T12:00:00+02:00",
+    generatedAt: "2026-10-03T12:00:00+02:00",
     title: "Rodziny po podtopieniach zostały bez wsparcia",
     problem: need().problem_text,
     groups: ["dzieci-mlodziez-rodziny"],

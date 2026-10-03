@@ -14,8 +14,8 @@ Subcommands (from the repository root, with the project venv):
                                  limits, the grounding and the personal-data rules; updates the manifest;
                                  exit code 1 when any record has errors
   validate --file <path>         validate one derived record at a path (the worked example) without the manifest
-  build                          write data/innovations/<id>.json (source + derived, duplicates merged),
-                                 data/index-cards.json, data/data-version.json, .local/pipeline/duplicates.json
+  build                          write data/built/innovations/<id>.json (source + derived, duplicates merged),
+                                 data/built/index-cards.json, data/built/data-version.json, .local/pipeline/duplicates.json
   sample [--n 20] [--seed 1]     write docs/review-sample.md (committed) for the human check (FR-1.3)
   show <id>                      print the source text and the derived record of one innovation
 """
@@ -30,13 +30,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PIPE = os.path.join(ROOT, ".local", "pipeline")            # the pipeline's working files, machine-local
 SOURCES = os.path.join(PIPE, "sources")
 DERIVED = os.path.join(PIPE, "derived")
-INNOVATIONS = os.path.join(ROOT, "data", "innovations")    # data/ holds only what the app serves
+INNOVATIONS = os.path.join(ROOT, "data", "built", "innovations")    # data/ holds only what the app serves
 EXAMPLE = os.path.join(ROOT, "prompts", "extract-example.json")
 SCHEMAS = os.path.join(ROOT, "schemas")
-TAXONOMIES = json.load(open(os.path.join(ROOT, "data", "taxonomies.json"), encoding="utf-8"))
+TAXONOMIES = json.load(open(os.path.join(ROOT, "data", "curated", "taxonomies.json"), encoding="utf-8"))
 PROMPT_FILE = os.path.join(ROOT, "prompts", "extract.md")
 MANIFEST = os.path.join(PIPE, "manifest.json")
-DECISIONS = os.path.join(ROOT, "data", "duplicates-decisions.json")   # a person's decisions on flagged pairs (FR-1.4)
+DECISIONS = os.path.join(ROOT, "data", "curated", "duplicates-decisions.json")   # a person's decisions on flagged pairs (FR-1.4)
 LINK_CHECK = os.path.join(PIPE, "link-check.json")                    # scripts/check-links.py (spec 12.13)
 
 CODES = {
@@ -68,7 +68,7 @@ STIGMA = [
     (r"\bniepełnosprawn(i|ych|ym|ymi|ego|emu)\b", "osoby z niepełnosprawnościami"),
     (r"\bupośledz", "osoby z niepełnosprawnością intelektualną"),
     (r"\bkalek", "osoby z niepełnosprawnością"),
-    # the adjective names an object ("wózek inwalidzki", "renta inwalidzka") and is allowed (user decision of 28 September 2026)
+    # the adjective names an object ("wózek inwalidzki", "renta inwalidzka") and is allowed (user decision)
     (r"\binwalid(?!zk)", "osoby z niepełnosprawnością"),
     (r"\bpatologi", "opis sytuacji bez etykiety"),
     (r"\bmargines", "opis sytuacji bez etykiety"),
@@ -510,7 +510,7 @@ def cmd_build(args):
             possible.append({"ids": ids, "title": sources[ids[0]]["title"], "reason": "partner row with the title of a catalogue record; decide in duplicates-decisions.json"})
         if len(rops) > 1 or len(nat) > 1 or len(partner) > 1:
             possible.append({"ids": ids, "title": sources[ids[0]]["title"], "reason": "same title inside one catalogue; not merged"})
-    # A person's decisions (data/duplicates-decisions.json) override the flags.
+    # A person's decisions (data/curated/duplicates-decisions.json) override the flags.
     decided = []
     for d in decisions:
         key = frozenset(d["ids"])
@@ -555,7 +555,7 @@ def cmd_build(args):
                       "implementer_types": der["implementer_types"], "cost_band": der["cost_band"], "evidence_level": der["evidence_level"]})
         dump_json(os.path.join(INNOVATIONS, sid + ".json"), out)
         written += 1
-    dump_json(os.path.join(ROOT, "data", "index-cards.json"), cards)
+    dump_json(os.path.join(ROOT, "data", "built", "index-cards.json"), cards)
     dump_json(os.path.join(PIPE, "duplicates.json"), {"merged": merged, "possible": possible, "decided": decided})
     # The version follows the served content: ids and source fingerprints, the taxonomy and the prompt.
     digest = hashlib.sha256(("".join(f"{c['id']}{sources[c['id']]['fingerprint']}" for c in cards)
@@ -563,7 +563,7 @@ def cmd_build(args):
     version = {"version": f"{datetime.date.today().isoformat()}-{digest}", "records": written, "merged": len(merged),
                "skipped_without_valid_derived": len(skipped), "prompt_version": manifest["prompt_version"],
                "parser_version": manifest["parser_version"], "built_at": datetime.datetime.now().isoformat(timespec="seconds")}
-    dump_json(os.path.join(ROOT, "data", "data-version.json"), version)
+    dump_json(os.path.join(ROOT, "data", "built", "data-version.json"), version)
     log(f"built {written} innovations ({len(merged)} merged pairs, {len(possible)} possible duplicates to review, {len(decided)} decided), "
         f"{len(skipped)} skipped without a valid derived record; data version {version['version']}")
     return 0
@@ -577,14 +577,14 @@ def cmd_sample(args):
     nat = [i for i in valid if source_kind(i) == "nat"]
     rops = [i for i in valid if source_kind(i) == "rops"]
     pick = rng.sample(nat, min(len(nat), args.n // 2)) + rng.sample(rops, min(len(rops), args.n - args.n // 2))
-    lines = [f"# Review sample ({len(pick)} records, seed {args.seed}, {datetime.date.today().isoformat()})", "",
+    lines = [f"# Review sample ({len(pick)} records, seed {args.seed})", "",
              "Check every record against its source page. Mark each field: ok, or the correction. "
              "A record with a wrong code or an unsupported claim goes back to the queue (delete .local/pipeline/derived/<id>.json and rerun the skill).", ""]
     for sid in pick:
         src, der = sources[sid], load_json(os.path.join(DERIVED, sid + ".json"))
         rec = manifest["records"][sid]
         lines += [f"## {src['title']}", f"- id: `{sid}`", f"- source: {src['sources'][0]['url']}",
-                  f"- generated by {der['generated_by']} on {der['generated_at']}, confidence {der['confidence']}", ""]
+                  f"- generated by {der['generated_by']}, confidence {der['confidence']}", ""]
         for field in ("summary_pl", "problem_pl", "mechanism_pl", "index_card_pl"):
             lines.append(f"- **{field}**: {der[field]}")
         for field in ("target_groups", "domains", "implementer_types", "requires_pl", "keywords_pl"):

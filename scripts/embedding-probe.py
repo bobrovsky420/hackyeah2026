@@ -54,7 +54,7 @@ def embed(model, texts, batch=32):
 
 def load():
     docs, ids, intro_q, prob_q = [], [], [], []
-    for f in sorted(glob.glob(os.path.join(ROOT, "data", "innovations", "*.json"))):
+    for f in sorted(glob.glob(os.path.join(ROOT, "data", "built", "innovations", "*.json"))):
         r = json.load(open(f, encoding="utf-8"))
         d = r["derived"]
         docs.append("\n".join(x for x in [r["title"], d.get("summary_pl"), d.get("problem_pl"), d.get("mechanism_pl"),
