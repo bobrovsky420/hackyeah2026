@@ -34,10 +34,10 @@ export function RouteActions({ routeId, markdown }: { routeId: string; markdown:
     } catch {
       // Storage blocked: the vote is not remembered in this browser.
     }
-    fetch("/api/opinie", {
+    fetch(`/api/routes/${encodeURIComponent(routeId)}/feedback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ route_id: routeId, value }),
+      body: JSON.stringify({ value }),
     }).catch(() => {
       // The thanks stays: a lost vote is not worth an error for the reader.
     });

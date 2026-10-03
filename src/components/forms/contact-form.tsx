@@ -31,7 +31,7 @@ export function ContactForm({
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(defaultMessage);
   const [consent, setConsent] = useState(false);
-  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/kontakt");
+  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/contact-requests");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -25,7 +25,7 @@ export default async function ReadinessPage({ searchParams }: PageProps<"/rops/g
 
   return (
     <ConsolePage title={t("console.readiness.title")} lead={t("console.readiness.lead")}>
-      <Filters statuses={verificationStatuses} current={{ status, gmina }} exportType="gotowosc" />
+      <Filters statuses={verificationStatuses} current={{ status, gmina }} exportType="readiness" />
       <p role="status">{t("console.results", { count: rows.length })}</p>
       {rows.length === 0 ? (
         <Empty>{t("console.empty")}</Empty>

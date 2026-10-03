@@ -17,14 +17,14 @@ const BEZ_PRESJI = "https://rops.krakow.pl/pliki/IS/bibloteka/bezpresji.zip";
 const MOBILNA_POMOC = "https://rops.krakow.pl/pliki/IS/bibloteka/mobilnapomoc.zip";
 
 const common = {
-  created_at: "2026-10-03T10:00:00+02:00",
+  created_at: "2026-09-29T10:00:00+02:00",
   screening: { category: "need", confidence: 0.93, sensitive_topics: [], redactions: 0, crisis_banner: false },
   clarification_needed: false,
   engine: {
     provider: "replay",
     model: "prototyp",
     prompt_version: "prototyp-v1",
-    data_version: "2026-10-03",
+    data_version: "2026-09-28",
     latency_ms: 0,
     cached: true,
   },

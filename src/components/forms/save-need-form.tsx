@@ -31,7 +31,7 @@ export function SaveNeedForm({
   const [email, setEmail] = useState("");
   const [consentStore, setConsentStore] = useState(false);
   const [consentPublish, setConsentPublish] = useState(false);
-  const { errors, status, result, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/potrzeby");
+  const { errors, status, result, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/needs");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

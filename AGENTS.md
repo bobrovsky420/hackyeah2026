@@ -72,7 +72,7 @@ challenge, the team and the decisions made so far are in
 - The data is mocked in `src/lib/mock/`: canned routes in the shape of
   schema 8.4 (types in `src/lib/contracts/`) and fixtures extracted from
   `data/`, the map's boundaries, indicators and implementations in
-  `src/lib/mock/map/`. `/api/droga` stands in for the pipeline
+  `src/lib/mock/map/`. `/api/routes` stands in for the pipeline
   (`src/lib/server/routes.ts`): the redaction of
   `src/lib/server/redact.ts`, the keyword scenarios of
   `src/lib/mock/scenarios.ts` and the route limit

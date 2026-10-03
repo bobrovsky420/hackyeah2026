@@ -136,7 +136,7 @@ export function IntakeForm({ children }: { children: ReactNode }) {
     const minimumWait = new Promise((resolve) => window.setTimeout(resolve, STEP_MS * 3));
 
     try {
-      const response = await fetch("/api/droga", {
+      const response = await fetch("/api/routes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem_text: problem, place_terc: draft.place.terc, role: draft.role || null }),

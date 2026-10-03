@@ -21,7 +21,7 @@ export function ReadinessForm() {
   const [contact, setContact] = useState("");
   const [consentStore, setConsentStore] = useState(false);
   const [consentShowName, setConsentShowName] = useState(false);
-  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/gotowosc");
+  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/readiness");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

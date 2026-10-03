@@ -1,0 +1,48 @@
+# Column mapping for scripts/ingest-partner.py (spec FR-1.6), the example for
+# tests/fixtures/partner/sample.csv and sample.xlsx (TEST DATA, invented).
+# For the real hand-over copy this file, change the column names on the right
+# to the headers of the partner's file, and run the adapter with --dry-run first.
+# Header names match case-insensitively; an empty value means "not in the file".
+
+source:
+  name: partner-rops                 # sources[].name and the record's source
+  retrieved_at: "2026-10-03"         # the day of the hand-over
+  licence: CC BY 4.0                 # confirm with ROPS at the hand-over (OP-17); a licence column overrides it per row
+  licence_url: https://creativecommons.org/licenses/by/4.0/deed.pl
+
+file:
+  sheet: null                        # XLSX only; null = first sheet; --sheet overrides
+  header_row: null                   # null = the first row that holds the title column; rows starting with "#" are skipped
+  list_separator: [";", "\n"]        # splits category, implementer and authors cells
+
+columns:                             # role: column header
+  id: null                           # the partner's own stable key, if any; else the id comes from the title
+  title: Nazwa innowacji             # required
+  intro: null
+  url: Link do opisu                 # the entry on the partner's site (https), or empty
+  licence: null
+  category: Kategoria                # ROPS category label or slug -> mapped.target_groups (data/taxonomies.json)
+  implementer: Kto może wdrożyć      # code, label or national-base value -> mapped.implementer_types
+  organisation: null                 # null: the first organisation among the authors
+  organisation_website: null
+  authors: Autorzy                   # organisations and people, split as the parser splits the ROPS authors
+  place: Miejscowość                 # innovator.place_name
+  incubator: Inkubator               # origin.incubator_name; the three ROPS incubators set rops_incubated
+  incubator_years: Lata inkubacji    # origin.incubator_years and programme
+  dissemination_label: null
+  contact: Kontakt                   # never copied; only contact_in_source is set
+  materials: [Materiały]             # columns with links to files or films
+
+source_fields:                       # key in the record: column header; the order is the order of text_pl
+  na_czym_polega: Na czym polega
+  jakich_problemow_dotyczy: Jaki problem rozwiązuje
+  grupa_docelowa: Grupa docelowa
+  kto_moze_skorzystac: Kto może wdrożyć
+  czy_to_dziala: Rezultaty testowania
+  autorzy: Autorzy
+  miejscowosc: Miejscowość
+
+labels:                              # Polish labels in text_pl for keys the parser does not label
+  miejscowosc: Miejscowość
+
+required: [na_czym_polega, jakich_problemow_dotyczy, grupa_docelowa]   # a missing one becomes missing-field:<key>
