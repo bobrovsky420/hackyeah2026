@@ -1,11 +1,12 @@
 # Deploy to the Azure server (docs/azure-deploy.md), started by hand in the
 # Actions tab by anyone with write access to the repository. On a GitHub
-# runner: lint and typecheck, then, in the environment "production":
-# log in to Azure through OIDC, create the VM when it does not exist
-# (deploy/azure/main.bicep), open SSH for this runner only, push the commit
-# to the VM, copy the data release and write .env.server from the
-# environment's secrets, run deploy/setup.sh the first time and
-# deploy/update.sh after that, close SSH again and check the site.
+# runner: lint and typecheck, then: read deploy/azure/settings.env, log in to
+# Azure through OIDC (only a run from main may), read the secrets from the
+# Key Vault, create the VM when it does not exist (deploy/azure/main.bicep),
+# open SSH for this runner only, push the commit to the VM, copy the data
+# release and write .env.server, run deploy/setup.sh the first time and
+# deploy/update.sh after that, close SSH again and check the site. Nothing
+# is kept in GitHub's secrets, so no repository admin is needed.
 # The app is down during the build (about two minutes): never run it while
 # the jury uses the app.
 name: Deploy to Azure
@@ -13,8 +14,12 @@ name: Deploy to Azure
 on:
   workflow_dispatch:
     inputs:
+      ref:
+        description: "Commit, tag or branch to deploy (empty: the head of main); for a roll back"
+        required: false
+        default: ""
       data_release:
-        description: "Data release X.Y.Z (empty: the variable DATA_RELEASE)"
+        description: "Data release X.Y.Z (empty: DATA_RELEASE of deploy/azure/settings.env)"
         required: false
         default: ""
       setup:
@@ -30,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -46,41 +53,42 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    environment:
-      name: production
-      url: ${{ steps.vm.outputs.url }}
     # One deploy at a time, never cancelled half way.
     concurrency:
       group: deploy-azure
       cancel-in-progress: false
     env:
-      RG: ${{ vars.AZURE_RESOURCE_GROUP }}
-      VM: ${{ vars.AZURE_VM_NAME }}
       VM_USER: azureuser
       APP_DIR: hackyeah2026
-      DATA_RELEASE: ${{ inputs.data_release || vars.DATA_RELEASE }}
-      DATA_REPO: ${{ vars.DATA_REPO || github.repository }}
     steps:
       - uses: actions/checkout@v4
         with:
           # The whole history: the VM's repository receives it by git push.
           fetch-depth: 0
 
-      - name: Check the settings
+      - name: Read the settings
         env:
-          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          AZURE_DNS_LABEL: ${{ vars.AZURE_DNS_LABEL }}
-          VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          REF: ${{ inputs.ref }}
+          INPUT_DATA_RELEASE: ${{ inputs.data_release }}
         run: |
+          # The settings of main (this checkout), whatever commit is deployed.
+          grep -E '^[A-Z_]+=' deploy/azure/settings.env >> "$GITHUB_ENV"
+          set -a; . deploy/azure/settings.env; set +a
+          [ -z "$INPUT_DATA_RELEASE" ] || { DATA_RELEASE="$INPUT_DATA_RELEASE"; echo "DATA_RELEASE=$DATA_RELEASE" >> "$GITHUB_ENV"; }
+          echo "DATA_REPO=${DATA_REPO:-$GITHUB_REPOSITORY}" >> "$GITHUB_ENV"
+          echo "AZURE_VM_SIZE=${AZURE_VM_SIZE:-Standard_B2ms}" >> "$GITHUB_ENV"
+          echo "RG=$AZURE_RESOURCE_GROUP" >> "$GITHUB_ENV"
+          echo "VM=$AZURE_VM_NAME" >> "$GITHUB_ENV"
+          echo "KV=$AZURE_KEY_VAULT" >> "$GITHUB_ENV"
+          sha="$(git rev-parse -q --verify "${REF:-HEAD}^{commit}" || git rev-parse -q --verify "origin/$REF^{commit}" || true)"
+          [ -n "$sha" ] || { echo "::error::no commit, tag or branch $REF"; exit 1; }
+          echo "DEPLOY_SHA=$sha" >> "$GITHUB_ENV"
           missing=""
-          for v in RG VM DATA_RELEASE AZURE_CLIENT_ID AZURE_TENANT_ID AZURE_SUBSCRIPTION_ID AZURE_DNS_LABEL VM_SSH_PRIVATE_KEY HF_TOKEN; do
+          for v in AZURE_CLIENT_ID AZURE_TENANT_ID AZURE_SUBSCRIPTION_ID AZURE_RESOURCE_GROUP AZURE_VM_NAME AZURE_DNS_LABEL AZURE_KEY_VAULT DATA_RELEASE; do
             [ -n "${!v}" ] || missing="$missing $v"
           done
           if [ -n "$missing" ]; then
-            echo "::error::missing in the environment production:$missing (docs/azure-deploy.md)"
+            echo "::error::empty in deploy/azure/settings.env:$missing (docs/azure-deploy.md, section 1)"
             exit 1
           fi
 
@@ -97,37 +105,52 @@ jobs:
 
       - uses: azure/login@v2
         with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
-      - name: SSH key
-        env:
-          VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+      - name: Read the secrets from the Key Vault
         run: |
+          kv() { az keyvault secret show --vault-name "$KV" -n "$1" --query value -o tsv 2>/dev/null || true; }
           mkdir -p ~/.ssh
-          printf '%s\n' "$VM_SSH_PRIVATE_KEY" > ~/.ssh/deploy
-          chmod 600 ~/.ssh/deploy
-          ssh-keygen -y -f ~/.ssh/deploy > ~/.ssh/deploy.pub
+          umask 077
+          kv vm-ssh-private-key > ~/.ssh/deploy
+          if ! ssh-keygen -y -f ~/.ssh/deploy > ~/.ssh/deploy.pub 2>/dev/null; then
+            echo "::error::no valid secret vm-ssh-private-key in the Key Vault $KV: run deploy/azure/bootstrap.sh (docs/azure-deploy.md, section 1)"
+            exit 1
+          fi
+          # The settings of the server (deploy/server.env.example), written to the VM later.
+          echo "DATA_RELEASE=$DATA_RELEASE" > ~/env.server
+          for pair in HF_TOKEN:hf-token ANTHROPIC_API_KEY:anthropic-api-key ROPS_TOKEN:rops-token; do
+            value="$(kv "${pair#*:}")"
+            [ -n "$value" ] || continue
+            echo "::add-mask::$value"
+            echo "${pair%%:*}=$value" >> ~/env.server
+          done
+          extra="$(kv server-env-extra)"
+          if [ -n "$extra" ]; then
+            while IFS= read -r line; do [ -z "$line" ] || echo "::add-mask::$line"; done <<<"$extra"
+            printf '%s\n' "$extra" >> ~/env.server
+          fi
+          if ! grep -q '^HF_TOKEN=.' ~/env.server; then
+            echo "::error::no secret hf-token in the Key Vault $KV (docs/azure-deploy.md, section 2)"
+            exit 1
+          fi
+          grep -o '^[A-Z_]*=' ~/env.server | tr '\n' ' '; echo
 
       - name: Create the VM when it does not exist
         id: vm
-        env:
-          VM_SIZE: ${{ vars.AZURE_VM_SIZE || 'Standard_B2ms' }}
-          DNS_LABEL: ${{ vars.AZURE_DNS_LABEL }}
         run: |
           if ! az vm show -g "$RG" -n "$VM" -o none 2>/dev/null; then
             echo "== creating $VM in $RG (a few minutes)"
             az deployment group create -g "$RG" -n server -o none \
               --template-file deploy/azure/main.bicep \
-              --parameters name="$VM" vmSize="$VM_SIZE" dnsLabel="$DNS_LABEL" \
+              --parameters name="$VM" vmSize="$AZURE_VM_SIZE" dnsLabel="$AZURE_DNS_LABEL" \
                            adminUsername="$VM_USER" sshPublicKey="$(cat ~/.ssh/deploy.pub)"
           fi
           az vm start -g "$RG" -n "$VM" -o none   # no-op when it runs; starts a deallocated VM
           fqdn="$(az network public-ip show -g "$RG" -n "$VM-ip" --query dnsSettings.fqdn -o tsv)"
           host="$(az network public-ip show -g "$RG" -n "$VM-ip" --query ipAddress -o tsv)"
-          echo "site=$fqdn" >> "$GITHUB_OUTPUT"
-          echo "url=https://$fqdn" >> "$GITHUB_OUTPUT"
           echo "SITE=$fqdn" >> "$GITHUB_ENV"
           echo "HOST=$host" >> "$GITHUB_ENV"
 
@@ -149,29 +172,18 @@ jobs:
           exit 1
 
       - name: Push the code, the data and the settings
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          ROPS_TOKEN: ${{ secrets.ROPS_TOKEN }}
-          SERVER_ENV_EXTRA: ${{ secrets.SERVER_ENV_EXTRA }}
         run: |
-          # The code: git push of this commit, then checked out on the VM (no GitHub credentials there).
+          # The code: git push of the commit, then checked out on the VM (no GitHub credentials there).
           ssh $SSH_OPTS "$VM_USER@$HOST" "mkdir -p $APP_DIR && cd $APP_DIR && { [ -d .git ] || git init -q; }"
-          GIT_SSH_COMMAND="ssh $SSH_OPTS" git push -f "$VM_USER@$HOST:$APP_DIR" "$GITHUB_SHA:refs/heads/deploy"
-          ssh $SSH_OPTS "$VM_USER@$HOST" "cd $APP_DIR && git checkout -q -f --detach $GITHUB_SHA && git log -1 --format='%h %s'"
+          GIT_SSH_COMMAND="ssh $SSH_OPTS" git push -f "$VM_USER@$HOST:$APP_DIR" "$DEPLOY_SHA:refs/heads/deploy"
+          ssh $SSH_OPTS "$VM_USER@$HOST" "cd $APP_DIR && git checkout -q -f --detach $DEPLOY_SHA && git log -1 --format='%h %s'"
 
           # The data release, where deploy/update.sh (get-data.py) looks first.
           ssh $SSH_OPTS "$VM_USER@$HOST" "mkdir -p $APP_DIR/.local/bundles"
           scp $SSH_OPTS "bundle/data-$DATA_RELEASE.zip" "$VM_USER@$HOST:$APP_DIR/.local/bundles/"
 
-          # The settings (deploy/server.env.example), owner-readable only.
-          {
-            echo "DATA_RELEASE=$DATA_RELEASE"
-            echo "HF_TOKEN=$HF_TOKEN"
-            echo "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
-            echo "ROPS_TOKEN=$ROPS_TOKEN"
-            [ -z "$SERVER_ENV_EXTRA" ] || printf '%s\n' "$SERVER_ENV_EXTRA"
-          } | ssh $SSH_OPTS "$VM_USER@$HOST" "umask 077 && cat > $APP_DIR/.env.server && chmod 600 $APP_DIR/.env.server"
+          # The settings, owner-readable only.
+          ssh $SSH_OPTS "$VM_USER@$HOST" "umask 077 && cat > $APP_DIR/.env.server && chmod 600 $APP_DIR/.env.server" < ~/env.server
 
       - name: Set up or update the server
         env:
@@ -185,12 +197,12 @@ jobs:
         if: always()
         run: |
           az network nsg rule delete -g "$RG" --nsg-name "$VM-nsg" -n github-actions-ssh -o none 2>/dev/null || true
-          rm -f ~/.ssh/deploy
+          rm -f ~/.ssh/deploy ~/env.server
 
       - name: Check the site
         run: |
           for _ in $(seq 1 30); do
-            if curl -fsS "https://$SITE/api/health"; then echo; echo "deployed: https://$SITE"; exit 0; fi
+            if curl -fsS "https://$SITE/api/health"; then echo; echo "deployed: https://$SITE"; echo "Deployed $DEPLOY_SHA to https://$SITE" >> "$GITHUB_STEP_SUMMARY"; exit 0; fi
             sleep 10
           done
           echo "::error::https://$SITE/api/health did not answer"
