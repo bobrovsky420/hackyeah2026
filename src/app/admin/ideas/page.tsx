@@ -53,6 +53,7 @@ export default async function AdminIdeasPage({ searchParams }: PageProps<"/admin
               </h2>
               <p className="text-muted-foreground">
                 {formatDate(idea.created_at)} · {ideaKindLabel(idea.kind)} · {ideaStageLabel(idea.stage)} · {idea.author.display_name}
+                {idea.demo && ` · ${t("admin.demo")}`}
               </p>
               <p>
                 <span className="font-bold">{t("admin.ideas.status")}</span> {ideaStatusLabel(idea.status)}

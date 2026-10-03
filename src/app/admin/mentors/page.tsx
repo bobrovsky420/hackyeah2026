@@ -72,6 +72,7 @@ export default async function AdminMentorsPage({ searchParams }: PageProps<"/adm
               <h2 className="text-[1.15rem] font-bold">
                 {mentor.name}
                 {!mentor.active && ` (${t("admin.mentors.inactive")})`}
+                {mentor.demo && ` · ${t("admin.demo")}`}
               </h2>
               <MentorForm mentor={mentor} prefix={mentor.id} />
             </li>

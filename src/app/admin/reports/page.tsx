@@ -39,7 +39,10 @@ export default async function AdminReportsPage({ searchParams }: PageProps<"/adm
                   <p className="font-bold">
                     {t(reportReasons[report.reason])}: {href ? <Link href={href}>{report.target.id}</Link> : report.target.id}
                   </p>
-                  <p className="text-muted-foreground">{formatDate(report.created_at)}</p>
+                  <p className="text-muted-foreground">
+                    {formatDate(report.created_at)}
+                    {report.demo && ` · ${t("admin.demo")}`}
+                  </p>
                   {report.comment && <p className="whitespace-pre-line">{report.comment}</p>}
                   <ModerationState moderation={report.moderation} />
                   {report.moderation.status === "do-weryfikacji" && (

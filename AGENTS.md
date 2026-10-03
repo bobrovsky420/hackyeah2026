@@ -123,7 +123,12 @@ decisions made so far are in [docs/decision-log.md](docs/decision-log.md).
   together)
   and falls back to a lexical scorer without it. `npx pnpm@12.6.0 eval`
   runs the test problems of 13.1 and writes `.local/reports/`;
-  `npx pnpm@12.6.0 cache:warm` fills the replay cache for the demo. The
+  `npx pnpm@12.6.0 cache:warm` fills the replay cache for the demo;
+  `npx pnpm@12.6.0 demo:routes` runs the questions of
+  `data/curated/demo-questions.yaml` (and the declined inputs of
+  `demo-records.yaml`) once, keeps their routes in
+  `data/built/demo-routes.json` and copies the two files beside it, the
+  set the panel's demonstration data is read from. The
   route limit is `RATE_LIMIT_ROUTES_PER_MINUTE` (default 10).
 - The map (S4) is switched off by `MAP_ENABLED` in `src/lib/features.ts`:
   `/mapa` answers 404, nothing links to it and its e2e tests skip; the
@@ -140,6 +145,11 @@ decisions made so far are in [docs/decision-log.md](docs/decision-log.md).
   (`.local/store/records.json`, or `STORE_FILE`) after every change and
   loaded at start, so a restart keeps them; `STORE_FILE=memory` keeps
   them in memory only (the Playwright server, the pipeline scripts).
+  A fresh store file gets the panel's demonstration data when
+  `data/built/` holds its three `demo-*` files, with no variable
+  (`src/server/db/demo.ts`, decision R.6): every such record has
+  `demo: true`, the panel marks it, and public pages and the route skip
+  it through `isReal` of `src/server/db/repository.ts`.
   There is no database (decision A.6), and one process per
   file. Only server code calls it; the composer gets the readiness
   registry as a dependency. The rate limiter's and the gate's short-lived

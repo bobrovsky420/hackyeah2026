@@ -38,6 +38,7 @@ export default async function AdminPartnershipsPage({ searchParams }: PageProps<
                   {sectorLabel(post.sector)}
                   {getGmina(post.place_terc) && ` · ${getGmina(post.place_terc)?.name}`} · {formatDate(post.created_at)}
                   {post.example && ` · ${t("admin.example")}`}
+                  {post.demo && ` · ${t("admin.demo")}`}
                 </p>
                 <p className="whitespace-pre-line">{post.description}</p>
                 <p>

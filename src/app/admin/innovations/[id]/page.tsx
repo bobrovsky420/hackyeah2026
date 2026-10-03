@@ -20,7 +20,7 @@ export default async function AdminInnovationPage({ params, searchParams }: Page
   const query = await searchParams;
   const item = getInnovation(id);
   if (!item) notFound();
-  const [override, summary] = await Promise.all([repository().getInnovationOverride(item.id), evaluationSummary(item.id)]);
+  const [override, summary] = await Promise.all([repository().getInnovationOverride(item.id), evaluationSummary(item.id, repository(), true)]);
 
   return (
     <AdminShell session={session} current="knowledge" title={item.title} lead={t("admin.innovation.lead")} saved={wasSaved(query)}>

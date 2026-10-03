@@ -40,8 +40,11 @@ export async function POST(request: Request) {
   const refId = typeof body.ref_id === "string" ? body.ref_id : "";
   let ref: Thread["ref"] = null;
   if (refType === "innovation" && getInnovation(refId)) ref = { type: "innovation", id: refId };
-  if (refType === "idea" && (await repo.getIdea(refId))) ref = { type: "idea", id: refId };
-  if (refType === "partnership" && (await repo.getPost(refId))?.moderation.status === "zatwierdzone") ref = { type: "partnership", id: refId };
+  // The panel's demonstration data is never a conversation's reference.
+  const idea = refType === "idea" ? await repo.getIdea(refId) : undefined;
+  const post = refType === "partnership" ? await repo.getPost(refId) : undefined;
+  if (idea && !idea.demo) ref = { type: "idea", id: refId };
+  if (post?.moderation.status === "zatwierdzone" && !post.demo) ref = { type: "partnership", id: refId };
 
   const client = clientAddress(request.headers);
   if (!allowSubmission("thread", limitKeys("thread", { email, client }))) return limitReached();

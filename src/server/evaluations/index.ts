@@ -1,5 +1,6 @@
 import type { Evaluation, EvaluationSummary } from "@/lib/contracts";
 import { repository, type Repository } from "@/server/db";
+import { isReal } from "@/server/db/repository";
 
 /*
  * Module IV, "Tester innowacji": what the innovation's page shows of its
@@ -27,6 +28,8 @@ export function summarise(all: readonly Evaluation[]): EvaluationSummary {
   };
 }
 
-export async function evaluationSummary(innovationId: string, repo: Repository = repository()): Promise<EvaluationSummary> {
-  return summarise(await repo.listEvaluations(innovationId));
+/** The innovation's numbers; the demonstration data's evaluations count only where the panel asks for them. */
+export async function evaluationSummary(innovationId: string, repo: Repository = repository(), withDemo = false): Promise<EvaluationSummary> {
+  const all = await repo.listEvaluations(innovationId);
+  return summarise(withDemo ? all : all.filter(isReal));
 }

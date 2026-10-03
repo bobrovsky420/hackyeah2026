@@ -111,6 +111,40 @@ Stop the server, delete `.local/store/records.json` (and its `.bak` when
 the old entries must go for good), start again: the store starts with the
 examples.
 
+## Demonstration data (decision R.6)
+
+When `data/built/` holds `demo-questions.yaml`, `demo-records.yaml` and
+`demo-routes.json`, a fresh store file starts with the examples and a
+simulated twelve-week pilot for the ROPS panel (`src/server/db/demo.ts`):
+about 250 questions with their routes, 80 needs, 45 idea cards, 109
+evaluations, 40 contact requests, 25 readiness registrations, mentors,
+partnership posts, conversations, content reports and the moderation log
+of their decisions. There is no variable: the files are the switch. A
+seeded generator draws the dates, counted back from the start of the
+server, and the decisions. Every such record has `demo: true`: the panel
+marks it and says so on every page, its trends can leave it out, and the
+public pages and the route never show it.
+
+- The questions and texts are edited in `data/curated/demo-questions.yaml`
+  and `data/curated/demo-records.yaml` (committed). `pnpm demo:routes`
+  computes the routes of new questions into `data/built/demo-routes.json`
+  and copies the two files beside it; after an edit of a text, run it
+  again (nothing new to compute, no model call). The three built files
+  travel in the data bundle.
+- The data acts on a fresh store file only: to switch it on or off, stop
+  the server, run `pnpm demo:routes` or delete the three `data/built/demo-*`
+  files, delete `.local/store/records.json` (keep a copy if it holds real
+  entries) and start again. The dates follow the start, so a reset the
+  day before a demo keeps the twelve weeks current.
+- A memory store (`STORE_FILE=memory`: the Playwright server, the
+  scripts) never gets it.
+- Entries made while the server runs (a question the jury asks live) are
+  real and count beside the simulated ones; "Tylko prawdziwe wpisy" in
+  the trends shows them alone.
+- When only some of the three files are there, the start logs which one
+  is missing (`[store] ... is missing`) and the store starts with the
+  examples only.
+
 ## Tests
 
 `pnpm test` runs the contract suite of `tests/unit/db/` against the memory
