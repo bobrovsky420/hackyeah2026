@@ -1,0 +1,197 @@
+# Deploy to the Azure server (docs/azure-deploy.md), started by hand in the
+# Actions tab by anyone with write access to the repository. On a GitHub
+# runner: lint and typecheck, then, in the environment "production":
+# log in to Azure through OIDC, create the VM when it does not exist
+# (deploy/azure/main.bicep), open SSH for this runner only, push the commit
+# to the VM, copy the data release and write .env.server from the
+# environment's secrets, run deploy/setup.sh the first time and
+# deploy/update.sh after that, close SSH again and check the site.
+# The app is down during the build (about two minutes): never run it while
+# the jury uses the app.
+name: Deploy to Azure
+
+on:
+  workflow_dispatch:
+    inputs:
+      data_release:
+        description: "Data release X.Y.Z (empty: the variable DATA_RELEASE)"
+        required: false
+        default: ""
+      setup:
+        description: "Run the full server setup again (packages, model, services)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: pnpm
+        run: npm install -g "pnpm@$(node -p 'require("./package.json").packageManager.split("@")[1]')"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+    environment:
+      name: production
+      url: ${{ steps.vm.outputs.url }}
+    # One deploy at a time, never cancelled half way.
+    concurrency:
+      group: deploy-azure
+      cancel-in-progress: false
+    env:
+      RG: ${{ vars.AZURE_RESOURCE_GROUP }}
+      VM: ${{ vars.AZURE_VM_NAME }}
+      VM_USER: azureuser
+      APP_DIR: hackyeah2026
+      DATA_RELEASE: ${{ inputs.data_release || vars.DATA_RELEASE }}
+      DATA_REPO: ${{ vars.DATA_REPO || github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The whole history: the VM's repository receives it by git push.
+          fetch-depth: 0
+
+      - name: Check the settings
+        env:
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE_DNS_LABEL: ${{ vars.AZURE_DNS_LABEL }}
+          VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          missing=""
+          for v in RG VM DATA_RELEASE AZURE_CLIENT_ID AZURE_TENANT_ID AZURE_SUBSCRIPTION_ID AZURE_DNS_LABEL VM_SSH_PRIVATE_KEY HF_TOKEN; do
+            [ -n "${!v}" ] || missing="$missing $v"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::missing in the environment production:$missing (docs/azure-deploy.md)"
+            exit 1
+          fi
+
+      - name: Download the data release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p bundle
+          if ! gh release download "data-$DATA_RELEASE" -R "$DATA_REPO" -p "data-$DATA_RELEASE.zip" -D bundle; then
+            echo "::error::no asset data-$DATA_RELEASE.zip in the release data-$DATA_RELEASE of $DATA_REPO (docs/azure-deploy.md, section 3)"
+            exit 1
+          fi
+          ls -l bundle
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: SSH key
+        env:
+          VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VM_SSH_PRIVATE_KEY" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          ssh-keygen -y -f ~/.ssh/deploy > ~/.ssh/deploy.pub
+
+      - name: Create the VM when it does not exist
+        id: vm
+        env:
+          VM_SIZE: ${{ vars.AZURE_VM_SIZE || 'Standard_B2ms' }}
+          DNS_LABEL: ${{ vars.AZURE_DNS_LABEL }}
+        run: |
+          if ! az vm show -g "$RG" -n "$VM" -o none 2>/dev/null; then
+            echo "== creating $VM in $RG (a few minutes)"
+            az deployment group create -g "$RG" -n server -o none \
+              --template-file deploy/azure/main.bicep \
+              --parameters name="$VM" vmSize="$VM_SIZE" dnsLabel="$DNS_LABEL" \
+                           adminUsername="$VM_USER" sshPublicKey="$(cat ~/.ssh/deploy.pub)"
+          fi
+          az vm start -g "$RG" -n "$VM" -o none   # no-op when it runs; starts a deallocated VM
+          fqdn="$(az network public-ip show -g "$RG" -n "$VM-ip" --query dnsSettings.fqdn -o tsv)"
+          host="$(az network public-ip show -g "$RG" -n "$VM-ip" --query ipAddress -o tsv)"
+          echo "site=$fqdn" >> "$GITHUB_OUTPUT"
+          echo "url=https://$fqdn" >> "$GITHUB_OUTPUT"
+          echo "SITE=$fqdn" >> "$GITHUB_ENV"
+          echo "HOST=$host" >> "$GITHUB_ENV"
+
+      - name: Open SSH for this runner
+        run: |
+          runner_ip="$(curl -fsS https://api.ipify.org)"
+          az network nsg rule create -g "$RG" --nsg-name "$VM-nsg" -n github-actions-ssh -o none \
+            --priority 100 --direction Inbound --access Allow --protocol Tcp \
+            --source-address-prefixes "$runner_ip/32" --destination-port-ranges 22
+          echo "SSH_OPTS=-i $HOME/.ssh/deploy -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -o ConnectTimeout=10" >> "$GITHUB_ENV"
+
+      - name: Wait for SSH
+        run: |
+          for _ in $(seq 1 30); do
+            if ssh $SSH_OPTS "$VM_USER@$HOST" true 2>/dev/null; then exit 0; fi
+            sleep 10
+          done
+          echo "::error::no SSH to $HOST"
+          exit 1
+
+      - name: Push the code, the data and the settings
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ROPS_TOKEN: ${{ secrets.ROPS_TOKEN }}
+          SERVER_ENV_EXTRA: ${{ secrets.SERVER_ENV_EXTRA }}
+        run: |
+          # The code: git push of this commit, then checked out on the VM (no GitHub credentials there).
+          ssh $SSH_OPTS "$VM_USER@$HOST" "mkdir -p $APP_DIR && cd $APP_DIR && { [ -d .git ] || git init -q; }"
+          GIT_SSH_COMMAND="ssh $SSH_OPTS" git push -f "$VM_USER@$HOST:$APP_DIR" "$GITHUB_SHA:refs/heads/deploy"
+          ssh $SSH_OPTS "$VM_USER@$HOST" "cd $APP_DIR && git checkout -q -f --detach $GITHUB_SHA && git log -1 --format='%h %s'"
+
+          # The data release, where deploy/update.sh (get-data.py) looks first.
+          ssh $SSH_OPTS "$VM_USER@$HOST" "mkdir -p $APP_DIR/.local/bundles"
+          scp $SSH_OPTS "bundle/data-$DATA_RELEASE.zip" "$VM_USER@$HOST:$APP_DIR/.local/bundles/"
+
+          # The settings (deploy/server.env.example), owner-readable only.
+          {
+            echo "DATA_RELEASE=$DATA_RELEASE"
+            echo "HF_TOKEN=$HF_TOKEN"
+            echo "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
+            echo "ROPS_TOKEN=$ROPS_TOKEN"
+            [ -z "$SERVER_ENV_EXTRA" ] || printf '%s\n' "$SERVER_ENV_EXTRA"
+          } | ssh $SSH_OPTS "$VM_USER@$HOST" "umask 077 && cat > $APP_DIR/.env.server && chmod 600 $APP_DIR/.env.server"
+
+      - name: Set up or update the server
+        env:
+          FULL_SETUP: ${{ inputs.setup }}
+        run: |
+          flag=""
+          [ "$FULL_SETUP" = true ] && flag="--setup"
+          ssh $SSH_OPTS "$VM_USER@$HOST" "cd $APP_DIR && bash deploy/azure/remote.sh $SITE $flag" </dev/null
+
+      - name: Close SSH
+        if: always()
+        run: |
+          az network nsg rule delete -g "$RG" --nsg-name "$VM-nsg" -n github-actions-ssh -o none 2>/dev/null || true
+          rm -f ~/.ssh/deploy
+
+      - name: Check the site
+        run: |
+          for _ in $(seq 1 30); do
+            if curl -fsS "https://$SITE/api/health"; then echo; echo "deployed: https://$SITE"; exit 0; fi
+            sleep 10
+          done
+          echo "::error::https://$SITE/api/health did not answer"
+          exit 1
