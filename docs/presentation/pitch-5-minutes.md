@@ -82,8 +82,8 @@ przed zapisem.
 **[Slide 7]**
 Zadanie prosi o koncepcję, nie tylko o oprogramowanie. Droga działa, a
 obok fiszka pomysłu, tester innowacji, rozmowy z mentorami i panel ROPS,
-w którym decyduje człowiek. Z siedmiu modułów wyzwania cztery działają
-w całości, trzy częściowo. *(pause)* Planem rozwoju są
+w którym decyduje człowiek. Z siedmiu modułów wyzwania pięć działa
+w całości, dwa częściowo. *(pause)* Planem rozwoju są
 ludzie: od poniedziałku ROPS może prowadzić usługę w trzech rolach,
 opiekun kategorii, redaktor katalogu i koordynator banku potrzeb. A
 utrzymanie kosztuje około 55 dolarów miesięcznie, mniej niż cent za
@@ -121,7 +121,7 @@ Dziękujemy.
   the Laskowa route of P01. The demo replaces the slide 3 text, it does
   not add to it.
 - Numbers behind the lines, for the questions: the 45-point threshold and
-  the 30 paths are on slide 4; the modules (four in full, three in part,
+  the 30 paths are on slide 4; the modules (five in full, two in part,
   specification 1.1) and the cost (Lightsail $24, RDS about $30, about
   $8 per 1 000 routes) on slide 7; the volunteering points (3 of 200, MEN
   regulation of 16 March 2017, § 7) on slide 8, the source in
