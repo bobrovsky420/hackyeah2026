@@ -1,7 +1,7 @@
 # Storage
 
 How the app keeps its entries: the needs, contact requests, readiness
-registrations, routes, feedback, content reports, the moderation and
+registrations, idea cards (7.13), routes, feedback, content reports, the moderation and
 screening logs and the counters. The statuses, moderation fields and the
 moderation log wait for the ROPS console of the roadmap (R.2); nothing
 in the app reads them yet. Decided: no database in any
@@ -30,8 +30,13 @@ actions call `repository()`, client components never do.
   renamed into place, so a reader never sees half a file. When the
   process exits, a pending write is made synchronously.
 - A fresh store (no file) starts with the example entries of
-  `examples.ts`: three needs and the two consented and verified team
-  entries of the readiness registry (FR-6.5), all marked "Przykład".
+  `examples.ts`: three needs, the two consented and verified team
+  entries of the readiness registry (FR-6.5) and one idea card with its
+  similar innovations (`pm-przyklad-1`, the stable address of the screen
+  checks), all marked as examples.
+- A list added in a later version (the idea cards) is optional in the
+  file: a file saved before it opens with the list empty instead of
+  being set aside as unreadable.
 - Beside the file: `records.json.bak`, a copy taken every time the server
   starts (the recovery point of that start), and, after a file that could
   not be read, `records.json.unreadable-<time>`, which the server sets
@@ -65,7 +70,8 @@ store opens and once a day after that (`src/server/retention.ts`):
   (YYYY-MM-DD) moves the day, and a value that is not a date is reported
   and ignored;
 - contact requests: 90 days after they were sent;
-- readiness registrations: after their `retention_until`;
+- readiness registrations and idea cards: after their `retention_until`
+  (12 months after they were sent);
 - the screening log: entries after 14 days, kept texts after seven days,
   also on every write of the log.
 
@@ -75,7 +81,8 @@ are kept. What a run removed is logged as `[store] retention removed ...`.
 ## Personal data
 
 The file holds what the forms collected: names, e-mail addresses and
-phone numbers of contact requests and registrations, the texts of needs,
+phone numbers of contact requests, registrations and idea cards, the
+texts of needs and ideas,
 and for seven days the texts the gate declined (FR-12.7). Treat it like
 the database it replaces: never commit it, never put it in a data bundle
 (`pack-data.py` leaves `.local/store/` alone), and mind where it lies. On

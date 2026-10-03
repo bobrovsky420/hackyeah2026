@@ -71,6 +71,16 @@ http://127.0.0.1:8765`, then open http://localhost:3000.
 - Describe a need, ask for a route and look for
   `retrieve:embedding-service` in the log.
 
+## Run the browser tests
+
+The Playwright runs build the app and use Edge; on a machine without it,
+name another installed browser:
+
+```
+E2E_CHANNEL=chrome npx pnpm@12.6.0 test:e2e
+E2E_CHANNEL=chrome npx pnpm@12.6.0 a11y
+```
+
 ## Reset
 
 - The entries: stop the server, `rm .local/store/records.json`.

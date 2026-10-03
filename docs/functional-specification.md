@@ -131,6 +131,29 @@ answers each clause:
 | "blisko 200 innowacji ... rozproszone" | The data is the national base plus the ROPS library plus whatever the partner hands over on the day | 7.1, FR-1.6 |
 | "Od empatii do technologii" (the teaser's title) | Empathy before technology: a person in crisis gets human help, not a list of innovations; a harmful or discriminatory request is declined with respect; nobody is profiled or decided about; personal data is not kept | 3.6 ethics, 7.12 safety and fairness |
 
+### 1.1 The challenge as published on 3 October
+
+The partner published the full challenge ("Zaprojektuj inteligentne
+narzędzie wspierające rozwój Małopolskiego Hubu Innowacji Społecznych")
+on the morning of the event. Section 2 of it lists the key functions of
+the tool, I to VII; matchmaking is obligatory, and the first criterion
+(40%) gives 10% for it and 5% for every further module delivered. The
+modules and where this specification answers them:
+
+| Module of the brief | What it asks | Where | Status |
+|---|---|---|---|
+| I. Matchmaking społeczny (obligatory) | A described problem finds similar cases and ready solutions | 7.2 to 7.4 | Built |
+| II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7 | Partly built: knowledge is shown on routes and innovation pages, not as a library |
+| III. Kreator pomysłów | An idea card (short description, essence, for whom, stage) at any time; an application generator during grant calls; the innovation canvas; an assistant that develops the idea | 7.13 | The idea card is built; the generator, the canvas and the assistant are not |
+| IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | | Not built |
+| V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | | Not built |
+| VI. Panel administratora | Quick editing, verification and publication of knowledge | 7.9 | ROADMAP (R.2) |
+| VII. Middleman Innowacji | An AI assistant that adapts an innovation into a service for the institution that asks | 7.4, 7.8 | Partly built: the route adapts the paths to the role and the gmina |
+
+The challenge also scores how fast the administrator learns of a new
+idea and how the answer reaches its author (its section 6), and asks for
+WCAG 2.1 AA (12.2).
+
 ## 2. What the event rules fix
 
 Verified from the rules PDF at https://hackyeah.pl/rules?lang=en, the
@@ -346,6 +369,7 @@ the app reads them yet, and the tool sends nothing to anyone.
 | 7.9 ROPS console | | | | Needs list with status and CSV export, statistics, advisor assignment, full back office (all ROADMAP by R.2) |
 | 7.10 Feedback and measures | "Czy to pomogło?" and event counters | | | Measures page (R.2) |
 | 7.11 Transparency | "Jak to działa", credits, licences, privacy note, accessibility statement, "Zasady" (principles and appeal path) | | | |
+| 7.13 Idea card (module III) | Idea card form; the gate before storage; the card's page with the similar innovations; Markdown download and print | | | Application generator per call; innovation canvas; idea assistant |
 | 7.12 Safety, moderation and fairness | Screening gate with its four outcomes; redaction of personal data; crisis screen with verified helplines; report link; screening log; fairness cases in the evaluation | Polish safety classifier as a second opinion; contact opt-out for organisations; abuse limits per e-mail | Appeal form | Moderation tab (R.2); ethics review board of the hub; quarterly fairness report |
 
 Explicitly out of scope for the hackathon: public user accounts, a native
@@ -747,7 +771,7 @@ first far more often than the multilingual ones.
 
 The gate runs before matching on every text a user submits: the need
 (7.2), a saved need (7.5), a contact request message (7.6), a readiness
-registration and a "Chcemy pomóc" response (7.5). It combines
+registration, a "Chcemy pomóc" response (7.5) and an idea card (7.13). It combines
 deterministic checks with one fast model call and produces one of the
 outcomes `need`, `redirected`, `declined`, `off_topic`. Principle E3 sets
 its bias: when in doubt between routing and redirecting, the tool shows
@@ -775,6 +799,20 @@ tool's own text.
 | FR-12.13 | SHOULD | Second opinion from a local Polish safety classifier (Bielik-Guard-0.5B, Apache 2.0) on the app server; a disagreement with the model on `harm` sends the case to the moderation queue instead of an automatic decline. | Toggle by environment variable, off by default |
 | FR-12.14 | SHOULD | Abuse limits per identity: at most five contact requests and two readiness registrations per e-mail address per day; honeypot fields on every public form; identical texts from one IP within an hour merged: an identical route request (same text, place, role and target groups) opens the route the first one got, without the gate or a model call, and "Policz ponownie" is never a repeat; a kill switch `PUBLIC_WRITES=false` that makes every public form read-only if the tool is flooded during the event. | Tested |
 | FR-12.15 | COULD | Appeal form on S11 that files a content report carrying the reference code. | |
+
+### 7.13 Idea card (module III of the brief; added after the brief was published)
+
+The "fiszka" of module III: a person presents a new idea or a good
+practice tested in microscale, and sees at once which proven solutions
+are close to it. The shape is `Idea` in `src/lib/contracts.ts`.
+
+| Id | Priority | Requirement | Acceptance |
+|---|---|---|---|
+| FR-13.1 | MUST | Form `/zglos-pomysl`: kind (new idea or good practice), name, short description, essence, for whom, target groups (optional), stage (idea, prototype, tested in microscale, running), gmina (optional), author's name or organisation, e-mail (required, for ROPS only), consent to store, optional consent to show the card to others. Every field checked in the browser with the error summary of the other forms. | Eight errors on an empty form, each linked to its field |
+| FR-13.2 | MUST | POST `/api/ideas` screens the four texts together with the gate (kind `idea`), stores the redacted texts and the author's name screened for harm only; a crisis gets S10, a harmful or off-topic text S11; at most three cards per e-mail address a day; honeypot. | A crisis text stores nothing; a fourth card from one address in a day is refused |
+| FR-13.3 | MUST | The card's page `/pomysl/{id}`: the card, its status, the similar innovations with "co jest podobne" and "czym się różni" taken from the matcher's grounded assessment (FR-5.3), each linked to its innovation; computed once on the first visit and stored; the canned engine takes the example route its keywords pick. The author's e-mail is never shown. | Similar innovations appear without a second model run on a reload |
+| FR-13.4 | MUST | The card downloads as Markdown and prints; the next steps link to a conversation with ROPS. | |
+| FR-13.5 | ROADMAP | The application generator per grant call, the innovation canvas of HackYeah and an idea assistant that develops the idea and draws it. | |
 
 ## 8. Data model
 
@@ -1420,6 +1458,8 @@ files.
 | POST `/api/contact-requests` | Contact request (J3) | `{route_id?, need_id?, target, requester, message, consent}` | 201 |
 | POST `/api/readiness` | Readiness registration (J6) | | 201 |
 | GET `/api/health` | Liveness | | `{ok, data_version, provider, model}` |
+| POST `/api/ideas` | Idea card (7.13) | `{kind, title, description, essence, for_whom, target_groups?, stage, place_terc?, display_name, is_organisation?, email, consent_store, consent_publish?}` | 201 `{id, redactions}`; the gate's outcomes as for a need |
+| POST `/api/ideas/{id}/similar` | The card's similar innovations, computed once and stored | | 200 `{similar}`; 503 when the model failed |
 
 The ROPS console, its pages and its two endpoints (the CSV export and
 the statistics) were removed from the build (R.2): the console is
@@ -1565,6 +1605,7 @@ change to a prompt.
   src/app/                  Next.js pages in folders with English names, served at Polish URLs through the rewrites of next.config.ts (src/lib/page-routes.ts): /route/[id] at /droga/[id], /innovation/[id] at /innowacja/[id], /need/[id]/brief at /potrzeba/[id]/fiszka, /map at /mapa, and /how-it-works, /rules, /sources, /privacy, /accessibility, /contact, /offer-help, /save-need, /report at /jak-to-dziala, /zasady, /zrodla, /prywatnosc, /dostepnosc, /kontakt, /chce-pomoc, /zapisz-potrzebe, /zglos
   src/app/api/              route handlers (9.2)
   src/server/               every server module: gate/ (the screening gate, 7.12), match/ (retrieval, shortlist, assess, grounding), route/ (the composer), needs/ (needs and briefs), db/ (the store), eval/ (the evaluation harness), pipeline.ts, route-service.ts (the engines and the repeat check), route-cache.ts, map.ts (S4), rate-limit.ts, validate.ts, ephemeral.ts, retention.ts
+  src/server/ideas/         the idea card of 7.13: its similar innovations and its Markdown
   src/lib/contracts.ts      the one file of the shapes the server and the screens share: the catalogue, the fixed contacts, the map data, the paths, the stored records, the route (8.4), the brief (8.5) and the boundaries between the pipeline modules
   src/lib/llm/              provider interface, the two providers, the chain and the replay recording
   src/lib/i18n/             message catalogue loader (Polish only)
@@ -1836,6 +1877,15 @@ tools used, the prior work and the libraries.
   removed; how to report content and how to appeal; who at ROPS reviews
   what and how often; the date of the last review of this page.
 
+### S13 Idea card (`/zglos-pomysl`, `/pomysl/{id}`)
+
+- The form of FR-13.1 as one page, prototype notice on top; after the
+  save, a confirmation with "Zobacz fiszkę".
+- The card: kind as the eyebrow, the name as the heading, stage, gmina
+  and author; "Status i odpowiedź ROPS"; the description, the essence
+  and for whom; "Podobne sprawdzone rozwiązania", computed on the first
+  visit; "Drukuj" and "Pobierz"; "Co dalej".
+
 ### Message keys
 
 Every string lives in `messages/pl.json` under keys named
@@ -2027,8 +2077,9 @@ per-request reads of the JSON files.
   published (R6). The privacy page carries the information duty text for
   people whose public data we show (art. 14 GDPR) and how to object.
 - Retention defaults: routes 30 days after the event; needs until
-  ROPS decides; contact requests 90 days; readiness 12 months; logs 14
-  days; no IP addresses stored outside the rate limiter's memory.
+  ROPS decides; contact requests 90 days; readiness 12 months; idea
+  cards 12 months; logs 14 days; no IP addresses stored outside the rate
+  limiter's memory.
 - No cookies; a browser-local flag deduplicates feedback.
 - AI transparency: the EU AI Act's transparency duties (art. 50) apply
   since 2 August 2026, and the Polish act on artificial intelligence
@@ -2271,7 +2322,11 @@ it, repetitions are not independent samples.
 - Screenshots (`pnpm screenshots`): every screen at 360, 1280 and the
   projector setting, saved for the design reviews of Analyst 1 every few
   hours and for the submission images.
-- Accessibility (`pnpm a11y`): axe on S1 to S8.
+- Accessibility (`pnpm a11y`): axe on every screen of
+  `tests/e2e/screens.ts` in the three themes, the idea card form and an
+  example card among them.
+- End-to-end for the idea card: the error summary, the save, the similar
+  innovations on its page, and a crisis text that stores nothing.
 
 ### 13.4 The demo path (five minutes, one presenter)
 
