@@ -181,7 +181,7 @@ export function RouteView({ route, markdown, similar }: { route: Route; markdown
           <Notice title={t("route.individual.title")}>
             <p>
               {t("route.individual.text")}{" "}
-              {route.input.place_name ? t("s10.ops.place", { place: route.input.place_name }) : t("s10.ops.generic")}
+              {route.input.place_name ? t("route.individual.ops.place", { place: route.input.place_name }) : t("route.individual.ops.generic")}
             </p>
             <p className="no-print">
               <Link href="/zapytaj">{t("route.individual.ask")}</Link>
