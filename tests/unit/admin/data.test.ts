@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { Evaluation, Idea, Need } from "@/lib/contracts";
+import type { Evaluation, Idea, Need, Route } from "@/lib/contracts";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
 import type { Repository } from "@/server/db/repository";
-import { csvCell, EXPORT_KINDS, exportRows, queueCounts, toCsv, trends, weekStart } from "@/server/admin/data";
+import { csvCell, EXPORT_KINDS, exportRows, questions, queueCounts, toCsv, trends, weekStart } from "@/server/admin/data";
 import { exampleIdeas, exampleNeeds } from "@/server/db/examples";
 
 const pending = { status: "do-weryfikacji" as const, reviewer: null, decided_at: null, reason_pl: null };
@@ -29,6 +29,18 @@ function evaluation(id: string, over: Partial<Evaluation> = {}): Evaluation {
     note_pl: null,
     ...over,
   };
+}
+
+function route(id: string, createdAt: string, mode: Route["mode"], questionGroups: string[] | undefined, readerGroups: string[] = []): Route {
+  return {
+    id,
+    created_at: createdAt,
+    input: { problem_text: "Tekst pytania.", place_terc: null, place_name: null, role: null, target_groups: readerGroups },
+    mode,
+    question_groups: questionGroups,
+    solutions: [],
+    engine: { provider: "x", model: "x", prompt_version: null, data_version: "x", latency_ms: 1, cached: false },
+  } as unknown as Route;
 }
 
 describe("the CSV of the panel (FR-9.2)", () => {
@@ -109,6 +121,45 @@ describe("the trends of module II", () => {
     expect(data.needsByWeek).toEqual([{ key: weekStart(needs[0].created_at), count: 3 }]);
     expect(data.rated).toEqual([{ id: "inn-nat-649", ratings: 1, average: 5, testers: 0 }]);
     expect(data.totals.evaluations).toBe(1);
+  });
+
+  describe("the questions by group", () => {
+    let repo: Repository;
+    beforeEach(async () => {
+      repo = createMemoryRepository({ ...createMemoryState(), needs: [], ideas: [] });
+      await repo.saveRoute(route("rt-1", "2026-10-01T09:00:00.000Z", "route", ["seniorzy", "zdrowie"]));
+      await repo.saveRoute(route("rt-2", "2026-10-02T09:00:00.000Z", "partial", ["seniorzy"]));
+      // Stored before the composer recorded groups: the reader's answer counts.
+      await repo.saveRoute(route("rt-3", "2026-10-02T22:30:00.000Z", "none", undefined, ["cudzoziemcy"]));
+      await repo.saveRoute(route("rt-4", "2026-10-03T09:00:00.000Z", "none", []));
+      // Not a question about a need.
+      await repo.saveRoute(route("rt-5", "2026-10-03T10:00:00.000Z", "declined", undefined, ["seniorzy"]));
+      await repo.saveRoute(route("rt-6", "2026-10-03T11:00:00.000Z", "off_topic", []));
+    });
+
+    it("counts a question in each of its groups and leaves declined and off-topic routes out", async () => {
+      const data = await trends(repo);
+      expect(data.questionsByGroup).toEqual([
+        { key: "seniorzy", count: 2 },
+        { key: "bez-grupy", count: 1 },
+        { key: "cudzoziemcy", count: 1 },
+        { key: "zdrowie", count: 1 },
+      ]);
+      expect(data.totals.questions).toBe(4);
+    });
+
+    it("lists the questions of a group, newest first", async () => {
+      expect((await questions({ group: "seniorzy" }, repo)).map((item) => item.id)).toEqual(["rt-2", "rt-1"]);
+      expect((await questions({ group: "bez-grupy" }, repo)).map((item) => item.id)).toEqual(["rt-4"]);
+      expect((await questions({}, repo)).map((item) => item.id)).toEqual(["rt-4", "rt-3", "rt-2", "rt-1"]);
+    });
+
+    it("filters by the day in Poland, both ends included", async () => {
+      // 22:30 UTC on 2 October is 00:30 on 3 October in Poland.
+      expect((await questions({ from: "2026-10-03" }, repo)).map((item) => item.id)).toEqual(["rt-4", "rt-3"]);
+      expect((await questions({ from: "2026-10-01", to: "2026-10-02" }, repo)).map((item) => item.id)).toEqual(["rt-2", "rt-1"]);
+      expect(await questions({ group: "zdrowie", from: "2026-10-02" }, repo)).toEqual([]);
+    });
   });
 
   it("starts a week on Monday", () => {

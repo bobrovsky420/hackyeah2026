@@ -1,0 +1,3095 @@
+# The texts of the simulated pilot's records in the ROPS panel: the
+# demonstration data of module II and the queues of module VI (idea cards,
+# contact requests, readiness registrations, mentors, partnership posts,
+# conversations, content reports and declined inputs). Hand-written
+# reference data, committed to git.
+#
+# The texts are authored examples in everyday voices; they quote nobody and
+# name no real person or organisation. A person is a first name and the
+# initial of the surname, an organisation a generic type. The texts hold no
+# contact data, dates or place names: the generator of the demonstration
+# data adds its own ids, dates, places, statuses and contact data. The ids
+# below only link the records of this file (a thread to its mentor or its
+# post). Target groups are the codes of data/curated/taxonomies.json.
+#
+# Fields:
+# - ideas: idea cards of module III ("Kreator pomysłów"). kind (pomysl, or
+#   dobra-praktyka for a practice already tried), stage (pomysl, prototyp,
+#   test, dziala), target_groups, author (display_name, is_organisation),
+#   title, description ("Krótki opis pomysłu"), essence ("Co jest jego
+#   istotą"), for_whom ("Komu jest dedykowany", in the author's words),
+#   reply_pl (ROPS's answer to the author, or null).
+# - contacts: requests "Poproś o kontakt" sent from a route. target
+#   (innovation or advisor), group (for an advisor the category asked
+#   about, for an innovation the group the asker works with), requester
+#   (name, organisation or null for a resident), message (fits any
+#   innovation of the group and names none).
+# - readiness: registrations "Gotowość do testów" of organisations.
+#   display_name, topics.
+# - mentors: experts beside the two of src/server/db/examples.ts. name (a
+#   role, not a person), expertise_pl, target_groups.
+# - posts: the partnership board. kind (szukam or oferuje), sector,
+#   seeking, target_groups, author (display_name, organisation or null),
+#   title, description.
+# - threads: conversations of module V. topic (pytanie, mentor,
+#   partnerstwo), subject, author (display_name, organisation or null,
+#   sector), target_groups, mentor (a mentor id for topic mentor, else
+#   null), post (a post id for topic partnerstwo, else null), messages
+#   (author: uzytkownik, rops or mentor; text). A thread whose last message
+#   is the user's waits for ROPS.
+# - reports: "Zgłoś problem z tą treścią". target (route, innovation or
+#   need), reason (nieprawdziwe, obrazliwe, dane_osobowe, inne), comment
+#   (or null).
+# - declined: texts sent to the question form that the gate declines or
+#   treats as off-topic. kind (spam, rude, test, harm), text. The link-like
+#   phrases are invented and lead nowhere.
+# - moderation_reasons_pl: reasons ROPS gives when it rejects or holds an
+#   entry.
+# - notes_pl: internal notes of ROPS staff on entries.
+# - evaluations: evaluations of catalogue innovations in module IV ("Tester
+#   innowacji"). innovation_id (an id of data/built/innovations), rating (1
+#   to 5, or null), experience (korzystam, wdrazam, opis, or null), feedback
+#   and improvement (or null), test_signup (as: uzytkownik or wdrazajacy, or
+#   null), author (display_name, or null when anonymous; a test sign-up
+#   always has one).
+version: "2026-10-03"
+
+ideas:
+  - id: PM01
+    kind: pomysl
+    stage: pomysl
+    target_groups: [seniorzy]
+    author:
+      display_name: Halina S.
+      is_organisation: false
+    title: Telefon do sąsiada w każdy poniedziałek
+    description: >-
+      Sąsiedzi z jednej ulicy dzwonią raz w tygodniu do starszych osób,
+      które mieszkają same. Krótka rozmowa, pytanie, czy czegoś nie trzeba.
+      Listę chętnych do dzwonienia można trzymać w świetlicy albo w parafii.
+    essence: >-
+      Regularny telefon daje poczucie, że ktoś pamięta, i pozwala szybko
+      zauważyć, że dzieje się coś złego.
+    for_whom: >-
+      Dla starszych ludzi, którzy mieszkają sami i rzadko wychodzą, tak jak
+      moja mama.
+    reply_pl: null
+  - id: PM02
+    kind: dobra-praktyka
+    stage: dziala
+    target_groups: [seniorzy, zdrowie]
+    author:
+      display_name: Klub Seniora przy świetlicy wiejskiej
+      is_organisation: true
+    title: Gimnastyka na krzesłach w świetlicy
+    description: >-
+      Od dwóch lat dwa razy w tygodniu prowadzimy ćwiczenia na krzesłach dla
+      seniorów. Prowadzi je emerytowana nauczycielka wychowania fizycznego
+      po krótkim kursie. Przychodzi kilkanaście osób, także po udarze i z
+      chorymi kolanami.
+    essence: Proste ćwiczenia w grupie, blisko domu, bez sprzętu i bez opłat.
+    for_whom: >-
+      Seniorzy z naszej wsi, także ci, którzy mają kłopot z chodzeniem.
+    reply_pl: null
+  - id: PM03
+    kind: pomysl
+    stage: pomysl
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Katarzyna M.
+      is_organisation: false
+    title: Wymiana ubranek dla dzieci
+    description: >-
+      Dzieci szybko wyrastają z ubrań i butów, a wielu rodzin nie stać na
+      ciągłe kupowanie nowych. Chciałabym raz w miesiącu zrobić w szkole
+      wymianę: przynosisz, co masz, bierzesz, czego potrzebujesz. Bez
+      pieniędzy i bez wstydu.
+    essence: Rzeczy krążą między rodzinami, zamiast leżeć w szafach.
+    for_whom: >-
+      Rodzice małych dzieci, zwłaszcza samotne mamy i rodziny wielodzietne.
+    reply_pl: null
+  - id: PM04
+    kind: pomysl
+    stage: prototyp
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Szkoła Podstawowa
+      is_organisation: true
+    title: Świetlica otwarta do wieczora
+    description: >-
+      Wielu rodziców wraca z pracy późno, a świetlica szkolna zamyka się po
+      południu. Przez jeden semestr dwa razy w tygodniu przedłużamy jej
+      pracę, a studenci odrabiają z dziećmi lekcje. Szukamy sposobu, żeby
+      utrzymać to na stałe.
+    essence: >-
+      Dzieci mają bezpieczne miejsce i pomoc w nauce, a rodzice mogą
+      spokojnie pracować.
+    for_whom: Uczniowie młodszych klas, których rodzice dojeżdżają do pracy.
+    reply_pl: >-
+      Dziękujemy za fiszkę. Pomysł pasuje do tematu najbliższego naboru
+      inkubatora na działania dla dzieci i rodzin. Prosimy przygotować
+      krótkie zestawienie kosztów pilotażu, omówimy je na konsultacji.
+  - id: PM05
+    kind: dobra-praktyka
+    stage: dziala
+    target_groups: [niepelnosprawnosc-intelektualna, rynek-pracy]
+    author:
+      display_name: Środowiskowy Dom Samopomocy
+      is_organisation: true
+    title: Kawiarenka prowadzona przez uczestników
+    description: >-
+      Raz w tygodniu nasi uczestnicy prowadzą małą kawiarenkę w budynku
+      ośrodka. Sami pieką ciasto, obsługują gości i liczą utarg. Przychodzą
+      mieszkańcy, rodziny, czasem urzędnicy z gminy.
+    essence: >-
+      Prawdziwa praca z gośćmi uczy samodzielności lepiej niż ćwiczenia na
+      zajęciach.
+    for_whom: >-
+      Dorośli z niepełnosprawnością intelektualną, którzy chcą spróbować
+      pracy.
+    reply_pl: >-
+      Dziękujemy za opis praktyki. Chcielibyśmy pokazać ją w bazie jako
+      dobrą praktykę i zapraszamy na krótką rozmowę z opiekunem kategorii.
+  - id: PM06
+    kind: pomysl
+    stage: pomysl
+    target_groups: [ograniczona-mobilnosc, seniorzy]
+    author:
+      display_name: Józef P.
+      is_organisation: false
+    title: Bus na zakupy dla starszych
+    description: >-
+      U nas autobus jeździ dwa razy dziennie i nie staje przy sklepie.
+      Starsi, którzy nie mają samochodu, proszą sąsiadów albo nie wychodzą
+      wcale. Gminny bus mógłby raz w tygodniu jechać do sklepu i do
+      przychodni.
+    essence: >-
+      Jeden stały kurs w tygodniu, żeby starsi mogli sami zrobić zakupy i
+      pójść do lekarza.
+    for_whom: >-
+      Dla starszych i chorych z przysiółków, którzy nie mają jak dojechać.
+    reply_pl: >-
+      Dziękujemy. W katalogu są usługi transportu na żądanie dla osób z
+      ograniczoną mobilnością, pokazujemy je na stronie trasy. Proponujemy
+      rozmowę z gminą o połączeniu pomysłu z przewozem, który już działa.
+  - id: PM07
+    kind: pomysl
+    stage: test
+    target_groups: [spektrum-autyzmu, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Fundacja wsparcia rodzin
+      is_organisation: true
+    title: Ciche godziny w bibliotece
+    description: >-
+      Razem z biblioteką testujemy jedną godzinę w tygodniu, kiedy światło
+      jest przygaszone, nie ma głośnych zajęć, a dzieci w spektrum mogą
+      przyjść z rodzicami. Na razie przychodzi kilka rodzin. Chcemy
+      sprawdzić, czy dzięki temu zaczną przychodzić także w zwykłe dni.
+    essence: >-
+      Mniej bodźców w znanym miejscu, żeby dziecko w spektrum mogło się z
+      nim oswoić.
+    for_whom: >-
+      Dzieci w spektrum autyzmu i ich rodzice, którzy unikają głośnych
+      miejsc.
+    reply_pl: null
+  - id: PM08
+    kind: pomysl
+    stage: pomysl
+    target_groups: [bezdomnosc]
+    author:
+      display_name: Tomasz R.
+      is_organisation: false
+    title: Szafka z rzeczami pierwszej potrzeby
+    description: >-
+      Przy dworcu codziennie widzę te same osoby w kryzysie bezdomności.
+      Myślę o zamykanej szafce, do której ludzie wkładaliby skarpety, środki
+      higieniczne i suchy prowiant. Ktoś z organizacji sprawdzałby ją raz
+      dziennie.
+    essence: Pomoc dostępna o każdej porze, bez kolejki i bez pytań.
+    for_whom: Osoby w kryzysie bezdomności, które nie chcą iść do noclegowni.
+    reply_pl: >-
+      Dziękujemy za fiszkę. Przed startem warto porozmawiać z organizacją,
+      która pracuje na ulicy w waszej okolicy. Opiekun kategorii pomoże
+      nawiązać kontakt.
+  - id: PM09
+    kind: dobra-praktyka
+    stage: dziala
+    target_groups: [seniorzy, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Koło Gospodyń Wiejskich
+      is_organisation: true
+    title: Babcie uczą pieczenia
+    description: >-
+      Od kilku lat w ferie zapraszamy dzieci do remizy na wspólne pieczenie.
+      Uczą panie z koła, a dzieci w zamian pokazują im, jak zrobić zdjęcie
+      telefonem i wysłać je wnukom. Chętnych zawsze jest więcej niż miejsc.
+    essence: Każde pokolenie czegoś uczy drugie, nikt nie jest tylko odbiorcą.
+    for_whom: Dzieci w czasie ferii i starsze kobiety z naszej wsi.
+    reply_pl: null
+  - id: PM10
+    kind: pomysl
+    stage: pomysl
+    target_groups: [cudzoziemcy, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Olena K.
+      is_organisation: false
+    title: Rozmowy po polsku dla mam
+    description: >-
+      Jestem z Ukrainy i mieszkam tu z dwójką dzieci. Dzieci szybko uczą się
+      polskiego w szkole, ale mamy siedzą w domu i boją się mówić.
+      Chciałabym spotkań raz w tygodniu, na których rozmawiamy po polsku
+      przy herbacie, a dzieci bawią się obok.
+    essence: Nauka języka przez zwykłą rozmowę, bez lekcji i bez ocen.
+    for_whom: >-
+      Mamy z innych krajów, które opiekują się dziećmi i nie mają czasu na
+      kurs.
+    reply_pl: >-
+      Dziękujemy. Podobne rozwiązanie z katalogu pokazujemy na stronie
+      trasy. Zapraszamy na konsultację, pomożemy znaleźć salę i
+      wolontariuszy.
+  - id: PM11
+    kind: pomysl
+    stage: prototyp
+    target_groups: [zdrowie, seniorzy]
+    author:
+      display_name: Ośrodek Pomocy Społecznej
+      is_organisation: true
+    title: Telefon po wypisie ze szpitala
+    description: >-
+      Seniorzy po wypisie ze szpitala często nie wiedzą, jak brać nowe leki,
+      i po kilku tygodniach wracają na oddział. Pracownik socjalny dzwoni do
+      nich w pierwszych dniach po powrocie i w razie potrzeby umawia wizytę
+      pielęgniarki środowiskowej. Na razie sprawdzamy to z jedną przychodnią.
+    essence: >-
+      Ktoś sprawdza w pierwszych dniach po szpitalu, czy senior sobie radzi.
+    for_whom: >-
+      Samotni seniorzy, którzy wracają do domu po pobycie w szpitalu.
+    reply_pl: >-
+      Dziękujemy za fiszkę. To dobry kandydat do testu w kilku gminach.
+      Prosimy o krótkie podsumowanie pierwszych miesięcy prototypu.
+  - id: PM12
+    kind: pomysl
+    stage: pomysl
+    target_groups: [rynek-pracy, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Paweł D.
+      is_organisation: false
+    title: Praktyki u miejscowych rzemieślników
+    description: >-
+      Młodzi wyjeżdżają z gminy, a starsi stolarze i mechanicy nie mają komu
+      przekazać fachu. Gmina mogłaby łączyć jednych z drugimi i płacić małe
+      stypendium za kilka miesięcy praktyki.
+    essence: Fach zostaje w okolicy, a młody człowiek dostaje pierwszą pracę.
+    for_whom: >-
+      Młodzież po szkole, która nie wie, co dalej, i rzemieślnicy przed
+      emeryturą.
+    reply_pl: null
+  - id: PM13
+    kind: dobra-praktyka
+    stage: test
+    target_groups: [niepelnosprawnosc-sensoryczna]
+    author:
+      display_name: Stowarzyszenie na rzecz osób z niepełnosprawnościami
+      is_organisation: true
+    title: Tłumacz migowy w urzędzie przez wideo
+    description: >-
+      Osoby głuche przychodzą do urzędu z kartką albo z kimś z rodziny.
+      Testujemy z jednym urzędem gminy połączenie wideo z tłumaczem
+      polskiego języka migowego na tablecie przy okienku. Pierwsze wizyty
+      pokazały, że sprawę da się załatwić za jednym razem.
+    essence: Osoba głucha załatwia sprawę sama, bez pośrednictwa rodziny.
+    for_whom: >-
+      Osoby głuche i słabosłyszące, które posługują się polskim językiem
+      migowym.
+    reply_pl: >-
+      Dziękujemy za opis testu. Prosimy o informację, ile wizyt obsłużono i
+      ile kosztuje usługa tłumacza, to pomoże innym gminom.
+  - id: PM14
+    kind: pomysl
+    stage: pomysl
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Agnieszka B.
+      is_organisation: false
+    title: Skrzynka na trudne pytania
+    description: >-
+      Jestem nauczycielką. Dzieci często nie mówią dorosłym, że coś je
+      martwi, bo się wstydzą. Chcę postawić w szkole skrzynkę na anonimowe
+      kartki, a pedagog raz w tygodniu odpowiadałby na gazetce, bez imion.
+    essence: >-
+      Dziecko może zapytać o coś trudnego, nie zdradzając, że to jego
+      sprawa.
+    for_whom: Uczniowie starszych klas szkoły podstawowej.
+    reply_pl: null
+  - id: PM15
+    kind: pomysl
+    stage: prototyp
+    target_groups: [seniorzy, niepelnosprawnosc-sensoryczna]
+    author:
+      display_name: Gminna Biblioteka Publiczna
+      is_organisation: true
+    title: Czytanie na głos u słabowidzących
+    description: >-
+      Wolontariusze z liceum odwiedzają w domach starsze osoby, które słabo
+      widzą, i czytają im gazety albo książki. Na razie mamy pięć par.
+      Uczymy się, jak dobierać ludzi i jak często się spotykać.
+    essence: >-
+      Dostęp do słowa pisanego dla tych, którzy już nie mogą czytać sami.
+    for_whom: Starsze osoby słabowidzące, które mieszkają same.
+    reply_pl: null
+  - id: PM16
+    kind: dobra-praktyka
+    stage: dziala
+    target_groups: [zdrowie, seniorzy]
+    author:
+      display_name: Stowarzyszenie opiekunów osób z demencją
+      is_organisation: true
+    title: Grupa wsparcia dla opiekunów osób z demencją
+    description: >-
+      Co dwa tygodnie spotykają się u nas osoby, które opiekują się chorym
+      rodzicem albo współmałżonkiem. Psycholog prowadzi pierwszą część,
+      potem jest czas na rozmowę i wymianę porad. W tym czasie wolontariusz
+      zostaje z chorymi w sali obok.
+    essence: Opiekun może na chwilę odpocząć i usłyszeć, że nie jest sam.
+    for_whom: Rodziny, które w domu opiekują się osobą z demencją.
+    reply_pl: null
+  - id: PM17
+    kind: pomysl
+    stage: pomysl
+    target_groups: [inne, seniorzy]
+    author:
+      display_name: Grzegorz L.
+      is_organisation: false
+    title: Wspólny sprzęt ogrodowy dla wsi
+    description: >-
+      Jestem sołtysem. W każdym domu stoi kosiarka, której się używa kilka
+      razy w roku. Chcemy z funduszu sołeckiego kupić dobry sprzęt i
+      wypożyczać go mieszkańcom, a starszym przy koszeniu pomogą chłopaki z
+      OSP.
+    essence: Wypożyczalnia narzędzi zamiast kupowania wszystkiego osobno.
+    for_whom: >-
+      Wszyscy mieszkańcy sołectwa, najbardziej starsi, którzy sami nie dadzą
+      rady.
+    reply_pl: null
+  - id: PM18
+    kind: pomysl
+    stage: test
+    target_groups: [ograniczona-mobilnosc]
+    author:
+      display_name: Stowarzyszenie na rzecz osób z niepełnosprawnościami
+      is_organisation: true
+    title: Mapa dostępnych miejsc w gminie
+    description: >-
+      Razem z uczniami technikum sprawdzamy, które sklepy, przychodnie i
+      urzędy mają podjazd, szerokie drzwi i toaletę dla osób na wózku.
+      Wyniki nanosimy na prostą mapę w internecie. Teraz testuje ją
+      kilkanaście osób poruszających się na wózkach.
+    essence: >-
+      Osoba na wózku wie przed wyjściem z domu, gdzie wejdzie bez pomocy.
+    for_whom: >-
+      Osoby na wózkach, rodzice z wózkami dziecięcymi i seniorzy z
+      balkonikami.
+    reply_pl: null
+  - id: PM19
+    kind: pomysl
+    stage: pomysl
+    target_groups: [niepelnosprawnosc-intelektualna]
+    author:
+      display_name: Barbara Z.
+      is_organisation: false
+    title: Mieszkanie treningowe dla dorosłych dzieci
+    description: >-
+      Mój syn ma trzydzieści lat i niepełnosprawność intelektualną. Martwię
+      się, co będzie, kiedy mnie zabraknie. Marzy mi się małe mieszkanie, w
+      którym kilka takich osób uczyłoby się żyć samodzielnie, z asystentem
+      na miejscu.
+    essence: Nauka samodzielnego życia, póki rodzice jeszcze mogą pomóc.
+    for_whom: >-
+      Dorośli z niepełnosprawnością intelektualną, którzy mieszkają z
+      rodzicami.
+    reply_pl: >-
+      Dziękujemy za fiszkę. Na stronie trasy pokazujemy rozwiązania z
+      katalogu dotyczące mieszkań treningowych. Zapraszamy na rozmowę z
+      opiekunem kategorii o tym, kto w gminie mógłby takie mieszkanie
+      prowadzić.
+  - id: PM20
+    kind: dobra-praktyka
+    stage: test
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Ośrodek Pomocy Społecznej
+      is_organisation: true
+    title: Sąsiedzka pomoc dla młodych rodziców
+    description: >-
+      Kilka doświadczonych mam z osiedla odwiedza młode rodziny, którym
+      urodziło się pierwsze dziecko i które nie mają bliskich w pobliżu.
+      Pomagają w codziennych sprawach i podpowiadają, gdzie szukać pomocy.
+      Asystentka rodziny z ośrodka dobiera pary i raz w miesiącu spotyka się
+      z wolontariuszkami.
+    essence: >-
+      Doświadczona sąsiadka zamiast samotności w pierwszych miesiącach z
+      dzieckiem.
+    for_whom: Młodzi rodzice, którzy nie mają wsparcia rodziny na miejscu.
+    reply_pl: null
+  - id: PM21
+    kind: pomysl
+    stage: pomysl
+    target_groups: [seniorzy, ograniczona-mobilnosc]
+    author:
+      display_name: Stanisława K.
+      is_organisation: false
+    title: Ławki po drodze do sklepu
+    description: >-
+      Mam osiemdziesiąt lat i chodzę o lasce. Do sklepu mam niedaleko, ale
+      nie mam gdzie odpocząć po drodze. Gdyby co kawałek stała ławka, więcej
+      starszych ludzi wychodziłoby z domu.
+    essence: Ławki, żeby starszy człowiek mógł dojść tam, gdzie chce.
+    for_whom: Starsi ludzie, którzy chodzą powoli i szybko się męczą.
+    reply_pl: null
+  - id: PM22
+    kind: pomysl
+    stage: prototyp
+    target_groups: [cudzoziemcy, rynek-pracy]
+    author:
+      display_name: Fundacja na rzecz cudzoziemców
+      is_organisation: true
+    title: Dyżur przed podpisaniem umowy o pracę
+    description: >-
+      Raz w tygodniu prowadzimy dyżur, na który cudzoziemcy mogą przynieść
+      umowę o pracę i zapytać, co podpisują. Dyżuruje wolontariusz, który
+      mówi po ukraińsku i po polsku, a trudniejsze sprawy konsultuje z
+      prawnikiem. Sprawdzamy, czy da się to robić także przez telefon.
+    essence: Cudzoziemiec rozumie umowę, zanim ją podpisze.
+    for_whom: >-
+      Osoby z Ukrainy i innych krajów, które zaczynają pracę w Polsce.
+    reply_pl: null
+  - id: PM23
+    kind: pomysl
+    stage: pomysl
+    target_groups: [zdrowie, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Monika J.
+      is_organisation: false
+    title: Zajęcia o stresie dla nastolatków
+    description: >-
+      Dzieci w klasie mojego syna są ostatnio bardzo nerwowe i zamknięte. Do
+      psychologa czeka się miesiącami. Może psycholog z poradni mógłby raz w
+      miesiącu prowadzić w szkole otwarte zajęcia o radzeniu sobie ze
+      stresem.
+    essence: >-
+      Wsparcie psychiczne przychodzi do szkoły, zanim problem urośnie.
+    for_whom: Nastolatki i ich rodzice.
+    reply_pl: null
+  - id: PM24
+    kind: dobra-praktyka
+    stage: dziala
+    target_groups: [bezdomnosc, rynek-pracy]
+    author:
+      display_name: Stowarzyszenie pomocy osobom w kryzysie bezdomności
+      is_organisation: true
+    title: Praca przy zieleni dla mieszkańców noclegowni
+    description: >-
+      Kilka osób z naszej noclegowni pracuje sezonowo przy porządkowaniu
+      zieleni w gminie, na umowę z zakładem komunalnym. Dostają
+      wynagrodzenie i wsparcie opiekuna, który pomaga, gdy pojawiają się
+      problemy. Dwie osoby dostały potem stałą pracę.
+    essence: Praca z opiekunem jako pierwszy krok do wyjścia z bezdomności.
+    for_whom: Mieszkańcy noclegowni, którzy chcą wrócić do pracy.
+    reply_pl: >-
+      Dziękujemy za opis. Takiej praktyki szukają inne gminy, prosimy o
+      zgodę na pokazanie jej w bazie dobrych praktyk.
+  - id: PM25
+    kind: pomysl
+    stage: test
+    target_groups: [seniorzy]
+    author:
+      display_name: Klub Seniora przy świetlicy wiejskiej
+      is_organisation: true
+    title: Jak nie dać się oszukać przez telefon
+    description: >-
+      Kilka osób z naszego klubu straciło oszczędności przez fałszywego
+      wnuczka albo fałszywego policjanta. Razem z dzielnicowym prowadzimy
+      krótkie spotkania, na których w parach ćwiczymy, co powiedzieć i do
+      kogo zadzwonić. Testujemy, czy scenki działają lepiej niż ulotki.
+    essence: Ćwiczenie rozmowy z oszustem, zanim zadzwoni naprawdę.
+    for_whom: >-
+      Seniorzy, którzy mieszkają sami i odbierają telefony od obcych.
+    reply_pl: null
+  - id: PM26
+    kind: pomysl
+    stage: pomysl
+    target_groups: [spektrum-autyzmu, zdrowie]
+    author:
+      display_name: Ewa N.
+      is_organisation: false
+    title: Karta dziecka w spektrum na wizytę u lekarza
+    description: >-
+      Mój syn ma autyzm. Każda wizyta u lekarza albo dentysty to wielki
+      stres, bo nikt nie wie, że trzeba mówić spokojnie i uprzedzać, co się
+      stanie. Chciałabym prostą kartę, którą pokazuję w rejestracji, żeby
+      personel wiedział, jak się zachować.
+    essence: >-
+      Personel od razu wie, jak pomóc dziecku w spektrum przejść przez
+      wizytę.
+    for_whom: >-
+      Dzieci w spektrum autyzmu i rodzice, którzy chodzą z nimi do lekarza.
+    reply_pl: >-
+      Dziękujemy. Podobne rozwiązania pokazujemy na stronie trasy.
+      Proponujemy rozmowę o tym, z jaką przychodnią można to sprawdzić w
+      małej skali.
+  - id: PM27
+    kind: pomysl
+    stage: prototyp
+    target_groups: [dzieci-mlodziez-rodziny, seniorzy]
+    author:
+      display_name: Szkoła Podstawowa
+      is_organisation: true
+    title: Ogródek szkolny dla całej wsi
+    description: >-
+      Za szkołą był kawałek ziemi, który stał pusty. Z uczniami i rodzicami
+      założyliśmy grządki, a w wakacje podlewają je seniorzy z sąsiedztwa i
+      biorą część warzyw. Pierwszy sezon pokazał, że chętnych jest więcej
+      niż miejsca.
+    essence: Wspólny ogród, który łączy szkołę z sąsiadami.
+    for_whom: Uczniowie, ich rodziny i starsi sąsiedzi szkoły.
+    reply_pl: null
+  - id: PM28
+    kind: dobra-praktyka
+    stage: test
+    target_groups: [niepelnosprawnosc-intelektualna]
+    author:
+      display_name: Warsztat Terapii Zajęciowej
+      is_organisation: true
+    title: Uczestnicy sprawdzają pisma urzędu
+    description: >-
+      Nasi uczestnicy pomagają urzędowi gminy sprawdzać, czy pisma i
+      ogłoszenia są zrozumiałe. Czytają je i mówią, co jest trudne, a
+      urzędnicy przepisują je prostym językiem. Sprawdziliśmy już kilka
+      druków.
+    essence: >-
+      Osoby z niepełnosprawnością intelektualną jako testerzy prostego
+      języka.
+    for_whom: >-
+      Osoby z niepełnosprawnością intelektualną i wszyscy, którym urzędowe
+      pisma sprawiają kłopot.
+    reply_pl: >-
+      Dziękujemy za fiszkę. Chętnie pokażemy tę praktykę innym urzędom,
+      zapraszamy na konsultację w sprawie opisu i kosztów.
+  - id: PM29
+    kind: pomysl
+    stage: pomysl
+    target_groups: [rynek-pracy, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Spółdzielnia socjalna
+      is_organisation: true
+    title: Obiady dla szkół z produktów od rolników
+    description: >-
+      Jesteśmy małą spółdzielnią socjalną i zatrudniamy osoby, które długo
+      były bez pracy. Chcemy gotować obiady dla dwóch szkół z produktów od
+      okolicznych rolników. Potrzebujemy pomocy w przygotowaniu oferty do
+      zamówienia gminy.
+    essence: Praca dla osób wykluczonych i zdrowe obiady dla dzieci.
+    for_whom: >-
+      Osoby długo bez pracy, które chcą wrócić na rynek, i uczniowie szkół
+      w gminie.
+    reply_pl: >-
+      Dziękujemy. Warto zapytać gminę o klauzule społeczne w zamówieniach.
+      Ekspert ds. ekonomii społecznej może pomóc w przygotowaniu oferty,
+      zapraszamy na konsultację.
+  - id: PM30
+    kind: pomysl
+    stage: pomysl
+    target_groups: [ograniczona-mobilnosc, zdrowie]
+    author:
+      display_name: Krzysztof W.
+      is_organisation: false
+    title: Wypożyczalnia sprzętu rehabilitacyjnego
+    description: >-
+      Po wypadku przez kilka miesięcy potrzebowałem wózka i kul, a nowy
+      sprzęt jest drogi. Potem taki sprzęt leży w piwnicach. Gmina albo
+      parafia mogłaby prowadzić wypożyczalnię, do której ludzie oddają
+      sprzęt i z której go biorą.
+    essence: Sprzęt krąży między ludźmi, którzy akurat go potrzebują.
+    for_whom: Osoby po wypadkach i operacjach oraz ich rodziny.
+    reply_pl: null
+  - id: PM31
+    kind: pomysl
+    stage: prototyp
+    target_groups: [seniorzy]
+    author:
+      display_name: Ośrodek Pomocy Społecznej
+      is_organisation: true
+    title: Obiady z dowozem z gospody
+    description: >-
+      Nie mamy w gminie stołówki dla seniorów. Dogadaliśmy się z miejscową
+      gospodą, która gotuje kilkanaście obiadów więcej, a kierowca gminnego
+      busa rozwozi je w porze obiadowej. Na razie dla dziesięciu osób, przez
+      kilka miesięcy sprawdzamy koszty.
+    essence: Ciepły posiłek dla seniora bez budowania stołówki.
+    for_whom: Samotni seniorzy, którzy już sami nie gotują.
+    reply_pl: null
+  - id: PM32
+    kind: pomysl
+    stage: pomysl
+    target_groups: [inne]
+    author:
+      display_name: Michał S.
+      is_organisation: false
+    title: Lodówka społeczna przy sklepie
+    description: >-
+      W osiedlowym sklepie codziennie zostaje pieczywo i nabiał z krótką
+      datą. Obok można postawić lodówkę, do której sklep i sąsiedzi wkładają
+      jedzenie, a każdy może coś wziąć. Ktoś musiałby pilnować czystości.
+    essence: Jedzenie trafia do ludzi, a nie do kosza.
+    for_whom: >-
+      Każdy, komu brakuje do pierwszego, i każdy, kto nie lubi marnować.
+    reply_pl: null
+  - id: PM33
+    kind: dobra-praktyka
+    stage: dziala
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Uczniowski Klub Sportowy
+      is_organisation: true
+    title: Sobotnie treningi bez opłat
+    description: >-
+      W soboty prowadzimy darmowe treningi piłki nożnej i lekkoatletyki.
+      Ośrodek pomocy społecznej daje znać rodzinom, których nie stać na
+      płatne zajęcia, a trenerzy pilnują, żeby nikt nie wiedział, kto skąd
+      przyszedł. Stale przychodzi około trzydziestu dzieci.
+    essence: Sport bez opłat i bez etykiet.
+    for_whom: >-
+      Dzieci i młodzież z rodzin, których nie stać na płatne zajęcia.
+    reply_pl: null
+  - id: PM34
+    kind: pomysl
+    stage: test
+    target_groups: [niepelnosprawnosc-sensoryczna]
+    author:
+      display_name: Adam G.
+      is_organisation: false
+    title: Aplikacja, która czyta nazwy przystanków
+    description: >-
+      Jestem niewidomy i dojeżdżam do pracy autobusem, w którym nie ma
+      zapowiedzi przystanków. Z kolegą zrobiliśmy aplikację, która czyta
+      nazwę przystanku na podstawie lokalizacji telefonu. Testuje ją teraz
+      kilka osób niewidomych i słabowidzących.
+    essence: Niewidomy pasażer wie, gdzie wysiąść, bez pytania innych.
+    for_whom: >-
+      Osoby niewidome i słabowidzące, które same jeżdżą komunikacją.
+    reply_pl: null
+  - id: PM35
+    kind: dobra-praktyka
+    stage: dziala
+    target_groups: [seniorzy]
+    author:
+      display_name: Rada Seniorów przy urzędzie gminy
+      is_organisation: true
+    title: Dyżur seniora w urzędzie
+    description: >-
+      W każdy wtorek dwie osoby z naszej rady dyżurują w holu urzędu i
+      pomagają starszym mieszkańcom wypełnić wniosek albo znaleźć właściwy
+      pokój. Najczęściej chodzi o dodatki, podatki i opłaty za śmieci. Urząd
+      dał nam stolik i identyfikatory.
+    essence: Senior pomaga seniorowi załatwić sprawę w urzędzie.
+    for_whom: >-
+      Starsi mieszkańcy, którzy rzadko bywają w urzędzie i boją się pytać.
+    reply_pl: null
+  - id: PM36
+    kind: pomysl
+    stage: prototyp
+    target_groups: [spektrum-autyzmu, rynek-pracy]
+    author:
+      display_name: Fundacja wspierania osób w spektrum autyzmu
+      is_organisation: true
+    title: Staż w firmie z trenerem pracy
+    description: >-
+      Dorośli w spektrum często mają dobre wykształcenie, ale odpadają na
+      rozmowie kwalifikacyjnej. Razem z dwiema miejscowymi firmami
+      przygotowaliśmy staże, na których trener pracy przez pierwsze tygodnie
+      towarzyszy stażyście i tłumaczy zespołowi, czego on potrzebuje.
+    essence: >-
+      Pracodawca i pracownik w spektrum mają kogoś, kto pomaga im się
+      porozumieć.
+    for_whom: Dorośli w spektrum autyzmu, którzy szukają pierwszej pracy.
+    reply_pl: >-
+      Dziękujemy. To dobry temat na test w kilku powiatach. Zapraszamy na
+      konsultację z opiekunem kategorii rynek pracy.
+  - id: PM37
+    kind: pomysl
+    stage: pomysl
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Joanna P.
+      is_organisation: false
+    title: Wieczór dla rodziców nastolatków
+    description: >-
+      Mam dwoje nastolatków i czasem nie wiem, jak z nimi rozmawiać. Myślę,
+      że inni rodzice mają to samo. Szkoła mogłaby raz w miesiącu robić
+      wieczór, na którym rodzice rozmawiają ze sobą i z pedagogiem, bez ocen
+      i bez wywiadówki.
+    essence: >-
+      Rodzice uczą się od siebie nawzajem, jak rozmawiać z dorastającymi
+      dziećmi.
+    for_whom: Rodzice dzieci w wieku od dwunastu do osiemnastu lat.
+    reply_pl: null
+  - id: PM38
+    kind: dobra-praktyka
+    stage: test
+    target_groups: [cudzoziemcy, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Szkoła Podstawowa
+      is_organisation: true
+    title: Asystentka międzykulturowa w klasie
+    description: >-
+      W naszej szkole uczy się kilkanaścioro dzieci z Ukrainy i jedno z
+      Gruzji. Zatrudniliśmy na część etatu asystentkę, która mówi po
+      ukraińsku, pomaga na lekcjach i rozmawia z rodzicami. Sprawdzamy, czy
+      dzieci szybciej nadrabiają zaległości.
+    essence: W szkole jest ktoś, kto rozumie język dziecka i jego rodziców.
+    for_whom: Uczniowie z innych krajów i ich rodzice.
+    reply_pl: null
+  - id: PM39
+    kind: pomysl
+    stage: pomysl
+    target_groups: [zdrowie, seniorzy]
+    author:
+      display_name: Henryk M.
+      is_organisation: false
+    title: Pomiar ciśnienia przy sklepie
+    description: >-
+      Do przychodni mamy daleko, a do sklepu chodzi każdy. Raz w tygodniu
+      pielęgniarka mogłaby mierzyć przy sklepie ciśnienie i cukier i
+      doradzić, kiedy iść do lekarza.
+    essence: Badanie tam, gdzie ludzie i tak przychodzą.
+    for_whom: >-
+      Mieszkańcy wsi, zwłaszcza starsi mężczyźni, którzy nie chodzą do
+      lekarza.
+    reply_pl: null
+  - id: PM40
+    kind: pomysl
+    stage: prototyp
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Młodzieżowa Rada Gminy
+      is_organisation: true
+    title: Pokój młodzieży w remizie
+    description: >-
+      Młodzież nie ma gdzie się spotykać, więc siedzi na przystanku.
+      Dostaliśmy od strażaków jeden pokój w remizie, sami go pomalowaliśmy i
+      urządziliśmy. Otwieramy go dwa razy w tygodniu pod opieką wolontariusza
+      i sprawdzamy, kto przychodzi i czego potrzebuje.
+    essence: Młodzi sami tworzą i prowadzą swoje miejsce.
+    for_whom: >-
+      Nastolatki ze wsi, które nie mają gdzie spędzać czasu po szkole.
+    reply_pl: >-
+      Dziękujemy. Podobną potrzebę zgłaszają inne gminy. Zapraszamy na
+      konsultację o finansowaniu opiekuna na kolejne miesiące.
+  - id: PM41
+    kind: pomysl
+    stage: pomysl
+    target_groups: [niepelnosprawnosc-intelektualna]
+    author:
+      display_name: Dorota F.
+      is_organisation: false
+    title: Wakacje dla dorosłych z niepełnosprawnością
+    description: >-
+      Pracuję jako opiekunka. Dorośli z niepełnosprawnością intelektualną
+      prawie nigdy nie wyjeżdżają, bo ich rodzice są już starzy i zmęczeni.
+      Chciałabym zorganizować krótki wyjazd z wolontariuszami, żeby oni
+      mieli wakacje, a rodzice chwilę odpoczęli.
+    essence: >-
+      Wyjazd dla dorosłych z niepełnosprawnością i odpoczynek dla ich
+      rodziców.
+    for_whom: >-
+      Dorośli z niepełnosprawnością intelektualną i ich starsi rodzice.
+    reply_pl: null
+  - id: PM42
+    kind: dobra-praktyka
+    stage: dziala
+    target_groups: [seniorzy, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Uniwersytet Trzeciego Wieku
+      is_organisation: true
+    title: Seniorzy czytają w przedszkolu
+    description: >-
+      Kilkoro naszych słuchaczy raz w tygodniu czyta bajki w przedszkolu i
+      pomaga przy zajęciach plastycznych. Przedszkole jest zadowolone, a
+      nasi wolontariusze mówią, że to najlepszy dzień tygodnia. Działa to
+      już trzeci rok.
+    essence: Seniorzy są potrzebni, a dzieci mają dodatkowych dziadków.
+    for_whom: >-
+      Aktywni seniorzy, którzy chcą coś robić dla innych, i przedszkolaki.
+    reply_pl: null
+  - id: PM43
+    kind: pomysl
+    stage: test
+    target_groups: [bezdomnosc, zdrowie]
+    author:
+      display_name: Fundacja pomocy osobom w kryzysie bezdomności
+      is_organisation: true
+    title: Pielęgniarka w łaźni
+    description: >-
+      Osoby w kryzysie bezdomności przychodzą do naszej łaźni, ale do
+      przychodni już nie. Testujemy dyżur pielęgniarki raz w tygodniu:
+      opatrunki, pomiary, rozmowa o leczeniu. Już widać, że ludzie
+      przychodzą z ranami, z którymi nie poszliby nigdzie indziej.
+    essence: >-
+      Opieka zdrowotna tam, gdzie osoba w kryzysie bezdomności i tak
+      przychodzi.
+    for_whom: Osoby w kryzysie bezdomności, które unikają przychodni.
+    reply_pl: null
+  - id: PM44
+    kind: pomysl
+    stage: prototyp
+    target_groups: [ograniczona-mobilnosc, seniorzy]
+    author:
+      display_name: Urząd Gminy
+      is_organisation: true
+    title: Pomoc na schodach w blokach bez wind
+    description: >-
+      W naszych blokach bez wind mieszka wielu starszych ludzi, którzy od
+      miesięcy nie zeszli na dół. Kupiliśmy jeden schodołaz i przeszkoliliśmy
+      dwóch pracowników, którzy na zgłoszenie pomagają zejść i wejść, na
+      przykład do lekarza albo na spacer. Sprawdzamy, ile jest zgłoszeń i
+      czy dwie osoby wystarczą.
+    essence: >-
+      Osoba, która nie pokona sama schodów, znowu wychodzi z domu.
+    for_whom: >-
+      Seniorzy i osoby z niepełnosprawnością ruchową, które mieszkają na
+      wyższych piętrach.
+    reply_pl: >-
+      Dziękujemy. Rozwiązania z podobnym sprzętem pokazujemy na stronie
+      trasy. Opiekun kategorii wskaże programy, z których można sfinansować
+      drugi schodołaz.
+  - id: PM45
+    kind: pomysl
+    stage: prototyp
+    target_groups: [inne, seniorzy]
+    author:
+      display_name: Łukasz T.
+      is_organisation: false
+    title: Tablica sąsiedzkiej pomocy
+    description: >-
+      Na klatce schodowej powiesiłem korkową tablicę: kto czegoś potrzebuje,
+      przypina kartkę, a kto może pomóc, dopisuje się. W kilka tygodni
+      pojawiło się sporo próśb o wyniesienie śmieci, zakupy i korepetycje.
+      Chcę to rozszerzyć na całe osiedle.
+    essence: >-
+      Sąsiedzi widzą, kto potrzebuje drobnej pomocy, i mogą jej udzielić.
+    for_whom: Mieszkańcy bloku, szczególnie starsi i samotni.
+    reply_pl: null
+
+contacts:
+  - id: KT01
+    target: innovation
+    group: seniorzy
+    requester:
+      name: Małgorzata K.
+      organisation: Ośrodek Pomocy Społecznej
+    message: >-
+      Chcielibyśmy wdrożyć to rozwiązanie w naszej gminie, mamy sporo
+      samotnych seniorów w małych wsiach. Czy są materiały dla koordynatora
+      i wzór regulaminu? Chętnie porozmawiamy też o kosztach pierwszego
+      roku.
+  - id: KT02
+    target: innovation
+    group: seniorzy
+    requester:
+      name: Ryszard B.
+      organisation: null
+    message: >-
+      Moja mama mieszka sama i myślę, że to by jej pomogło. Czy można to
+      zorganizować u nas we wsi, czy trzeba to zgłosić w gminie? Nie wiem,
+      od czego zacząć.
+  - id: KT03
+    target: innovation
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Iwona S.
+      organisation: Szkoła Podstawowa
+    message: >-
+      Jestem pedagogiem szkolnym. Chciałabym zapytać, jak wyglądały pierwsze
+      tygodnie wdrożenia w szkole i ile osób potrzeba do prowadzenia zajęć.
+      Czy można przyjechać i zobaczyć, jak to działa na miejscu?
+  - id: KT04
+    target: innovation
+    group: seniorzy
+    requester:
+      name: Wiesław N.
+      organisation: Klub Seniora przy świetlicy wiejskiej
+    message: >-
+      Jesteśmy małym klubem seniora i działamy bez etatów. Czy to
+      rozwiązanie da się prowadzić siłami wolontariuszy? Prosimy o krótką
+      rozmowę telefoniczną.
+  - id: KT05
+    target: innovation
+    group: ograniczona-mobilnosc
+    requester:
+      name: Elżbieta W.
+      organisation: Urząd Gminy
+    message: >-
+      Gmina planuje usługę dla osób, które mają trudność z wyjściem z domu.
+      Interesuje nas, jak rozwiązaliście zamawianie usługi i ile to kosztuje
+      miesięcznie. Czy są dokumenty, które możemy wykorzystać?
+  - id: KT06
+    target: innovation
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Marta L.
+      organisation: Fundacja wsparcia rodzin
+    message: >-
+      Pracujemy z rodzinami, które mają kłopoty wychowawcze. Chcielibyśmy
+      skorzystać z waszych doświadczeń w naszym projekcie. Czy możemy umówić
+      się na rozmowę online?
+  - id: KT07
+    target: innovation
+    group: niepelnosprawnosc-intelektualna
+    requester:
+      name: Teresa D.
+      organisation: null
+    message: >-
+      Mam dorosłą córkę z niepełnosprawnością intelektualną i szukam czegoś
+      takiego w okolicy. Czy to działa tylko u was, czy można to założyć
+      gdzie indziej?
+  - id: KT08
+    target: innovation
+    group: zdrowie
+    requester:
+      name: Andrzej P.
+      organisation: Stowarzyszenie promocji zdrowia
+    message: >-
+      Chcemy przenieść to rozwiązanie na nasz teren. Prosimy o informację,
+      czy potrzebna jest współpraca z przychodnią i jakie były największe
+      trudności na początku.
+  - id: KT09
+    target: innovation
+    group: cudzoziemcy
+    requester:
+      name: Natalia H.
+      organisation: Fundacja na rzecz cudzoziemców
+    message: >-
+      W naszym powiecie mieszka coraz więcej rodzin z zagranicy i to
+      rozwiązanie bardzo nas zainteresowało. Czy macie materiały w innych
+      językach i czy możemy z nich korzystać?
+  - id: KT10
+    target: innovation
+    group: seniorzy
+    requester:
+      name: Bożena A.
+      organisation: Ośrodek Pomocy Społecznej
+    message: >-
+      Dzień dobry, jestem pracownikiem socjalnym. Kierownik poprosił, żebym
+      dowiedziała się więcej o tym rozwiązaniu, zanim zaplanujemy budżet.
+      Ile osób obsługuje jeden koordynator i skąd były pieniądze na start?
+  - id: KT11
+    target: innovation
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Piotr Z.
+      organisation: Urząd Gminy
+    message: >-
+      Rozważamy wprowadzenie podobnych zajęć w trzech szkołach gminy. Czy
+      można dostać scenariusze zajęć i informację, jakich kwalifikacji
+      wymaga prowadzący? Chętnie zaprosimy kogoś od was na spotkanie z
+      dyrektorami.
+  - id: KT12
+    target: innovation
+    group: niepelnosprawnosc-sensoryczna
+    requester:
+      name: Jolanta M.
+      organisation: Stowarzyszenie na rzecz osób z niepełnosprawnościami
+    message: >-
+      Wśród naszych członków jest kilkanaście osób niewidomych i
+      słabowidzących. Chcielibyśmy sprawdzić to rozwiązanie u nas. Ile
+      kosztuje sprzęt i czy prowadzicie szkolenia?
+  - id: KT13
+    target: innovation
+    group: seniorzy
+    requester:
+      name: Zofia R.
+      organisation: null
+    message: >-
+      Jestem emerytką i mam trochę czasu. Chętnie pomogłabym przy czymś
+      takim w swojej okolicy. Do kogo mam się zgłosić?
+  - id: KT14
+    target: innovation
+    group: rynek-pracy
+    requester:
+      name: Mariusz C.
+      organisation: Spółdzielnia socjalna
+    message: >-
+      Zatrudniamy osoby, które długo były bez pracy, i szukamy sprawdzonych
+      sposobów na pierwsze miesiące zatrudnienia. Czy moglibyśmy
+      porozmawiać o tym, jak to u was wygląda w praktyce?
+  - id: KT15
+    target: innovation
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Anna W.
+      organisation: null
+    message: >-
+      Jestem mamą trójki dzieci i bardzo chciałabym, żeby coś takiego było
+      w naszej szkole. Jak mogę to zaproponować dyrekcji? Czy macie ulotkę,
+      którą mogę pokazać?
+  - id: KT16
+    target: innovation
+    group: spektrum-autyzmu
+    requester:
+      name: Kamila O.
+      organisation: Przedszkole samorządowe
+    message: >-
+      W naszym przedszkolu jest kilkoro dzieci w spektrum autyzmu. Szukamy
+      sprawdzonych sposobów pracy w grupie. Czy możecie przeszkolić nasze
+      nauczycielki albo polecić materiały?
+  - id: KT17
+    target: innovation
+    group: seniorzy
+    requester:
+      name: Edward J.
+      organisation: Urząd Gminy
+    message: >-
+      Gmina przygotowuje program działań dla seniorów na kolejne lata i
+      chcemy wpisać do niego to rozwiązanie. Prosimy o kontakt z osobą,
+      która opowie o kosztach i efektach.
+  - id: KT18
+    target: innovation
+    group: bezdomnosc
+    requester:
+      name: Robert F.
+      organisation: Stowarzyszenie pomocy osobom w kryzysie bezdomności
+    message: >-
+      Prowadzimy noclegownię i szukamy sposobów, żeby nasi mieszkańcy
+      szybciej się usamodzielniali. Bardzo interesuje nas wasze
+      doświadczenie. Czy możemy przyjechać na wizytę studyjną?
+  - id: KT19
+    target: innovation
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Ewelina G.
+      organisation: Ośrodek Pomocy Społecznej
+    message: >-
+      Jestem asystentką rodziny i pracuję z kilkoma rodzinami, którym to by
+      pomogło. Czy rodzina może zgłosić się sama, czy potrzebne jest
+      skierowanie?
+  - id: KT20
+    target: innovation
+    group: ograniczona-mobilnosc
+    requester:
+      name: Leszek K.
+      organisation: null
+    message: >-
+      Od wypadku poruszam się na wózku. Przeczytałem o tym rozwiązaniu i
+      chciałbym wiedzieć, czy działa też w mniejszych miejscowościach. Kto
+      mógłby to u nas uruchomić?
+  - id: KT21
+    target: innovation
+    group: zdrowie
+    requester:
+      name: Grażyna T.
+      organisation: Koło Gospodyń Wiejskich
+    message: >-
+      Wiele kobiet z naszego koła opiekuje się chorymi w domu. Chcielibyśmy
+      zorganizować u nas coś podobnego. Czy są materiały dla osób, które
+      prowadzą spotkania?
+  - id: KT22
+    target: innovation
+    group: seniorzy
+    requester:
+      name: Dariusz S.
+      organisation: Fundacja wsparcia seniorów
+    message: >-
+      Prowadzimy kilka klubów seniora w powiecie i chcielibyśmy dodać to do
+      naszych zajęć. Na jakich warunkach można korzystać z materiałów? Czy
+      trzeba podpisać jakąś umowę?
+  - id: KT23
+    target: innovation
+    group: niepelnosprawnosc-intelektualna
+    requester:
+      name: Urszula B.
+      organisation: Środowiskowy Dom Samopomocy
+    message: >-
+      Nasi uczestnicy mogliby skorzystać z takiego rozwiązania. Zanim
+      zgłosimy pomysł do gminy, chcemy wiedzieć, jak długo trwało
+      przygotowanie i kto był partnerem. Prosimy o kontakt.
+  - id: KT24
+    target: innovation
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Sylwia K.
+      organisation: Gminna Biblioteka Publiczna
+    message: >-
+      Biblioteka chce poszerzyć ofertę dla rodzin z małymi dziećmi. Czy to
+      rozwiązanie można prowadzić w bibliotece? Prosimy o przykładowy plan
+      spotkań.
+  - id: KT25
+    target: innovation
+    group: cudzoziemcy
+    requester:
+      name: Oksana P.
+      organisation: null
+    message: >-
+      Mieszkam w Polsce od niedawna i pracuję w szkole jako pomoc
+      nauczyciela. Chciałabym, żeby coś takiego było też u nas. Czy mogę
+      dostać więcej informacji po polsku albo po ukraińsku?
+  - id: KT26
+    target: innovation
+    group: niepelnosprawnosc-sensoryczna
+    requester:
+      name: Marek K.
+      organisation: Urząd Gminy
+    message: >-
+      Gmina chce poprawić dostępność usług dla osób głuchych i niewidomych.
+      Czy wasze rozwiązanie można wdrożyć w małym urzędzie i ile kosztuje
+      rocznie?
+  - id: KT27
+    target: innovation
+    group: rynek-pracy
+    requester:
+      name: Beata R.
+      organisation: Powiatowe Centrum Pomocy Rodzinie
+    message: >-
+      Szukamy sposobów aktywizacji zawodowej osób z niepełnosprawnościami.
+      Czy to rozwiązanie przeniesiono już do innego powiatu? Chętnie
+      porozmawiamy o współpracy.
+  - id: KT28
+    target: innovation
+    group: seniorzy
+    requester:
+      name: Halina G.
+      organisation: null
+    message: >-
+      Prowadzę nieformalną grupę sąsiadek, spotykamy się co tydzień. Czy do
+      tego trzeba mieć stowarzyszenie, czy możemy zacząć same? Proszę o
+      kilka rad na początek.
+  - id: KT29
+    target: innovation
+    group: inne
+    requester:
+      name: Tadeusz W.
+      organisation: Stowarzyszenie rozwoju wsi
+    message: >-
+      Szukamy pomysłów, które zbliżą mieszkańców naszej wsi, i wasze
+      rozwiązanie bardzo nam się podoba. Czy da się je zrobić bez dużych
+      pieniędzy i kto u was był liderem?
+  - id: KT30
+    target: innovation
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Agata M.
+      organisation: Szkoła Podstawowa
+    message: >-
+      Jestem dyrektorką małej wiejskiej szkoły. Mamy salę i chętnych
+      nauczycieli, brakuje nam pomysłu na zajęcia popołudniowe. Czy możemy
+      dostać opis, jak to zorganizować krok po kroku?
+  - id: KT31
+    target: advisor
+    group: seniorzy
+    requester:
+      name: Krystyna L.
+      organisation: Ośrodek Pomocy Społecznej
+    message: >-
+      Prosimy o kontakt opiekuna kategorii. Szukamy wsparcia dla seniorów z
+      demencją, którzy mieszkają sami, i nie znaleźliśmy w katalogu nic, co
+      pasuje do małej gminy. Chętnie opiszemy naszą sytuację na spotkaniu.
+  - id: KT32
+    target: advisor
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Rafał N.
+      organisation: Urząd Gminy
+    message: >-
+      Chcemy przygotować wniosek na działania dla rodzin z dziećmi i nie
+      wiemy, który nabór wybrać. Prosimy o rozmowę z doradcą o możliwych
+      źródłach finansowania.
+  - id: KT33
+    target: advisor
+    group: niepelnosprawnosc-intelektualna
+    requester:
+      name: Danuta P.
+      organisation: null
+    message: >-
+      Jestem mamą dorosłego syna z niepełnosprawnością intelektualną.
+      Odkąd zostałam sama, nie wiem, kto w gminie może nam pomóc w
+      codziennej opiece. Proszę o rozmowę z kimś, kto zna te sprawy.
+  - id: KT34
+    target: advisor
+    group: cudzoziemcy
+    requester:
+      name: Ludmiła S.
+      organisation: Szkoła Podstawowa
+    message: >-
+      Do naszej szkoły zapisało się kilkoro dzieci z zagranicy, które nie
+      mówią po polsku. Prosimy doradcę o wskazanie, gdzie szukać wsparcia
+      dla szkoły i dla rodziców.
+  - id: KT35
+    target: advisor
+    group: bezdomnosc
+    requester:
+      name: Jan K.
+      organisation: Ośrodek Pomocy Społecznej
+    message: >-
+      W naszej gminie nie ma noclegowni, a zimą mamy kilka osób w kryzysie
+      bezdomności. Chcielibyśmy porozmawiać z doradcą o rozwiązaniach dla
+      małych gmin, których nie stać na własną placówkę.
+  - id: KT36
+    target: advisor
+    group: rynek-pracy
+    requester:
+      name: Magdalena Z.
+      organisation: Centrum Integracji Społecznej
+    message: >-
+      Prosimy o konsultację w sprawie współpracy z lokalnymi firmami.
+      Chcemy, żeby nasi uczestnicy po kursach mieli gdzie odbyć praktyki, i
+      szukamy sprawdzonych modeli.
+  - id: KT37
+    target: advisor
+    group: zdrowie
+    requester:
+      name: Stefan O.
+      organisation: Urząd Gminy
+    message: >-
+      Gmina chce zająć się zdrowiem psychicznym młodzieży, ale w okolicy nie
+      ma psychologa dziecięcego. Prosimy o kontakt z doradcą, który podpowie,
+      od czego zacząć i z kim współpracować.
+  - id: KT38
+    target: advisor
+    group: seniorzy
+    requester:
+      name: Irena C.
+      organisation: null
+    message: >-
+      Jestem w radzie seniorów i chcemy przekonać wójta do otwarcia klubu
+      seniora. Prosimy o rozmowę o tym, jakie argumenty i dane pokazać na
+      sesji rady gminy.
+  - id: KT39
+    target: advisor
+    group: dzieci-mlodziez-rodziny
+    requester:
+      name: Patrycja W.
+      organisation: Fundacja wsparcia rodzin
+    message: >-
+      Mamy pomysł na wsparcie rodzin zastępczych w powiecie, ale nie wiemy,
+      czy coś podobnego działa już w regionie. Prosimy o kontakt z doradcą
+      kategorii.
+  - id: KT40
+    target: advisor
+    group: spektrum-autyzmu
+    requester:
+      name: Hubert D.
+      organisation: Stowarzyszenie rodziców dzieci w spektrum autyzmu
+    message: >-
+      Szukamy wsparcia przy planowaniu zajęć dla nastolatków w spektrum,
+      którzy kończą szkołę. Prosimy doradcę o rozmowę, czy w regionie są
+      partnerzy, z którymi warto się połączyć.
+
+readiness:
+  - id: GT01
+    display_name: Ośrodek Pomocy Społecznej
+    topics: [seniorzy, dzieci-mlodziez-rodziny]
+  - id: GT02
+    display_name: Klub Seniora przy świetlicy wiejskiej
+    topics: [seniorzy]
+  - id: GT03
+    display_name: Szkoła Podstawowa
+    topics: [dzieci-mlodziez-rodziny]
+  - id: GT04
+    display_name: Środowiskowy Dom Samopomocy
+    topics: [niepelnosprawnosc-intelektualna, spektrum-autyzmu]
+  - id: GT05
+    display_name: Stowarzyszenie na rzecz osób z niepełnosprawnościami
+    topics: [ograniczona-mobilnosc, niepelnosprawnosc-sensoryczna]
+  - id: GT06
+    display_name: Fundacja wsparcia rodzin
+    topics: [dzieci-mlodziez-rodziny]
+  - id: GT07
+    display_name: Koło Gospodyń Wiejskich
+    topics: [seniorzy, inne]
+  - id: GT08
+    display_name: Urząd Gminy
+    topics: [seniorzy, dzieci-mlodziez-rodziny, ograniczona-mobilnosc]
+  - id: GT09
+    display_name: Gminna Biblioteka Publiczna
+    topics: [seniorzy, dzieci-mlodziez-rodziny, cudzoziemcy]
+  - id: GT10
+    display_name: Warsztat Terapii Zajęciowej
+    topics: [niepelnosprawnosc-intelektualna, rynek-pracy]
+  - id: GT11
+    display_name: Centrum Integracji Społecznej
+    topics: [rynek-pracy, bezdomnosc]
+  - id: GT12
+    display_name: Fundacja na rzecz cudzoziemców
+    topics: [cudzoziemcy, rynek-pracy]
+  - id: GT13
+    display_name: Uniwersytet Trzeciego Wieku
+    topics: [seniorzy]
+  - id: GT14
+    display_name: Stowarzyszenie pomocy osobom w kryzysie bezdomności
+    topics: [bezdomnosc, zdrowie]
+  - id: GT15
+    display_name: Dom Pomocy Społecznej
+    topics: [seniorzy, zdrowie]
+  - id: GT16
+    display_name: Przedszkole samorządowe
+    topics: [dzieci-mlodziez-rodziny, spektrum-autyzmu]
+  - id: GT17
+    display_name: Powiatowe Centrum Pomocy Rodzinie
+    topics: [dzieci-mlodziez-rodziny, ograniczona-mobilnosc]
+  - id: GT18
+    display_name: Stowarzyszenie osób niewidomych i słabowidzących
+    topics: [niepelnosprawnosc-sensoryczna]
+  - id: GT19
+    display_name: Klub Seniora
+    topics: [seniorzy, zdrowie]
+  - id: GT20
+    display_name: Spółdzielnia socjalna
+    topics: [rynek-pracy]
+  - id: GT21
+    display_name: Ośrodek Pomocy Społecznej
+    topics: [dzieci-mlodziez-rodziny, bezdomnosc, inne]
+  - id: GT22
+    display_name: Fundacja wspierania osób w spektrum autyzmu
+    topics: [spektrum-autyzmu]
+  - id: GT23
+    display_name: Stowarzyszenie rozwoju wsi
+    topics: [inne, seniorzy]
+  - id: GT24
+    display_name: Centrum Usług Społecznych
+    topics: [seniorzy, dzieci-mlodziez-rodziny, zdrowie]
+  - id: GT25
+    display_name: Szkoła Podstawowa
+    topics: [dzieci-mlodziez-rodziny, cudzoziemcy]
+
+mentors:
+  - id: MT01
+    name: Ekspertka ds. wsparcia rodzin z dziećmi
+    expertise_pl: >-
+      Asystentura rodziny, świetlice środowiskowe i wsparcie rodziców w
+      kryzysie, także w małych gminach wiejskich.
+    target_groups: [dzieci-mlodziez-rodziny]
+  - id: MT02
+    name: Ekspert ds. dostępności i niepełnosprawności
+    expertise_pl: >-
+      Dostępność budynków i usług, mieszkania treningowe, asystencja
+      osobista i zatrudnienie wspomagane osób z niepełnosprawnościami.
+    target_groups:
+      - ograniczona-mobilnosc
+      - niepelnosprawnosc-sensoryczna
+      - niepelnosprawnosc-intelektualna
+      - spektrum-autyzmu
+  - id: MT03
+    name: Ekspertka ds. integracji cudzoziemców
+    expertise_pl: >-
+      Wsparcie rodzin cudzoziemców w szkole i w urzędzie, nauka języka
+      polskiego i pierwsze kroki na rynku pracy.
+    target_groups: [cudzoziemcy, dzieci-mlodziez-rodziny]
+
+posts:
+  - id: PP01
+    kind: szukam
+    sector: ngo
+    seeking: [biznes]
+    target_groups: [seniorzy]
+    author:
+      display_name: Dariusz S.
+      organisation: Fundacja wsparcia seniorów
+    title: Szukamy firmy, która odda używane laptopy
+    description: >-
+      Prowadzimy kursy komputerowe dla seniorów w trzech klubach i brakuje
+      nam sprzętu. Szukamy firmy, która wymienia komputery i może przekazać
+      starsze laptopy. Sami je przygotujemy i wystawimy potwierdzenie
+      darowizny.
+  - id: PP02
+    kind: oferuje
+    sector: biznes
+    seeking: [ngo, instytucja]
+    target_groups: [rynek-pracy, niepelnosprawnosc-intelektualna]
+    author:
+      display_name: Krzysztof B.
+      organisation: Piekarnia rodzinna
+    title: Praktyki w piekarni dla osób z niepełnosprawnością
+    description: >-
+      Prowadzimy rodzinną piekarnię i możemy przyjąć na praktyki dwie osoby
+      z niepełnosprawnością intelektualną. Szukamy partnera, który zapewni
+      trenera pracy na pierwsze tygodnie. Jedna taka osoba pracuje u nas od
+      kilku lat, więc wiemy, że to się udaje.
+  - id: PP03
+    kind: oferuje
+    sector: nauka
+    seeking: [instytucja, ngo]
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Aleksandra N.
+      organisation: Wydział pedagogiki uczelni publicznej
+    title: Studenci pedagogiki poprowadzą zajęcia dla dzieci
+    description: >-
+      Moi studenci mogą w ramach praktyk prowadzić popołudniowe zajęcia w
+      świetlicach i szkołach poza dużymi miastami. Szukamy placówek, które
+      dadzą salę i opiekuna praktyk. Pomożemy przygotować program zajęć.
+  - id: PP04
+    kind: szukam
+    sector: instytucja
+    seeking: [ngo, nauka]
+    target_groups: [cudzoziemcy, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Agata M.
+      organisation: Szkoła Podstawowa
+    title: Szkoła szuka partnera do zajęć z polskiego dla dzieci z zagranicy
+    description: >-
+      W naszej szkole uczy się kilkanaścioro dzieci, które dopiero uczą się
+      polskiego. Szukamy organizacji albo uczelni, która pomoże poprowadzić
+      dodatkowe zajęcia językowe po lekcjach. Możemy dać salę i pomoc
+      nauczyciela.
+  - id: PP05
+    kind: oferuje
+    sector: jst
+    seeking: [ngo, mieszkaniec]
+    target_groups: [seniorzy, inne]
+    author:
+      display_name: Elżbieta W.
+      organisation: Urząd Gminy
+    title: Udostępnimy świetlicę wiejską na stałe zajęcia
+    description: >-
+      Mamy wyremontowaną świetlicę wiejską, która przez większość tygodnia
+      stoi pusta. Udostępnimy ją bezpłatnie organizacji albo grupie
+      mieszkańców, którzy poprowadzą stałe zajęcia dla seniorów albo dla
+      rodzin. Pomożemy też złożyć wniosek o mały grant.
+  - id: PP06
+    kind: szukam
+    sector: mieszkaniec
+    seeking: [ngo, jst]
+    target_groups: [ograniczona-mobilnosc]
+    author:
+      display_name: Leszek K.
+      organisation: null
+    title: Szukam wolontariuszy do wspólnych spacerów
+    description: >-
+      Poruszam się na wózku i chcę zebrać grupę sąsiadów, którzy raz w
+      tygodniu wyjdą na spacer z osobami takimi jak ja. Szukam organizacji,
+      która pomoże to zorganizować i ubezpieczyć wolontariuszy.
+  - id: PP07
+    kind: oferuje
+    sector: ngo
+    seeking: [jst, instytucja]
+    target_groups: [bezdomnosc]
+    author:
+      display_name: Robert F.
+      organisation: Stowarzyszenie pomocy osobom w kryzysie bezdomności
+    title: Bezpłatne szkolenie o pracy z osobami w kryzysie bezdomności
+    description: >-
+      Od lat pracujemy z osobami w kryzysie bezdomności. Możemy poprowadzić
+      jednodniowe szkolenie dla pracowników socjalnych i strażników
+      gminnych o tym, jak rozmawiać z takimi osobami i dokąd je kierować.
+      Prosimy tylko o salę.
+  - id: PP08
+    kind: szukam
+    sector: biznes
+    seeking: [instytucja, ngo]
+    target_groups: [seniorzy, ograniczona-mobilnosc]
+    author:
+      display_name: Tomasz G.
+      organisation: Lokalna firma przewozowa
+    title: Firma przewozowa szuka partnera do dowozu seniorów
+    description: >-
+      Mamy kilka busów, które w ciągu dnia stoją między kursami szkolnymi.
+      Chętnie wykorzystamy je do dowozu seniorów do przychodni albo na
+      zajęcia. Szukamy ośrodka lub organizacji, które zbiorą zgłoszenia i
+      pomogą ustalić zasady.
+  - id: PP09
+    kind: szukam
+    sector: jst
+    seeking: [nauka]
+    target_groups: [zdrowie, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Stefan O.
+      organisation: Urząd Gminy
+    title: Gmina szuka uczelni do badania potrzeb młodzieży
+    description: >-
+      Chcemy przygotować program wsparcia psychicznego dla młodzieży, ale
+      brakuje nam rzetelnych danych. Szukamy uczelni lub zespołu
+      badawczego, który pomoże przeprowadzić ankietę w szkołach i opracować
+      wyniki.
+  - id: PP10
+    kind: oferuje
+    sector: ngo
+    seeking: [instytucja, mieszkaniec]
+    target_groups: [spektrum-autyzmu, dzieci-mlodziez-rodziny]
+    author:
+      display_name: Hubert D.
+      organisation: Stowarzyszenie rodziców dzieci w spektrum autyzmu
+    title: Poradniki o wspieraniu ucznia w spektrum
+    description: >-
+      Przygotowaliśmy proste poradniki dla rodziców i nauczycieli o tym,
+      jak wspierać dziecko w spektrum w szkole. Przekażemy je bezpłatnie i
+      poprowadzimy spotkanie dla rodziców. Szukamy szkół i grup rodziców,
+      które chcą z nich skorzystać.
+
+threads:
+  - id: RZ01
+    topic: pytanie
+    subject: Czy koło gospodyń może prowadzić spotkania dla seniorów?
+    author:
+      display_name: Grażyna T.
+      organisation: Koło Gospodyń Wiejskich
+      sector: ngo
+    target_groups: [seniorzy]
+    mentor: null
+    post: null
+    messages:
+      - author: uzytkownik
+        text: >-
+          Nasze koło chce prowadzić spotkania dla seniorów w świetlicy. Czy
+          możemy dostać na to pieniądze z gminy, skoro nie jesteśmy
+          stowarzyszeniem?
+      - author: rops
+        text: >-
+          Dziękujemy za pytanie. Koło wpisane do rejestru kół gospodyń
+          wiejskich może samo składać wnioski. Najprościej zacząć od
+          rozmowy w urzędzie gminy o małych grantach albo o funduszu
+          sołeckim.
+  - id: RZ02
+    topic: pytanie
+    subject: Jak zgłosić naszą praktykę do bazy?
+    author:
+      display_name: Urszula B.
+      organisation: Środowiskowy Dom Samopomocy
+      sector: instytucja
+    target_groups: [niepelnosprawnosc-intelektualna]
+    mentor: null
+    post: null
+    messages:
+      - author: uzytkownik
+        text: >-
+          Od kilku lat prowadzimy z uczestnikami kawiarenkę i chcielibyśmy,
+          żeby inni mogli skorzystać z naszego doświadczenia. Jak zgłosić to
+          do bazy dobrych praktyk? Czy potrzebne są zdjęcia albo jakieś
+          dokumenty?
+  - id: RZ03
+    topic: pytanie
+    subject: Koszt tłumacza migowego w małym urzędzie
+    author:
+      display_name: Marek K.
+      organisation: Urząd Gminy
+      sector: jst
+    target_groups: [niepelnosprawnosc-sensoryczna]
+    mentor: null
+    post: null
+    messages:
+      - author: uzytkownik
+        text: >-
+          Trasa pokazała nam rozwiązanie z tłumaczem polskiego języka
+          migowego przez wideo. Czy ROPS wie, ile taka usługa kosztuje w
+          małym urzędzie?
+      - author: rops
+        text: >-
+          Dziękujemy. Koszt zależy głównie od liczby godzin, w których
+          tłumacz jest dostępny, i od formy umowy. Poprosiliśmy dwie gminy,
+          które już z tego korzystają, o zgodę na udostępnienie zestawień i
+          prześlemy je w tej rozmowie.
+  - id: RZ04
+    topic: pytanie
+    subject: Czy mogę wysłać pomysł bez organizacji?
+    author:
+      display_name: Katarzyna M.
+      organisation: null
+      sector: mieszkaniec
+    target_groups: [dzieci-mlodziez-rodziny]
+    mentor: null
+    post: null
+    messages:
+      - author: uzytkownik
+        text: >-
+          Wysłałam fiszkę z pomysłem wymiany ubranek dla dzieci. Nie należę
+          do żadnej organizacji. Czy to przeszkoda?
+      - author: rops
+        text: >-
+          Nie, fiszkę może wysłać każdy mieszkaniec. Jeśli pomysł trafi do
+          naboru, pomożemy znaleźć organizację, która zostanie partnerem i
+          zajmie się formalnościami.
+  - id: RZ05
+    topic: mentor
+    subject: Jak utrzymać wolontariuszki przy młodych rodzinach?
+    author:
+      display_name: Ewelina G.
+      organisation: Ośrodek Pomocy Społecznej
+      sector: instytucja
+    target_groups: [dzieci-mlodziez-rodziny]
+    mentor: MT01
+    post: null
+    messages:
+      - author: uzytkownik
+        text: >-
+          Chcemy połączyć młode mamy z doświadczonymi sąsiadkami, które będą
+          je odwiedzać. Boimy się, że wolontariuszki szybko się zniechęcą.
+          Jak tego uniknąć?
+      - author: rops
+        text: >-
+          Dziękujemy. Do rozmowy dołącza ekspertka, która zna podobne
+          programy.
+      - author: mentor
+        text: >-
+          Najważniejsze są regularne spotkania wolontariuszek z
+          koordynatorką, raz w miesiącu, i jasna umowa, ile czasu każda z
+          nich daje. Dobrze też zacząć od kilku par, a nie od całej gminy.
+      - author: uzytkownik
+        text: >-
+          Dziękujemy, to bardzo pomocne. Czy ma Pani wzór takiej umowy z
+          wolontariuszką?
+  - id: RZ06
+    topic: mentor
+    subject: Kto może prowadzić mieszkanie treningowe?
+    author:
+      display_name: Barbara Z.
+      organisation: null
+      sector: mieszkaniec
+    target_groups: [niepelnosprawnosc-intelektualna]
+    mentor: MT02
+    post: null
+    messages:
+      - author: uzytkownik
+        text: >-
+          Mój syn ma niepełnosprawność intelektualną. Wysłałam fiszkę o
+          mieszkaniu treningowym. Kto w gminie mógłby coś takiego prowadzić?
+      - author: rops
+        text: >-
+          Dziękujemy. Do rozmowy zaprosiliśmy eksperta ds. dostępności i
+          niepełnosprawności.
+      - author: mentor
+        text: >-
+          Takie mieszkanie najczęściej prowadzi ośrodek pomocy społecznej
+          albo organizacja, której gmina zleca to zadanie. Proponuję zacząć
+          od rozmowy z kierownikiem ośrodka i zebrać kilka zainteresowanych
+          rodzin. Wspólny głos kilku rodzin łatwiej przekonuje gminę.
+  - id: RZ07
+    topic: mentor
+    subject: Skąd wziąć wolontariuszy do rozmów po polsku?
+    author:
+      display_name: Olena K.
+      organisation: null
+      sector: mieszkaniec
+    target_groups: [cudzoziemcy, dzieci-mlodziez-rodziny]
+    mentor: MT03
+    post: null
+    messages:
+      - author: uzytkownik
+        text: >-
+          Chcę zorganizować spotkania po polsku dla mam z dziećmi. Mam salę w
+          bibliotece, ale nie wiem, jak znaleźć wolontariuszy.
+      - author: rops
+        text: >-
+          Dziękujemy. Do rozmowy zaprosiliśmy ekspertkę ds. integracji
+          cudzoziemców.
+      - author: mentor
+        text: >-
+          Wolontariuszy najłatwiej znaleźć wśród emerytowanych nauczycielek
+          i studentów. Na początek wystarczą dwie osoby i stały dzień
+          tygodnia, a dzieciom warto przygotować kącik z zabawkami.
+  - id: RZ08
+    topic: partnerstwo
+    subject: Studenci pedagogiki poprowadzą zajęcia dla dzieci
+    author:
+      display_name: Aleksandra N.
+      organisation: Wydział pedagogiki uczelni publicznej
+      sector: nauka
+    target_groups: [dzieci-mlodziez-rodziny]
+    mentor: null
+    post: PP03
+    messages:
+      - author: uzytkownik
+        text: >-
+          Dodałam ofertę praktyk dla studentów pedagogiki. Grupa będzie
+          gotowa od nowego semestru.
+      - author: rops
+        text: >-
+          Dziękujemy. Zgłosiły się dwie szkoły i jeden ośrodek pomocy
+          społecznej. Prosimy o potwierdzenie, ilu studentów możecie
+          skierować do każdej placówki.
+      - author: uzytkownik
+        text: >-
+          Możemy skierować sześcioro studentów, po dwoje do każdej placówki.
+          Prosimy o przekazanie nam kontaktu do opiekunów praktyk.
+  - id: RZ09
+    topic: partnerstwo
+    subject: Szkoła szuka partnera do zajęć z polskiego dla dzieci z zagranicy
+    author:
+      display_name: Agata M.
+      organisation: Szkoła Podstawowa
+      sector: instytucja
+    target_groups: [cudzoziemcy, dzieci-mlodziez-rodziny]
+    mentor: null
+    post: PP04
+    messages:
+      - author: uzytkownik
+        text: >-
+          Dodaliśmy ogłoszenie o zajęciach językowych po lekcjach. Prosimy o
+          wiadomość, gdy ktoś się zgłosi.
+      - author: rops
+        text: >-
+          Ogłoszenie jest już widoczne na tablicy. Zgłosiła się fundacja,
+          która prowadzi kursy polskiego dla dzieci, przekazaliśmy jej waszą
+          prośbę.
+      - author: uzytkownik
+        text: >-
+          Dziękujemy. Prosimy zapytać fundację, czy może przyjechać na
+          spotkanie w szkole, najlepiej po południu.
+  - id: RZ10
+    topic: partnerstwo
+    subject: Firma przewozowa szuka partnera do dowozu seniorów
+    author:
+      display_name: Tomasz G.
+      organisation: Lokalna firma przewozowa
+      sector: biznes
+    target_groups: [seniorzy, ograniczona-mobilnosc]
+    mentor: null
+    post: PP08
+    messages:
+      - author: uzytkownik
+        text: >-
+          Dodałem ogłoszenie o busach, które stoją między kursami szkolnymi.
+          Czy ktoś się już zgłosił?
+      - author: rops
+        text: >-
+          Ogłoszenie przeszło weryfikację i jest już widoczne. Damy znać w
+          tej rozmowie, gdy zgłosi się ośrodek pomocy społecznej albo
+          organizacja.
+
+reports:
+  - id: ZG01
+    target: innovation
+    reason: nieprawdziwe
+    comment: >-
+      Z tego, co wiem, projekt się zakończył i już nie działa. Opis
+      sugeruje, że nadal można się do niego zgłosić.
+  - id: ZG02
+    target: innovation
+    reason: inne
+    comment: Link do materiałów prowadzi do strony, która nie istnieje.
+  - id: ZG03
+    target: route
+    reason: nieprawdziwe
+    comment: >-
+      Trasa wskazała mi ośrodek w innym powiecie, chociaż wybrałam swoją
+      gminę.
+  - id: ZG04
+    target: need
+    reason: dane_osobowe
+    comment: >-
+      W opisie potrzeby jest nazwisko sąsiadki i nazwa jej choroby. Proszę
+      to usunąć.
+  - id: ZG05
+    target: need
+    reason: obrazliwe
+    comment: Opis zawiera obraźliwe określenie osób w kryzysie bezdomności.
+  - id: ZG06
+    target: route
+    reason: inne
+    comment: null
+
+declined:
+  - id: OD01
+    kind: spam
+    text: >-
+      Szybka gotówka bez sprawdzania historii kredytowej! Wejdź na
+      szybkagotowka kropka pl i odbierz bonus na start, decyzja w kwadrans.
+  - id: OD02
+    kind: spam
+    text: >-
+      Promocja! Tanie suplementy prosto do domu, wpisz w wyszukiwarkę
+      apteka-promo-online i zamów dziś z rabatem.
+  - id: OD03
+    kind: spam
+    text: >-
+      Zarabiaj w domu kilka tysięcy tygodniowo bez wychodzenia z łóżka.
+      Szczegóły na praca-z-domu-teraz kropka com, pisz śmiało!
+  - id: OD04
+    kind: rude
+    text: >-
+      Wy w tych urzędach i tak nic nie robicie, tylko bierzecie pensje za
+      picie kawy. Szkoda czasu na wasze formularze.
+  - id: OD05
+    kind: rude
+    text: >-
+      Kolejna strona za nasze podatki, a chodnika jak nie było, tak nie ma.
+      Urzędnicy to banda nierobów.
+  - id: OD06
+    kind: test
+    text: test test 123 asdf
+  - id: OD07
+    kind: test
+    text: qwerty sprawdzam czy działa
+  - id: OD08
+    kind: harm
+    text: >-
+      Jak ukryć przed ośrodkiem pomocy społecznej, że mąż pracuje na czarno,
+      żeby dalej dostawać zasiłek?
+
+moderation_reasons_pl:
+  - Treść zawiera dane osobowe osoby trzeciej.
+  - Treść zawiera dane o zdrowiu, które mogą wskazać konkretną osobę.
+  - Wpis nie dotyczy innowacji społecznych ani potrzeb mieszkańców.
+  - Treść ma charakter reklamowy.
+  - Treść zawiera sformułowania obraźliwe wobec innych osób.
+  - Opis jest zbyt ogólny, prosimy dopisać, komu i w czym ma pomóc pomysł.
+  - Wpis powtarza fiszkę, którą ta sama osoba wysłała wcześniej.
+  - Nie udało się potwierdzić, że organizacja działa i zgodziła się na wpis.
+  - Ogłoszenie dotyczy sprzedaży usług, a nie partnerstwa.
+  - Wpis wstrzymany do wyjaśnienia, czy opisana praktyka nadal działa.
+
+notes_pl:
+  - Przekazano opiekunowi kategorii seniorzy, odpowiedź do piątku.
+  - Zadzwonić do autorki, czy zgadza się na opis w bazie dobrych praktyk.
+  - Podobna fiszka z sąsiedniej gminy, warto połączyć autorów.
+  - Kandydat do naboru inkubatora, omówić na zebraniu działu.
+  - Sprawdzić u koordynatora, czy innowacja nadal działa.
+  - Autor prosi o rozmowę telefoniczną po południu.
+  - Usunięto z opisu nazwisko osoby trzeciej przed publikacją.
+  - Czekamy na odpowiedź eksperta, przypomnieć w poniedziałek.
+  - Zgłoszenie spoza województwa, odpisano z informacją, gdzie szukać pomocy.
+  - Organizacja sprawdzona w rejestrze, wpis zweryfikowany.
+  - Ogłoszenie zatwierdzone po skróceniu opisu, autor poinformowany.
+  - Pilne, osoba w kryzysie bezdomności przed mrozami, przekazano do OPS.
+
+evaluations:
+  - id: OP01
+    innovation_id: inn-nat-bawita
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Zrobiliśmy tablicę według instrukcji i używamy jej na zajęciach z
+      podopiecznymi, u których zaczyna się otępienie. Najchętniej układają
+      kolejność czynności, bo to przypomina im domowe sprawy. Tablica jest
+      jednak ciężka i trudno ją przenosić między salami.
+    improvement: >-
+      Lżejsza wersja tablicy, na przykład ze sklejki, albo podział na dwie
+      mniejsze części.
+    test_signup: null
+    author:
+      display_name: Dzienny Dom Pomocy
+  - id: OP02
+    innovation_id: inn-nat-bawita
+    rating: 4
+    experience: korzystam
+    feedback: >-
+      Mama jest we wczesnym stadium otępienia, a mój syn zrobił jej tablicę
+      według instrukcji. Ćwiczy kilka razy w tygodniu i bardzo to lubi,
+      tylko zatrzaski są dla niej za trudne, palce już nie te.
+    improvement: Większe zatrzaski, które da się otworzyć bez siły w palcach.
+    test_signup: null
+    author:
+      display_name: Jadwiga R.
+  - id: OP03
+    innovation_id: inn-nat-bawita
+    rating: 5
+    experience: null
+    feedback: null
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP04
+    innovation_id: inn-nat-bawita
+    rating: 3
+    experience: wdrazam
+    feedback: >-
+      Nasi uczestnicy wykonali dwie tablice dla zaprzyjaźnionego klubu
+      seniora. Instrukcja jest dokładna, ale materiały i okucia wyszły
+      drożej, niż zakładaliśmy, a praca zajęła wiele tygodni.
+    improvement: >-
+      Lista tańszych zamienników materiałów i okuć w instrukcji wykonania.
+    test_signup: null
+    author:
+      display_name: Warsztat Terapii Zajęciowej
+  - id: OP05
+    innovation_id: inn-nat-bawita
+    rating: null
+    experience: opis
+    feedback: >-
+      Chcielibyśmy zrobić tablicę dla naszego klubu. Kilka osób u nas słabo
+      widzi i nie wiemy, czy poradzą sobie z drobnymi elementami.
+    improvement: >-
+      Elementy w mocnych, kontrastowych kolorach, żeby osoby słabowidzące
+      też mogły ćwiczyć.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Klub Seniora
+  - id: OP06
+    innovation_id: inn-rops-therapy-set
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Mieszkanki same szyją termofory i robią memory na zajęciach, a potem
+      używamy tych pomocy przy łóżkach osób, które już nie wstają. Dla nich
+      to ważne, że to, co zrobiły, komuś się przydaje.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Dom Pomocy Społecznej
+  - id: OP07
+    innovation_id: inn-rops-therapy-set
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Tata leży od dłuższego czasu i całe dnie się nudzi. Przy dźwiękowym
+      bingo pierwszy raz od dawna się śmiał. Scenariusze ze strony są
+      proste, poradziłam sobie bez terapeuty.
+    improvement: >-
+      Krótki film pokazujący ćwiczenia przy łóżku byłby łatwiejszy niż
+      czytanie instrukcji.
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Elżbieta P.
+  - id: OP08
+    innovation_id: inn-rops-therapy-set
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Gotowy pakiet materiałów do zamówienia, bo nie każdy opiekun ma czas
+      wszystko robić sam.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Hospicjum domowe
+  - id: OP09
+    innovation_id: inn-rops-therapy-set
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP10
+    innovation_id: inn-nat-senior-cuder-czyli-gra-o-sens-zycia-2
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Większa czcionka na kartach, bo część uczestników czyta je z trudem
+      nawet w okularach.
+    test_signup: null
+    author:
+      display_name: Uniwersytet Trzeciego Wieku
+  - id: OP11
+    innovation_id: inn-nat-senior-cuder-czyli-gra-o-sens-zycia-2
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Gramy z koleżankami i kolegami w klubie. Najlepsze są karty z
+      zadaniami ruchowymi, każdy się trochę porusza i jest dużo śmiechu.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP12
+    innovation_id: inn-nat-senior-cuder-czyli-gra-o-sens-zycia-2
+    rating: 3
+    experience: opis
+    feedback: >-
+      Pomysł ładny, ale gra wymaga moderatora, a w naszej wsi nie widzę
+      nikogo, kto by się tego podjął.
+    improvement: >-
+      Instrukcja dla moderatora na jednej kartce, żeby poprowadzić grę bez
+      przygotowań.
+    test_signup: null
+    author: null
+  - id: OP13
+    innovation_id: inn-nat-plusk-przenosny-zestaw-prysznicowy
+    rating: 4
+    experience: korzystam
+    feedback: >-
+      Żona po udarze nie wejdzie do wanny, a łazienka jest za ciasna na
+      przeróbki. Prysznic rozkładamy w pokoju i kąpiel na siedząco wreszcie
+      jest bezpieczna. Uszycie parawanu zajęło mi jednak kilka wieczorów i
+      pomoc sąsiadki.
+    improvement: >-
+      Gotowy, uszyty parawan do kupienia dla tych, którzy nie umieją szyć.
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Wojciech S.
+  - id: OP14
+    innovation_id: inn-nat-plusk-przenosny-zestaw-prysznicowy
+    rating: 5
+    experience: opis
+    feedback: null
+    improvement: >-
+      Instrukcja z rysunkami krok po kroku, bo opiekunowie nie zawsze mają
+      czas czytać długie opisy.
+    test_signup: null
+    author: null
+  - id: OP15
+    innovation_id: inn-nat-844
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: >-
+      Wskazówki, jak zebrać zespół specjalistów w małej gminie, gdzie nie ma
+      na miejscu architekta ani psychologa.
+    test_signup: null
+    author:
+      display_name: Ośrodek Pomocy Społecznej
+  - id: OP16
+    innovation_id: inn-rops-terapeuta-przestrzeni
+    rating: 3
+    experience: korzystam
+    feedback: >-
+      Mamie przestawili meble i obniżyli szafki, wszystko z tego, co już
+      było w domu. Po kilku tygodniach wróciła do starych przyzwyczajeń i
+      dywaniki znowu leżą na środku pokoju.
+    improvement: >-
+      Więcej wizyt po wprowadzeniu zmian, żeby starsza osoba miała czas się
+      do nich przyzwyczaić.
+    test_signup: null
+    author: null
+  - id: OP17
+    innovation_id: inn-rops-edki-kredki-terapeutyczne
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Syn ma spastyczną prawą rękę i zwykłej kredki nie utrzyma. Edkami
+      rysuje sam i nie trzeba go namawiać do ćwiczeń, bo dla niego to
+      zabawa.
+    improvement: null
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Natalia W.
+  - id: OP18
+    innovation_id: inn-rops-edki-kredki-terapeutyczne
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Używam kredek na zajęciach z dziećmi ze spastycznością. Kształt sam
+      otwiera dłoń i prostuje nadgarstek, a dziecko skupia się na rysunku,
+      nie na ćwiczeniu.
+    improvement: >-
+      Mniejszy rozmiar kredek dla najmłodszych dzieci, którym obecne
+      wypadają z ręki.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Poradnia rehabilitacji dziecięcej
+  - id: OP19
+    innovation_id: inn-rops-edki-kredki-terapeutyczne
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Większy zestaw dla całej grupy w niższej cenie, bo inne dzieci też
+      chcą nimi rysować.
+    test_signup: null
+    author:
+      display_name: Przedszkole samorządowe
+  - id: OP20
+    innovation_id: inn-rops-edki-kredki-terapeutyczne
+    rating: null
+    experience: opis
+    feedback: >-
+      Gdzie można kupić te kredki? Z opisu nie wynika, czy są w sprzedaży,
+      czy trzeba je gdzieś zamówić.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP21
+    innovation_id: inn-rops-edki-kredki-terapeutyczne
+    rating: 4
+    experience: korzystam
+    feedback: null
+    improvement: >-
+      Więcej kolorów w zestawie, bo córka najszybciej zużywa ulubiony
+      czerwony.
+    test_signup: null
+    author: null
+  - id: OP22
+    innovation_id: inn-rops-to-nie-koniec-swiata-to-poczatek-swiata
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Podcastów słucham w samochodzie, kiedy wożę córkę na terapię. Pierwszy
+      raz ktoś mówił o tym, co czuję ja, a nie tylko o tym, co mam robić.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP23
+    innovation_id: inn-rops-to-nie-koniec-swiata-to-poczatek-swiata
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Karty pracy do wypełnienia w telefonie, bo rodzice rzadko mają czas
+      usiąść z kartką.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Powiatowe Centrum Pomocy Rodzinie
+  - id: OP24
+    innovation_id: inn-rops-to-nie-koniec-swiata-to-poczatek-swiata
+    rating: null
+    experience: korzystam
+    feedback: >-
+      Starszy syn przesłuchał podcast dla rodzeństwa i pierwszy raz sam
+      zapytał mnie o niepełnosprawność brata.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP25
+    innovation_id: inn-rops-to-nie-koniec-swiata-to-poczatek-swiata
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: >-
+      Informator dla rodziców także po ukraińsku, bo pracujemy z kilkoma
+      rodzinami z Ukrainy.
+    test_signup: null
+    author:
+      display_name: Fundacja wsparcia rodzin
+  - id: OP26
+    innovation_id: inn-nat-cichosza-czyli-balance-place-w-kazdej-szkole
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Z mamami uczniów uszyłyśmy kaptur i fasolę z filcu. Stoją w kącie
+      biblioteki szkolnej i korzystają z nich nie tylko dzieci w spektrum.
+      Lekcje ze scenariusza pomogły wytłumaczyć klasie, po co to jest.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Szkoła Podstawowa
+  - id: OP27
+    innovation_id: inn-nat-cichosza-czyli-balance-place-w-kazdej-szkole
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: >-
+      Wykroje także w większym rozmiarze, dla uczniów starszych klas.
+    test_signup: null
+    author: null
+  - id: OP28
+    innovation_id: inn-rops-jezykolamacz
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Córka ma pięć lat i mówi pojedyncze słowa. Rozszerzona rzeczywistość
+      bardzo ją wciąga, powtarza za aplikacją chętniej niż na zajęciach przy
+      stoliku.
+    improvement: null
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Kamila S.
+  - id: OP29
+    innovation_id: inn-rops-jezykolamacz
+    rating: 3
+    experience: wdrazam
+    feedback: >-
+      Scenariusze zajęć są dobrze napisane, ale na starszym tablecie w
+      poradni aplikacja działa wolno i dziecko szybko traci cierpliwość.
+    improvement: >-
+      Lżejsza wersja aplikacji, która działa płynnie na starszych tabletach
+      i telefonach.
+    test_signup: null
+    author:
+      display_name: Poradnia psychologiczno-pedagogiczna
+  - id: OP30
+    innovation_id: inn-rops-nasz-wspolny-rodzinny-swiat-poznaje-ucze-reaguje
+    rating: 4
+    experience: wdrazam
+    feedback: >-
+      Grę wykorzystujemy w pracy asystentów rodziny. Przy planszy rodzice
+      mówią rzeczy, których nie powiedzieliby przy biurku.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Ośrodek Pomocy Społecznej
+  - id: OP31
+    innovation_id: inn-rops-komix-zyciowy
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Nasi wychowankowie zwykle nie chcą rozmawiać o emocjach, a przy grze
+      otwierają się sami. Karty do druku dostaliśmy dopiero po zgłoszeniu
+      się do ROPS, ale było warto.
+    improvement: >-
+      Karty do pobrania w mniejszym pliku, żeby można je było wydrukować na
+      miejscu.
+    test_signup: null
+    author:
+      display_name: Placówka opiekuńczo-wychowawcza
+  - id: OP32
+    innovation_id: inn-nat-1169
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Mama rano naciska w aplikacji „uśmiech” i od razu wiem, że wstała i
+      dobrze się czuje. Mieszkam daleko, więc to dla mnie duży spokój.
+    improvement: null
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Beata M.
+  - id: OP33
+    innovation_id: inn-nat-1169
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Przypomnienie dźwiękowe dla seniora, który do południa nie wysłał
+      meldunku.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Centrum Usług Społecznych
+  - id: OP34
+    innovation_id: inn-nat-1169
+    rating: null
+    experience: opis
+    feedback: >-
+      Czy to zadziała na zwykłym telefonie z klawiszami? Tata nie ma
+      smartfona i nie chce go mieć.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP35
+    innovation_id: inn-nat-1169
+    rating: 3
+    experience: korzystam
+    feedback: >-
+      Obrazki są czytelne, tylko przyciski za małe na moje palce. Czasem
+      naciskam nie to, co chcę.
+    improvement: Większe przyciski i mniej obrazków na jednym ekranie.
+    test_signup: null
+    author: null
+  - id: OP36
+    innovation_id: inn-rops-inteligentny-organizer-do-lekow
+    rating: 2
+    experience: korzystam
+    feedback: >-
+      Testowaliśmy organizer z tatą przez kilka tygodni. Kiedy działał, był
+      świetny, ale czujnik parę razy nie zauważył, że tata wziął lek, i
+      dostawałem fałszywe alarmy. Potem tata przestał mu ufać.
+    improvement: >-
+      Prostszy montaż i pomoc techniczna, do której można zadzwonić, kiedy
+      coś przestaje działać.
+    test_signup: null
+    author: null
+  - id: OP37
+    innovation_id: inn-rops-inteligentny-organizer-do-lekow
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: null
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Apteka
+  - id: OP38
+    innovation_id: inn-rops-inteligentny-organizer-do-lekow
+    rating: 4
+    experience: opis
+    feedback: >-
+      Pomysł dobry, ale moja mama nie obsługuje smartfona, a z opisu wynika,
+      że to dla seniorów, którzy sobie z nim radzą.
+    improvement: >-
+      Wersja, w której wszystko ustawia opiekun, a senior widzi tylko
+      światełko przy właściwej przegródce.
+    test_signup: null
+    author: null
+  - id: OP39
+    innovation_id: inn-rops-inteligentny-organizer-do-lekow
+    rating: null
+    experience: opis
+    feedback: >-
+      Chcielibyśmy sprawdzić organizer u kilku podopiecznych, którzy
+      mieszkają sami i biorą dużo leków na stałe.
+    improvement: null
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Ośrodek Pomocy Społecznej
+  - id: OP40
+    innovation_id: inn-nat-model-dom
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Poradnik o nauce dziecka po leczeniu onkologicznym dałam wychowawczyni
+      syna. Wcześniej nie wiedziałam, jak jej to wszystko wytłumaczyć.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP41
+    innovation_id: inn-nat-model-dom
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Krótsze wersje poradników dla rodziców, bo w czasie leczenia nikt nie
+      ma siły czytać długich tekstów.
+    test_signup: null
+    author:
+      display_name: >-
+        Ośrodek środowiskowej opieki psychologicznej dla dzieci i młodzieży
+  - id: OP42
+    innovation_id: inn-rops-oncotriada
+    rating: 5
+    experience: opis
+    feedback: >-
+      Jestem kilka lat po leczeniu i chętnie zostałabym taką wolontariuszką.
+      Zaraz po diagnozie najbardziej potrzebowałam rozmowy z kimś, kto przez
+      to przeszedł.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP43
+    innovation_id: inn-nat-mobilna-platforma-gasienicowa-dla-wozkow-inwalidzkich-2
+    rating: 5
+    experience: opis
+    feedback: >-
+      Poruszam się na wózku i od lat nie byłem w lesie dalej niż przy
+      parkingu. Gdyby taką platformę można było wypożyczyć na szlaku,
+      pojechałbym od razu.
+    improvement: null
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Marcin D.
+  - id: OP44
+    innovation_id: inn-nat-mobilna-platforma-gasienicowa-dla-wozkow-inwalidzkich-2
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: >-
+      Informacja w opisie, ile kosztuje wykonanie platformy i jej serwis.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Ośrodek wypoczynkowy
+  - id: OP45
+    innovation_id: inn-nat-mobilna-platforma-gasienicowa-dla-wozkow-inwalidzkich-2
+    rating: 3
+    experience: opis
+    feedback: >-
+      Świetna rzecz na wycieczki, ale z opisu wynika, że to prototyp, i nie
+      wiem, kto mógłby mi taką platformę zrobić.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP46
+    innovation_id: inn-nat-mobilna-platforma-gasienicowa-dla-wozkow-inwalidzkich-2
+    rating: 4
+    experience: null
+    feedback: null
+    improvement: >-
+      Platformy do wypożyczenia na dzień w parkach krajobrazowych i
+      ośrodkach wypoczynkowych.
+    test_signup: null
+    author: null
+  - id: OP47
+    innovation_id: inn-rops-lekki-wozek-aktywny
+    rating: 3
+    experience: opis
+    feedback: >-
+      Od dawna szukam lekkiego wózka, a cena to największy problem. Szkoda,
+      że to na razie tylko prototyp i nie da się go kupić.
+    improvement: >-
+      Informacja, czy któryś producent pracuje nad wersją do sprzedaży.
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Paweł K.
+  - id: OP48
+    innovation_id: inn-rops-lekki-wozek-aktywny
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: null
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Stowarzyszenie na rzecz osób z niepełnosprawnościami
+  - id: OP49
+    innovation_id: inn-rops-lekki-wozek-aktywny
+    rating: 3
+    experience: null
+    feedback: null
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP50
+    innovation_id: inn-rops-lekki-wozek-aktywny
+    rating: null
+    experience: opis
+    feedback: >-
+      Opis jest bardzo krótki, nie wiadomo, ile wózek waży ani z czego jest
+      zrobiony.
+    improvement: >-
+      Zdjęcia prototypu i podstawowe dane, przynajmniej waga i szerokość
+      wózka.
+    test_signup: null
+    author: null
+  - id: OP51
+    innovation_id: inn-rops-puzzles-ramp
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Przy wejściu mieliśmy wysoki próg i jeden stopień. Podjazd z klocków
+      złożyliśmy w jedno popołudnie, bez remontu i bez pozwoleń. Teraz
+      wjeżdżają i wózki inwalidzkie, i dziecięce.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Gminna Biblioteka Publiczna
+  - id: OP52
+    innovation_id: inn-rops-puzzles-ramp
+    rating: 4
+    experience: korzystam
+    feedback: >-
+      W sklepie obok domu postawili taki podjazd i wreszcie wjeżdżam sama.
+      Po deszczu jest trochę śliski.
+    improvement: Powierzchnia z rowkami, żeby koła nie ślizgały się po deszczu.
+    test_signup: null
+    author: null
+  - id: OP53
+    innovation_id: inn-nat-yourway-3
+    rating: 4
+    experience: korzystam
+    feedback: null
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP54
+    innovation_id: inn-nat-yourway-3
+    rating: 2
+    experience: korzystam
+    feedback: >-
+      W mojej okolicy prawie nie ma miejsc ze znacznikami, więc aplikacja
+      niewiele mi daje. Bez nadajników w urzędach i przychodniach to tylko
+      lista adresów.
+    improvement: >-
+      Zachęcić gminy, żeby przy remontach urzędów i przychodni montowały
+      znaczniki.
+    test_signup: null
+    author: null
+  - id: OP55
+    innovation_id: inn-nat-yourway-3
+    rating: 3
+    experience: opis
+    feedback: >-
+      Rozwiązanie dobre, ale zaczyna działać dopiero wtedy, gdy instytucje
+      kupią i zamontują znaczniki. Brakuje informacji, ile to kosztuje
+      urząd.
+    improvement: >-
+      Krótki przewodnik dla urzędu, ile znaczników potrzeba i ile one
+      kosztują.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Stowarzyszenie osób niewidomych i słabowidzących
+  - id: OP56
+    innovation_id: inn-nat-yourway-3
+    rating: 4
+    experience: korzystam
+    feedback: null
+    improvement: >-
+      Mocniejszy kontrast na ekranie dla osób słabowidzących, które nie
+      używają czytnika ekranu.
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Halina W.
+  - id: OP57
+    innovation_id: inn-rops-dostepny-wniosek-dla-ggluchych
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Jestem Głuchy. Pierwszy raz sam zamówiłem tłumacza PJM do urzędu i nie
+      musiałem prosić mamy, żeby napisała za mnie pismo.
+    improvement: null
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Mateusz G.
+  - id: OP58
+    innovation_id: inn-rops-dostepny-wniosek-dla-ggluchych
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Krótki film w języku migowym, który wyjaśnia, do czego służy wniosek,
+      do umieszczenia na stronie urzędu.
+    test_signup: null
+    author:
+      display_name: Urząd Gminy
+  - id: OP59
+    innovation_id: inn-rops-dostepny-wniosek-dla-ggluchych
+    rating: 5
+    experience: null
+    feedback: null
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP60
+    innovation_id: inn-rops-dostepny-wniosek-dla-ggluchych
+    rating: 4
+    experience: wdrazam
+    feedback: >-
+      Niektóre symbole na wniosku trzeba było naszym członkom tłumaczyć,
+      zwłaszcza starszym osobom.
+    improvement: Słowniczek symboli na odwrocie wniosku.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Stowarzyszenie osób głuchych i słabosłyszących
+  - id: OP61
+    innovation_id: inn-nat-gluchy-czytelnik-w-bibliotece-przewodnik-w-pjm
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Przewodnik pokazał nam, jak mało osoby głuche wiedzą o bibliotece.
+      Słowniczek pojęć przydał się też naszym bibliotekarkom.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Miejska Biblioteka Publiczna
+  - id: OP62
+    innovation_id: inn-nat-gluchy-czytelnik-w-bibliotece-przewodnik-w-pjm
+    rating: 4
+    experience: korzystam
+    feedback: >-
+      Jestem Głucha, a moje dzieci słyszą. Dzięki przewodnikowi zapisałam
+      się do biblioteki i teraz chodzimy tam razem na zajęcia.
+    improvement: >-
+      Więcej filmów w PJM zamiast tekstu, bo nie każda osoba głucha dobrze
+      czyta po polsku.
+    test_signup: null
+    author: null
+  - id: OP63
+    innovation_id: inn-rops-dostepny-transport-publiczny
+    rating: 3
+    experience: korzystam
+    feedback: >-
+      Na Androidzie działa, TalkBack czyta nazwy przystanków. U nas jednak
+      nie widać na mapie autobusów, chyba przewoźnik nie udostępnia danych.
+    improvement: >-
+      Wyraźna informacja w aplikacji, z którymi przewoźnikami działa w
+      pełni.
+    test_signup: null
+    author: null
+  - id: OP64
+    innovation_id: inn-rops-zalatw-to-sam
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Po kilku rozgrywkach poszliśmy z uczestnikami na pocztę i do urzędu
+      naprawdę. Jedna z uczestniczek pierwszy raz sama nadała list.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Środowiskowy Dom Samopomocy
+  - id: OP65
+    innovation_id: inn-rops-zalatw-to-sam
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Możliwość wklejenia na planszę zdjęć urzędów z własnej okolicy, żeby
+      uczestnicy rozpoznawali budynki, które znają.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Warsztat Terapii Zajęciowej
+  - id: OP66
+    innovation_id: inn-rops-zalatw-to-sam
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Gra jest fajna. Teraz wiem, gdzie iść w urzędzie i co powiedzieć w
+      okienku.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP67
+    innovation_id: inn-rops-zalatw-to-sam
+    rating: 4
+    experience: opis
+    feedback: >-
+      Mój syn boi się urzędów. Gra mogłaby go oswoić, ale w domu chyba sobie
+      nie poradzę, potrzebny jest ktoś, kto ją poprowadzi.
+    improvement: null
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Wanda K.
+  - id: OP68
+    innovation_id: inn-nat-gdynski-lodolamacz-technologiczny-2
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Robimy z uczniami mapy wizualne drogi z domu do szkoły. Najwięcej
+      radości dała im wspólna grupa klasy w komunikatorze, piszą tam do
+      siebie codziennie.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Specjalny Ośrodek Szkolno-Wychowawczy
+  - id: OP69
+    innovation_id: inn-nat-gdynski-lodolamacz-technologiczny-2
+    rating: 4
+    experience: korzystam
+    feedback: >-
+      Bałam się puścić córkę samą do sklepu. Teraz ma w telefonie zdjęcia
+      drogi i dzwoni do mnie, kiedy dojdzie. Na razie chodzi tylko krótką
+      trasą.
+    improvement: >-
+      Spotkania dla rodziców, którzy tak jak ja boją się pierwszych
+      samodzielnych wyjść dziecka.
+    test_signup: null
+    author: null
+  - id: OP70
+    innovation_id: inn-nat-gdynski-lodolamacz-technologiczny-2
+    rating: null
+    experience: opis
+    feedback: null
+    improvement: >-
+      Lista konkretnych aplikacji z opisem, jak je ustawić krok po kroku.
+    test_signup: null
+    author: null
+  - id: OP71
+    innovation_id: inn-nat-gdynski-lodolamacz-technologiczny-2
+    rating: 4
+    experience: opis
+    feedback: >-
+      Nasi mieszkańcy mają telefony, ale używają ich tylko do odbierania
+      połączeń. Model wydaje się dobrze przemyślany, zwłaszcza część o
+      rozmowach z rodzinami.
+    improvement: null
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Dom Pomocy Społecznej
+  - id: OP72
+    innovation_id: inn-rops-urzedowy-ambaras
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Duże karty i czytelna plansza, więc grają też uczestnicy, którzy słabo
+      czytają. Wysyłanie listu poleconego ćwiczyliśmy potem na prawdziwej
+      poczcie.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Warsztat Terapii Zajęciowej
+  - id: OP73
+    innovation_id: inn-rops-urzedowy-ambaras
+    rating: 4
+    experience: null
+    feedback: null
+    improvement: Dodać zadania z przychodni i z banku, bo tam też jest trudno.
+    test_signup: null
+    author: null
+  - id: OP74
+    innovation_id: inn-rops-podroz-poza-domem-w-wirtualnej-rzeczywistosci
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: >-
+      Informacja, jakie gogle są potrzebne i czy wystarczą tańsze, zakładane
+      na telefon.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Szkoła specjalna
+  - id: OP75
+    innovation_id: inn-rops-niewypaleni
+    rating: 4
+    experience: wdrazam
+    feedback: >-
+      Broszura w tekście łatwym do czytania jest dla naszych pracowników
+      naprawdę zrozumiała. Sam warsztat to jednak za mało, więc wracamy do
+      broszury co kilka tygodni.
+    improvement: >-
+      Krótkie przypominajki na każdy miesiąc, do powieszenia w pracowni.
+    test_signup: null
+    author:
+      display_name: Zakład Aktywności Zawodowej
+  - id: OP76
+    innovation_id: inn-rops-niewypaleni
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Lubię swoją pracę, ale czasem jestem zmęczony. W broszurze są rzeczy,
+      które mogę zrobić, żeby było lepiej. Robię przerwę i piję herbatę.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP77
+    innovation_id: inn-rops-niewypaleni
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: null
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Piotr G.
+  - id: OP78
+    innovation_id: inn-rops-niewypaleni
+    rating: 3
+    experience: opis
+    feedback: >-
+      Dobre materiały, ale trzy dni warsztatu to dla wielu pracodawców za
+      długo, żeby puścić pracownika.
+    improvement: >-
+      Warsztat podzielony na krótsze spotkania, na przykład godzinę w
+      tygodniu.
+    test_signup: null
+    author: null
+  - id: OP79
+    innovation_id: inn-rops-agencja-pracy-incydentalnej
+    rating: 4
+    experience: wdrazam
+    feedback: >-
+      Model dobrze pasuje do osób, które nie wytrzymają ośmiu godzin w
+      pracy. Najtrudniej było znaleźć zleceniodawców, którzy zgodzą się na
+      tak luźne zasady.
+    improvement: >-
+      Wzór umowy i krótki poradnik dla zleceniodawcy, żeby łatwiej było go
+      przekonać.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Centrum Integracji Społecznej
+  - id: OP80
+    innovation_id: inn-rops-agencja-pracy-incydentalnej
+    rating: 2
+    experience: opis
+    feedback: >-
+      Boję się, że ktoś, kto zacznie dorabiać, straci zasiłek i zostanie z
+      niczym. W opisie brakuje wyjaśnienia, jak to pogodzić.
+    improvement: Prosta rozpiska, ile można dorobić bez utraty świadczeń.
+    test_signup: null
+    author: null
+  - id: OP81
+    innovation_id: inn-rops-agencja-pracy-incydentalnej
+    rating: 3
+    experience: wdrazam
+    feedback: >-
+      Kilku naszych mieszkańców chciało spróbować, ale po pierwszych
+      zleceniach większość zrezygnowała. Pomysł jest dobry, tylko potrzeba
+      więcej czasu i stałego opiekuna.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Stowarzyszenie pomocy osobom w kryzysie bezdomności
+  - id: OP82
+    innovation_id: inn-rops-agencja-pracy-incydentalnej
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: null
+    test_signup:
+      as: uzytkownik
+    author:
+      display_name: Krystian J.
+  - id: OP83
+    innovation_id: inn-nat-wiory-leca
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Robiłam kurs wieczorami przy kuchennym stole. Instruktorka widziała
+      przez kamerkę, co robię źle, i od razu poprawiała. Obiłam już dwa
+      krzesła dla sąsiadów.
+    improvement: >-
+      Lista tańszych narzędzi i materiałów na start, bo pierwsze zakupy
+      sporo kosztowały.
+    test_signup: null
+    author:
+      display_name: Monika R.
+  - id: OP84
+    innovation_id: inn-nat-wiory-leca
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: null
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Gminny Ośrodek Kultury
+  - id: OP85
+    innovation_id: inn-rops-wortal-informacyjny
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Wersja w paszto, bo nie wszyscy nasi podopieczni z Afganistanu dobrze
+      znają dari.
+    test_signup: null
+    author:
+      display_name: Fundacja na rzecz cudzoziemców
+  - id: OP86
+    innovation_id: inn-rops-wortal-informacyjny
+    rating: 4
+    experience: korzystam
+    feedback: >-
+      Pielęgniarki przeczytały pakiet dla personelu medycznego przed wizytą
+      afgańskiej rodziny. Kilka wskazówek od razu się przydało.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP87
+    innovation_id: inn-rops-wortal-informacyjny
+    rating: 3
+    experience: opis
+    feedback: >-
+      Dobrze zrobione, ale u nas większość cudzoziemców to osoby z Ukrainy,
+      a wortal jest tylko w dari.
+    improvement: >-
+      Ten sam układ informacji w innych językach, na przykład po ukraińsku.
+    test_signup: null
+    author: null
+  - id: OP88
+    innovation_id: inn-rops-wortal-informacyjny
+    rating: null
+    experience: opis
+    feedback: >-
+      Sekcja o edukacji przyda się rodzicom naszych nowych uczniów z
+      Afganistanu.
+    improvement: null
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Szkoła Podstawowa
+  - id: OP89
+    innovation_id: inn-nat-arbuz-mobilny-uniwersalny
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Nagrałem w studiu w busie swoją pierwszą piosenkę. Na koncercie na
+      koniec słuchali mnie sąsiedzi, którzy wcześniej patrzyli na mnie z
+      dystansem.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Andrij S.
+  - id: OP90
+    innovation_id: inn-nat-arbuz-mobilny-uniwersalny
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Bus ze studiem przyjechał do nas na cykl zajęć. Dzieci, które zwykle
+      siedzą z boku, nagrały własny teledysk i pokazały go na pikniku.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Świetlica środowiskowa
+  - id: OP91
+    innovation_id: inn-nat-arbuz-mobilny-uniwersalny
+    rating: null
+    experience: opis
+    feedback: >-
+      Piękny pomysł, ale ile to kosztuje? Bus, kierowca, artysta i noclegi
+      to chyba za dużo dla małej gminy.
+    improvement: Tańszy wariant bez busa, z zajęciami w sali na miejscu.
+    test_signup: null
+    author: null
+  - id: OP92
+    innovation_id: inn-nat-arbuz-mobilny-uniwersalny
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Stowarzyszenie animatorów kultury
+  - id: OP93
+    innovation_id: inn-rops-dialog-ponad-kulturami
+    rating: 4
+    experience: opis
+    feedback: >-
+      Mamy kilka rodzin mieszanych w ostrym konflikcie o dzieci. Model
+      mediacji wygląda solidnie, ale potrzebni są mediatorzy z wiedzą prawną
+      i znajomością języków.
+    improvement: >-
+      Lista przeszkolonych mediatorów, do których można skierować rodzinę.
+    test_signup: null
+    author:
+      display_name: Ośrodek interwencji kryzysowej
+  - id: OP94
+    innovation_id: inn-rops-szlakiem-ludzi-bezdomnych
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Przyczepa jedzie tam, gdzie ludzie naprawdę są, zamiast czekać w
+      łaźni, do której i tak nie przyjdą. Najważniejsze okazało się to, że
+      jest ogrzewana i działa także zimą.
+    improvement: >-
+      Umowa z pralnią albo pralka na miejscu, bo czystej odzieży na zmianę
+      ciągle brakuje.
+    test_signup: null
+    author:
+      display_name: Ośrodek Pomocy Społecznej
+  - id: OP95
+    innovation_id: inn-rops-szlakiem-ludzi-bezdomnych
+    rating: null
+    experience: korzystam
+    feedback: >-
+      Pierwszy raz od tygodni mogłem się umyć w ciepłej wodzie i przebrać w
+      czyste rzeczy. Nikt nie zadawał głupich pytań.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP96
+    innovation_id: inn-rops-szlakiem-ludzi-bezdomnych
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: >-
+      Wspólna przyczepa dla kilku sąsiednich gmin, ze stałym grafikiem
+      objazdów.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Urząd Gminy
+  - id: OP97
+    innovation_id: inn-rops-szlakiem-ludzi-bezdomnych
+    rating: 4
+    experience: null
+    feedback: null
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP98
+    innovation_id: inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Praca z gliną, wikliną i starymi oponami daje naszym podopiecznym
+      zajęcie i powód, żeby nie pić. Wieś to dla wielu z nich spokojniejsze
+      miejsce niż noclegownia w mieście.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Fundacja pomocy osobom w kryzysie bezdomności
+  - id: OP99
+    innovation_id: inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa
+    rating: 3
+    experience: opis
+    feedback: >-
+      Dobry pomysł dla małych gmin, ale to długi program i ryzyko, że ludzie
+      odejdą w połowie, jest duże. Rada gminy na pewno zapyta o koszty.
+    improvement: Przykładowy budżet programu dla małej gminy wiejskiej.
+    test_signup: null
+    author:
+      display_name: Gminny Ośrodek Pomocy Społecznej
+  - id: OP100
+    innovation_id: inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa
+    rating: 2
+    experience: opis
+    feedback: >-
+      Mieszkam na wsi i sąsiedzi boją się, że ośrodek dla osób po
+      bezdomności i nałogach przyniesie kłopoty. W opisie brakuje tego, jak
+      rozmawiać z mieszkańcami przed otwarciem.
+    improvement: >-
+      Rozdział o spotkaniach z mieszkańcami wsi, zanim program ruszy.
+    test_signup: null
+    author: null
+  - id: OP101
+    innovation_id: inn-rops-wiejski-program-pomocy-osobom-w-kryzysie-bezdomnosci-sciezka-feniksa
+    rating: null
+    experience: opis
+    feedback: null
+    improvement: >-
+      Połączenie programu z zajęciami w centrum integracji społecznej, żeby
+      po jego zakończeniu było gdzie pracować.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Centrum Integracji Społecznej
+  - id: OP102
+    innovation_id: inn-nat-bunja
+    rating: 5
+    experience: wdrazam
+    feedback: >-
+      Uczniowie podzieleni na plemiona zaplanowali i zrobili rabatę przy
+      wejściu do szkoły. Dyrekcja zgodziła się bez problemu, a dzieci same
+      pilnują, żeby nikt jej nie deptał.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Szkoła Podstawowa
+  - id: OP103
+    innovation_id: inn-nat-bunja
+    rating: 4
+    experience: opis
+    feedback: null
+    improvement: >-
+      Karty misji dla dzieci z małych wsi, gdzie nie ma parków ani skwerów,
+      jest za to przystanek i boisko.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Stowarzyszenie rozwoju wsi
+  - id: OP104
+    innovation_id: inn-nat-bunja
+    rating: 5
+    experience: korzystam
+    feedback: >-
+      Byliśmy plemieniem i zrobiliśmy budki dla ptaków przy boisku. Fajnie,
+      że dorośli nas słuchali.
+    improvement: null
+    test_signup: null
+    author: null
+  - id: OP105
+    innovation_id: inn-nat-bunja
+    rating: 4
+    experience: wdrazam
+    feedback: null
+    improvement: >-
+      Krótsza instrukcja dla mistrza gry, bo przeczytanie wszystkich kart
+      zajmuje dużo czasu.
+    test_signup: null
+    author: null
+  - id: OP106
+    innovation_id: inn-nat-opracowanie-standaryzowanego-modelu-wsparcia-doradczego-dla-osob-z-grupy-ubostwa-energetycznego
+    rating: 1
+    experience: opis
+    feedback: >-
+      Anonimowe zgłaszanie sąsiadów to dla mnie donos. Nie chciałbym, żeby
+      ktoś za moimi plecami zgłaszał, że mam zimno w domu.
+    improvement: >-
+      Zgłoszenie tylko za zgodą osoby, której dotyczy, po rozmowie z nią.
+    test_signup: null
+    author: null
+  - id: OP107
+    innovation_id: inn-nat-opracowanie-standaryzowanego-modelu-wsparcia-doradczego-dla-osob-z-grupy-ubostwa-energetycznego
+    rating: 4
+    experience: wdrazam
+    feedback: >-
+      Dzięki zgłoszeniom trafiliśmy do starszych osób, które same nigdy by
+      się nie zgłosiły. Każde zgłoszenie sprawdzamy na miejscu, zanim
+      cokolwiek zaproponujemy.
+    improvement: null
+    test_signup: null
+    author:
+      display_name: Ośrodek Pomocy Społecznej
+  - id: OP108
+    innovation_id: inn-nat-opracowanie-standaryzowanego-modelu-wsparcia-doradczego-dla-osob-z-grupy-ubostwa-energetycznego
+    rating: 5
+    experience: opis
+    feedback: null
+    improvement: >-
+      Możliwość zgłoszenia także na papierze, w sklepie albo u sołtysa, bo
+      nie każdy korzysta z internetu.
+    test_signup:
+      as: wdrazajacy
+    author:
+      display_name: Urząd Gminy
+  - id: OP109
+    innovation_id: inn-nat-opracowanie-standaryzowanego-modelu-wsparcia-doradczego-dla-osob-z-grupy-ubostwa-energetycznego
+    rating: 3
+    experience: opis
+    feedback: >-
+      Pomysł ma sens, ale gmina musi mieć potem z czego pomóc. Samo
+      sprawdzenie, że ktoś marznie, nic nie da.
+    improvement: null
+    test_signup: null
+    author: null

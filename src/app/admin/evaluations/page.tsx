@@ -57,6 +57,7 @@ export default async function AdminEvaluationsPage({ searchParams }: PageProps<"
                   {formatDate(item.created_at)}
                   {item.rating !== null && ` · ${t("admin.evaluations.rating", { rating: item.rating })}`}
                   {item.experience && ` · ${experienceLabel(item.experience)}`}
+                  {item.demo && ` · ${t("admin.demo")}`}
                 </p>
                 {item.feedback && (
                   <p>

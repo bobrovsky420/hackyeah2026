@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { t, type MessageKey } from "@/lib/i18n";
 import type { AdminSession } from "@/server/admin/auth";
+import { demoCount } from "@/server/admin/data";
 
 export type AdminSection = "start" | "threads" | "partnerships" | "mentors" | "ideas" | "evaluations" | "needs" | "contacts" | "readiness" | "reports" | "trends" | "knowledge";
 
@@ -23,8 +24,12 @@ const SECTIONS: { key: AdminSection; href: string; label: MessageKey }[] = [
   { key: "knowledge", href: "/rops/wiedza", label: "admin.nav.knowledge" },
 ];
 
-/** The frame of every panel page: who is signed in, the sections, the page's heading and a saved notice. */
-export function AdminShell({
+/**
+ * The frame of every panel page: who is signed in, the sections, the
+ * page's heading, the notice of the demonstration data while the store
+ * holds it, and a saved notice.
+ */
+export async function AdminShell({
   session,
   current,
   title,
@@ -39,6 +44,7 @@ export function AdminShell({
   saved?: boolean;
   children: ReactNode;
 }) {
+  const demo = await demoCount();
   return (
     <div className="grid gap-8">
       <div className="no-print flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -73,6 +79,11 @@ export function AdminShell({
         </h1>
         {lead && <p className="max-w-[48rem]">{lead}</p>}
       </header>
+      {demo > 0 && (
+        <Notice title={t("admin.demo.title")}>
+          <p>{t("admin.demo.text", { count: demo })}</p>
+        </Notice>
+      )}
       {saved && (
         <div role="status">
           <Notice tone="success" title={t("admin.saved")}>

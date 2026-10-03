@@ -56,7 +56,7 @@ ośrodek pomocy. *(cut)* Narzędzie niczego nie wysyła; każdy wpis
 rozpatruje człowiek w panelu ROPS.
 
 **[Slide 7]**
-Cztery z siedmiu modułów wyzwania działają w całości, trzy częściowo, a
+Pięć z siedmiu modułów wyzwania działa w całości, dwa częściowo, a
 w panelu ROPS decyduje człowiek. Droga kosztuje mniej niż cent.
 
 **[Slide 8]**

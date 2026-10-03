@@ -1,5 +1,6 @@
 import type { Idea, Need, Route } from "@/lib/contracts";
 import { repository, type Repository } from "@/server/db";
+import { isReal } from "@/server/db/repository";
 import { buildLexicalIndex, lexicalTerms, rankLexical } from "./lexical";
 
 /*
@@ -118,9 +119,9 @@ export function findSimilarCases(query: CaseQuery, needs: readonly Need[], ideas
   return { shown, hiddenCount: similar.length - showable.length };
 }
 
-/** The similar cases of a route, read from the store. */
+/** The similar cases of a route, read from the store; the panel's demonstration data is no case of anyone's. */
 export async function similarCasesForRoute(route: Route, repo: Repository = repository()): Promise<SimilarCases> {
-  const [needs, ideas] = await Promise.all([repo.listNeeds(), repo.listIdeas()]);
+  const [needs, ideas] = await Promise.all([repo.listNeeds().then((all) => all.filter(isReal)), repo.listIdeas().then((all) => all.filter(isReal))]);
   const text = [route.need_summary_pl, route.input.problem_text].filter(Boolean).join("\n");
   return findSimilarCases({ text, targetGroups: route.input.target_groups, routeId: route.id }, needs, ideas);
 }
