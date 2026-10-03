@@ -23,15 +23,6 @@ The answer is a route, not a list:
 - **Implementation path**: the legal vehicle, the funding calls and three
   next steps.
 
-Beyond the route, a person can talk to ROPS without an account. A
-question, a request for a mentor or an answer to a partnership post
-starts a conversation with a private link, remembered on the device;
-ROPS answers in its panel and can invite a mentor, who gets a private
-link of their own. The partnership board shows the posts ROPS approved,
-from NGOs, gminas, institutions, businesses, universities and residents;
-an answer goes through ROPS, so no contact is public. Nothing is sent by
-e-mail, and only the hashes of the links' keys are stored.
-
 When nothing fits well enough, the tool says so, files the need in a
 needs bank and drafts the brief for the next incubator call, with a
 duplicate check against the existing innovations. Needs become the
@@ -46,6 +37,15 @@ Every innovation can be rated, commented on and improved, and people
 and organisations can sign up to test it. Its page shows only the
 numbers; the texts and the sign-ups go to ROPS, which passes them on to
 the innovators.
+
+Beyond the route, a person can talk to ROPS without an account. A
+question, a request for a mentor or an answer to a partnership post
+starts a conversation with a private link, remembered on the device;
+ROPS answers in its panel and can invite a mentor, who gets a private
+link of their own. The partnership board shows the posts ROPS approved,
+from NGOs, gminas, institutions, businesses, universities and residents;
+an answer goes through ROPS, so no contact is public. Nothing is sent by
+e-mail, and only the hashes of the links' keys are stored.
 
 It is not a web search: it never looks at the open internet, only at a
 closed catalogue of 381 described and attributed innovations. And it is

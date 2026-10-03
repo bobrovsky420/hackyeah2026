@@ -146,7 +146,7 @@ modules and where this specification answers them:
 | II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7, FR-9.5, FR-9.6 | Partly built: knowledge on routes and innovation pages, kept live in the panel with films; the trends for the administrator; no library to browse |
 | III. Kreator pomysłów | An idea card (short description, essence, for whom, stage) at any time; an application generator during grant calls; the innovation canvas; an assistant that develops the idea | 7.13 | The idea card is built; the generator, the canvas and the assistant are not |
 | IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | 7.14 | Built |
-| V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | | Not built |
+| V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | 7.15 | Built |
 | VI. Panel administratora | Quick editing, verification and publication of knowledge | 7.9 | Built (R.3) |
 | VII. Middleman Innowacji | An AI assistant that adapts an innovation into a service for the institution that asks | 7.4, 7.8 | Partly built: the route adapts the paths to the role and the gmina |
 
@@ -368,13 +368,15 @@ page (FR-5.6). The tool sends nothing to anyone by e-mail.
 | 7.11 Transparency | "Jak to działa", credits, licences, privacy note, accessibility statement, "Zasady" (principles and appeal path) | | | |
 | 7.13 Idea card (module III) | Idea card form; the gate before storage; the card's page with the similar innovations; Markdown download and print | | | Application generator per call; innovation canvas; idea assistant |
 | 7.14 Tester (module IV) | Rating, feedback, improvement proposal and test sign-up per innovation; the gate before storage; the numbers on the innovation's page | | | Test campaigns run by the innovators |
+| 7.15 Conversations and partnerships (module V) | Conversations with private links, ROPS's answers, mentors with their own links, "Moje rozmowy"; the partnership board after approval, answers through ROPS | | | E-mail notices of a new answer |
 | 7.12 Safety, moderation and fairness | Screening gate with its four outcomes; redaction of personal data; crisis screen with verified helplines; report link; screening log; fairness cases in the evaluation | Polish safety classifier as a second opinion; contact opt-out for organisations; abuse limits per e-mail | Appeal form | Moderation tab (R.2); ethics review board of the hub; quarterly fairness report |
 
 Explicitly out of scope for the hackathon: public user accounts, a native
 mobile app, integration with ROPS internal systems, regions other than
 Małopolska (the national base is ingested whole, but the map and the paths
-are Małopolska), an English interface, a free chat interface (the intake is
-a form with one optional clarification, not a conversation), automatic
+are Małopolska), an English interface, a free chat with the model (the
+intake is a form with one optional clarification; the conversations of
+7.15 are between people), automatic
 e-mail sending to real people (contact requests are stored and ROPS
 relays them from the panel; nothing is sent), voice input.
 
@@ -756,6 +758,7 @@ code is `src/app/admin/`, `src/server/admin/` and
 | FR-9.4 | MUST | The reply path of section 6 of the brief: an idea card gets a status (nowy, w analizie, przyjęty, zamknięty) and a reply its author reads on the card's page, with the reviewer and the date; an evaluation is marked as passed on to the innovators; a rejected evaluation leaves the innovation's numbers. | The reply shows on `/pomysl/{id}` at once |
 | FR-9.5 | MUST | Trends (module II, for the administrator only): needs by target group, powiat and week, ideas by group and stage, routes by result, the most proposed innovations and the ones with evaluations and testers, as tables with bars. | |
 | FR-9.6 | MUST | Knowledge kept live (modules II and VI): an innovation is marked verified ("Sprawdzone przez ROPS" on its page and on routes) or hidden (gone from routes and its page), its summary corrected, a material such as a film added or removed; a knowledge item of `knowledge.yaml` edited or hidden, or a new one added for target groups or for every route. Applied when a route or an innovation is read, so it shows at once and on routes made before; the catalogue, the curated files and the stored routes stay unchanged. | A film added to an innovation shows on an existing route |
+| FR-9.8 | MUST | Conversations (7.15): the list, those waiting for ROPS first and counted on the dashboard; the conversation with the author's contact for ROPS, the answer signed with the reviewer's name, the status, the mentor's invitation and a new link for an author who lost theirs, each link shown once as a full address; the mentors (name, field, groups, active); the partnership posts with their decision and the conversations of those who answered. | A mentor invited in the panel answers through their link |
 | FR-9.7 | ROADMAP | "Zapisz wdrożenie" from a contact request creates an implementation record; clustering of needs (FR-5.4); a hidden innovation also left out of retrieval, not only of the route. | |
 
 ### 7.10 Feedback and measures (owner: Developer 1)
@@ -782,8 +785,9 @@ code is `src/app/admin/`, `src/server/admin/` and
 
 The gate runs before matching on every text a user submits: the need
 (7.2), a saved need (7.5), a contact request message (7.6), a readiness
-registration, a "Chcemy pomóc" response (7.5), an idea card (7.13) and
-an evaluation of an innovation (7.14). It combines
+registration, a "Chcemy pomóc" response (7.5), an idea card (7.13), an
+evaluation of an innovation (7.14), and the messages, posts and answers
+of 7.15 (with the rules of FR-12.16). It combines
 deterministic checks with one fast model call and produces one of the
 outcomes `need`, `redirected`, `declined`, `off_topic`. Principle E3 sets
 its bias: when in doubt between routing and redirecting, the tool shows
@@ -810,6 +814,7 @@ tool's own text.
 | FR-12.12 | MUST | A model refusal after the gate (the provider declines a request that passed screening) is retried through the provider's fallback once; a refusal that survives becomes the mild `declined` outcome ("Nie możemy automatycznie przygotować drogi dla tego opisu") with the ROPS contact, logged for review, never a technical error. | Simulated in a unit test |
 | FR-12.13 | SHOULD | Second opinion from a local Polish safety classifier (Bielik-Guard-0.5B, Apache 2.0) on the app server; a disagreement with the model on `harm` sends the case to the moderation queue instead of an automatic decline. | Toggle by environment variable, off by default |
 | FR-12.14 | SHOULD | Abuse limits per identity: at most five contact requests and two readiness registrations per e-mail address per day; honeypot fields on every public form; identical texts from one IP within an hour merged: an identical route request (same text, place, role and target groups) opens the route the first one got, without the gate or a model call, and "Policz ponownie" is never a repeat; a kill switch `PUBLIC_WRITES=false` that makes every public form read-only if the tool is flooded during the event. | Tested |
+| FR-12.16 | MUST | Texts of an ongoing conversation (kind `message`) and partnership posts and answers to them (kind `partnership`), 7.15: a crisis (the lexicon, or the model at 0.6 or more) is redirected and harm at the decline threshold is declined, as everywhere; `off_topic` and spam never turn them away, and repeats and links are not counted, because a thank-you, a date or a mentor's link belong in a conversation and ROPS reads every conversation and approves every post; an individual case is not redirected, as a person at ROPS reads it. The first message of a question or a mentor request is screened as a contact request. Decision E.3. | Unit tests of the rules; the live model's off-topic reading of a mentor's advice no longer blocks it |
 | FR-12.15 | COULD | Appeal form on S11 that files a content report carrying the reference code. | |
 
 ### 7.13 Idea card (module III of the brief; added after the brief was published)
@@ -839,6 +844,24 @@ people who use or run it. The shape is `Evaluation` in
 | FR-14.2 | MUST | POST `/api/innovations/{id}/evaluations` screens the feedback and the proposal together with the gate (kind `evaluation`), the name for harm only; at most five evaluations of one innovation per e-mail address and per client address a day; honeypot; 404 for an unknown innovation. | A crisis text stores nothing; a rating of 7 is refused |
 | FR-14.3 | MUST | The innovation's page shows "Opinie i testy": the average rating with the number of ratings (Polish plural and decimal comma), the test sign-ups, the improvement proposals, never a text or a contact; and the link to the form. | "5 na 5 (1 ocena)" after one rating |
 | FR-14.4 | ROADMAP | Test campaigns the innovators open, with dates and places, and the results published with consent. | |
+
+### 7.15 Conversations and partnerships (module V of the brief; added after the brief was published)
+
+Direct dialogue without accounts and without e-mail (decision R.4).
+The shapes are `Thread`, `Mentor` and `PartnershipPost` in
+`src/lib/contracts.ts`; the code is `src/server/threads/`,
+`src/components/talk/` and the pages under `/zapytaj`, `/rozmowa`,
+`/rozmowy` and `/partnerstwa`.
+
+| Id | Priority | Requirement | Acceptance |
+|---|---|---|---|
+| FR-15.1 | MUST | `/zapytaj`: the kind (a question to ROPS, a mentor's support, a partnership), a subject, the message, the author's name, an organisation, the sector, the gmina and an e-mail address for ROPS alone (all optional but the name), consent. Opened from an innovation ("Zapytaj eksperta o to rozwiązanie"), an idea card or a partnership post, the conversation refers to it. | The innovation is named above the form |
+| FR-15.2 | MUST | After sending: the private link `/rozmowa/{id}?klucz=...`, a key of 24 random bytes, with "Kopiuj link"; the browser remembers it for "Moje rozmowy" (`/rozmowy`, localStorage, the author's links only). Only the sha256 of each key is stored. | A copy of the store opens no conversation |
+| FR-15.3 | MUST | The conversation page shows the messages of the author, of ROPS (with the reviewer's name) and of the mentor, the status and what it refers to, and takes the next message; a wrong key and an unknown conversation get the same 404; the page is never indexed and its address never sent on (no referrer). A message of the author reopens a closed conversation. | A wrong key shows "not found" |
+| FR-15.4 | MUST | A mentor invited in the panel (FR-9.8) opens the conversation with a key of their own and writes under their name; a new invitation revokes the old link. A mentor has no access to the panel. | |
+| FR-15.5 | MUST | The partnership board `/partnerstwa`: posts ROPS approved ("Szukam partnera" or "Oferuję współpracę", sector, sectors sought, gmina, groups, the organisation's name), a filter by sector, "Chcę współpracować" opening a conversation that refers to the post; no contact is shown. `/partnerstwa/nowe` adds a post with the author's own conversation, where ROPS relays the answers. | An unapproved post is not on the board |
+| FR-15.6 | MUST | Every text through the gate (FR-12.16); at most five new conversations or three posts per e-mail address and per client address a day, 30 messages per conversation a day; honeypots. | |
+| FR-15.7 | ROADMAP | An e-mail or text message when an answer arrives, with the consent the form would ask for; cross-sector matching that suggests partners for a post. | |
 
 ## 8. Data model
 
@@ -1486,6 +1509,9 @@ files.
 | GET `/api/health` | Liveness | | `{ok, data_version, provider, model}` |
 | POST `/api/ideas` | Idea card (7.13) | `{kind, title, description, essence, for_whom, target_groups?, stage, place_terc?, display_name, is_organisation?, email, consent_store, consent_publish?}` | 201 `{id, redactions}`; the gate's outcomes as for a need |
 | POST `/api/innovations/{id}/evaluations` | Evaluation of an innovation (7.14) | `{rating?, experience?, feedback?, improvement?, test_signup?, tester_role?, place_terc?, display_name?, email?, consent_store}` | 201 `{id, redactions}`; 404 for an unknown innovation |
+| POST `/api/threads` | Start a conversation (7.15) | `{topic, subject, message, display_name, organisation?, sector?, place_terc?, email?, ref_type?, ref_id?, consent_store}` | 201 `{id, key, path, redactions}` |
+| POST `/api/threads/{id}/messages` | A message of the author or the mentor | `{key, text}` | 201 `{redactions}`; 404 for a wrong key or an unknown conversation |
+| POST `/api/partnerships` | A partnership post with its author's conversation | `{kind, title, description, sector, seeking?, target_groups?, place_terc?, display_name, organisation?, email?, consent_store}` | 201 `{id, path}` |
 | POST `/api/ideas/{id}/similar` | The card's similar innovations, computed once and stored | | 200 `{similar}`; 503 when the model failed |
 
 The panel of 7.9 works through server actions behind its session; its
@@ -1634,6 +1660,8 @@ change to a prompt.
   src/server/               every server module: gate/ (the screening gate, 7.12), match/ (retrieval, shortlist, assess, grounding), route/ (the composer), needs/ (needs and briefs), db/ (the store), eval/ (the evaluation harness), pipeline.ts, route-service.ts (the engines and the repeat check), route-cache.ts, map.ts (S4), rate-limit.ts, validate.ts, ephemeral.ts, retention.ts
   src/server/ideas/         the idea card of 7.13: its similar innovations and its Markdown
   src/server/evaluations/   the tester of 7.14: the numbers an innovation's page shows
+  src/server/threads/       the conversations of 7.15: private keys and their hashes, message screening
+  src/components/talk/      the conversation and partnership forms, the private link, "Moje rozmowy"
   src/app/admin/            the ROPS panel of 7.9 at /rops, with its server actions (actions.ts)
   src/server/admin/         the panel's door (auth.ts), queues, trends and CSV (data.ts), labels
   src/server/knowledge/     the panel's knowledge applied over routes and innovations (overlay.ts)
@@ -1840,8 +1868,9 @@ the partner allows).
 - The door: the reviewer's name and the code; a locked notice when the
   server has no code.
 - Every page: who is signed in and "Wyloguj", the sections (Pulpit,
-  Pomysły, Opinie i testy, Potrzeby, Prośby o kontakt, Gotowość do
-  działania, Zgłoszenia i odmowy, Trendy, Wiedza), the heading, a
+  Rozmowy, Partnerstwa, Mentorzy, Pomysły, Opinie i testy, Potrzeby,
+  Prośby o kontakt, Gotowość do działania, Zgłoszenia i odmowy, Trendy,
+  Wiedza), the heading, a
   "Zapisano" status after an action.
 - Queues as cards, the newest first, each with its moderation state and
   the approve and reject forms (reason list and note); the idea card and
@@ -1928,6 +1957,25 @@ tools used, the prior work and the libraries.
   sign-up's role and gmina appear when the box is ticked.
 - On S5, after the people block: the numbers of FR-14.3 and "Oceń albo
   zgłoś się do testów"; "Nikt jeszcze nie ocenił" before the first.
+
+### S15 Conversations (`/zapytaj`, `/rozmowa/{id}`, `/rozmowy`)
+
+- `/zapytaj`: "Jak to działa" (no account, a private link), the
+  reference when there is one, the form of FR-15.1; after sending, the
+  private link with "Kopiuj link" and "Otwórz rozmowę".
+- `/rozmowa/{id}`: the kind as the eyebrow, the subject, the status, the
+  mentor; "To jest Twoja prywatna rozmowa" or, for the mentor, "Piszesz
+  jako mentor"; the messages oldest first, ROPS's and the mentor's
+  marked apart from the author's; "Czekamy na odpowiedź ROPS" while the
+  last word is not ROPS's; the reply form.
+- `/rozmowy`: the remembered conversations, each with "Zapomnij na tym
+  urządzeniu".
+
+### S16 Partnership board (`/partnerstwa`, `/partnerstwa/nowe`)
+
+- The board: the lead on how ROPS checks every post, the sector filter,
+  "Dodaj ogłoszenie", the posts as cards with "Chcę współpracować".
+- The new post: the form of FR-15.5 and the author's private link.
 
 ### Message keys
 
@@ -2106,6 +2154,10 @@ per-request reads of the JSON files.
 - Prompt injection: user text is data (9.3); the schema validation and
   the identifier check make injected instructions inert; a test problem
   covers it.
+- Conversations (7.15): private links with 24-byte random keys, only
+  their sha256 stored, compared in constant time; a wrong key answers
+  404 like an unknown conversation; the pages are never indexed and send
+  no referrer; a new link revokes the old one.
 - The ROPS panel: one shared code (`ROPS_TOKEN`), compared in constant
   time; production without it keeps the panel locked; every server action
   checks the session itself; the export is refused without one; the pages
@@ -2125,7 +2177,8 @@ per-request reads of the JSON files.
   people whose public data we show (art. 14 GDPR) and how to object.
 - Retention defaults: routes 30 days after the event; needs until
   ROPS decides; contact requests 90 days; readiness 12 months; idea
-  cards and evaluations 12 months; logs 14 days; no IP addresses stored outside the rate
+  cards and evaluations 12 months; conversations 12 months after their
+  last message; partnership posts 12 months; logs 14 days; no IP addresses stored outside the rate
   limiter's memory.
 - No cookies on the public pages; a browser-local flag deduplicates
   feedback. The ROPS panel alone sets strictly necessary cookies for its
@@ -2376,6 +2429,11 @@ it, repetitions are not independent samples.
 - Accessibility (`pnpm a11y`): axe on every screen of
   `tests/e2e/screens.ts` in the three themes, the idea card form and an
   example card among them.
+- End-to-end for module V: a question with its private link, a wrong
+  key, ROPS's answer and a mentor invited, the mentor's answer from their
+  own link, the author's reply and "Moje rozmowy"; a partnership post
+  that waits for approval, the board, an answer that reaches ROPS, and
+  no contact shown.
 - End-to-end for the panel: the door with a wrong and a right code, the
   reply that reaches the idea's author, an innovation verified with a
   film and then hidden, and the panel and its export closed without a
