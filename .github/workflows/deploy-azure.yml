@@ -172,8 +172,8 @@ jobs:
           az network nsg rule create -g "$RG" --nsg-name "$VM-nsg" -n github-actions-ssh -o none \
             --priority "$priority" --direction Inbound --access Allow --protocol Tcp \
             --source-address-prefixes "$runner_ip/32" --destination-port-ranges 22
-          az network nsg rule list -g "$RG" --nsg-name "$VM-nsg" -o table \
-            --query "[?direction=='Inbound'].{name:name, priority:priority, access:access, from:sourceAddressPrefix, ports:join(',', [destinationPortRange || '', join(',', destinationPortRanges)])}"
+          az network nsg rule list -g "$RG" --nsg-name "$VM-nsg" -o tsv \
+            --query "[?direction=='Inbound'].[name, to_string(priority), access, sourceAddressPrefix, destinationPortRange, to_string(destinationPortRanges)]" || true
           echo "SSH_OPTS=-i $HOME/.ssh/deploy -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -o ConnectTimeout=10" >> "$GITHUB_ENV"
 
       - name: Wait for SSH
