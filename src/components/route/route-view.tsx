@@ -176,6 +176,19 @@ export function RouteView({ route, markdown, similar }: { route: Route; markdown
 
         {route.screening.crisis_banner && <CrisisBanner topics={topics} />}
 
+        {/* E.4: a person writing about their own matter gets the route, and where individual matters go. */}
+        {route.screening.category === "individual_case" && (
+          <Notice title={t("route.individual.title")}>
+            <p>
+              {t("route.individual.text")}{" "}
+              {route.input.place_name ? t("s10.ops.place", { place: route.input.place_name }) : t("s10.ops.generic")}
+            </p>
+            <p className="no-print">
+              <Link href="/zapytaj">{t("route.individual.ask")}</Link>
+            </p>
+          </Notice>
+        )}
+
         {redactions > 0 && (
           <Notice title={t("route.redacted.title")}>
             <p>

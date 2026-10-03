@@ -57,10 +57,27 @@ describe("rule 3: no model", () => {
 });
 
 describe("rule 4: crisis and individual case", () => {
-  it.each(["crisis", "individual_case"] as const)("%s at the threshold redirects, just below it routes with the banner", (category) => {
-    expect(decide(input({ model: model(category, REDIRECT_MIN_CONFIDENCE) })).outcome).toBe("redirected");
-    const doubtful = decide(input({ model: model(category, below(REDIRECT_MIN_CONFIDENCE)) }));
+  it("a crisis at the threshold redirects, just below it routes with the banner", () => {
+    expect(decide(input({ model: model("crisis", REDIRECT_MIN_CONFIDENCE) })).outcome).toBe("redirected");
+    const doubtful = decide(input({ model: model("crisis", below(REDIRECT_MIN_CONFIDENCE)) }));
     expect(doubtful).toMatchObject({ outcome: "need", crisis_banner: true });
+  });
+
+  it("an individual case with a sensitive topic redirects like a crisis (E.4)", () => {
+    const violent = model("individual_case", REDIRECT_MIN_CONFIDENCE, { topics: ["child_abuse"] });
+    expect(decide(input({ model: violent })).outcome).toBe("redirected");
+    const doubtful = decide(input({ model: { ...violent, confidence: below(REDIRECT_MIN_CONFIDENCE) } }));
+    expect(doubtful).toMatchObject({ outcome: "need", crisis_banner: true });
+    // A sensitive topic of the community lexicon counts too.
+    const lexicon = { crisis: [], community: [{ topic: "violence" as SensitiveTopic, entry: "bije" }] };
+    expect(decide(input({ lexicon, model: model("individual_case", 0.9) })).outcome).toBe("redirected");
+  });
+
+  it("an individual case without a sensitive topic is routed like any need, without the crisis banner (E.4)", () => {
+    // "Straciłam wzrok i chciałabym wrócić do tańca": a person's own need, not a danger.
+    const own = decide(input({ model: model("individual_case", 0.95) }));
+    expect(own).toMatchObject({ outcome: "need", category: "individual_case", crisis_banner: false });
+    expect(own.rules_fired).toContain("individual_case:routed");
   });
 });
 
