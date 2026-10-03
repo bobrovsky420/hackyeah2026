@@ -108,7 +108,9 @@ challenge, the team and the decisions made so far are in
   there; `ROUTE_ENGINE=canned` forces the prototype's keyword stand-in
   (`src/lib/mock/scenarios.ts`, canned routes in `src/lib/mock/routes.ts`),
   which the Playwright journeys use. The retriever needs the embedding
-  service (`.venv-embedding/Scripts/python scripts/embedding-service.py`)
+  service (`npx pnpm@12.6.0 embeddings`, which runs `scripts/embedding-service.py`
+  with the Python of `.venv-embedding` or `.venv`; `dev:embeddings` starts it
+  and `next dev` together)
   and falls back to a lexical scorer without it. `npx pnpm@12.6.0 eval`
   runs the test problems of 13.1 and writes `reports/`;
   `npx pnpm@12.6.0 cache:warm` fills the replay cache for the demo. The

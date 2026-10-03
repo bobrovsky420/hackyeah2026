@@ -32,7 +32,7 @@ const atkinsonMono = Atkinson_Hyperlegible_Mono({
   adjustFontFallback: false,
 });
 
-/* Font decision (Q1): UI_FONT=source-sans-3 switches the app. */
+/* Font decision (Q1) open until Saturday 3 October 2026, 20:00: UI_FONT=source-sans-3 switches the app. */
 const uiFont = process.env.UI_FONT === "source-sans-3" ? sourceSans : atkinson;
 
 /* Applies the saved view settings before the first paint, so the page never flashes. */

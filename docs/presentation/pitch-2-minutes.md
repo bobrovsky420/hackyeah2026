@@ -2,8 +2,8 @@
 
 One presenter, the nine slides of [presentation.pdf](presentation.pdf).
 The long version is [pitch-5-minutes.md](pitch-5-minutes.md).
-259 spoken words and seven pauses, 2:00 at 140 words a minute: the words
-take 1:51, the pauses about 9 seconds. The two sentences after *(cut)* add
+261 spoken words and seven pauses, 2:01 at 140 words a minute: the words
+take 1:52, the pauses about 9 seconds. The two sentences after *(cut)* add
 24 words, about 10 seconds; say them only if the rehearsal shows time to
 spare. The times below are for the version without them.
 
@@ -22,13 +22,13 @@ spare. The times below are for the version without them.
 ## Script
 
 **[Slide 1]**
-Laskowa, a village gmina in Małopolska. More and more seniors live alone,
+Laskowa, a rural gmina in Małopolska. More and more seniors live alone,
 and there is no day centre. *(pause)* Somewhere in Poland someone has
 already solved this. The social worker in Laskowa will never find it.
 *(pause)*
 
 **[Slide 2]**
-ROPS Kraków told us: no more portals, catalogues or search engines.
+ROPS Kraków wrote in its brief: no more portals, catalogues or search engines.
 Connect a problem to a solution, to knowledge and to people. And when no
 solution exists, help create one.
 
@@ -76,4 +76,4 @@ From need to solution. Not another catalogue: a route. Thank you.
 - Say numbers as words: "three hundred eighty-one", "less than one cent".
 - DoBro is an invitation, not an agreement: never say "partner".
 - If the stage has a live demo slot, slide 3 is the moment for it; the
-  Laskowa route is `rt-2026-10-03-57045c`.
+  Laskowa route is `rt-2026-09-29-57045c`.
