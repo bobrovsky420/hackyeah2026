@@ -104,3 +104,29 @@ describe("readiness: harm only", () => {
     expect(decidesWithoutModel({ kind: "readiness", lexicon, spam: noSpam })).toBe(false);
   });
 });
+
+describe("a message in an ongoing conversation (module V)", () => {
+  const message = (overrides: Partial<DecisionInput>) => input({ kind: "message", ...overrides });
+
+  it("is never turned away as off-topic or spam: a thank-you and a mentor's advice belong there", () => {
+    expect(decide(message({ model: model("off_topic", 0.95) })).outcome).toBe("need");
+    expect(decide(message({ model: model("spam", 0.95) })).outcome).toBe("need");
+    expect(decide(message({ model: null })).rules_fired).toEqual(["kind:message", "model:unavailable"]);
+  });
+
+  it("still leads a crisis to human help and declines a harmful text", () => {
+    expect(decide(message({ model: model("crisis", REDIRECT_MIN_CONFIDENCE) })).outcome).toBe("redirected");
+    const lexicon = { crisis: [{ topic: "suicide" as SensitiveTopic, entry: "nie$ chce$ ~ zyc$" }], community: [] };
+    expect(decide(message({ lexicon, model: null })).outcome).toBe("redirected");
+    expect(decide(message({ model: model("harm", DECLINE_MIN_CONFIDENCE) })).outcome).toBe("declined");
+  });
+
+  it("does not redirect an individual case: a person at ROPS reads the conversation", () => {
+    expect(decide(message({ model: model("individual_case", 0.95) })).outcome).toBe("need");
+  });
+
+  it("screens a partnership post the same way, as ROPS approves every post before anyone sees it", () => {
+    expect(decide(input({ kind: "partnership", model: model("off_topic", 0.95) })).rules_fired).toEqual(["kind:partnership", "model:off_topic"]);
+    expect(decide(input({ kind: "partnership", model: model("harm", DECLINE_MIN_CONFIDENCE) })).outcome).toBe("declined");
+  });
+});

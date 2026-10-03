@@ -34,7 +34,7 @@ export const memory: EphemeralMemory = (holder.__ephemeralMemory ??= {
 });
 
 /** Ids in the style of the specification: rt-2026-10-03-7f3a. */
-export function newId(prefix: "rt" | "nd" | "kt" | "gt" | "zg" | "pm"): string {
+export function newId(prefix: "rt" | "nd" | "kt" | "gt" | "zg" | "pm" | "oc" | "rz" | "wd" | "pp" | "mt"): string {
   const date = new Date().toISOString().slice(0, 10);
   return `${prefix}-${date}-${randomBytes(3).toString("hex")}`;
 }

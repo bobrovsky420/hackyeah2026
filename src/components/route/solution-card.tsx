@@ -36,9 +36,12 @@ export function SolutionCard({
   return (
     <article aria-labelledby={headingId} className="grid gap-4 rounded-lg border border-border bg-background p-5">
       <div className="grid gap-1.5">
-        <p className="justify-self-start rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">
-          {sourceBadge(item.source)}
-        </p>
+        <div className="flex flex-wrap gap-2">
+          <p className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">{sourceBadge(item.source)}</p>
+          {solution.verified_by_rops && (
+            <p className="rounded-sm border-2 border-foreground px-2 text-[0.9rem] font-bold">{t("admin.verifiedBadge")}</p>
+          )}
+        </div>
         <h3 id={headingId} className="text-[1.25rem] leading-snug font-bold">
           <Link href={detailsHref}>{item.title}</Link>
         </h3>

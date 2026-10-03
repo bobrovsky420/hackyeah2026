@@ -1,4 +1,4 @@
-import type { CostBand, EvidenceLevel, IdeaKind, IdeaStage, RoleCode, SourceName, TimeToImplement, RouteSolution, IndicatorKey } from "@/lib/contracts";
+import type { CostBand, EvaluationExperience, EvidenceLevel, IdeaKind, Sector, TesterRole, ThreadStatus, ThreadTopic, IdeaStage, RoleCode, SourceName, TimeToImplement, RouteSolution, IndicatorKey } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 
 /* Codes of the contracts (data/curated/taxonomies.json, schemas 8.4 and 8.7) mapped to interface strings. */
@@ -67,6 +67,84 @@ export function isIdeaStage(value: unknown): value is IdeaStage {
 
 export function ideaStageLabel(code: IdeaStage): string {
   return t(ideaStageKeys[code]);
+}
+
+const experienceKeys = {
+  korzystam: "tester.experience.korzystam",
+  wdrazam: "tester.experience.wdrazam",
+  opis: "tester.experience.opis",
+} as const satisfies Record<EvaluationExperience, MessageKey>;
+
+export const experienceCodes = Object.keys(experienceKeys) as EvaluationExperience[];
+
+export function isExperience(value: unknown): value is EvaluationExperience {
+  return typeof value === "string" && value in experienceKeys;
+}
+
+export function experienceLabel(code: EvaluationExperience): string {
+  return t(experienceKeys[code]);
+}
+
+const testerRoleKeys = {
+  uzytkownik: "tester.signup.uzytkownik",
+  wdrazajacy: "tester.signup.wdrazajacy",
+} as const satisfies Record<TesterRole, MessageKey>;
+
+export const testerRoleCodes = Object.keys(testerRoleKeys) as TesterRole[];
+
+export function isTesterRole(value: unknown): value is TesterRole {
+  return typeof value === "string" && value in testerRoleKeys;
+}
+
+export function testerRoleLabel(code: TesterRole): string {
+  return t(testerRoleKeys[code]);
+}
+
+const sectorKeys = {
+  mieszkaniec: "talk.sector.mieszkaniec",
+  ngo: "talk.sector.ngo",
+  jst: "talk.sector.jst",
+  instytucja: "talk.sector.instytucja",
+  biznes: "talk.sector.biznes",
+  nauka: "talk.sector.nauka",
+} as const satisfies Record<Sector, MessageKey>;
+
+export const sectorCodes = Object.keys(sectorKeys) as Sector[];
+
+export function isSector(value: unknown): value is Sector {
+  return typeof value === "string" && value in sectorKeys;
+}
+
+export function sectorLabel(code: Sector): string {
+  return t(sectorKeys[code]);
+}
+
+const topicKeys = {
+  pytanie: "talk.topic.pytanie",
+  mentor: "talk.topic.mentor",
+  partnerstwo: "talk.topic.partnerstwo",
+} as const satisfies Record<ThreadTopic, MessageKey>;
+
+export const topicCodes = Object.keys(topicKeys) as ThreadTopic[];
+
+export function isTopic(value: unknown): value is ThreadTopic {
+  return typeof value === "string" && value in topicKeys;
+}
+
+export function topicLabel(code: ThreadTopic): string {
+  return t(topicKeys[code]);
+}
+
+const threadStatusKeys = {
+  nowa: "talk.status.nowa",
+  "w-toku": "talk.status.w-toku",
+  zamknieta: "talk.status.zamknieta",
+} as const satisfies Record<ThreadStatus, MessageKey>;
+
+export const threadStatusCodes = Object.keys(threadStatusKeys) as ThreadStatus[];
+
+export function threadStatusLabel(code: ThreadStatus): string {
+  return t(threadStatusKeys[code]);
 }
 
 const sourceKeys = {

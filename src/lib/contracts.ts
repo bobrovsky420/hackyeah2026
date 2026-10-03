@@ -294,6 +294,9 @@ export type IdeaKind = "pomysl" | "dobra-praktyka";
 /** "Na jakim etapie jest jego realizacji" of the idea card. */
 export type IdeaStage = "pomysl" | "prototyp" | "test" | "dziala";
 
+/** Where ROPS took an idea card (module VI): the author sees it on the card's page. */
+export type IdeaStatus = "nowy" | "w-analizie" | "przyjety" | "zamkniety";
+
 /** A similar catalogue innovation of an idea card, in the shape of the needs bank's nearest matches (FR-5.3). */
 export type IdeaSimilar = Need["nearest_matches"][number];
 
@@ -322,10 +325,55 @@ export interface Idea {
   moderation: Moderation;
   /** The similar innovations of the catalogue; null until they are computed for the card's page. */
   similar: IdeaSimilar[] | null;
+  status: IdeaStatus;
+  /** ROPS's answer to the author, shown on the card's page (module VI). */
+  reply: { text_pl: string; at: string; by: string } | null;
   retention_until: string;
+  /** ROPS's internal note; never shown to the author. */
   note_pl: string | null;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
   example?: boolean;
+}
+
+/** How the author knows the innovation they evaluate (module IV, "Tester innowacji"). */
+export type EvaluationExperience = "korzystam" | "wdrazam" | "opis";
+
+/** How a tester wants to take part in a test: as a user, or as an organisation that runs a trial. */
+export type TesterRole = "uzytkownik" | "wdrazajacy";
+
+/**
+ * An evaluation of a catalogue innovation (module IV): a rating, feedback,
+ * an improvement proposal and a sign-up for its tests, any of them. The
+ * texts went through the gate (7.12); they reach the innovators only
+ * through ROPS, and the innovation's page shows only the counts.
+ */
+export interface Evaluation {
+  id: string;
+  created_at: string;
+  innovation_id: string;
+  /** 1 to 5; null when the author did not rate. */
+  rating: number | null;
+  experience: EvaluationExperience | null;
+  feedback: string | null;
+  improvement: string | null;
+  test_signup: { as: TesterRole; place_terc: string | null } | null;
+  /** Required for a test sign-up; otherwise the author may stay anonymous. */
+  author: { display_name: string | null; email: string | null };
+  consents: { store: boolean; contact: boolean } & Consent;
+  moderation: Moderation;
+  /** When ROPS passed the evaluation on to the innovators; null until then. */
+  forwarded_at: string | null;
+  retention_until: string;
+  note_pl: string | null;
+}
+
+/** What the innovation's page shows of its evaluations: numbers only. */
+export interface EvaluationSummary {
+  ratings: number;
+  /** Null without a rating. */
+  average: number | null;
+  testers: number;
+  improvements: number;
 }
 
 export type FeedbackValue = "tak" | "czesciowo" | "nie";
@@ -353,9 +401,9 @@ export interface ContentReport {
 export interface ModerationLogEntry {
   ts: string;
   reviewer: string;
-  target_type: "need" | "contact" | "readiness" | "declined" | "report";
+  target_type: "need" | "contact" | "readiness" | "declined" | "report" | "idea" | "evaluation" | "knowledge" | "innovation" | "thread" | "mentor" | "partnership";
   target_id: string;
-  action: "zatwierdzone" | "odrzucone" | "zweryfikowane" | "przejrzane" | "status";
+  action: "zatwierdzone" | "odrzucone" | "zweryfikowane" | "przejrzane" | "status" | "odpowiedz" | "przekazane" | "edycja" | "mentor" | "link";
   /** The new status code of a "status" action; null for decisions. */
   status: string | null;
   reason_pl: string | null;
@@ -404,6 +452,8 @@ export interface RouteSolution {
   where_it_runs: { count: number; nearest: { terc: string; name: string; distance_km: number }[] };
   materials: { title: string; url: string; type: string }[];
   contact: { organisation: string | null; channels: Channel[] };
+  /** Set when ROPS marked the innovation verified in the panel (module VI); applied when the route is read. */
+  verified_by_rops?: boolean;
 }
 
 export interface Route {
@@ -546,6 +596,130 @@ export interface StoredBrief {
 }
 
 /** A named group of needs (FR-5.4); Need.cluster_id points to it. */
+// ------------------------------------------------ communication (module V)
+
+/** What a conversation is about: a question to ROPS, a mentor's support, or a partnership. */
+export type ThreadTopic = "pytanie" | "mentor" | "partnerstwo";
+
+/** Who wrote a message of a conversation. */
+export type MessageAuthor = "uzytkownik" | "rops" | "mentor";
+
+/** The sector a person or an organisation speaks for, for cross-sector partnerships. */
+export type Sector = "mieszkaniec" | "ngo" | "jst" | "instytucja" | "biznes" | "nauka";
+
+export interface ThreadMessage {
+  id: string;
+  at: string;
+  author: MessageAuthor;
+  /** The reviewer or the mentor; null for the user, whose name is the thread's. */
+  name: string | null;
+  /** Screened by the gate, personal data of others removed (7.12). */
+  text: string;
+}
+
+export type ThreadStatus = "nowa" | "w-toku" | "zamknieta";
+
+/**
+ * A conversation between a user and ROPS (module V), joined by a mentor
+ * when ROPS assigns one. No accounts: the user and the mentor each hold a
+ * private link with a key; only the keys' hashes are stored. Nothing is
+ * sent by e-mail; the e-mail address, when given, is for ROPS alone.
+ */
+export interface Thread {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  topic: ThreadTopic;
+  subject: string;
+  author: { display_name: string; organisation: string | null; email: string | null; sector: Sector | null };
+  place_terc: string | null;
+  target_groups: string[];
+  /** What the conversation started from: an idea card, an innovation or a partnership post. */
+  ref: { type: "idea" | "innovation" | "partnership"; id: string } | null;
+  /** sha256 of the user's key, hex. */
+  access_hash: string;
+  mentor: { id: string; name: string; key_hash: string } | null;
+  messages: ThreadMessage[];
+  status: ThreadStatus;
+  consent: Consent;
+  retention_until: string;
+  note_pl: string | null;
+  example?: boolean;
+}
+
+/** A mentor of the hub (module V): an expert ROPS can invite into a conversation. */
+export interface Mentor {
+  id: string;
+  name: string;
+  expertise_pl: string;
+  target_groups: string[];
+  active: boolean;
+  updated_at: string;
+  example?: boolean;
+}
+
+/**
+ * A post of the partnership board (module V): who looks for a partner or
+ * offers one, from which sector, for what. Shown after ROPS approved it;
+ * answers go through ROPS, so no contact is ever public.
+ */
+export interface PartnershipPost {
+  id: string;
+  created_at: string;
+  kind: "szukam" | "oferuje";
+  title: string;
+  description: string;
+  sector: Sector;
+  seeking: Sector[];
+  place_terc: string | null;
+  target_groups: string[];
+  author: { display_name: string; organisation: string | null; email: string | null };
+  /** The author's conversation with ROPS about the post, where answers are relayed. */
+  thread_id: string;
+  moderation: Moderation;
+  retention_until: string;
+  example?: boolean;
+}
+
+/** The kinds of a knowledge item; "video" only for the items ROPS adds in the panel (module II, VI). */
+export type KnowledgeEntryType = "guide" | "model" | "publication" | "catalogue" | "data" | "contact" | "project" | "video";
+
+/**
+ * A knowledge item kept in the panel (module VI): a new one, or the edit of
+ * an item of data/curated/knowledge.yaml (`base_id`), which the curated
+ * file keeps unchanged. Applied when a route is read, so a change shows at
+ * once; a hidden item leaves every route.
+ */
+export interface KnowledgeEntry {
+  id: string;
+  base_id: string | null;
+  title_pl: string;
+  description_pl: string;
+  url: string;
+  type: KnowledgeEntryType;
+  /** Target-group codes, or ["any"]. */
+  target_groups: string[];
+  always_show: boolean;
+  hidden: boolean;
+  updated_at: string;
+  updated_by: string;
+}
+
+/**
+ * ROPS's word on one catalogue innovation (module VI): verified, or hidden
+ * from routes and its page; a corrected summary; extra materials such as a
+ * film. The catalogue record stays as the data release built it.
+ */
+export interface InnovationOverride {
+  innovation_id: string;
+  status: "zweryfikowane" | "ukryte" | null;
+  summary_pl: string | null;
+  extra_materials: { title: string; url: string; type: "video" | "document" }[];
+  note_pl: string | null;
+  updated_at: string;
+  updated_by: string;
+}
+
 export interface NeedCluster {
   id: string;
   name_pl: string;
@@ -604,7 +778,7 @@ export interface ScreeningResult {
 }
 
 /** Which submitted text the gate screens (7.12, first paragraph). */
-export type GateTextKind = "need" | "saved_need" | "contact" | "readiness" | "offer" | "idea";
+export type GateTextKind = "need" | "saved_need" | "contact" | "readiness" | "offer" | "idea" | "evaluation" | "message" | "partnership";
 
 export interface GateInput {
   text: string;

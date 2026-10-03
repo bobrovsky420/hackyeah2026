@@ -7,6 +7,7 @@ import { helplines } from "@/lib/catalogue";
 import type { RouteMode } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { routeToMarkdown } from "@/lib/route-markdown";
+import { similarCasesForRoute } from "@/server/match/similar-cases";
 import { getRoute } from "@/server/route-service";
 
 const titles: Record<RouteMode, MessageKey> = {
@@ -38,6 +39,6 @@ export default async function RoutePage({ params }: PageProps<"/route/[id]">) {
     case "off_topic":
       return <OffTopicView />;
     default:
-      return <RouteView route={route} markdown={routeToMarkdown(route)} />;
+      return <RouteView route={route} markdown={routeToMarkdown(route)} similar={await similarCasesForRoute(route)} />;
   }
 }

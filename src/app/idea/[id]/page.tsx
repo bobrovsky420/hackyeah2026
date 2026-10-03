@@ -8,9 +8,11 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { getGmina, getInnovation } from "@/lib/catalogue";
+import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { ideaStageLabel, targetGroupLabel } from "@/lib/labels";
 import { repository } from "@/server/db";
+import { ideaStatusLabel } from "@/server/admin/labels";
 import { ideaMarkdown } from "@/server/ideas";
 
 export const metadata: Metadata = { title: t("card.meta.title") };
@@ -69,9 +71,23 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
         </dl>
       </header>
 
-      <Notice title={t("card.status.title")}>
-        <p>{t("card.status.text")}</p>
-      </Notice>
+      <section aria-labelledby="status-fiszki" className="grid gap-3">
+        <h2 id="status-fiszki" className={sectionTitle}>
+          {t("card.reply.title")}
+        </h2>
+        <p>
+          <span className="font-bold">{t("card.reply.status")}</span> {ideaStatusLabel(idea.status)}
+        </p>
+        {idea.reply ? (
+          <Notice tone="success" title={t("card.reply.from", { date: formatDate(idea.reply.at) })}>
+            <p className="whitespace-pre-line">{idea.reply.text_pl}</p>
+          </Notice>
+        ) : (
+          <Notice title={t("card.status.title")}>
+            <p>{t("card.status.text")}</p>
+          </Notice>
+        )}
+      </section>
 
       <DocumentActions markdown={ideaMarkdown(idea)} filename={`fiszka-pomyslu-${idea.id}.md`} />
 
@@ -124,7 +140,7 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
       <Section id="co-dalej" title={t("card.next.title")}>
         <p>{t("card.next.text")}</p>
         <div className="no-print flex flex-wrap gap-3">
-          <Link href="/kontakt" className={buttonVariants()}>
+          <Link href={`/zapytaj?pomysl=${idea.id}`} className={buttonVariants()}>
             {t("card.next.contact")}
           </Link>
           <Link href="/zglos-pomysl" className={buttonVariants({ variant: "secondary" })}>
