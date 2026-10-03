@@ -7,7 +7,7 @@ solutions to social problems reach the places that need them?
 
 ## What it is
 
-A social worker, an NGO leader, a municipal official or a resident
+A resident, a social worker, an NGO leader or a municipal official
 describes a need in plain Polish and picks their municipality (gmina).
 The answer is a route, not a list:
 
