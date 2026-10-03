@@ -35,6 +35,33 @@ export function tokenMatches(value: string): boolean {
   return given.length === expected.length && timingSafeEqual(given, expected);
 }
 
+/** The console cookie's value in a Cookie header, or undefined. */
+function cookieValue(header: string | null, name: string): string | undefined {
+  for (const part of header?.split(";") ?? []) {
+    const [key, ...rest] = part.split("=");
+    if (key.trim() !== name) continue;
+    try {
+      return decodeURIComponent(rest.join("=").trim());
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * The console's JSON API (9.2): the same code as the console, from its
+ * cookie (the console's own pages) or from `Authorization: Bearer <code>`
+ * (scripts). Reads the request itself, so route handlers and tests need no
+ * request scope.
+ */
+export function requestAuthorized(request: Request): boolean {
+  const bearer = /^Bearer\s+(.+)$/i.exec(request.headers.get("authorization") ?? "")?.[1]?.trim();
+  if (bearer !== undefined && tokenMatches(bearer)) return true;
+  const cookie = cookieValue(request.headers.get("cookie"), TOKEN_COOKIE);
+  return cookie !== undefined && tokenMatches(cookie);
+}
+
 export async function isAuthenticated(): Promise<boolean> {
   const value = (await cookies()).get(TOKEN_COOKIE)?.value;
   return value !== undefined && tokenMatches(value);

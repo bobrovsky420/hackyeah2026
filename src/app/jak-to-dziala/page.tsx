@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { InfoPage, InfoSection } from "@/components/info/info-page";
 import { t, type MessageKey } from "@/lib/i18n";
-import { ropsDepartment } from "@/lib/mock/contacts";
+import { ropsDepartment } from "@/lib/catalogue";
 
 export const metadata: Metadata = { title: t("how.meta.title") };
 
@@ -19,7 +19,7 @@ function cardEntries(): [MessageKey, ReactNode][] {
     [
       "how.card.operator.term",
       <>
-        {t("how.card.operator.text")} <a href={`mailto:${ropsDepartment.email}`}>{ropsDepartment.email}</a>.
+        {t("how.card.operator.text")} <a href={`mailto:${ropsDepartment().email}`}>{ropsDepartment().email}</a>.
       </>,
     ],
     ["how.card.basis.term", t("how.card.basis.text")],

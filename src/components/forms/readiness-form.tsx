@@ -8,12 +8,14 @@ import { describedBy, Field, FieldError, Hint, Label, TextInput } from "@/compon
 import { Notice } from "@/components/ui/notice";
 import { t } from "@/lib/i18n";
 import { targetGroupCodes, targetGroupLabel } from "@/lib/labels";
+import type { PlaceOption } from "@/lib/place-options";
 import { FormFailed } from "./form-failed";
+import { HONEYPOT_FIELD, Honeypot } from "./honeypot";
 import { PlaceCombobox, type PlaceValue } from "./place-combobox";
 import { useSubmitForm } from "./use-submit-form";
 
 /** S9b: readiness to act ("Chcę pomóc"), with separate consents to store and to show the name. */
-export function ReadinessForm() {
+export function ReadinessForm({ places }: { places: PlaceOption[] }) {
   const [name, setName] = useState("");
   const [isOrganisation, setIsOrganisation] = useState(false);
   const [place, setPlace] = useState<PlaceValue>({ text: "", terc: null });
@@ -21,7 +23,8 @@ export function ReadinessForm() {
   const [contact, setContact] = useState("");
   const [consentStore, setConsentStore] = useState(false);
   const [consentShowName, setConsentShowName] = useState(false);
-  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/gotowosc");
+  const [honeypot, setHoneypot] = useState("");
+  const { errors, status, failure, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/readiness");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,6 +40,7 @@ export function ReadinessForm() {
       contact: contact.trim(),
       consent_store: consentStore,
       consent_display_name: consentShowName,
+      [HONEYPOT_FIELD]: honeypot,
     });
   }
 
@@ -55,9 +59,10 @@ export function ReadinessForm() {
 
   return (
     <div className="grid gap-6">
-      {status === "failed" && <FormFailed ref={failedRef} />}
+      {status === "failed" && <FormFailed ref={failedRef} message={failure} />}
       <ErrorSummary ref={summaryRef} errors={errors} />
       <form noValidate onSubmit={handleSubmit} className="grid gap-6">
+        <Honeypot value={honeypot} onChange={setHoneypot} />
         <Field invalid={Boolean(nameError)}>
           <Label htmlFor="nazwa">{t("s9b.name.label")}</Label>
           {nameError && <FieldError id="nazwa-blad">{nameError}</FieldError>}
@@ -73,7 +78,7 @@ export function ReadinessForm() {
         <Checkbox id="organizacja" checked={isOrganisation} onChange={setIsOrganisation}>
           {t("s9b.isOrganisation")}
         </Checkbox>
-        <PlaceCombobox id="miejsce" name="miejsce" value={place} onChange={setPlace} />
+        <PlaceCombobox id="miejsce" name="miejsce" places={places} value={place} onChange={setPlace} />
         <CheckboxList
           idPrefix="tematy"
           name="tematy"

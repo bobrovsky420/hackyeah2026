@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { FormFailed } from "@/components/forms/form-failed";
+import { HONEYPOT_FIELD, Honeypot } from "@/components/forms/honeypot";
 import { useSubmitForm } from "@/components/forms/use-submit-form";
 import { Button } from "@/components/ui/button";
 import { RadioList } from "@/components/ui/choice";
@@ -25,12 +26,13 @@ export function ReportForm({
 }) {
   const [reason, setReason] = useState("");
   const [comment, setComment] = useState("");
-  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/reports");
+  const [honeypot, setHoneypot] = useState("");
+  const { errors, status, failure, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/reports");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const found: FormError[] = reason ? [] : [{ fieldId: "powod-0", message: t("report.reason.error") }];
-    void submit(found, { target, reason, comment: comment.trim() || null });
+    void submit(found, { target, reason, comment: comment.trim() || null, [HONEYPOT_FIELD]: honeypot });
   }
 
   if (status === "sent") {
@@ -48,9 +50,10 @@ export function ReportForm({
 
   return (
     <div className="grid gap-6">
-      {status === "failed" && <FormFailed ref={failedRef} />}
+      {status === "failed" && <FormFailed ref={failedRef} message={failure} />}
       <ErrorSummary ref={summaryRef} errors={errors} />
       <form noValidate onSubmit={handleSubmit} className="grid gap-6">
+        <Honeypot value={honeypot} onChange={setHoneypot} />
         <RadioList
           idPrefix="powod"
           name="powod"

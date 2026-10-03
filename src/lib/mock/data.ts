@@ -7,7 +7,8 @@ import type { Gmina, Innovation } from "@/lib/contracts/catalogue";
  * build (data/places/pl-register.json with the centroids, and
  * data/innovations/), so the prototype runs on a fresh clone without the
  * pipeline. The MIIS records are shown like every ROPS record (decided
- * 29 September 2026). The real app reads data/ at start.
+ * 29 September 2026). The app reads them only through src/lib/catalogue.ts,
+ * when data/ is missing or fails the loader's checks, or with DATA_SOURCE=mock.
  */
 export const gminy = gminyData as Gmina[];
 export const innovations = innovationsData as Innovation[];

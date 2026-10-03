@@ -1,8 +1,9 @@
 import { Phone } from "lucide-react";
 import Link from "next/link";
+import { helplines } from "@/lib/catalogue";
+import type { Helpline } from "@/lib/contracts/contacts";
 import type { SensitiveTopic } from "@/lib/contracts/route";
 import { t } from "@/lib/i18n";
-import { emergencyNumber, helplines, type Helpline } from "@/lib/mock/contacts";
 
 /* The lines that fit each sensitive topic of 8.10, most relevant first. */
 const linesByTopic: Record<SensitiveTopic, string[]> = {
@@ -32,17 +33,20 @@ function Line({ line }: { line: Helpline }) {
  * heading, where the reader starts after the focus moves.
  */
 export function CrisisBanner({ topics }: { topics: SensitiveTopic[] }) {
+  const { alarm, support } = helplines();
   const numbers = [...new Set(topics.flatMap((topic) => linesByTopic[topic]))].slice(0, 3);
-  const lines = numbers.map((number) => helplines.find((line) => line.number === number)).filter((line) => line !== undefined);
+  const lines = numbers.map((number) => support.find((line) => line.number === number)).filter((line) => line !== undefined);
   return (
     <div className="flex gap-3 rounded-lg border-2 border-warning-border bg-warning-tint p-4">
       <Phone aria-hidden className="mt-1 size-5 shrink-0" />
       <div className="grid gap-1.5">
         <p className="font-bold">{t("crisis.title")}</p>
         <p className="flex flex-wrap gap-x-4 gap-y-1">
-          <Line line={emergencyNumber} />
+          {alarm.slice(0, 1).map((line) => (
+            <Line key={line.id} line={line} />
+          ))}
           {lines.map((line) => (
-            <Line key={line.number} line={line} />
+            <Line key={line.id} line={line} />
           ))}
         </p>
         <p>

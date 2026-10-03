@@ -5,15 +5,15 @@
  */
 export interface SourceRecord {
   id: string;
-  source: "baza-krajowa" | "rops-biblioteka";
+  source: "baza-krajowa" | "rops-biblioteka" | "partner-rops";
   title: string;
   intro_pl: string | null;
   /**
    * @minItems 1
    */
   sources: {
-    name: "baza-krajowa" | "rops-biblioteka";
-    url: string;
+    name: "baza-krajowa" | "rops-biblioteka" | "partner-rops";
+    url: string | null;
     category_slug: string | null;
     retrieved_at: string;
     licence: "CC BY 4.0" | "MIIS-agreement";
@@ -106,7 +106,7 @@ export interface SourceRecord {
      */
     local_path: string | null;
     /**
-     * e.g. dead-2026-10-03 for an empty download
+     * e.g. dead-2026-09-28 for an empty download
      */
     status?: string;
   }[];

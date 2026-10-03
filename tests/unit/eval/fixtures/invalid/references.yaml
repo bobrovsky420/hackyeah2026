@@ -1,0 +1,17 @@
+# Invalid: ids and codes that the data does not know.
+id: P06
+title: Nieznane identyfikatory
+author: lawyer
+written_on: 2026-10-03
+role: urzad-gminy
+place_terc: "1299999"
+problem_text_pl: Tekst.
+expected:
+  mode: route
+  any_of_innovations: [inn-rops-senior-cuder, inn-rops-nie-istnieje]
+  none_of_innovations: []
+  target_groups: [emeryci]
+  paths_any_of: [program-widmo]
+  people_roles: []
+  summary_must_mention_pl: []
+notes: null

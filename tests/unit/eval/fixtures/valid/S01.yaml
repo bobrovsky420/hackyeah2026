@@ -1,0 +1,11 @@
+# A fixture of the loader tests: a sensitive-but-legitimate case.
+id: S01
+title: Coraz więcej prób samobójczych wśród młodzieży w powiecie
+author: lawyer
+written_on: 2026-10-03
+role: pracownik-instytucji
+place_terc: "1262011"
+problem_text_pl: >
+  Tekst przypadku wrażliwego.
+expected:
+  mode: route

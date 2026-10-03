@@ -1,0 +1,17 @@
+# Two files with one id.
+id: P09
+title: Duplikat
+author: lawyer
+written_on: 2026-10-03
+role: mieszkaniec
+place_terc: null
+problem_text_pl: Tekst.
+expected:
+  mode: clarification
+  any_of_innovations: []
+  none_of_innovations: []
+  target_groups: []
+  paths_any_of: []
+  people_roles: []
+  summary_must_mention_pl: []
+notes: null

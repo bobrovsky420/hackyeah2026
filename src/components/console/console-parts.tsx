@@ -26,10 +26,19 @@ export function ConsolePage({ title, lead, children }: { title: string; lead: st
 }
 
 /** A table in a labelled region that scrolls sideways on its own, never the page. */
-export function DataTable({ caption, children }: { caption: string; children: ReactNode }) {
+export function DataTable({
+  caption,
+  children,
+  minWidth = "min-w-[52rem]",
+}: {
+  caption: string;
+  children: ReactNode;
+  /** The width below which the table scrolls; narrow tables take less. */
+  minWidth?: "min-w-[52rem]" | "min-w-[30rem]" | "min-w-[20rem]";
+}) {
   return (
     <div role="region" aria-label={caption} tabIndex={0} className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full min-w-[52rem] border-collapse text-left">
+      <table className={cn("w-full border-collapse text-left", minWidth)}>
         <caption className="sr-only">{caption}</caption>
         {children}
       </table>
@@ -66,7 +75,7 @@ export function Filters({
 }: {
   statuses: Record<string, MessageKey>;
   current: { status: string; gmina: string; category?: string };
-  exportType: "potrzeby" | "kontakty" | "gotowosc";
+  exportType: "needs" | "contacts" | "readiness";
   /** The target groups for the category filter of the needs list (FR-9.2). */
   categories?: { value: string; label: string }[];
 }) {
@@ -111,7 +120,7 @@ export function Filters({
           {t("console.filter.submit")}
         </Button>
       </form>
-      <a href={`/api/rops/eksport/${exportType}`} className={buttonVariants({ variant: "secondary" })}>
+      <a href={`/api/rops/export.csv?what=${exportType}`} className={buttonVariants({ variant: "secondary" })}>
         {t("console.export")}
       </a>
     </div>

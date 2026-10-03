@@ -4,11 +4,12 @@ import { Phone } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import type { Helpline } from "@/lib/contracts/contacts";
 import { t } from "@/lib/i18n";
-import { emergencyNumber, helplines, type Helpline } from "@/lib/mock/contacts";
 import { FocusOnMount } from "./focus-on-mount";
 import { QuickExit } from "./quick-exit";
 
+/** A number with its name and, once verified, its hours (FR-12.5 asks for honest hours). */
 function HelplineRow({ line }: { line: Helpline }) {
   return (
     <li>
@@ -20,6 +21,7 @@ function HelplineRow({ line }: { line: Helpline }) {
         <span className="grid">
           <span className="text-[1.5rem] leading-tight font-bold tabular-nums">{line.number}</span>
           <span>{line.name}</span>
+          {line.hours && <span className="text-muted-foreground">{line.hours}</span>}
         </span>
       </a>
     </li>
@@ -31,26 +33,38 @@ function HelplineRow({ line }: { line: Helpline }) {
  * above them; the two entry paths only reorder the list. Nothing typed is
  * stored.
  */
-export function HumanHelp({ placeName }: { placeName: string | null }) {
+export function HumanHelp({
+  placeName,
+  helplines,
+  titleAs: Title = "h1",
+}: {
+  placeName: string | null;
+  /** From the server page: data/helplines.yaml or the fixtures. */
+  helplines: { alarm: Helpline[]; support: Helpline[] };
+  /** "h2" inside a page that has its own h1, such as the needs form (S9c). */
+  titleAs?: "h1" | "h2";
+}) {
   const [focus, setFocus] = useState<"self" | "someone" | null>(null);
   const ordered = focus
-    ? [...helplines].sort((a, b) => Number(a.forWhom !== focus && a.forWhom !== "both") - Number(b.forWhom !== focus && b.forWhom !== "both"))
-    : helplines;
+    ? [...helplines.support].sort((a, b) => Number(a.forWhom !== focus && a.forWhom !== "both") - Number(b.forWhom !== focus && b.forWhom !== "both"))
+    : helplines.support;
 
   return (
     <div className="grid max-w-[40rem] gap-7">
       <FocusOnMount targetId="naglowek-drogi" />
       <QuickExit />
-      <h1 id="naglowek-drogi" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
+      <Title id="naglowek-drogi" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
         {t("s10.title")}
-      </h1>
+      </Title>
 
       <section aria-labelledby="numery-alarmowe" className="grid gap-2">
         <h2 id="numery-alarmowe" className="text-[1.2rem] font-bold">
           {t("s10.emergency.title")}
         </h2>
         <ul className="grid gap-2">
-          <HelplineRow line={emergencyNumber} />
+          {helplines.alarm.map((line) => (
+            <HelplineRow key={line.id} line={line} />
+          ))}
         </ul>
       </section>
 
@@ -68,7 +82,7 @@ export function HumanHelp({ placeName }: { placeName: string | null }) {
         </div>
         <ul className="grid gap-2">
           {ordered.map((line) => (
-            <HelplineRow key={line.number} line={line} />
+            <HelplineRow key={line.id} line={line} />
           ))}
         </ul>
       </section>

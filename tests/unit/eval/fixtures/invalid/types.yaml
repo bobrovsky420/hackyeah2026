@@ -1,0 +1,18 @@
+# Invalid: an unquoted TERC, an unknown role, a date in another format, an unknown field.
+id: P05
+title: Złe typy
+author: lawyer
+written_on: 2026-10-03
+role: burmistrz
+place_terc: 1207062
+problem_text_pl: Tekst.
+difficulty: high
+expected:
+  mode: route
+  any_of_innovations: []
+  none_of_innovations: []
+  target_groups: []
+  paths_any_of: []
+  people_roles: [advisor, sasiad]
+  summary_must_mention_pl: []
+notes: null

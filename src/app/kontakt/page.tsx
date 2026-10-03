@@ -6,7 +6,7 @@ import { InfoPage } from "@/components/info/info-page";
 import { Notice } from "@/components/ui/notice";
 import type { ContactRequest } from "@/lib/contracts/records";
 import { t } from "@/lib/i18n";
-import { getGmina, getInnovation } from "@/lib/mock/data";
+import { getGmina, getInnovation } from "@/lib/catalogue";
 import { getRoute } from "@/lib/server/routes";
 
 export const metadata: Metadata = { title: t("s9a.meta.title") };
@@ -20,7 +20,7 @@ export const metadata: Metadata = { title: t("s9a.meta.title") };
 export default async function ContactPage({ searchParams }: PageProps<"/kontakt">) {
   const query = await searchParams;
   const item = typeof query.innowacja === "string" ? getInnovation(query.innowacja) : undefined;
-  const route = typeof query.droga === "string" ? getRoute(query.droga) : undefined;
+  const route = typeof query.droga === "string" ? await getRoute(query.droga) : undefined;
   const gmina = typeof query.gmina === "string" ? getGmina(query.gmina) : undefined;
   const purpose = query.cel === "propozycja" || query.cel === "polaczenie" ? query.cel : null;
   const need = route?.need_summary_pl;

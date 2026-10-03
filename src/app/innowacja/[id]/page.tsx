@@ -7,6 +7,7 @@ import { ReportLink } from "@/components/report/report-link";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
+import { getInnovation } from "@/lib/catalogue";
 import type { Innovation, Material } from "@/lib/contracts/catalogue";
 import { t } from "@/lib/i18n";
 import {
@@ -17,7 +18,6 @@ import {
   targetGroupLabel,
   timeLabel,
 } from "@/lib/labels";
-import { getInnovation } from "@/lib/mock/data";
 import { getRoute } from "@/lib/server/routes";
 
 export async function generateMetadata({ params }: PageProps<"/innowacja/[id]">): Promise<Metadata> {
@@ -69,7 +69,7 @@ export default async function InnovationPage({ params, searchParams }: PageProps
   const query = await searchParams;
   const item = getInnovation(id);
   if (!item) notFound();
-  const routeId = typeof query.droga === "string" && getRoute(query.droga) ? query.droga : undefined;
+  const routeId = typeof query.droga === "string" && (await getRoute(query.droga)) ? query.droga : undefined;
 
   return (
     <article aria-labelledby="naglowek-innowacji" className="grid max-w-[48rem] gap-8">
@@ -166,9 +166,11 @@ export default async function InnovationPage({ params, searchParams }: PageProps
         <Link href={`/mapa?innowacja=${item.id}`} className={buttonVariants({ variant: "secondary" })}>
           {t("s5.whereNeeded")}
         </Link>
-        <a href={item.sourceUrl} className={buttonVariants({ variant: "secondary" })}>
-          {t("s5.fullSource")}
-        </a>
+        {item.sourceUrl && (
+          <a href={item.sourceUrl} className={buttonVariants({ variant: "secondary" })}>
+            {t("s5.fullSource")}
+          </a>
+        )}
       </div>
 
       <Attribution item={item} />

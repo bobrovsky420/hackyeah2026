@@ -7,10 +7,10 @@ import { Notice } from "@/components/ui/notice";
 import type { Channel, Route, SensitiveTopic } from "@/lib/contracts/route";
 import { t, type MessageKey } from "@/lib/i18n";
 import { knowledgeTypeLabel, roleLabel, targetGroupLabel, telHref } from "@/lib/labels";
-import { getInnovation } from "@/lib/mock/data";
-import { allPaths } from "@/lib/mock/paths";
+import { allPaths, getInnovation } from "@/lib/catalogue";
 import { placeText, placeWhere } from "@/lib/places";
 import { pluralPl } from "@/lib/text";
+import { cn } from "@/lib/utils";
 import { ClarificationForm } from "./clarification-form";
 import { CrisisBanner } from "./crisis-banner";
 import { FocusOnMount } from "./focus-on-mount";
@@ -22,6 +22,9 @@ import { SolutionCard } from "./solution-card";
 
 /** Topics whose routes get the quick exit of FR-12.5. */
 const exitTopics: SensitiveTopic[] = ["violence", "child_abuse", "sexual_violence"];
+
+/** Characters above which the page heading (a full need summary) is set in a smaller size. */
+const longTitle = 80;
 
 const channelLabels: Record<Channel["type"], MessageKey> = {
   www: "people.channel.website",
@@ -122,7 +125,7 @@ function People({ route }: { route: Route }) {
 /** S2 (mode route) and S3 (modes partial and none) of section 10. */
 export function RouteView({ route, markdown }: { route: Route; markdown: string }) {
   const isRoute = route.mode === "route";
-  const title = isRoute ? route.need_summary_pl : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
+  const title = isRoute ? (route.need_summary_pl ?? t("s2.title.fallback")) : t(route.mode === "partial" ? "s3.title.partial" : "s3.title.none");
   const { sensitive_topics: topics, redactions } = route.screening;
   const hasPlace = route.input.place_terc !== null;
 
@@ -137,7 +140,16 @@ export function RouteView({ route, markdown }: { route: Route; markdown: string 
             {t("route.changeText")}
           </Link>
           <p className="font-bold text-muted-foreground">{t("route.eyebrow")}</p>
-          <h1 id="naglowek-drogi" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
+          <h1
+            id="naglowek-drogi"
+            tabIndex={-1}
+            className={cn(
+              "font-bold",
+              title.length > longTitle
+                ? "max-w-[50rem] text-[1.3rem] leading-snug @3xl:text-[1.55rem]"
+                : "text-[1.75rem] leading-tight @3xl:text-[2.2rem]",
+            )}
+          >
             {title}
           </h1>
           {!isRoute && route.need_summary_pl && (

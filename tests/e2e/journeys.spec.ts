@@ -190,7 +190,7 @@ test("J3: a contact request reaches the ROPS console, is relayed and exported", 
   await expect(row).toContainText("Zatwierdzona");
   await expect(row.getByLabel("Status")).toHaveValue("przekazane");
 
-  const response = await page.request.get("/api/rops/eksport/kontakty");
+  const response = await page.request.get("/api/rops/export.csv?what=contacts");
   expect(response.status()).toBe(200);
   expect(response.headers()["content-type"]).toContain("text/csv");
   const csv = await response.text();
@@ -214,7 +214,7 @@ test("the console asks for the code and returns to the requested page", async ({
   await expect(page.getByText("Samotni seniorzy w gminie wiejskiej")).toBeVisible();
   await expect(page.getByText("Młodzież nie ma gdzie się spotykać")).toHaveCount(0);
 
-  const anonymous = await request.get("/api/rops/eksport/potrzeby");
+  const anonymous = await request.get("/api/rops/export.csv?what=needs");
   expect(anonymous.status()).toBe(401);
 });
 

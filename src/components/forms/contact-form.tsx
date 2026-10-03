@@ -10,6 +10,7 @@ import { Notice } from "@/components/ui/notice";
 import type { ContactRequest } from "@/lib/contracts/records";
 import { t } from "@/lib/i18n";
 import { FormFailed } from "./form-failed";
+import { HONEYPOT_FIELD, Honeypot } from "./honeypot";
 import { EMAIL_PATTERN, useSubmitForm } from "./use-submit-form";
 
 /** S9a: a contact request, relayed by ROPS (never an e-mail of a private person). */
@@ -31,7 +32,8 @@ export function ContactForm({
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(defaultMessage);
   const [consent, setConsent] = useState(false);
-  const { errors, status, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/kontakt");
+  const [honeypot, setHoneypot] = useState("");
+  const { errors, status, failure, summaryRef, doneRef, failedRef, submit, errorFor } = useSubmitForm("/api/contact-requests");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,6 +50,7 @@ export function ContactForm({
       consent,
       target,
       route_id: routeId,
+      [HONEYPOT_FIELD]: honeypot,
     });
   }
 
@@ -70,9 +73,10 @@ export function ContactForm({
 
   return (
     <div className="grid gap-6">
-      {status === "failed" && <FormFailed ref={failedRef} />}
+      {status === "failed" && <FormFailed ref={failedRef} message={failure} />}
       <ErrorSummary ref={summaryRef} errors={errors} />
       <form noValidate onSubmit={handleSubmit} className="grid gap-6">
+        <Honeypot value={honeypot} onChange={setHoneypot} />
         <Field invalid={Boolean(nameError)}>
           <Label htmlFor="imie">{t("forms.name.label")}</Label>
           {nameError && <FieldError id="imie-blad">{nameError}</FieldError>}

@@ -6,19 +6,25 @@ import { GminaPanelView, GminaTable, IndicatorNote, MapLegend, NeedRanking } fro
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { controlClass } from "@/components/ui/field";
+import { getGmina, getInnovation, gminy } from "@/lib/catalogue";
+import type { IndicatorKey } from "@/lib/contracts/map";
 import { t } from "@/lib/i18n";
 import { indicatorLabel } from "@/lib/labels";
-import { getGmina, getInnovation, gminy } from "@/lib/mock/data";
 import {
   classBreaks,
   classIndex,
+  gminaPanel,
+  gminaRows,
+  implementationMarks,
   indicatorFromSlug,
   indicatorKeys,
   indicatorSlugs,
+  MAP_COLORS,
+  malopolskaBounds,
+  needCounts,
   valuesOf,
-  type IndicatorKey,
-} from "@/lib/mock/indicators";
-import { gminaPanel, gminaRows, implementationMarks, MAP_COLORS, malopolskaBounds, whereMostNeeded } from "@/lib/server/map";
+  whereMostNeeded,
+} from "@/lib/server/map";
 import { formatNumber } from "@/lib/text";
 import { cn } from "@/lib/utils";
 
@@ -65,7 +71,8 @@ export default async function MapPage({ searchParams }: PageProps<"/mapa">) {
   const innovation = getInnovation(queryText(query, "innowacja") ?? "");
   const gmina = getGmina(queryText(query, "gmina"));
   const ranking = innovation ? whereMostNeeded(innovation) : null;
-  const panel = gmina ? gminaPanel(gmina.terc) : null;
+  const needs = await needCounts();
+  const panel = gmina ? gminaPanel(gmina.terc, needs) : null;
   const chosen = indicatorFromSlug(queryText(query, "wskaznik"));
   const indicator: IndicatorKey = chosen ?? ranking?.indicators[0] ?? "social-assistance";
   const widok = queryText(query, "widok");
@@ -83,11 +90,11 @@ export default async function MapPage({ searchParams }: PageProps<"/mapa">) {
   const breaks = classBreaks(indicator);
   const settings: MapSettings = {
     label: t("map.canvasLabel", { name: label.name }),
-    bounds: malopolskaBounds,
+    bounds: malopolskaBounds(),
     colors: MAP_COLORS,
     classes: Object.fromEntries(Object.entries(values).map(([terc, value]) => [terc, classIndex(value, breaks)])),
     tooltips: Object.fromEntries(
-      gminy.map((item) => [
+      gminy().map((item) => [
         item.terc,
         values[item.terc] === undefined
           ? `${item.name}: ${t("map.legend.noData")}`
@@ -194,7 +201,7 @@ export default async function MapPage({ searchParams }: PageProps<"/mapa">) {
           </div>
           <div className={cn(view === "mapa" ? "hidden" : view === "tabela" ? "block" : "@4xl:hidden")}>
             <GminaTable
-              rows={gminaRows(indicator, sort)}
+              rows={gminaRows(indicator, sort, needs)}
               indicator={indicator}
               sort={sort}
               sortHref={(next) => mapHref({ ...state, sort: next })}

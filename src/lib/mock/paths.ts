@@ -2,9 +2,8 @@ import type { ImplementationPath } from "@/lib/contracts/path";
 import { t } from "@/lib/i18n";
 
 /*
- * Paths in the shape of schema 8.7 until data/paths/ exists (FR-8.1), with
- * the facts of section 14.4 as read on 28 September 2026. No lawyer
- * reviewed them (decided 29 September 2026): every path carries the
+ * Paths in the shape of schema 8.7, the fallback for data/paths/ (FR-8.1), with
+ * the facts of section 14.4. No lawyer reviewed them : every path carries the
  * prototype note of FR-1.8.
  */
 const prototypeNote = t("attribution.note");

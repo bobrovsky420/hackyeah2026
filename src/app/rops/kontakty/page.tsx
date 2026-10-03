@@ -5,12 +5,10 @@ import { StatusForm } from "@/components/console/status-form";
 import { contactStatuses, isOneOf, moderationStatuses } from "@/lib/console";
 import { formatDateTime } from "@/lib/dates";
 import { t } from "@/lib/i18n";
-import { getInnovation } from "@/lib/mock/data";
-import { placeText } from "@/lib/places";
+import { getInnovation } from "@/lib/catalogue";
 import { isAuthenticated } from "@/lib/server/auth";
-import { getRoute } from "@/lib/server/routes";
-import { store } from "@/lib/server/store";
-import { fold } from "@/lib/text";
+import { listContactsFiltered } from "@/server/console/queries";
+import { repository } from "@/server/db";
 
 export const metadata: Metadata = { title: t("console.contacts.title") };
 
@@ -20,14 +18,11 @@ export default async function ContactsPage({ searchParams }: PageProps<"/rops/ko
   const query = await searchParams;
   const status = typeof query.status === "string" && isOneOf(contactStatuses, query.status) ? query.status : "";
   const gmina = typeof query.gmina === "string" ? query.gmina.trim() : "";
-  const rows = store.contacts.filter((contact) => {
-    const place = contact.route_id ? placeText(getRoute(contact.route_id)?.input.place_terc) : "";
-    return (!status || contact.status === status) && (!gmina || fold(place).includes(fold(gmina)));
-  });
+  const rows = await listContactsFiltered(repository(), { status: status || undefined, gmina });
 
   return (
     <ConsolePage title={t("console.contacts.title")} lead={t("console.contacts.lead")}>
-      <Filters statuses={contactStatuses} current={{ status, gmina }} exportType="kontakty" />
+      <Filters statuses={contactStatuses} current={{ status, gmina }} exportType="contacts" />
       <p role="status">{t("console.results", { count: rows.length })}</p>
       {rows.length === 0 ? (
         <Empty>{t("console.empty")}</Empty>
