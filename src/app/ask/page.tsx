@@ -24,10 +24,10 @@ export default async function AskPage({ searchParams }: PageProps<"/ask">) {
   if (innovation) refItem = { type: "innovation", id: innovation.id, label: innovation.title };
   const ideaId = one("pomysl");
   const idea = ideaId ? await repository().getIdea(ideaId) : undefined;
-  if (idea) refItem = { type: "idea", id: idea.id, label: idea.title };
+  if (idea && !idea.demo) refItem = { type: "idea", id: idea.id, label: idea.title };
   const postId = one("partnerstwo");
   const post = postId ? await repository().getPost(postId) : undefined;
-  if (post?.moderation.status === "zatwierdzone") refItem = { type: "partnership", id: post.id, label: post.title };
+  if (post?.moderation.status === "zatwierdzone" && !post.demo) refItem = { type: "partnership", id: post.id, label: post.title };
 
   const topic = refItem?.type === "partnership" ? "partnerstwo" : isTopic(one("temat")) ? (one("temat") as "pytanie") : "pytanie";
   const defaultSubject =

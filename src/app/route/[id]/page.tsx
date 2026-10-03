@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { DeclinedView, OffTopicView } from "@/components/route/declined-view";
 import { HumanHelp } from "@/components/route/human-help";
 import { RouteView } from "@/components/route/route-view";
+import { Notice } from "@/components/ui/notice";
 import { helplines } from "@/lib/catalogue";
 import type { RouteMode } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
@@ -38,7 +39,19 @@ export default async function RoutePage({ params }: PageProps<"/route/[id]">) {
       return <DeclinedView route={route} />;
     case "off_topic":
       return <OffTopicView />;
-    default:
-      return <RouteView route={route} markdown={routeToMarkdown(route)} similar={await similarCasesForRoute(route)} />;
+    default: {
+      const view = <RouteView route={route} markdown={routeToMarkdown(route)} similar={await similarCasesForRoute(route)} />;
+      // A question of the panel's demonstration data, opened from the panel: said so above the route.
+      return route.demo ? (
+        <div className="grid gap-6">
+          <Notice title={t("route.demo.title")}>
+            <p>{t("route.demo.text")}</p>
+          </Notice>
+          {view}
+        </div>
+      ) : (
+        view
+      );
+    }
   }
 }

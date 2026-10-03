@@ -111,6 +111,32 @@ Stop the server, delete `.local/store/records.json` (and its `.bak` when
 the old entries must go for good), start again: the store starts with the
 examples.
 
+## Demonstration data (decision R.6)
+
+With `DEMO_DATA=true`, a fresh store starts with the examples and a
+simulated twelve-week pilot for the ROPS panel (`src/server/db/demo.ts`):
+about 250 questions with their routes, 80 needs, 45 idea cards, 109
+evaluations, 40 contact requests, 25 readiness registrations, mentors,
+partnership posts, conversations, content reports and the moderation log
+of their decisions. The questions and texts come from
+`data/curated/demo-questions.yaml` and `data/curated/demo-records.yaml`,
+the routes from `data/built/demo-routes.json` (`pnpm demo:routes`, in the
+data bundle); a seeded generator draws the dates, counted back from the
+start of the server, and the decisions. Every such record has
+`demo: true`: the panel marks it and says so on every page, its trends
+can leave it out, and the public pages and the route never show it.
+
+- The switch acts on a fresh store only: to switch the data on or off,
+  stop the server, set or remove `DEMO_DATA`, delete
+  `.local/store/records.json` (keep a copy if it holds real entries) and
+  start again. The dates follow the start, so a reset the day before a
+  demo keeps the twelve weeks current.
+- Entries made while the server runs (a question the jury asks live) are
+  real and count beside the simulated ones; "Tylko prawdziwe wpisy" in
+  the trends shows them alone.
+- A missing source file is logged (`[store] DEMO_DATA is set, but ...`)
+  and the store starts with the examples only.
+
 ## Tests
 
 `pnpm test` runs the contract suite of `tests/unit/db/` against the memory

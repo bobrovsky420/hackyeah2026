@@ -1,6 +1,7 @@
 import type { Brief, BriefMatch, ImplementationPath, Need, Route, IndicatorKey } from "@/lib/contracts";
 import { getInnovation, getPath, indicators as indicatorSet } from "@/lib/catalogue";
 import { repository } from "@/server/db";
+import { isReal } from "@/server/db/repository";
 import { indicatorFacts } from "@/server/map";
 import { getRoute } from "@/server/route-service";
 import { nowIso } from "@/server/ephemeral";
@@ -62,6 +63,7 @@ export async function buildBrief(need: Need, given?: Route | null): Promise<Brie
   const similarNeeds = (await repo.listNeeds({ places: [need.place_terc] }))
     .filter(
       (other) =>
+        isReal(other) &&
         other.id !== need.id &&
         other.place_terc === need.place_terc &&
         other.target_groups.some((group) => groups.includes(group)),
@@ -69,7 +71,7 @@ export async function buildBrief(need: Need, given?: Route | null): Promise<Brie
     .map((other) => ({ summary: other.summary_pl ?? firstSentence(other.problem_text), createdAt: other.created_at }));
 
   const readinessCount = (await repo.listReadiness(need.place_terc === null ? {} : { places: [need.place_terc] })).filter(
-    (entry) => entry.verification.status !== "odrzucone" && entry.topics.some((topic) => groups.includes(topic)),
+    (entry) => isReal(entry) && entry.verification.status !== "odrzucone" && entry.topics.some((topic) => groups.includes(topic)),
   ).length;
 
   const paths: ImplementationPath[] = BRIEF_PATHS.flatMap((ids) => ids.map(getPath).find((path) => path !== undefined) ?? []);

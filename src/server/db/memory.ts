@@ -116,6 +116,7 @@ function routeFacts(route: Route): RouteFacts {
     cached: route.engine.cached,
     solution_ids: route.solutions.map((solution) => solution.innovation_id),
     target_groups: [...questionGroups(route)],
+    demo: route.demo,
   };
 }
 
@@ -176,8 +177,9 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
     },
     async needCountsByPlace() {
       const counts = new Map<string, number>();
+      // The map is public: the panel's demonstration data stays off it.
       for (const item of state.needs) {
-        if (item.place_terc) counts.set(item.place_terc, (counts.get(item.place_terc) ?? 0) + 1);
+        if (item.place_terc && !item.demo) counts.set(item.place_terc, (counts.get(item.place_terc) ?? 0) + 1);
       }
       return counts;
     },
