@@ -4,13 +4,14 @@ import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { MAP_ENABLED } from "@/lib/features";
 import { t, type MessageKey } from "@/lib/i18n";
 import { publicPath } from "@/lib/page-routes";
 import { cn } from "@/lib/utils";
 
 const navigation: { href: string; label: MessageKey }[] = [
   { href: "/", label: "shell.nav.describe" },
-  { href: "/mapa", label: "shell.nav.map" },
+  ...(MAP_ENABLED ? [{ href: "/mapa", label: "shell.nav.map" } as const] : []),
   { href: "/zglos-pomysl", label: "shell.nav.idea" },
   { href: "/zapytaj", label: "shell.nav.ask" },
   { href: "/partnerstwa", label: "shell.nav.partnerships" },

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { InfoPage, InfoSection } from "@/components/info/info-page";
+import { MAP_ENABLED } from "@/lib/features";
 import { t } from "@/lib/i18n";
 import { ropsDepartment } from "@/lib/catalogue";
 
@@ -47,7 +48,7 @@ export default function AccessibilityStatementPage() {
       <InfoSection id="stan" title={t("a11y.status.title")}>
         <p id="a11y-status">{t("a11y.status.text")}</p>
         <ul className="grid list-disc gap-2 pl-6">
-          <li>{t("a11y.status.issue.map")}</li>
+          {MAP_ENABLED && <li>{t("a11y.status.issue.map")}</li>}
           <li>{t("a11y.status.issue.files")}</li>
           <li>{t("a11y.status.issue.audit")}</li>
         </ul>

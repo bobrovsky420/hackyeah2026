@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { GminaMap, type MapSettings } from "@/components/map/gmina-map";
 import { GminaPanelView, GminaTable, IndicatorNote, MapLegend, NeedRanking } from "@/components/map/map-parts";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
@@ -8,6 +9,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { controlClass } from "@/components/ui/field";
 import { getGmina, getInnovation, gminy } from "@/lib/catalogue";
 import type { IndicatorKey } from "@/lib/contracts";
+import { MAP_ENABLED } from "@/lib/features";
 import { t } from "@/lib/i18n";
 import { indicatorLabel } from "@/lib/labels";
 import {
@@ -57,6 +59,7 @@ function queryText(query: Record<string, string | string[] | undefined>, key: st
 }
 
 export async function generateMetadata({ searchParams }: PageProps<"/map">): Promise<Metadata> {
+  if (!MAP_ENABLED) notFound();
   const query = await searchParams;
   const innovation = getInnovation(queryText(query, "innowacja") ?? "");
   const gmina = getGmina(queryText(query, "gmina"));
@@ -67,6 +70,7 @@ export async function generateMetadata({ searchParams }: PageProps<"/map">): Pro
 
 /** S4 (FR-7.1 to FR-7.6): explore, "Gdzie jest najbardziej potrzebna" (J4) and the gmina panel (J5). */
 export default async function MapPage({ searchParams }: PageProps<"/map">) {
+  if (!MAP_ENABLED) notFound();
   const query = await searchParams;
   const innovation = getInnovation(queryText(query, "innowacja") ?? "");
   const gmina = getGmina(queryText(query, "gmina"));

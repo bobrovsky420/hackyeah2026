@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { MAP_ENABLED } from "../../src/lib/features";
 import { E2E_ROPS_TOKEN } from "./admin";
 
 /*
@@ -171,6 +172,7 @@ test("FR-11.7: Jak to działa has the register card in its order", async ({ page
 });
 
 test("FR-7.5: the map's table lists all 183 gminas and sorts by value", async ({ page }) => {
+  test.skip(!MAP_ENABLED, "the map is switched off in src/lib/features.ts");
   await page.goto("/mapa?widok=tabela");
   const table = page.getByRole("table", { name: /^Gminy Małopolski:/ });
   await expect(table.locator("tbody tr")).toHaveCount(183);
