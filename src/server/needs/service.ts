@@ -7,18 +7,14 @@ import { buildBrief } from "@/server/needs/brief-template";
 import { repository, type Repository } from "@/server/db";
 import { createEmbedClient } from "@/server/match";
 import { generateBrief } from "./brief";
-import { clusterNeeds, clusterable, type ClusterResult } from "./cluster";
 import { nearestFromRoute, nearestMatches } from "./nearest";
-import { openNeeds, type OpenNeed, type OpenNeedsFilter } from "./open";
 import { briefSections, sectionsToMarkdown } from "./sections";
 
 /*
- * The needs bank's work behind the handlers and the console (7.5): the
- * brief generated once per need and stored (8.5), the duplicate check
- * computed when the first brief needs it, the clustering run of the
- * console (FR-5.4) and the public view of approved needs (FR-5.6). The
- * dependencies default to the app's repository, model chain and data, and
- * tests pass their own.
+ * The needs bank's work behind the handlers (7.5): the brief generated
+ * once per need and stored (8.5) and the duplicate check computed when the
+ * first brief needs it. The dependencies default to the app's repository,
+ * model chain and data, and tests pass their own.
  */
 
 export interface NeedsDeps {
@@ -119,16 +115,15 @@ const inFlight = (holder.__briefsInFlight ??= new Map());
 
 /**
  * POST /api/needs/{id}/brief (9.2): the stored brief, or a new one generated
- * and stored when there is none or `refresh` is set (the console only).
- * Null when the need is unknown. Parallel requests for one need share one
- * generation.
+ * and stored when there is none. Null when the need is unknown. Parallel
+ * requests for one need share one generation.
  */
-export async function briefForNeed(needId: string, options: { refresh?: boolean } = {}, given?: Partial<NeedsDeps>): Promise<StoredBrief | null> {
+export async function briefForNeed(needId: string, given?: Partial<NeedsDeps>): Promise<StoredBrief | null> {
   const deps = resolve(given);
   const need = await deps.repo.getNeed(needId);
   if (!need) return null;
   const stored = await deps.repo.getBrief(need.id);
-  if (stored && !options.refresh) return stored;
+  if (stored) return stored;
 
   const running = inFlight.get(need.id);
   if (running) return running;
@@ -140,46 +135,4 @@ export async function briefForNeed(needId: string, options: { refresh?: boolean 
 /** The stored brief of a need, for the page; never generates. */
 export async function storedBrief(needId: string, repo: Repository = repository()): Promise<StoredBrief | undefined> {
   return repo.getBrief(needId);
-}
-
-export interface ClusterRun extends ClusterResult {
-  /** How many needs the run looked at. */
-  considered: number;
-}
-
-/** "Pogrupuj" of the console (FR-5.4): clusters the open needs and stores the ids and names. */
-export async function clusterOpenNeeds(given?: Partial<NeedsDeps>): Promise<ClusterRun> {
-  const deps = resolve(given);
-  const open = clusterable(await deps.repo.listNeeds());
-  const result = await clusterNeeds(open, { llm: deps.llm });
-  if (result.stage) logStages("cluster", `${open.length} needs`, [result.stage]);
-  // A failed call stores nothing, so the clusters of the last good run stay.
-  if (!result.failed) {
-    const createdAt = deps.now().toISOString();
-    await deps.repo.saveClusters(
-      result.clusters.map((cluster) => ({ ...cluster, created_at: createdAt })),
-      open.map((need) => need.id),
-    );
-  }
-  return { ...result, considered: open.length };
-}
-
-export interface OpenNeedView extends OpenNeed {
-  place_name: string | null;
-}
-
-/** GET /api/needs/open (FR-5.6): approved needs with consent to publication, with gmina names. */
-export async function openNeedsView(filter: OpenNeedsFilter, given?: Partial<Pick<NeedsDeps, "repo" | "catalogue">>): Promise<OpenNeedView[]> {
-  const repo = given?.repo ?? repository();
-  const data = given?.catalogue ?? defaultCatalogue();
-  const needs = await repo.listNeeds({
-    moderation: "zatwierdzone",
-    publishable: true,
-    category: filter.category ?? undefined,
-    places: filter.terc ? [filter.terc] : undefined,
-  });
-  return openNeeds(needs, filter).map((need) => ({
-    ...need,
-    place_name: need.place_terc ? (data.gminaByTerc.get(need.place_terc)?.name ?? null) : null,
-  }));
 }

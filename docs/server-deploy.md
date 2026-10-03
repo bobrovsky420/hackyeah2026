@@ -66,8 +66,8 @@ GitHub release `data-X.Y.Z`.
 The settings: `cp deploy/server.env.example .env.server`, then fill in
 `.env.server` (`nano .env.server`): `DATA_RELEASE`, `HF_TOKEN` (for Bielik
 and for the first download of the gated PolDense model: accept the Gemma
-terms once on the model page with the token's account),
-`ANTHROPIC_API_KEY`, `ROPS_TOKEN` and `ROPS_REVIEWER`. The file is
+terms once on the model page with the token's account) and
+`ANTHROPIC_API_KEY`. The file is
 git-ignored and readable by the owner only; the setup checks that.
 
 ## 3. Set up and start

@@ -9,7 +9,7 @@ import { allowSubmission, honeypotFilled, limitKeys, limitReached, publicWritesC
 
 const targetTypes = ["innovation", "organisation", "advisor", "gmina"] as const;
 
-/** S9a: stores a contact request for the ROPS console (8.6), to be relayed after moderation. */
+/** S9a: stores a contact request (8.6) for ROPS to relay; nothing is sent by the tool. */
 export async function POST(request: Request) {
   const closed = publicWritesClosed();
   if (closed) return closed;

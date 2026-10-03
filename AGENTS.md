@@ -1,8 +1,9 @@
 # Repository instructions
 
 Instructions for every AI assistant working in this repository. The
-challenge, the team and the decisions made so far are in
-[docs/challenge-selection.md](docs/challenge-selection.md).
+task and the requirements are in
+[docs/functional-specification.md](docs/functional-specification.md); the
+decisions made so far are in [docs/decision-log.md](docs/decision-log.md).
 
 ## Writing conventions
 
@@ -23,17 +24,22 @@ challenge, the team and the decisions made so far are in
   variable set in the environment wins, and takes no `--env` option.
 - The catalogue data flows raw snapshot (`.local/raw/`) to
   `.local/pipeline/sources/` (parser) to `.local/pipeline/derived/`
-  (extraction workers) to `data/innovations/` (build). `data/` holds only
-  what the app serves; `.local/` is machine-local. The contract is
+  (extraction workers) to `data/built/innovations/` (build). `data/` holds
+  only what the app serves: `data/curated/` is hand-written and committed,
+  `data/built/` is every build output and git-ignored; `.local/` is
+  machine-local. The contract is
   [docs/innovation-record.md](docs/innovation-record.md); the referee is
   `scripts/derive-records.py`; the extraction runs through the skill
   `/extract-innovations`. Do not edit a folder another step owns.
 - The static reference data flows `scripts/fetch-static-data.py`
   (downloads into `.local/`) to `scripts/build-static-data.py` (builds
-  `data/places/`, `data/map/` and `data/indicators.json`). Build outputs
-  are git-ignored; `data/taxonomies.json`, `data/duplicates-decisions.json`,
-  `data/advisors.yaml` and `data/implementations.yaml` are hand-written and
-  committed.
+  `data/built/places/`, `data/built/map/` and
+  `data/built/indicators.json`).
+- The legal and funding paths (`data/built/paths/`) are re-verified or
+  added through the skill `/research-paths`; the referees are
+  `scripts/check-paths.py` (the path files) and `scripts/check-evidence.py`
+  (the run's evidence). Nothing changes there before the user approves
+  the skill's report.
 - A data release for another machine is
   `.venv/Scripts/python scripts/pack-data.py --release X.Y.Z` (with
   `--rebuild` after the records changed), which writes
@@ -73,24 +79,23 @@ challenge, the team and the decisions made so far are in
   `<screen>.<element>` keys and is read with `t()` from `src/lib/i18n.ts`;
   no Polish text in components (specification, section 11).
 - Colours, type and radii come from the tokens in `src/app/globals.css`
-  (OP-15); components use the token utilities such as `bg-primary` or
+  (decision U.1); components use the token utilities such as `bg-primary` or
   `text-muted-foreground`, never raw hex values. Text reaches 7:1 against
   its background, controls are at least 44 px high, focus is the 3 px ring
   of the tokens (specification 12.2).
 - Forms and the innovation details are pages, never dialogs or side
   panels; single choices are native radios in tiles
   (`src/components/ui/choice.tsx`), never chips.
-- No cookies, except the access-code cookie of the ROPS console: the view
-  settings and the intake draft live in the browser under the keys of
-  `src/lib/storage-keys.ts`; the inline script in `src/app/layout.tsx`
-  applies the view settings before the first paint.
+- No cookies: the view settings and the intake draft live in the browser
+  under the keys of `src/lib/storage-keys.ts`; the inline script in
+  `src/app/layout.tsx` applies the view settings before the first paint.
 - The app reads `data/` through one server facade,
   `src/lib/catalogue.ts`; when `data/` is missing or fails the loader's
   checks it falls back to the committed fixtures in `src/lib/mock/`, so a
   fresh clone runs (`DATA_SOURCE=data|mock` forces one). Client components
   get what they need as props, never from the facade. Innovation text is
   always shown with the attribution line and the prototype note of FR-1.8;
-  the MIIS items like every ROPS item (decided 29 September 2026), their
+  the MIIS items like every ROPS item (decision D.4), their
   licence named by its terms.
 - Every server module lives in `src/server/`; `src/lib/` holds only what a
   client component may import too. The route pipeline: the gate (`gate/`,
@@ -98,9 +103,8 @@ challenge, the team and the decisions made so far are in
   needs bank (`needs/`, 7.5) and `pipeline.ts`, which runs them with the
   replay cache of FR-3.5 (`route-cache.ts`, files in `.local/route-cache/`).
   Around it: `route-service.ts` (the engines and the repeat check),
-  `map.ts` (S4), `console/` (the ROPS console), `db/` (the store), `eval/`
-  (the harness) and the request helpers `rate-limit.ts`, `validate.ts` and
-  `ephemeral.ts`. The modules meet only through the types of
+  `map.ts` (S4), `db/` (the store), `eval/` (the harness) and the request
+  helpers `rate-limit.ts`, `validate.ts` and `ephemeral.ts`. The modules meet only through the types of
   `src/lib/contracts.ts`, the one file of the shapes the server and the
   screens share, and receive the model as an `Llm` function, so their Vitest tests
   (`npx pnpm@12.6.0 test`, in `tests/unit/`) never reach the network. The
@@ -130,28 +134,23 @@ challenge, the team and the decisions made so far are in
   (`.local/store/records.json`, or `STORE_FILE`) after every change and
   loaded at start, so a restart keeps them; `STORE_FILE=memory` keeps
   them in memory only (the Playwright server, the pipeline scripts).
-  There is no database (decided 29 September 2026), and one process per
+  There is no database (decision A.6), and one process per
   file. Only server code calls it; the composer gets the readiness
   registry as a dependency. The rate limiter's and the gate's short-lived
   memory stay in `src/server/ephemeral.ts`, never in the file. Retention
   runs inside the server. Details, reset and deployment are in
   [docs/storage.md](docs/storage.md).
-- The ROPS console (`/rops`, S7) asks for the access code in `ROPS_TOKEN`.
-  Without it, `next dev` accepts the prototype's code `rops-prototyp` and a
-  production server keeps the console locked. The console's lists, status
-  changes and moderation decisions are server actions of its pages
-  (`src/app/rops/actions.ts`); its only HTTP endpoints are the CSV export
-  and the statistics (`/api/rops/export.csv`, `/api/rops/stats`, decided
-  1 October 2026). The Playwright config starts
-  its server with that code, the canned route engine, an empty replay
-  recording for the gate (no model calls), the store in memory and high
-  limits; a server it reuses needs the same variables, listed in
-  `playwright.config.ts`.
-  `ROPS_REVIEWER` names the reviewer in the action log.
-- Console forms submit through `submitTo` in
-  `src/components/forms/submit.ts`, not `<form action>`: React resets a
-  form after its action, and the reset puts even a controlled select back
-  on its first option.
+- The ROPS console (`/rops`, S7) is a roadmap item, removed from the build
+  (decision R.2): the store keeps the statuses, the
+  moderation fields and the logs it will need, and nothing in the app reads
+  them. The Playwright config starts its server with the canned route
+  engine, an empty replay recording for the gate (no model calls), the
+  store in memory and high limits; a server it reuses needs the same
+  variables, listed in `playwright.config.ts`.
+- A form that must keep its state after submitting (the clarification
+  form) submits through `submitTo` in `src/components/forms/submit.ts`,
+  not `<form action>`: React resets a form after its action, and the reset
+  puts even a controlled select back on its first option.
 - The React Compiler lint rules apply: no writes to `document` inside a
   component body (use a module-level helper), and hooks that return refs
   are destructured.

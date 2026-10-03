@@ -1,11 +1,11 @@
-"""Embed every built record for the retriever of stage 1 (FR-3.7) into data/index-vectors.json.
+"""Embed every built record for the retriever of stage 1 (FR-3.7) into data/built/index-vectors.json.
 
-Input:  data/innovations/<id>.json (derive-records.py build) and data/data-version.json.
+Input:  data/built/innovations/<id>.json (derive-records.py build) and data/built/data-version.json.
 Model:  --model or EMBEDDING_MODEL, default OPI-PIB/PolDense-400M;
         the fallback is OPI-PIB/PolDense-150M. Passages take no prefix, queries take "[query]: ".
 Document per record, the same composition scripts/embedding-probe.py measured: title, summary_pl,
         problem_pl, mechanism_pl, keywords_pl.
-Output: data/index-vectors.json (git-ignored): the model id, the vector size, the prefixes, the data
+Output: data/built/index-vectors.json (git-ignored): the model id, the vector size, the prefixes, the data
         version, the document composition, and one unit-length vector per record (5 decimals), so the
         app computes cosine as a dot product and can refuse vectors built with another model.
 
@@ -20,8 +20,8 @@ from dotenv import load_dotenv
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(ROOT, ".env.dev"))  # the environment wins, as in the app
-INNOVATIONS = os.path.join(ROOT, "data", "innovations")
-OUT = os.path.join(ROOT, "data", "index-vectors.json")
+INNOVATIONS = os.path.join(ROOT, "data", "built", "innovations")
+OUT = os.path.join(ROOT, "data", "built", "index-vectors.json")
 DEFAULT_MODEL = "OPI-PIB/PolDense-400M"
 QUERY_PREFIX = "[query]: "
 DOCUMENT = "title, summary_pl, problem_pl, mechanism_pl, keywords_pl"
@@ -51,8 +51,8 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     files = sorted(glob.glob(os.path.join(INNOVATIONS, "*.json")))
     if not files:
-        sys.exit("no data/innovations; run derive-records.py build first")
-    version_path = os.path.join(ROOT, "data", "data-version.json")
+        sys.exit("no data/built/innovations; run derive-records.py build first")
+    version_path = os.path.join(ROOT, "data", "built", "data-version.json")
     version = json.load(open(version_path, encoding="utf-8"))["version"] if os.path.exists(version_path) else None
     ids, docs, titles = [], [], {}
     for f in files:

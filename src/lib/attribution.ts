@@ -10,7 +10,7 @@ export const ROPS_LIBRARY = "https://rops.krakow.pl/innowacje-spoleczne/bibliote
 
 /**
  * The licence of the attribution line (FR-1.8) as a reader sees it. The MIIS
- * items are shown like every ROPS item (decided 29 September 2026); their
+ * items are shown like every ROPS item (decision D.4); their
  * licence value is provenance, named here by its terms.
  */
 export function licenceOf(item: Innovation): { label: string; href: string | null } {
@@ -19,7 +19,7 @@ export function licenceOf(item: Innovation): { label: string; href: string | nul
   return { label: item.licence, href: null };
 }
 
-/** The retrieval date in the interface format of section 11, such as "28.09.2026". */
+/** The retrieval date in the interface format of section 11, such as "3.10.2026". */
 export function retrievedDate(item: Innovation): string | null {
   return item.retrievedAt ? formatDate(item.retrievedAt) : null;
 }

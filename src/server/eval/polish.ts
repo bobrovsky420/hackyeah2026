@@ -2,7 +2,7 @@ import { findBanned, type BannedWords } from "@/server/route/safety";
 
 /*
  * The Polish check of 13.2 on every string the model wrote into a route:
- * the banned words of data/safety/banned-words-pl.yaml (the composer's own
+ * the banned words of data/curated/banned-words-pl.yaml (the composer's own
  * check, FR-12.10), no English fragments, no leaked field names or record
  * ids, and a language check. The language check is a heuristic without a
  * dependency: a text of six words or more must carry Polish function words

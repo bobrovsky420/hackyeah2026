@@ -6,7 +6,7 @@ import { localityLabeller, type PlaceOption } from "@/lib/place-options";
 
 /* FR-2.2: a town or village of Małopolska finds its gmina in the picker. */
 
-const hasData = fs.existsSync(path.join(process.cwd(), "data", "places", "malopolska-localities.json"));
+const hasData = fs.existsSync(path.join(process.cwd(), "data", "built", "places", "malopolska-localities.json"));
 
 const places: PlaceOption[] = [
   { terc: "1207021", name: "Mszana Dolna", powiat: "limanowski", kind: "gmina miejska" },

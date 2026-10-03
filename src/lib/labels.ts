@@ -1,7 +1,7 @@
 import type { CostBand, EvidenceLevel, RoleCode, SourceName, TimeToImplement, RouteSolution, IndicatorKey } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 
-/* Codes of the contracts (data/taxonomies.json, schemas 8.4 and 8.7) mapped to interface strings. */
+/* Codes of the contracts (data/curated/taxonomies.json, schemas 8.4 and 8.7) mapped to interface strings. */
 
 function listLabel(labels: string[]): string {
   const text = labels.length > 1 ? `${labels.slice(0, -1).join(", ")} ${t("common.or")} ${labels.at(-1)}` : (labels[0] ?? "");
@@ -26,13 +26,13 @@ export function roleLabel(code: RoleCode): string {
 }
 
 const roleNounKeys = {
-  "pracownik-instytucji": "console.role.instytucja",
-  "organizacja-spoleczna": "console.role.organizacja",
-  mieszkaniec: "console.role.mieszkaniec",
-  "urzad-gminy": "console.role.gmina",
+  "pracownik-instytucji": "labels.role.instytucja",
+  "organizacja-spoleczna": "labels.role.organizacja",
+  mieszkaniec: "labels.role.mieszkaniec",
+  "urzad-gminy": "labels.role.gmina",
 } as const satisfies Record<RoleCode, MessageKey>;
 
-/** The role as a noun for the console's tables; the form's labels speak in the first person. */
+/** The role as a noun for the prompts' reader context; the form's labels speak in the first person. */
 export function roleNoun(code: RoleCode): string {
   return t(roleNounKeys[code]);
 }

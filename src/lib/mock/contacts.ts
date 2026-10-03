@@ -1,6 +1,6 @@
 import type { Department, Helpline } from "@/lib/contracts";
 
-/** From data/advisors.yaml (the ROPS contact page, read on 28 September 2026). */
+/** From data/curated/advisors.yaml (the ROPS contact page). */
 export const ropsDepartment: Department = {
   name: "Dział Innowacji Społecznych ROPS w Krakowie",
   email: "iws@rops.krakow.pl",
@@ -10,7 +10,7 @@ export const ropsDepartment: Department = {
 
 /*
  * The helplines of screen S10 as listed in the specification, the fallback
- * when data/helplines.yaml cannot be loaded. Opening hours are left out:
+ * when data/curated/helplines.yaml cannot be loaded. Opening hours are left out:
  * the verified ones live in the data file (FR-12.5 asks for honest hours).
  */
 export const helplines: { alarm: Helpline[]; support: Helpline[] } = {

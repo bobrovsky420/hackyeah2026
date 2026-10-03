@@ -23,7 +23,7 @@ const BDL = "https://bdl.stat.gov.pl/";
 /**
  * The paths of FR-5.5: the incubator call, the small grant and the local
  * initiative; the ROPS advice is a line of its own. The incubator is
- * iws-2-inkubator in data/paths/ and iws-inkubator in the fixtures.
+ * iws-2-inkubator in data/built/paths/ and iws-inkubator in the fixtures.
  */
 const BRIEF_PATHS = [["iws-2-inkubator", "iws-inkubator"], ["maly-grant-19a"], ["inicjatywa-lokalna"]];
 const SCALE_INDICATORS: IndicatorKey[] = ["social-assistance", "ageing", "unemployment"];

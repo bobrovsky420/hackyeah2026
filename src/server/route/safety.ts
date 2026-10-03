@@ -4,12 +4,12 @@ import { parseYaml, type YamlValue } from "@/lib/data/yaml";
 
 /*
  * The output checks on the model's text (FR-12.10, 9.4 compose.md, 11 rule
- * 6): the banned words of data/safety/banned-words-pl.yaml, and the amounts
+ * 6): the banned words of data/curated/banned-words-pl.yaml, and the amounts
  * and dates the composer's texts must not carry (FR-8.5). A text that fails
  * is replaced by its template; the log names the check, never the text.
  */
 
-export const BANNED_WORDS_FILE = "data/safety/banned-words-pl.yaml";
+export const BANNED_WORDS_FILE = "data/curated/banned-words-pl.yaml";
 
 /** One entry: consecutive words, each an exact form or a prefix (written with a trailing *). */
 type Entry = { word: string; prefix: boolean }[];

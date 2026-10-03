@@ -2,8 +2,10 @@
 
 How the app keeps its entries: the needs, contact requests, readiness
 registrations, routes, feedback, content reports, the moderation and
-screening logs and the counters. No
-database in any installation. The entries live in the server's memory
+screening logs and the counters. The statuses, moderation fields and the
+moderation log wait for the ROPS console of the roadmap (R.2); nothing
+in the app reads them yet. Decided: no database in any
+installation. The entries live in the server's memory
 and are saved to one JSON file, so they survive a restart and a redeploy,
 and a fresh clone runs with nothing to set up.
 
@@ -55,7 +57,7 @@ on port 3100 needs `STORE_FILE=memory` like its other variables.
 
 ## Retention
 
-The periods of 12.6 (OP-18) are applied by the server itself, when the
+The periods of 12.6 are applied by the server itself, when the
 store opens and once a day after that (`src/server/retention.ts`):
 
 - routes, with their feedback: from 4 November 2026 (30 days after the

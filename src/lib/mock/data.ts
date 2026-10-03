@@ -4,11 +4,11 @@ import localitiesData from "./localities.json";
 import type { Gmina, Innovation, Locality } from "@/lib/contracts";
 
 /*
- * Prototype fixtures, extracted on 29 September 2026 from the local data
- * build (data/places/pl-register.json with the centroids,
- * data/places/malopolska-localities.json and data/innovations/), so the
- * prototype runs on a fresh clone without the pipeline. The MIIS records are shown like every ROPS record (decided
- * 29 September 2026). The app reads them only through src/lib/catalogue.ts,
+ * Prototype fixtures, extracted from the local data
+ * build (data/built/places/pl-register.json with the centroids,
+ * data/built/places/malopolska-localities.json and data/built/innovations/), so the
+ * prototype runs on a fresh clone without the pipeline. The MIIS records are shown like every ROPS record (decision
+ * D.4). The app reads them only through src/lib/catalogue.ts,
  * when data/ is missing or fails the loader's checks, or with DATA_SOURCE=mock.
  */
 export const gminy = gminyData as Gmina[];

@@ -2,9 +2,9 @@ import type { ImplementationPath } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 
 /*
- * Paths in the shape of schema 8.7, the fallback for data/paths/ (FR-8.1), with
- * the facts of section 14.4 as read on 28 September 2026. No lawyer
- * reviewed them (decided 29 September 2026): every path carries the
+ * Paths in the shape of schema 8.7, the fallback for data/built/paths/ (FR-8.1), with
+ * the facts of section 14.4. No lawyer reviewed them (decided): every
+ * path carries the
  * prototype note of FR-1.8.
  */
 const prototypeNote = t("attribution.note");
@@ -28,7 +28,7 @@ const paths: ImplementationPath[] = [
       "Złóż ofertę w kwietniowym naborze.",
     ],
     source_url: "https://www.gov.pl/web/senior/ogloszenie-o-konkursie-priorytet-v---asy-2026",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: prototypeNote,
   },
@@ -48,7 +48,7 @@ const paths: ImplementationPath[] = [
       "Po 7 dniach i rozpatrzeniu uwag podpisz umowę i zacznij zadanie.",
     ],
     source_url: "https://eli.gov.pl/eli/DU/2026/1040/ogl/pol",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: `Część urzędów, w tym Kraków, nadal podaje stary limit 10 000 zł. Sprawdź aktualny komunikat urzędu. ${prototypeNote}`,
   },
@@ -70,7 +70,7 @@ const paths: ImplementationPath[] = [
       "Złóż wniosek w urzędzie gminy.",
     ],
     source_url: "https://eli.gov.pl/eli/DU/2025/1338/ogl/pol",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: prototypeNote,
   },
@@ -93,7 +93,7 @@ const paths: ImplementationPath[] = [
     ],
     source_url:
       "https://rops.krakow.pl/realizowane-projekty-i-zadania/usluga-wrazliwa-upowszechnianie-innowacji-spolecznych-w-srodowiskach-lokalnych,o-projekcie",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: prototypeNote,
   },
@@ -114,7 +114,7 @@ const paths: ImplementationPath[] = [
       "Zapytaj Dział Innowacji Społecznych ROPS o kolejny nabór.",
     ],
     source_url: "https://mapadotacji.gov.pl/projekty/1677388/",
-    verified_on: "2026-09-28",
+    verified_on: "2026-10-03",
     reviewer: null,
     notes_pl: prototypeNote,
   },

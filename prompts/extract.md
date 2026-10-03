@@ -1,7 +1,7 @@
 ---
 version: extract-v4
 task: derived fields of one innovation, written by a Claude Code subagent (not by the app)
-changes: v2 added the anchoring quotes for problem_pl and mechanism_pl, the last pass against the source, the hard people-first rule, and the option to drop a mapped code with a note; v3 (same day) prefers an estimate of cost and time over unknown when the source describes the resources; v4 (same day, with taxonomies tax-v2) adds the target group spektrum-autyzmu and the rule for autism, the domains zdrowie-fizyczne, kultura-sport-i-czas-wolny and prawa-i-sprawy-urzedowe, and allows "wózek inwalidzki"
+changes: v2 added the anchoring quotes for problem_pl and mechanism_pl, the last pass against the source, the hard people-first rule, and the option to drop a mapped code with a note; v3 prefers an estimate of cost and time over unknown when the source describes the resources; v4 (with taxonomies tax-v2) adds the target group spektrum-autyzmu and the rule for autism, the domains zdrowie-fizyczne, kultura-sport-i-czas-wolny and prawa-i-sprawy-urzedowe, and allows "wózek inwalidzki"
 ---
 
 # Extraction worker
@@ -21,7 +21,7 @@ coordinator gives you the list of ids, the model name to write into
 
 Read once, before the first record:
 
-- `data/taxonomies.json`: the closed lists. You may only use codes that
+- `data/curated/taxonomies.json`: the closed lists. You may only use codes that
   are listed there.
 - `prompts/extract-example.json`: a worked example (the Merkury record).
 
@@ -101,7 +101,7 @@ For every id in your batch:
    obvious. When in doubt, leave the sentence out. When the source does
    not say, the field says unknown or null, and `notes_pl` may say what
    is missing.
-2. **Closed lists.** Codes only from `data/taxonomies.json`. Never invent
+2. **Closed lists.** Codes only from `data/curated/taxonomies.json`. Never invent
    a code. If no domain fits, use `inne` and explain in `notes_pl`.
 3. **Keep the mapped codes, or say why not.** `target_groups` should
    contain every code in `mapped.target_groups` (you may drop `inne` when

@@ -8,7 +8,7 @@ import { FIXTURES_VERSION } from "@/lib/mock/fixtures";
 
 /* The facade picks data/ or the fixtures (src/lib/catalogue.ts). */
 
-const DATA = path.join(process.cwd(), "data");
+const DATA = path.join(process.cwd(), "data", "built");
 const hasData = fs.existsSync(path.join(DATA, "data-version.json"));
 const emptyDir = () => fs.mkdtempSync(path.join(os.tmpdir(), "catalogue-"));
 
@@ -36,7 +36,7 @@ describe("source selection", () => {
     const data = loadCatalogue({ dataDir: emptyDir(), warn });
     expect(data.source).toBe("mock");
     expect(warn).toHaveBeenCalledTimes(1);
-    expect(warn.mock.calls[0][0]).toMatch(/data\/data-version\.json is missing/);
+    expect(warn.mock.calls[0][0]).toMatch(/data\/built\/data-version\.json is missing/);
   });
 
   it("refuses to fall back when forced to data", () => {

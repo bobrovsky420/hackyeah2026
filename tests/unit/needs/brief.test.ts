@@ -153,7 +153,7 @@ describe("the name check", () => {
     expect(unknownNames("Rodziny w Zakliczynie i w Krakowie. Ludzie czekają.", known)).toEqual([]);
     expect(unknownNames("Pomoc da Jan Kowalski nad Dunajcem.", known)).toEqual(["Jan", "Kowalski", "Dunajcem"]);
     expect(unknownNames("„Hipoteza” brzmi prosto. Wsparcie ROPS w Małopolsce.", known)).toEqual([]);
-    // Kinds of local institution are no names (the live C09 brief of 29 September 2026 was dropped on "OSP").
+    // Kinds of local institution are no names (a live C09 brief was dropped on "OSP").
     expect(unknownNames("Współpraca gminy, OSP, KGW i GOPS.", known)).toEqual([]);
   });
 });

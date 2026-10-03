@@ -114,7 +114,7 @@ def main():
     except (OSError, ValueError):
         installed = None
     if (installed and installed.get("release") == release and not args.force
-            and os.path.exists(os.path.join(args.root, "data", "data-version.json"))):
+            and os.path.exists(os.path.join(args.root, "data", "built", "data-version.json"))):
         print(f"release {release} is installed already (data version {installed.get('data_version')}); "
               f"--force unpacks it again")
         return
@@ -134,7 +134,7 @@ def main():
     if subprocess.run(unpack).returncode != 0:
         fail("unpack-data.py refused; nothing is marked as installed")
 
-    with open(os.path.join(args.root, "data", "data-version.json"), encoding="utf-8") as f:
+    with open(os.path.join(args.root, "data", "built", "data-version.json"), encoding="utf-8") as f:
         data_version = json.load(f).get("version")
     with open(marker + ".part", "w", encoding="utf-8") as f:
         json.dump({"release": release, "data_version": data_version, "zip_sha256": digest,

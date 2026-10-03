@@ -19,7 +19,7 @@ Usage (from the repository root, with the project venv):
 import argparse, collections, datetime, glob, json, os, socket, sys, time, urllib.error, urllib.parse, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INNOVATIONS = os.path.join(ROOT, "data", "innovations")
+INNOVATIONS = os.path.join(ROOT, "data", "built", "innovations")
 LOGS = [os.path.join(ROOT, ".local", "raw", "s1-files", "log.jsonl"),
         os.path.join(ROOT, ".local", "raw", "s2-files", "log.jsonl")]
 OUT = os.path.join(ROOT, ".local", "pipeline", "link-check.json")

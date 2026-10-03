@@ -61,8 +61,8 @@ function Header({ item, routeId }: { item: Innovation; routeId: string | undefin
 
 /**
  * S5: the innovation as a page, reached from a route or the map (rule R1:
- * no browse page). The MIIS items are shown like every ROPS item (decided
- * 29 September 2026).
+ * no browse page). The MIIS items are shown like every ROPS item (decision
+ * D.4).
  */
 export default async function InnovationPage({ params, searchParams }: PageProps<"/innovation/[id]">) {
   const { id } = await params;

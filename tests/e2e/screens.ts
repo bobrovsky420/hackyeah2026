@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 
 /** Every screen of section 10 the prototype has, with a path that shows it filled. */
-export const screens: { name: string; path: string; console?: boolean }[] = [
+export const screens: { name: string; path: string }[] = [
   { name: "s1-start", path: "/" },
   { name: "s2-droga", path: "/droga/przyklad-seniorzy" },
   { name: "s2-przemoc", path: "/droga/przyklad-przemoc" },
@@ -30,24 +30,7 @@ export const screens: { name: string; path: string; console?: boolean }[] = [
   { name: "s4-gmina", path: "/mapa?gmina=1214053" },
   { name: "s12-zglos", path: "/zglos?droga=przyklad-seniorzy" },
   { name: "404", path: "/nie-ma-takiej-strony" },
-  { name: "s7-logowanie", path: "/rops" },
-  { name: "s7-moderacja", path: "/rops", console: true },
-  { name: "s7-potrzeby", path: "/rops/potrzeby", console: true },
-  { name: "s7-kontakty", path: "/rops/kontakty", console: true },
-  { name: "s7-gotowosc", path: "/rops/gotowosc", console: true },
-  { name: "s7-miary", path: "/rops/miary", console: true },
 ];
-
-/**
- * The console's access code: ROPS_TOKEN, or the prototype's code. The test
- * server gets it from the Playwright config; a reused server must run with it.
- */
-export const CONSOLE_TOKEN = process.env.ROPS_TOKEN || "rops-prototyp";
-
-/** Signs the page in to the ROPS console by setting its cookie. */
-export async function signIn(page: Page, baseURL: string | undefined) {
-  await page.context().addCookies([{ name: "rops_token", value: CONSOLE_TOKEN, url: baseURL ?? "http://localhost:3100" }]);
-}
 
 /** The three themes of the tokens: the device's light and dark, and "Wersja kontrastowa". */
 export const themes: Record<string, (page: Page) => Promise<void>> = {

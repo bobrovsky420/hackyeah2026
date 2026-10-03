@@ -6,7 +6,7 @@ import { RETRIEVE_K } from "./thresholds";
 
 /*
  * The retriever of FR-3.7: the need, embedded as a query, against the unit
- * vectors of data/index-vectors.json (cosine is a dot product), the forty
+ * vectors of data/built/index-vectors.json (cosine is a dot product), the forty
  * nearest cards to stage 1. The target-group guard runs over the whole
  * ranking before the cut, so stage 1 still reads forty cards. A route never
  * fails here: when the service is unreachable, slow, serves another model

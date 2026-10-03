@@ -21,7 +21,7 @@ import { MAX_GAPS, MAX_REASONS, MAX_TOP_IDS, PARTIAL_MIN, ROUTE_MIN, modeFor } f
  *   by the extraction, allowed for every licence;
  * - the source passages that describe the problem, the mechanism, the
  *   people served and the evidence: ROPS items may be shown in full (CC BY
- *   4.0, the MIIS items by the decision of 29 September 2026); national-base
+ *   4.0, the MIIS items by decision D.4); national-base
  *   text is stored for quotes of at most 25 words (8.1), and a quote here
  *   has at most 15. Authors, contacts, places, funding and the free-text
  *   website field are never given: they name people or are not about fit.

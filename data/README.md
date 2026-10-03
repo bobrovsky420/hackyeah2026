@@ -8,37 +8,45 @@ records, sections 8.1 to 8.9 of the
 [src/lib/data/types.ts](../src/lib/data/types.ts), with the record shapes
 generated from `schemas/` by `node scripts/build-data-types.mjs`;
 `node scripts/build-data-types.mjs --check` type-checks every file present in
-`data/` against them.
+`data/` against them. Figures are of a build of 381 records.
 
 ## The files
 
-| File | Holds | Written by | Git | Type |
-|---|---|---|---|---|
-| `taxonomies.json` | Closed lists and mapping rules of the record (8.2), `tax-v3` | hand | committed | `TaxonomiesFile` |
-| `duplicates-decisions.json` | A person's decision on each duplicate pair the build flags (FR-1.4) | hand | committed | `DuplicateDecisionsFile` |
-| `advisors.yaml` | One contact row per target group (8.6, FR-6.2) | hand | committed | `AdvisorsFile` |
-| `implementations.yaml` | Seeded implementations with sources (8.6, FR-6.3) | hand | committed | `ImplementationsFile` |
-| `knowledge.yaml` | Fixed links of the route's knowledge block and the model per target group (FR-4.3) | hand | committed | `KnowledgeFile` |
-| `helplines.yaml` | Free helplines of S10 and Zasady, checked against the operators (12.6, OP-33) | hand | committed | `HelplinesFile` |
-| `paths/<id>.yaml` | One YAML per legal or funding path, 30 files, drafted from 14.4 without legal review (8.7) | hand | committed | `Path` |
-| `incubators.json` | The 34 incubator profiles of the national base | `parse-catalogues.py` | rebuilt | `IncubatorsFile` |
-| `innovations/<id>.json` | One built record per innovation (381) | `derive-records.py build` | rebuilt | `BuiltInnovation` |
-| `index-cards.json` | One line per record for stage 1 (FR-3.1) | `derive-records.py build` | rebuilt | `IndexCard[]` |
-| `data-version.json` | The data version (FR-1.7) | `derive-records.py build` | rebuilt | `DataVersion` |
-| `index-vectors.json` | One embedding per record for the retriever (FR-3.7) | `build-index-vectors.py` | rebuilt | `IndexVectorsFile` |
-| `places/pl-register.json` | Voivodeships, powiats and gminas of Poland (8.9) | `build-static-data.py`, step `places` | rebuilt | `PlacesRegister` |
-| `places/malopolska-localities.json` | Villages and Kraków delegatury of Małopolska, each with its gmina (FR-2.2) | `build-static-data.py`, step `places` | rebuilt | `LocalitiesFile` |
-| `map/malopolska-gminy.geojson` | The 183 gmina boundaries of Małopolska (8.8, FR-7.1) | `build-static-data.py`, step `map` | rebuilt | `GminaBoundaries` |
-| `indicators.json` | Four GUS BDL indicators per gmina (8.8, FR-7.2) | `build-static-data.py`, step `indicators` | rebuilt | `IndicatorsFile` |
-| `implementations-derived.json` | The place of origin of every built record as an implementation (8.6) | `build-static-data.py`, step `origins` | rebuilt | `ImplementationsDerivedFile` |
-| `organisations.json` | Innovator organisations and seed implementers, natural persons by id only (8.6, FR-6.1) | `build-static-data.py`, step `organisations` | rebuilt | `OrganisationsFile` |
-| `implementations-merged.json` | Seeds plus origins with `organisation_id` (8.6, FR-6.3); the map and the route read this file | `build-static-data.py`, step `organisations` | rebuilt | `ImplementationsMergedFile` |
+Two folders. `curated/` holds what people write by hand; `built/` holds
+every build output of the scripts below. Paths in the table are relative to
+`data/`.
 
-The git rule: git carries only what cannot
-be recreated. Hand-written data is committed; every build output is in
-`.gitignore` and is rebuilt with the commands below or arrives as a bundle of
-the whole folder. On a fresh clone the loader names each missing file and the
-command that builds it.
+| File | Holds | Written by | Type |
+|---|---|---|---|
+| `curated/taxonomies.json` | Closed lists and mapping rules of the record (8.2), `tax-v3` | hand | `TaxonomiesFile` |
+| `curated/duplicates-decisions.json` | A person's decision on each duplicate pair the build flags (FR-1.4) | hand | `DuplicateDecisionsFile` |
+| `curated/advisors.yaml` | One contact row per target group (8.6, FR-6.2) | hand | `AdvisorsFile` |
+| `curated/implementations.yaml` | Seeded implementations with sources (8.6, FR-6.3) | hand | `ImplementationsFile` |
+| `curated/knowledge.yaml` | Fixed links of the route's knowledge block and the model per target group (FR-4.3) | hand | `KnowledgeFile` |
+| `curated/helplines.yaml` | Free helplines of S10 and Zasady, checked against the operators (12.6) | hand | `HelplinesFile` |
+| `curated/lexicon-pl.yaml` | The crisis lexicon of the pre-checks (FR-12.1) | hand | - |
+| `curated/banned-words-pl.yaml` | The banned words checked in every model text a reader sees (FR-12.10) | hand | - |
+| `built/incubators.json` | The 34 incubator profiles of the national base | `parse-catalogues.py` | `IncubatorsFile` |
+| `built/innovations/<id>.json` | One built record per innovation (381) | `derive-records.py build` | `BuiltInnovation` |
+| `built/index-cards.json` | One line per record for stage 1 (FR-3.1) | `derive-records.py build` | `IndexCard[]` |
+| `built/data-version.json` | The data version (FR-1.7) | `derive-records.py build` | `DataVersion` |
+| `built/index-vectors.json` | One embedding per record for the retriever (FR-3.7) | `build-index-vectors.py` | `IndexVectorsFile` |
+| `built/places/pl-register.json` | Voivodeships, powiats and gminas of Poland (8.9) | `build-static-data.py`, step `places` | `PlacesRegister` |
+| `built/places/malopolska-localities.json` | Villages and Kraków delegatury of Małopolska, each with its gmina (FR-2.2) | `build-static-data.py`, step `places` | `LocalitiesFile` |
+| `built/map/malopolska-gminy.geojson` | The 183 gmina boundaries of Małopolska (8.8, FR-7.1) | `build-static-data.py`, step `map` | `GminaBoundaries` |
+| `built/indicators.json` | Four GUS BDL indicators per gmina (8.8, FR-7.2) | `build-static-data.py`, step `indicators` | `IndicatorsFile` |
+| `built/implementations-derived.json` | The place of origin of every built record as an implementation (8.6) | `build-static-data.py`, step `origins` | `ImplementationsDerivedFile` |
+| `built/organisations.json` | Innovator organisations and seed implementers, natural persons by id only (8.6, FR-6.1) | `build-static-data.py`, step `organisations` | `OrganisationsFile` |
+| `built/implementations-merged.json` | Seeds plus origins with `organisation_id` (8.6, FR-6.3); the map and the route read this file | `build-static-data.py`, step `organisations` | `ImplementationsMergedFile` |
+| `built/paths/<id>.yaml` | One YAML per legal or funding path, 30 files, researched from primary sources without legal review (8.7); the research runs behind them (saved sources, evidence, drafts, report) stay in `.local/paths-research/<date>/` and are not packed | the skill `/research-paths`, after the user approves its report | `Path` |
+
+The git rule: git carries only what cannot be recreated. `data/curated/` is
+committed; `data/built/` is in `.gitignore` as a whole and is rebuilt with
+the commands below or arrives as a bundle of the whole folder. The paths of
+`data/built/paths/` are recreated by the skill `/research-paths` (with the
+user's approval), so they travel only in bundles. `data/` holds only what
+the app reads: research and other working files belong in `.local/`. On a fresh
+clone the loader names each missing file and the command that builds it.
 
 To move the data to another machine, make a data release:
 `.venv/Scripts/python scripts/pack-data.py --release X.Y.Z` writes
@@ -50,8 +58,14 @@ and refuses an inconsistent set or a label that is not above the last
 release; `--rebuild` runs steps 4 to 7 below first) and
 `scripts/unpack-data.py <zip>` verifies and restores it without touching
 the files git tracks; see [docs/data-setup.md](../docs/data-setup.md).
+Bundles of format 4 carry the `curated/` and `built/` paths, with the
+legal and funding paths in `built/paths/`; a bundle of format 3 still
+unpacks, its `curated/paths/` moved to `built/paths/` and its
+`curated/safety/` files to `curated/`, and one of format 1
+or 2 too, its flat `data/` paths moved to the new places; `--prune`
+deletes the old flat build outputs left in `data/`.
 
-A partner hand-over (FR-1.6, OP-17) enters the pipeline beside the two
+A partner hand-over (FR-1.6) enters the pipeline beside the two
 catalogues: save the file under `.local/raw/partner/`, copy
 `tests/fixtures/partner/mapping.yaml`, put the partner's column headers into
 it, and run `scripts/ingest-partner.py --dry-run`, then without it. The
@@ -69,18 +83,20 @@ From the repository root, with `.venv` as in `AGENTS.md`:
 1. `.venv/Scripts/python scripts/crawl-catalogues.py s1 s1-files s2 s2-files`:
    snapshots into `.local/raw/`.
 2. `.venv/Scripts/python scripts/parse-catalogues.py`: source records into
-   `.local/pipeline/sources/`, and `incubators.json`.
+   `.local/pipeline/sources/`, and `data/built/incubators.json`.
 3. `/extract-innovations` in Claude Code: derived records into
    `.local/pipeline/derived/`, each validated by `derive-records.py validate`.
-4. `.venv/Scripts/python scripts/derive-records.py build`: `innovations/`,
-   `index-cards.json`, `data-version.json`; applies `duplicates-decisions.json`.
+4. `.venv/Scripts/python scripts/derive-records.py build`: into `data/built/`
+   `innovations/`, `index-cards.json`, `data-version.json`; applies
+   `data/curated/duplicates-decisions.json`.
 5. `.venv/Scripts/python scripts/fetch-static-data.py` (once; BDL needs
    `BDL_CLIENT_ID`), then `.venv/Scripts/python scripts/build-static-data.py`:
-   `places/`, `map/`, `indicators.json`, `implementations-derived.json`,
+   into `data/built/` `places/`, `map/`, `indicators.json`, `implementations-derived.json`,
    `organisations.json` and `implementations-merged.json`
    (`--only places,map,indicators,origins,organisations`; `origins` needs
    step 4, `organisations` needs `origins`).
-6. `.venv/Scripts/python scripts/build-index-vectors.py`.
+6. `.venv/Scripts/python scripts/build-index-vectors.py`:
+   `data/built/index-vectors.json`.
 7. `.venv/Scripts/python scripts/check-links.py` writes
    `.local/pipeline/link-check.json`; `derive-records.py build` again copies
    `link_status` and `link_checked_at` onto every material and link.
@@ -92,7 +108,7 @@ build keeps it on the same day over the same records; otherwise rerun
 
 ## Version stamps and load-time checks
 
-`data-version.json` holds `version` (`2026-10-03-f3d93b5c`) and `records`;
+`data-version.json` holds `version` (the build date and a content hash, `2026-10-03-f3d93b5c`) and `records`;
 `index-vectors.json` repeats them as `data_version` and `records_count`, with
 `model` and `dims`; `implementations-derived.json` carries `data_version`;
 `index-cards.json` and `innovations/` come from the same build as
@@ -129,7 +145,7 @@ and part of the replay-cache key (FR-3.5).
   of at most 60 words each, and links; software is never copied. A ROPS record
   under `CC BY 4.0` may be shown in full. A record whose ROPS source is
   `MIIS-agreement` (15) is displayed exactly like the other ROPS records
-  (the app is built for ROPS, the licensor of these items, so no separate licence applies); the licence value stays in the data as provenance only.
+  (decided: the app is built for ROPS, the licensor of these items, so no separate licence applies); the licence value stays in the data as provenance only.
 - `source_fields`, `source_fields_secondary` and `text_pl` serve matching and
   short quotes; they are rendered in full only for ROPS `CC BY 4.0` records.
 - `persons_public`: names exactly as the source publishes them, as authors of
@@ -144,11 +160,13 @@ and part of the replay-cache key (FR-3.5).
   `derived.confidence` and `derived.notes_pl` are for the reviewers.
 - `sources[].url` is the entry itself (`https://innowacjespoleczne.pl/innowacja/<slug>`
   or the ROPS library page). Parse-v2 had overwritten it
-  in 265 national-base entries with the last link of the page; parse-v3 of
-  the same day fixed it and every record was rebuilt (the check that found
+  in 265 national-base entries with the last link of the page; parse-v3
+  fixed it and every record was rebuilt (the check that found
   it: every national `sources[0].url` must match that pattern).
 
 ## Hand-written files
+
+In `data/curated/`.
 
 `taxonomies.json`: `version`, `note`, then per closed list an array of
 `{code, label_pl}`: `target_groups` (plus `rops_category_slug`), `domains`
@@ -172,7 +190,7 @@ the pairs still to decide are in `.local/pipeline/duplicates.json`.
 `advisors.yaml`: `version`, `source_url`, `verified_on`, `department` (name,
 address, hours, e-mail, phones), `programme_contacts` (`usluga-wrazliwa`) and
 `advisors[]`, one row per target-group code: `category`, `name` (null until
-ROPS publishes one, OP-10), `role`, `email`, `phone`, `source_url`.
+ROPS publishes one), `role`, `email`, `phone`, `source_url`.
 
 ```yaml
   - category: seniorzy
@@ -207,9 +225,9 @@ Quote TERC codes and dates, or YAML reads them as numbers and dates.
 composer adds. `helplines.yaml`: per number `id`, `order`, `group` (alarm or
 support), `name_pl`, `number`, `hours_pl`, `who_for_pl`, `free`, `url`,
 `source_url`, `verified_on`; top-level `note_pl` and `reviewer` (null until
-the lawyer confirms, OP-33).
+the lawyer confirms).
 
-`paths/<id>.yaml`: id equal to the file name; `name_pl`, `legal_basis_pl`;
+`built/paths/<id>.yaml`: id equal to the file name; `name_pl`, `legal_basis_pl`;
 `applicant_types` (jst, ngo, pes, mieszkancy); `decides` (jst, ngo,
 mieszkancy, panstwo, operator-ue); `purposes`; `target_groups` (taxonomy codes
 or `[any]`); `scope` (lokalna, malopolska, krakow, krajowa, ue);
@@ -221,9 +239,12 @@ forward by a year); `decision_maker_pl`; `steps_pl` (three imperative
 sentences, at most 12 words each); `fit` (`cost_bands`, `roles`,
 `boost_when_implementer_types`); `source_url`; `verified_on`;
 `reviewer: null`; `notes_pl`, opening with the prototype note of FR-1.8 and
-"Sprawdź u źródła.". Validated by `scripts/check-paths.py`.
+"Sprawdź u źródła.". Validated by `scripts/check-paths.py`; re-verified
+or added with the skill `/research-paths` in Claude Code.
 
 ## Built files
+
+In `data/built/`.
 
 `organisations.json`: `note`, `data_version`, `privacy`, `type_rules`,
 `grouping`, `reasons`, `counts`, then `organisations[]` with `id`
@@ -236,7 +257,8 @@ sentences, at most 12 words each); `fit` (`cost_bands`, `roles`,
 `implementations-merged.json`: `note`, `data_version`, `seeds_version`,
 `sources`, `counts`, then `implementations[]` with every field of both
 inputs plus `organisation_id` (null for natural persons and the regional
-models) and `origin_file`, and `deduplicated[]`. Load-time check for both:
+models) and `origin_file` (`data/curated/implementations.yaml` or
+`data/built/implementations-derived.json`), and `deduplicated[]`. Load-time check for both:
 `data_version` equals `version`, every `innovation_id` is a record id and
 every `organisation_id` is a row of `organisations.json`.
 
@@ -251,7 +273,7 @@ dissemination label), which the contract's key list does not name. Excerpt of
 ```json
 {"id": "inn-rops-merkury", "source": "rops-biblioteka", "title": "Merkury", "sources": [{"name": "rops-biblioteka", "url": "https://rops.krakow.pl/innowacje-spoleczne/biblioteka-innowacji-spolecznych/dla-seniorow,merkury", "category_slug": "dla-seniorow", "retrieved_at": "2026-10-03", "licence": "CC BY 4.0", "licence_url": "https://creativecommons.org/licenses/by/4.0/deed.pl", ...}, ...],
  "organisation": {"name": "Stowarzyszenie Edukacji Pozaformalnej „Meritum”", "website": null},
- "persons_public": ["Bartosz Kosiński", "Mirosław Bohatkiewicz"], "contact_in_source": true, "materials": [{"type": "zip", "title": "Materiały do pobrania", "url": "https://rops.krakow.pl/pliki/IS/bibloteka/merkury.zip", "licence": "CC BY 4.0", "local_path": null, "link_status": "ok", "link_checked_at": "2026-10-03T10:07:43"}, ...],
+ "persons_public": ["Bartosz Kosiński", "Mirosław Bohatkiewicz"], "contact_in_source": true, "materials": [{"type": "zip", "title": "Materiały do pobrania", "url": "https://rops.krakow.pl/pliki/IS/bibloteka/merkury.zip", "licence": "CC BY 4.0", "local_path": null, "link_status": "ok", "link_checked_at": "2026-10-03T12:07:43"}, ...],
  "merged_from": ["inn-nat-merkury-symulator-kioskow-samoobslugowych"], "derived": {"prompt_version": "extract-v4", "generated_by": "claude-sonnet-5", "target_groups": ["seniorzy"], "cost_band": "low", "evidence_level": "selected-for-dissemination", ...},
  "status": "active"}
 ```

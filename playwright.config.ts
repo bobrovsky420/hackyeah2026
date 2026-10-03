@@ -1,5 +1,4 @@
 import { defineConfig } from "@playwright/test";
-import { CONSOLE_TOKEN } from "./tests/e2e/screens";
 
 const PORT = 3100;
 const baseURL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`;
@@ -36,15 +35,13 @@ export default defineConfig({
     ? undefined
     : {
         command: `npx next build && npx next start --port ${PORT}`,
-        // A production server without ROPS_TOKEN keeps the console locked. The
-        // journeys make no model calls: the canned route engine answers routes,
+        // The journeys make no model calls: the canned route engine answers routes,
         // and the gate of the forms reads an empty replay recording, so it takes
         // its deterministic path. They send many requests from one address, above
         // the limits of FR-2.4, FR-6.4 and FR-12.14. The store stays in memory:
         // every run starts from the example entries and never touches the
         // developer's store file.
         env: {
-          ROPS_TOKEN: CONSOLE_TOKEN,
           ROUTE_ENGINE: "canned",
           LLM_PROVIDER: "replay",
           LLM_REPLAY_DIR: ".local/playwright-replay",

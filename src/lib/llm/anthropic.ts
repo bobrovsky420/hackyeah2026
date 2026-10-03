@@ -19,7 +19,7 @@ import { LlmError, type LlmCall, type LlmEffort, type LlmTask } from "./types";
  * into the mild `declined` outcome of FR-12.12.
  */
 
-/** Effort per task (9.3); cluster is not named there and keeps the caller's value. */
+/** Effort per task (9.3). */
 const EFFORT: Partial<Record<LlmTask, LlmEffort>> = {
   screen: "low",
   shortlist: "medium",

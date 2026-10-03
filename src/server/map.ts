@@ -38,7 +38,7 @@ function once<T>(key: string, build: (data: Catalogue) => T): T {
 
 // ------------------------------------------------------------- indicators
 
-/** The three need indicators first; civic density is the optional fourth (OP-25). */
+/** The three need indicators first; civic density is the optional fourth. */
 export const indicatorKeys: IndicatorKey[] = ["social-assistance", "ageing", "unemployment", "civic-density"];
 
 /** Slugs for the address of S4 (?wskaznik=...). */

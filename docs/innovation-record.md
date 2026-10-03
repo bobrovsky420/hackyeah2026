@@ -5,8 +5,8 @@ the reviewers of the human check, and for every AI assistant that parses,
 extracts, validates or consumes the catalogue data. It implements section
 7.1 (FR-1.1 to FR-1.9) and section 8.1 of
 [functional-specification.md](functional-specification.md) and the
-decision that the extraction step runs as Claude Code
-subagents, not as API calls from the app ([decision-log.md](decision-log.md)).
+decision (M.5 of the decision log) that the extraction step runs as Claude Code
+subagents, not as API calls from the app.
 
 ## 1. The pipeline in one picture
 
@@ -21,24 +21,26 @@ subagents, not as API calls from the app ([decision-log.md](decision-log.md)).
       |  scripts/derive-records.py validate  schema, closed lists, grounding, personal data
       |  scripts/derive-records.py build     merge of duplicates, index cards, data version
       v
-data/innovations/<id>.json          the record the app seeds (spec 8.1); data/index-cards.json; data/data-version.json
+data/built/innovations/<id>.json    the record the app seeds (spec 8.1); data/built/index-cards.json; data/built/data-version.json
 ```
 
-Two kinds of folders. `data/` holds only what
+Two kinds of folders (decided). `data/` holds only what
 the app serves: `innovations/`, `index-cards.json`, `data-version.json`,
 `taxonomies.json`, `incubators.json`, and later the paths, indicators and
 map files. It is the set to copy to the machine that runs the app. Git
-carries only what cannot be recreated: of
-`data/`, the hand-written `taxonomies.json`; the parser's
-`incubators.json` and the build's `innovations/`, `index-cards.json` and
-`data-version.json` are git-ignored and rebuilt by the pipeline. A file
+carries only what cannot be recreated (decided): the
+hand-written files, `taxonomies.json` among them, are in `data/curated/`
+and committed; the parser's `incubators.json`, the build's
+`innovations/`, `index-cards.json` and `data-version.json` and every
+other build output are in `data/built/`, which is git-ignored and rebuilt
+by the pipeline. A file
 added later follows the same test: hand-written reference data is
 committed, generated data is not. `.local/pipeline/` holds the working files of the pipeline
 and is machine-local (git-ignored with `.local/`): the source records, the
 derived records, `manifest.json` (state per id) and `duplicates.json`.
 Another clone recreates them with a fresh crawl and a fresh extraction
 run. The review sample (`derive-records.py sample`) is the exception: it
-is written to `docs/review-sample.md` and committed, because the reviewer works on another machine and the marked-up
+is written to `docs/review-sample.md` and committed (decided), because the reviewer works on another machine and the marked-up
 file is the record of the human check of FR-1.3.
 
 Two hand-written inputs are versioned next to what uses them:
@@ -47,7 +49,7 @@ Two hand-written inputs are versioned next to what uses them:
 and `.claude/skills/extract-innovations/pilot.json`, the pilot set.
 
 Three writers. The parser owns the source records; the workers own the
-derived records; the build owns `data/innovations`. Nobody edits a file
+derived records; the build owns `data/built/innovations`. Nobody edits a file
 another step owns.
 
 Versions: the parser stamps `parser_version` (`parse-v4`: v2 pulled real URLs from the free text of "Strona internetowa", v3 fixed v2's overwriting of the entry URL in `sources[]`, v4 removes postal addresses, e-mail addresses and phone numbers from the text and changed the fingerprints of the 8 records that had one); the worker
@@ -68,8 +70,7 @@ stale.
 example `inn-nat-1032`, `inn-nat-doradztwo-edukacyjne-dla-seniorow-2`);
 `inn-rops-<slug>` for the ROPS library (the part of the URL after the
 comma, for example `inn-rops-merkury`). Slugs are unique within each
-catalogue (300 and 115 entries, no
-collisions). A merged duplicate keeps the ROPS id and lists the national
+catalogue (checked: 300 and 115 entries, no collisions). A merged duplicate keeps the ROPS id and lists the national
 id under `merged_from`.
 
 ## 3. The source record (`.local/pipeline/sources/<id>.json`, parse-v4)
@@ -83,13 +84,13 @@ Everything here is copied or computed mechanically.
 | `sources[]` | `name` (`baza-krajowa` or `rops-biblioteka`), `url`, `category_slug` (ROPS), `retrieved_at`, `licence` (`CC BY 4.0`, or `MIIS-agreement` for the 15 ROPS items whose terms need an agreement), `licence_url`, `raw_path`, `raw_sha256` | provenance of FR-1.1 |
 | `source_fields` | One key per section of the entry, text verbatim, list items as lines starting with `- ` | keys below |
 | `tags` | The national base's advanced terms (taxonomy, path, English name) and simple facets (`dla_kogo`, `kto_moze_wdrazac`, `charakter`, `narzedzia`, `obszar_dzialan`) | as published |
-| `mapped` | `target_groups` and `implementer_types` derived from the facets and the ROPS category by the rules of spec 8.2 (`data/taxonomies.json`); `character`, `tools`, `areas` as names; `settings` and `domain_hints` from the advanced tags | the worker keeps the first two |
+| `mapped` | `target_groups` and `implementer_types` derived from the facets and the ROPS category by the rules of spec 8.2 (`data/curated/taxonomies.json`); `character`, `tools`, `areas` as names; `settings` and `domain_hints` from the advanced tags | the worker keeps the first two |
 | `innovator` | `type` (Podmiot prawny, Osoba fizyczna, Grupa nieformalna, or null), `place_name` | national base |
 | `organisation` | `name` and `website` when the innovator is a legal entity (national base) or an organisation is named among the authors (ROPS) | FR-1.9 |
 | `persons_public` | Names of people exactly as the source publishes them | nothing else about a person is stored (R6) |
 | `contact_in_source` | True when the entry carries contact details | they are never copied; the app links the entry |
 | `origin` | `incubator_name`, `incubator_years`, `incubator_profile_url`, `programme` (`POWER 4.1` for incubators that ended by 2023, `FERS` from 2024), `selected_for_dissemination` (the ROPS label, or the national base's assessment comment), `dissemination_label_pl`, `region`, `rops_incubated` | |
-| `materials[]` | `type` (pdf, doc, sheet, slides, zip, video, image, audio, link), `title`, `url`, `licence`, `local_path` under `.local/raw` when downloaded, `status` (for example `dead-2026-10-03`) | FR-1.8 links |
+| `materials[]` | `type` (pdf, doc, sheet, slides, zip, video, image, audio, link), `title`, `url`, `licence`, `local_path` under `.local/raw` when downloaded, `status` (`dead-` and the date of the check) | FR-1.8 links |
 | `links[]` | The innovator's website and the "Inne linki" of the entry | |
 | `text_pl` | The whole entry as plain text with the Polish labels: what the workers read and the validator quotes against; also the text the app stores for matching (FR-1.9) | |
 | `review_flags` | Parser doubts: `authors-heuristic`, `persons-unsplit`, `unknown-label:<label>`, `missing-section:<id>`, `incubator-mismatch:<name>`, `innovator-type-missing`, `has-gallery`, `has-video-section`, `no-implementer-facet` | for the human check |
@@ -105,7 +106,7 @@ Keys of `source_fields`. National base: `charakter`, `problem`,
 `czy_to_dziala`, `autorzy`. The section "Kontakt w sprawie innowacji" is
 never stored (`contact_in_source` records that it exists).
 
-Personal data, decided for the parser (no legal review in the hackathon; OP-09 closed):
+Personal data, decided for the parser (no legal review in the hackathon, decided):
 names of people stay as published (they are the authors of a public
 work); phone numbers, e-mail addresses and postal addresses are not
 copied for anybody, organisations included; a website is kept for
@@ -122,7 +123,7 @@ and the town stay ("Muzeum Kaset; Piaseczno"); an e-mail address becomes
 Schema: [schemas/derived-record.schema.json](../schemas/derived-record.schema.json).
 Worker instructions, with the decision rules for every field:
 [prompts/extract.md](../prompts/extract.md). Closed lists:
-[data/taxonomies.json](../data/taxonomies.json).
+[data/curated/taxonomies.json](../data/curated/taxonomies.json).
 
 | Field | Content | Limit |
 |---|---|---|
@@ -158,8 +159,7 @@ for the reviewer). `tax-v2` with prompt extract-v4 (decided by the user after th
   and is allowed; the noun "inwalida" is still rejected. Six ROPS records
   of extract-v3 had lost the term people search for.
 
-`tax-v3` (decided by the user on the coordinator's
-evidence) changes the mapping rules only. The families pattern no longer
+`tax-v3` (decided by the user on the coordinator's evidence) changes the mapping rules only. The families pattern no longer
 matches `rodzin` and `opiekun`, and the simple tag "Rodziny i opiekunowie
 osób wymagających wsparcia" maps to no target group, because the
 catalogue's "Rodzina i opiekunowie" branch names carers of seniors and of
@@ -170,8 +170,7 @@ the 47 drops disappear, the 9 that remain are students and children tags
 where the worker judged adults, and no record becomes invalid. The closed
 lists are unchanged, so the derived records of extract-v4 stay valid.
 
-Analyst 1 may still merge or split domains,
-which is then `tax-v4` and a rerun.
+A merge or a split of domains is a new version, `tax-v4`, and a rerun.
 
 ## 5. What the validator rejects and what it flags
 
@@ -231,7 +230,7 @@ catalogue first (`batches --source rops`, 110 records, about 40 minutes)
 and check the plan's usage before the national base. The same skill ingests a partner
 hand-over on 3 October once the parser has an adapter for it (FR-1.6).
 
-## 7. The built record (`data/innovations/<id>.json`)
+## 7. The built record (`data/built/innovations/<id>.json`)
 
 The source record without `parsed_at`, plus `derived` (the derived record
 without `id` and `source_fingerprint`), plus `status: "active"`, plus
@@ -239,11 +238,11 @@ without `id` and `source_fingerprint`), plus `status: "active"`, plus
 was merged into a ROPS entry (same normalised title and the same or an
 unknown organisation, FR-1.4; pairs with the same title and different
 organisations are listed in `duplicates.json` for a person to decide; the decision, keep both or
-merge, is written by hand into `data/duplicates-decisions.json`, which is
+merge, is written by hand into `data/curated/duplicates-decisions.json`, which is
 committed and applied by every build, and the pair then appears under
 `decided`).
-`data/index-cards.json` holds one line per record for stage 1 of the
-matching engine; `data/data-version.json` holds the data version
+`data/built/index-cards.json` holds one line per record for stage 1 of the
+matching engine; `data/built/data-version.json` holds the data version
 the app shows on "Jak to działa" (FR-1.7). When `.local/pipeline/link-check.json`
 exists (`scripts/check-links.py`, spec 12.13), every material and link of a
 built record carries `link_status` (`ok`, `dead` or `unknown`) and
@@ -256,6 +255,6 @@ national base: title, organisation, codes, our own summaries, the
 "Problem" and "Jak działa" passages of at most 60 words with attribution,
 and links; it never copies software. ROPS items under CC BY 4.0 may be
 shown in full with attribution, and so are the 15 `MIIS-agreement` items
-(the app is built for ROPS, the licensor of these items, so no separate licence applies; the licence value is kept as provenance). The attribution line is fixed in
+(decided: the app is built for ROPS, the licensor of these items, so no separate licence applies; the licence value is kept as provenance). The attribution line is fixed in
 FR-1.8 and is followed by the prototype note of FR-1.8. No lawyer
-confirms the reading in the hackathon (OP-09 closed).
+confirms the reading in the hackathon (decided).

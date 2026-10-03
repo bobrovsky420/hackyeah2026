@@ -21,11 +21,11 @@ function data(sensitive: boolean): ReportData {
     meta: {
       command: "eval",
       runId: "20260929-abcdef",
-      startedAt: "2026-09-29T12:00:00.000Z",
-      finishedAt: "2026-09-29T12:05:00.000Z",
+      startedAt: "2026-10-03T12:00:00.000Z",
+      finishedAt: "2026-10-03T12:05:00.000Z",
       official: false,
       options: { provider: "replay", readCache: true, concurrency: 1, gate: "final", exceptions: [], fairnessAll: false, runTag: false, only: [] },
-      environment: { llmHead: "replay", llmModel: null, llmConfigured: [], dataVersion: "2026-09-29-x", promptVersions: { screen: "screen-v1" }, embeddingModel: "OPI-PIB/PolDense-400M", embeddingReachable: false },
+      environment: { llmHead: "replay", llmModel: null, llmConfigured: [], dataVersion: "2026-10-03-x", promptVersions: { screen: "screen-v1" }, embeddingModel: "OPI-PIB/PolDense-400M", embeddingReachable: false },
     },
     loaded: { dir: "tests/problems", problems: [p], issues: [], hashes: [{ file: p.file, sha256: p.sha256 }] },
     results,
@@ -45,8 +45,8 @@ describe("the report", () => {
       expect(text).not.toContain("STRESZCZENIE-POTRZEBY");
     }
     expect(markdown).toContain("The text is marked sensitive and is not shown.");
-    expect(markdown).toMatch(/^# Evaluation report 2026-09-29 12:05 UTC/);
-    expect(JSON.parse(json)).toMatchObject({ schema: "hubmi-eval-report/1", lastRun: "2026-09-29T12:05:00.000Z" });
+    expect(markdown).toMatch(/^# Evaluation report 2026-10-03 12:05 UTC/);
+    expect(JSON.parse(json)).toMatchObject({ schema: "hubmi-eval-report/1", lastRun: "2026-10-03T12:05:00.000Z" });
   });
 
   it("shows the text of a problem that is not sensitive", () => {

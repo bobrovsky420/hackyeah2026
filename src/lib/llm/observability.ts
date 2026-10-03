@@ -3,9 +3,10 @@ import type { LlmResult, LlmTask, LlmUsage } from "./types";
 
 /*
  * Observability of the model calls (12.8, 12.10): one structured log line
- * per call, in-memory counters per provider and model for the console
- * statistics, the cost line from the token counts, and the StageLog of the
- * route pipeline. Nothing here ever carries user text or a key.
+ * per call, in-memory counters per provider and model for the statistics
+ * of the roadmap's ROPS console, the cost line from the token counts, and
+ * the StageLog of the route pipeline. Nothing here ever carries user text
+ * or a key.
  */
 
 export type LlmOutcome = "ok" | "replay" | "refusal" | "invalid_output" | "unavailable" | "timeout" | "not_configured";
@@ -83,7 +84,7 @@ export function countFailure(provider: string, model: string): void {
   entry.failures += 1;
 }
 
-/** A copy of the counters since the process started, for the console statistics (FR-10.2, 12.10). */
+/** A copy of the counters since the process started (FR-10.2, 12.10); read by the tests until the console of the roadmap shows them. */
 export function getLlmCounters(): LlmCounter[] {
   return [...counters.values()].map((entry) => ({ ...entry }));
 }

@@ -7,7 +7,7 @@ import { fixtureCatalogue } from "@/lib/mock/fixtures";
  * The one door to the catalogue data for the screens and the API: the real
  * data of data/ (getDataset(), checked by the loader) when it loads, else
  * the committed fixtures of src/lib/mock/, so a fresh clone runs without
- * the pipeline (decided 29 September 2026). DATA_SOURCE=data|mock forces
+ * the pipeline (decided). DATA_SOURCE=data|mock forces
  * one; a forced "data" that fails to load throws. Cached per process.
  */
 
@@ -141,7 +141,7 @@ export function knowledge(): Catalogue["knowledge"] {
   return catalogue().knowledge;
 }
 
-/** people.advisor for a target group; the ROPS department when no row names one (OP-10). */
+/** people.advisor for a target group; the ROPS department when no row names one. */
 export function advisorFor(category: string): Advisor {
   const { advisorByCategory, department } = catalogue();
   return advisorByCategory.get(category) ?? { category, name: null, role: department.name, email: department.email, phone: department.phone };

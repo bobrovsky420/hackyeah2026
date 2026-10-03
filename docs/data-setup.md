@@ -2,7 +2,7 @@
 
 For a developer who sets up the deployment machine, the offline demo laptop
 or a second development machine. Git carries only what cannot be recreated:
-the built data is git-ignored, and
+the built data (`data/built/`) is git-ignored, and
 rebuilding it needs the 7 GB raw snapshot and a 2.5 hour extraction. So the
 data travels as a bundle, a data release `data-X.Y.Z.zip`: one zip with
 every file under `data/`, the pipeline's working files in `.local/pipeline/`
@@ -46,7 +46,7 @@ The script checks the sha256 of every file before it writes anything,
 writes only into `data/`, `.local/pipeline/`, `.local/route-cache/` and
 `.local/llm-replay/`, and prints the release, the data, parser, prompt and
 taxonomy versions and the embedding model. Files that git tracks here (the
-hand-written files of `data/`) are never written: git owns them, and a
+hand-written files of `data/curated/`) are never written: git owns them, and a
 tracked file that differs from the bundle is listed with the commit the
 bundle was packed from, so pull that commit or rebuild. It refuses (and
 writes nothing) when the local data version was built later than the
@@ -55,6 +55,18 @@ changed after the bundle was packed (for example a replay file recorded
 since): check which side is right, then rerun with `--force`. A file that
 differs only in line endings counts as the same. Record files that are
 here but not in the bundle are listed; `--prune` deletes them.
+
+A bundle of format 4 holds `data/curated/` and `data/built/`, with the
+legal and funding paths in `data/built/paths/` (they are not in git; a fresh clone gets them only from a bundle). A bundle of
+format 3 still unpacks, its `data/curated/paths/` moved to
+`data/built/paths/` and its `data/curated/safety/` files to `data/curated/`. A bundle of format 1 or 2 (the older, flat layout of
+`data/`) still unpacks too: the
+script moves its files to the new places and lists the old flat build
+outputs left in `data/` as stale files, which `--prune` deletes
+(`deploy/update.sh` runs `get-data.py --prune`, so a server cleans up on
+the next deploy). A machine with the old layout: run
+`.venv/Scripts/python scripts/unpack-data.py <zip> --prune` again, or move
+the files by hand.
 
 Download and unpack in one step: `.venv/Scripts/python scripts/get-data.py X.Y.Z`
 takes the zip from `.local/bundles/` or, when the team publishes releases on
@@ -82,7 +94,7 @@ build steps first (next section); `--no-cache` leaves the replay files out;
 
 ## 3. Download the embedding model once, then run offline
 
-The vectors in `data/index-vectors.json` were built with the model the
+The vectors in `data/built/index-vectors.json` were built with the model the
 unpack printed (`OPI-PIB/PolDense-400M`); queries must use the same model.
 Download it, and the 150M fallback, into the Hugging Face cache while
 online:
@@ -110,7 +122,7 @@ curl http://127.0.0.1:8765/health
 0 when shapes and norms are right. The service listens on 127.0.0.1:8765
 (`--host`, `--port` or `EMBEDDING_HOST`, `EMBEDDING_PORT`). `/health`
 returns the model and dims and the model and data version of
-`data/index-vectors.json`; they must match the unpack's output. The service
+`data/built/index-vectors.json`; they must match the unpack's output. The service
 refuses to start when the vectors were built with another model. For the
 fallback, `EMBEDDING_MODEL=OPI-PIB/PolDense-150M` needs vectors built with
 it (`.venv/Scripts/python scripts/build-index-vectors.py`).
@@ -129,7 +141,7 @@ the first run needs the network). Then start the app as in
 
 ## Rebuild instead of unpack (partner hand-over)
 
-After a partner hand-over or a change of the prompt or
+After a partner hand-over (3 October 2026) or a change of the prompt or
 the taxonomies, the data is rebuilt rather than unpacked: unpack the last
 bundle first (so only new or changed records are extracted), add the new
 source records, run the extraction with the skill `/extract-innovations`

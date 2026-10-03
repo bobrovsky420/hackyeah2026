@@ -6,7 +6,7 @@ import { fold } from "@/lib/text";
 
 /*
  * The Polish crisis lexicon of FR-12.1, kept by the lawyer in
- * data/safety/lexicon-pl.yaml (its header explains the entry syntax). A
+ * data/curated/lexicon-pl.yaml (its header explains the entry syntax). A
  * `crisis` hit forces `redirected` (FR-12.3); a `community` hit only adds
  * its sensitive topic, so the route carries the crisis banner. Matching
  * runs on the folded text (lower case, no diacritics), stem by stem.
@@ -34,7 +34,7 @@ export interface Lexicon {
 
 export class LexiconError extends Error {
   constructor(message: string) {
-    super(`data/safety/lexicon-pl.yaml: ${message}`);
+    super(`data/curated/lexicon-pl.yaml: ${message}`);
     this.name = "LexiconError";
   }
 }
@@ -86,17 +86,17 @@ export function compileLexicon(value: YamlValue): Lexicon {
 
 let cached: Lexicon | undefined;
 
-/** The lexicon from data/safety/lexicon-pl.yaml, read once per process. */
+/** The lexicon from data/curated/lexicon-pl.yaml, read once per process. */
 export function loadLexicon(): Lexicon {
   if (cached) return cached;
-  const file = path.join(process.cwd(), "data", "safety", "lexicon-pl.yaml");
+  const file = path.join(process.cwd(), "data", "curated", "lexicon-pl.yaml");
   let text: string;
   try {
     text = fs.readFileSync(file, "utf8");
   } catch {
     throw new LexiconError(`missing (looked for ${file})`);
   }
-  cached = compileLexicon(parseYaml(text, "data/safety/lexicon-pl.yaml"));
+  cached = compileLexicon(parseYaml(text, "data/curated/lexicon-pl.yaml"));
   return cached;
 }
 

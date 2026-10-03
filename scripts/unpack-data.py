@@ -5,20 +5,24 @@ Order: read the bundle's manifest.json; check that the zip holds exactly the fil
 bundle with what is already here; only then write. Nothing outside those folders is touched, and nothing is deleted
 (except with --prune).
 
-Files that git tracks here (the hand-written files of data/: taxonomies, decisions, advisors, paths and so on) are
-never written: git owns them, the bundle only carries them for a machine without a checkout. When a tracked file
+Files that git tracks here (the hand-written files of data/curated/: taxonomies, decisions, advisors, paths and
+so on) are never written: git owns them, the bundle only carries them for a machine without a checkout. When a tracked file
 differs from the bundle's copy, it is listed with the commit the bundle was packed from, so the reader can pull or
 rebuild.
 
 Refused without --force (exit 1):
-  - the local data/data-version.json is of another data version built later than the bundle's (built_at);
+  - the local data/built/data-version.json is of another data version built later than the bundle's (built_at);
   - a local file differs from the bundle's copy and was modified after the bundle was packed (created_at), for
     example a replay file recorded since.
 A local file that differs from the bundle's copy only in line endings (git core.autocrlf on Windows) counts as the
 same file and is left as it is.
 
-Stale files: a record present locally but not in the bundle (data/innovations/, .local/pipeline/sources/,
+Stale files: a record present locally but not in the bundle (data/built/innovations/, .local/pipeline/sources/,
 .local/pipeline/derived/) would break the app's count check. They are listed; --prune deletes them.
+
+Old layout: bundles of formats 1 and 2 kept data/ flat. Their files are written to the current places (the
+hand-written files to data/curated/, everything else to data/built/), and the build outputs still lying in the flat
+layout here are listed as stale; --prune deletes them too.
 
 Usage (from the repository root, with the project venv):
   .venv/Scripts/python scripts/unpack-data.py .local/bundles/data-<version>.zip [--force] [--prune] [--root dir]
@@ -28,8 +32,31 @@ import argparse, datetime, hashlib, json, os, subprocess, sys, zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ALLOWED = ("data/", ".local/pipeline/", ".local/route-cache/", ".local/llm-replay/")
-RECORD_DIRS = ("data/innovations/", ".local/pipeline/sources/", ".local/pipeline/derived/")
-BUNDLE_FORMATS = (1, 2)   # 1: data/ and .local/pipeline/ only; 2 adds the release label, previous and the replay folders
+RECORD_DIRS = ("data/built/innovations/", ".local/pipeline/sources/", ".local/pipeline/derived/")
+BUNDLE_FORMATS = (1, 2, 3, 4)   # 1: data/ and .local/pipeline/ only; 2 adds the release label, previous and the
+                                # replay folders; 3 splits data/ into data/curated/ and data/built/; 4 moves the paths
+                                # from data/curated/paths/ to data/built/paths/ and the two safety files from
+                                # data/curated/safety/ up to data/curated/
+CURATED = ("taxonomies.json", "duplicates-decisions.json", "advisors.yaml", "implementations.yaml", "knowledge.yaml",
+           "helplines.yaml")   # the hand-written entries of data/; README.md stays at the top
+FLAT_BUILT = ("data-version.json", "innovations", "index-cards.json", "index-vectors.json", "incubators.json", "places",
+              "map", "indicators.json", "implementations-derived.json", "organisations.json",
+              "implementations-merged.json")   # the build outputs of the flat data/ of formats 1 and 2
+
+
+def current_path(path, bundle_format):
+    """Where a bundle path lives now: formats 1 and 2 kept data/ flat, format 3 has data/curated/ and data/built/
+    with the paths in data/curated/paths/, format 4 has them in data/built/paths/."""
+    if bundle_format >= 4 or not path.startswith("data/") or path == "data/README.md":
+        return path
+    if bundle_format == 3:
+        if path.startswith("data/curated/paths/"):
+            return "data/built/paths/" + path[len("data/curated/paths/"):]
+        return "data/curated/" + path[len("data/curated/safety/"):] if path.startswith("data/curated/safety/") else path
+    if path.startswith("data/safety/"):
+        return "data/curated/" + path[len("data/safety/"):]
+    top = path.split("/")[1]
+    return f"data/{'curated' if top in CURATED else 'built'}/{path[len('data/'):]}"
 
 
 def git_tracked(root):
@@ -60,7 +87,7 @@ def safe(path):
 
 
 def local_version(root):
-    p = os.path.join(root, "data", "data-version.json")
+    p = os.path.join(root, "data", "built", "data-version.json")
     if not os.path.exists(p):
         return None
     try:
@@ -79,7 +106,7 @@ def main():
     ap.add_argument("zip", help="the bundle written by pack-data.py")
     ap.add_argument("--force", action="store_true", help="overwrite newer local data and newer local files")
     ap.add_argument("--prune", action="store_true",
-                    help="delete record files of data/innovations/ and .local/pipeline/{sources,derived}/ that the "
+                    help="delete record files of data/built/innovations/ and .local/pipeline/{sources,derived}/ that the "
                          "bundle does not hold")
     ap.add_argument("--root", default=ROOT, help="the directory tree to unpack into (default: this repository)")
     args = ap.parse_args()
@@ -95,7 +122,7 @@ def main():
         except (KeyError, ValueError):
             fail("the bundle has no readable manifest.json")
         if manifest.get("bundle_format") not in BUNDLE_FORMATS:
-            fail(f"bundle format {manifest.get('bundle_format')}, this script reads {' and '.join(map(str, BUNDLE_FORMATS))}")
+            fail(f"bundle format {manifest.get('bundle_format')}, this script reads {', '.join(map(str, BUNDLE_FORMATS))}")
         listed = {e["path"]: e for e in manifest["files"]}
         names = {n for n in z.namelist() if not n.endswith("/")} - {"manifest.json"}
         if names != set(listed):
@@ -110,7 +137,7 @@ def main():
             data = z.read(p)
             if len(data) != listed[p]["size"] or hashlib.sha256(data).hexdigest() != listed[p]["sha256"]:
                 fail(f"{p} does not match its sha256 in the manifest: the bundle is damaged")
-            blobs[p] = data
+            blobs[current_path(p, manifest["bundle_format"])] = data
     print(f"verified {len(blobs)} files (sha256)")
 
     # 2. compare with what is here
@@ -167,14 +194,33 @@ def main():
         if os.path.isdir(top):
             stale += [d + n for n in sorted(os.listdir(top))
                       if os.path.isfile(os.path.join(top, n)) and d + n not in blobs]
-    if stale and args.prune:
-        for p in stale:
+    flat = []   # build outputs left in the flat data/ of formats 1 and 2
+    for name in FLAT_BUILT:
+        top = os.path.join(root, "data", name)
+        if os.path.isfile(top):
+            flat.append(f"data/{name}")
+        elif os.path.isdir(top):
+            flat += [rel for rel in (os.path.relpath(os.path.join(d, n), root).replace(os.sep, "/")
+                                     for d, _, files in os.walk(top) for n in files)]
+    if (stale or flat) and args.prune:
+        for p in stale + flat:
             os.remove(native(root, p))
-        print(f"pruned {len(stale)} record files the bundle does not hold")
-    elif stale:
-        print(f"unpack-data: warning: {len(stale)} record files are not in the bundle and will break the app's count "
-              f"check ({', '.join(stale[:5])}{' ...' if len(stale) > 5 else ''}); rerun with --prune to delete them",
-              file=sys.stderr)
+        for name in FLAT_BUILT:
+            top = os.path.join(root, "data", name)
+            if os.path.isdir(top):
+                for d, _, _ in sorted(os.walk(top), reverse=True):
+                    if not os.listdir(d):
+                        os.rmdir(d)
+        print(f"pruned {len(stale)} record files the bundle does not hold and {len(flat)} files of the old flat data/")
+    else:
+        if stale:
+            print(f"unpack-data: warning: {len(stale)} record files are not in the bundle and will break the app's "
+                  f"count check ({', '.join(stale[:5])}{' ...' if len(stale) > 5 else ''}); rerun with --prune to "
+                  f"delete them", file=sys.stderr)
+        if flat:
+            print(f"unpack-data: note: {len(flat)} build outputs of the old flat data/ are left over "
+                  f"({', '.join(flat[:5])}{' ...' if len(flat) > 5 else ''}); the app reads data/built/ now, rerun "
+                  f"with --prune to delete them", file=sys.stderr)
 
     print(f"wrote {len(writes)} files, {same} already identical, {len(kept)} kept from git, into {root}")
     if manifest.get("release_version"):

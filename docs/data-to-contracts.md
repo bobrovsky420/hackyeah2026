@@ -11,7 +11,7 @@ stay strings, a duplicate key is an error); a syntax error names the file
 and the line. A contract change and a data change both land in
 `to-contracts.ts`; nothing else converts.
 
-Figures: build `2026-10-03-f3d93b5c` (381 records, 30 paths).
+Figures: a build of 381 records and 30 paths.
 
 ## Innovation (catalogue.ts) from `innovations/<id>.json`
 
@@ -38,7 +38,7 @@ Figures: build `2026-10-03-f3d93b5c` (381 records, 30 paths).
 | `RouteSolution.contact` | `organisation` as above; `channels` | `toContact` |
 | `Channel[]` | org website as `www`; the source entry URL as `www` when `contact_in_source` | contacts were not copied (R6), so the entry is linked; none for natural persons |
 | `people.innovators[]` | `organisation`, `channels`, `persons_public`, `innovation_id` | none for a record without an organisation (174: natural persons and 5 without any) |
-| `people.advisor` | `advisors.yaml` row: `category`, `name` (null, OP-10), `role`, `email`, `phone` | institutional contacts only |
+| `people.advisor` | `advisors.yaml` row: `category`, `name` (null), `role`, `email`, `phone` | institutional contacts only |
 | `knowledge[]` | `knowledge.yaml` item: `title_pl`, `url`, `type`; `for_innovation_id: null` | `Dataset.knowledge.always` (always_show), `byTargetGroup` (model_by_target_group); `materialToKnowledgeLink` for a solution's material |
 | `engine.data_version` | `data-version.json` `version` | `Dataset.version` |
 
@@ -53,7 +53,7 @@ Figures: build `2026-10-03-f3d93b5c` (381 records, 30 paths).
 | `year` | same, null when absent | |
 | `LocatedImplementation` (shape of `src/lib/mock/implementations.ts`) | Implementation plus the gmina centroid | 119 rows |
 
-## ImplementationPath (path.ts) from `paths/<id>.yaml`
+## ImplementationPath (path.ts) from `built/paths/<id>.yaml`
 
 Copied as they are: `id`, `name_pl`, `legal_basis_pl`, `applicant_types`,
 `amount_note_pl`, `timing.note_pl`, `decision_maker_pl`, `steps_pl`,
@@ -89,7 +89,8 @@ Defaults are in the Rule columns above; the embedding model defaults to
 - Knowledge: `description_pl`, `target_groups`, `source_url`,
   `verified_on`. Advisor: `source_url`; the `programme_contacts` of
   `advisors.yaml`.
-- Helplines, the ROPS department, indicators and boundaries have contracts (the fixed contacts and the map data of
+- Helplines, the ROPS department, indicators and boundaries have contracts
+  (the fixed contacts and the map data of
   `src/lib/contracts.ts`, mapped in `to-contracts.ts` as `Dataset.helplines`, `department`,
   `indicators`, `boundaries`); the helplines' `short` and `forWhom` come
   from a table in `to-contracts.ts`, a BDL "no information" flag drops
@@ -103,9 +104,9 @@ Defaults are in the Rule columns above; the embedding model defaults to
 builds it, ending with the bundle alternative
 (`.venv/Scripts/python scripts/unpack-data.py <zip>`). The checks:
 
-- every file present: missing, e.g. `data/index-vectors.json is missing;
-  rebuild: .venv/Scripts/python scripts/build-index-vectors.py`;
-  hand-written files point to `git checkout -- data/<file>`;
+- every file present: missing, e.g. `data/built/index-vectors.json is
+  missing; rebuild: .venv/Scripts/python scripts/build-index-vectors.py`;
+  hand-written files point to `git checkout -- data/curated/<file>`;
 - valid JSON, YAML inside the subset, `id` equal to the file name
   (`innovations/`, `paths/`);
 - `innovations/*.json` count equals `records`; `index-cards.json` ids are

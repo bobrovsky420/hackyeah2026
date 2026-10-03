@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "derived-record.schema.json",
   "title": "Derived record of one innovation (prompt extract-v1)",
-  "description": "What an extraction worker writes to .local/pipeline/derived/<id>.json. Closed lists (target_groups, domains, implementer_types, setting, scale, cost_band, time_to_implement, evidence_level) are enforced by scripts/derive-records.py from data/taxonomies.json, the single source of truth; word limits, grounding and personal-data rules are enforced there too. See docs/innovation-record.md.",
+  "description": "What an extraction worker writes to .local/pipeline/derived/<id>.json. Closed lists (target_groups, domains, implementer_types, setting, scale, cost_band, time_to_implement, evidence_level) are enforced by scripts/derive-records.py from data/curated/taxonomies.json, the single source of truth; word limits, grounding and personal-data rules are enforced there too. See docs/innovation-record.md.",
   "type": "object",
   "additionalProperties": false,
   "required": [

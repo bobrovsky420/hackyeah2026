@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { screens, signIn, themes } from "./screens";
+import { screens, themes } from "./screens";
 
 /*
  * Specification 12.2: axe on every screen with zero critical or serious
@@ -28,9 +28,8 @@ async function expectAccessible(page: Page) {
 for (const [theme, applyTheme] of Object.entries(themes)) {
   test.describe(theme, () => {
     for (const screen of screens) {
-      test(screen.name, async ({ page, baseURL }) => {
+      test(screen.name, async ({ page }) => {
         await applyTheme(page);
-        if (screen.console) await signIn(page, baseURL);
         await page.goto(screen.path);
         await expectAccessible(page);
       });
@@ -52,13 +51,5 @@ for (const [theme, applyTheme] of Object.entries(themes)) {
       await expectAccessible(page);
     });
 
-    test("s7 with a rejection refused for lack of a reason", async ({ page, baseURL }) => {
-      await applyTheme(page);
-      await signIn(page, baseURL);
-      await page.goto("/rops");
-      await page.getByRole("button", { name: "Odrzuć" }).first().click();
-      await expect(page.getByText("Wybierz powód odrzucenia.")).toBeVisible();
-      await expectAccessible(page);
-    });
   });
 }

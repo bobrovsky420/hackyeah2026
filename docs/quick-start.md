@@ -63,8 +63,7 @@ npx pnpm@12.6.0 dev:embeddings
 ```
 
 Wait for `serving OPI-PIB/PolDense-400M (1024 dimensions) on
-http://127.0.0.1:8765`, then open http://localhost:3000. The ROPS console
-at http://localhost:3000/rops takes the code `rops-prototyp`.
+http://127.0.0.1:8765`, then open http://localhost:3000.
 
 ## 6. Check that it all runs
 
@@ -76,7 +75,7 @@ at http://localhost:3000/rops takes the code `rops-prototyp`.
 
 - The entries: stop the server, `rm .local/store/records.json`.
 - The data: run `unpack-data.py` again; git keeps the hand-written files
-  of `data/`, the built ones are git-ignored.
+  of `data/curated/`, the built ones in `data/built/` are git-ignored.
 
 ## Where things are
 

@@ -5,7 +5,7 @@ scripts/crawl-catalogues.py stored under .local/raw/ and writes one JSON per
 innovation in the source-record shape of docs/innovation-record.md
 (schemas/source-record.schema.json) into the pipeline's machine-local working
 folder (data/ holds only what the app serves). It also writes
-data/incubators.json from the incubator profile pages, which the app does read. A re-run changes nothing when the snapshot
+data/built/incubators.json from the incubator profile pages, which the app does read. A re-run changes nothing when the snapshot
 is unchanged. This is the "parse" half of FR-1.1 and FR-1.2; the derived
 fields are added by the extraction skill (.claude/skills/extract-innovations).
 
@@ -23,8 +23,8 @@ import datetime, hashlib, html, json, os, re, sys, urllib.parse
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, ".local", "raw")
 OUT = os.path.join(ROOT, ".local", "pipeline", "sources")
-INCUBATORS_OUT = os.path.join(ROOT, "data", "incubators.json")
-TAXONOMIES = os.path.join(ROOT, "data", "taxonomies.json")
+INCUBATORS_OUT = os.path.join(ROOT, "data", "built", "incubators.json")
+TAXONOMIES = os.path.join(ROOT, "data", "curated", "taxonomies.json")
 PARSER_VERSION = "parse-v4"   # v2: links are real URLs pulled from the free text of "Strona internetowa";
                               # v3: v2 had overwritten the entry URL of sources[] with the last link; fixed
                               # v4: postal addresses (street with house number, postal code) removed, the town kept
@@ -544,6 +544,7 @@ def run_s1(only=None):
                    "rops": any(norm_name(p["name"]).startswith(x) for x in ROPS_INCUBATORS)}
                   for p in profiles.values() if p["type"] == "Inkubator"]
     incubators.sort(key=lambda x: x["name"])
+    os.makedirs(os.path.dirname(INCUBATORS_OUT), exist_ok=True)
     with open(INCUBATORS_OUT, "w", encoding="utf-8", newline="\n") as f:
         json.dump({"source": f"{S1}/profile/", "retrieved_at": max(r["time"][:10] for r in log_s1.values()), "incubators": incubators}, f, ensure_ascii=False, indent=2)
         f.write("\n")

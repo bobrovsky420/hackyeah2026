@@ -7,7 +7,7 @@
  *
  * Display rules of data/README.md applied here:
  * - no name, website or channel of a natural person: the organisation of a
- *   record comes from data/organisations.json (people removed from the
+ *   record comes from data/built/organisations.json (people removed from the
  *   name), and the records of natural_person_innovations get none;
  * - a material or link with link_status "dead" is dropped (the contracts
  *   cannot mark it); "unknown" and an absent status pass as they are;
@@ -53,7 +53,7 @@ export const PROTOTYPE_NOTE =
 
 // ------------------------------------------------------------------ context
 
-/** What the record mappers need from data/organisations.json. */
+/** What the record mappers need from data/built/organisations.json. */
 export interface OrganisationIndex {
   byId: Map<string, Organisation>;
   /** The organisation that authored a record (organisations[].innovation_ids). */
@@ -101,7 +101,7 @@ export function toMaterial(material: BuiltMaterial): Material {
   return { type: material.type, title: material.title, url: material.url };
 }
 
-/** data/innovations/<id>.json to the catalogue contract (S2, S3, S5). */
+/** data/built/innovations/<id>.json to the catalogue contract (S2, S3, S5). */
 export function toInnovation(record: BuiltInnovation, orgs: OrganisationIndex): Innovation {
   const source = primarySource(record);
   const derived = record.derived;
@@ -214,7 +214,9 @@ export function gminasOf(register: PlacesRegister): GminaPlace[] {
  */
 export function toImplementation(row: MergedImplementation, orgs: OrganisationIndex): Implementation | null {
   if (row.place_terc === null) return null;
-  const seeded = row.origin_file === "data/implementations.yaml" ? row.organisation?.name_pl : undefined;
+  // Only a seed has a nested organisation; origin_file is not compared, since releases packed before
+  // data/curated/ existed name "data/implementations.yaml".
+  const seeded = "organisation" in row ? row.organisation?.name_pl : undefined;
   return {
     id: row.id,
     innovation_id: row.innovation_id,
@@ -240,7 +242,7 @@ export function locate(item: Implementation, gminaByTerc: Map<string, Gmina>): L
 // ------------------------------------------------------------------- paths
 
 /**
- * data/paths timing kinds to the contract's four. `today` (YYYY-MM-DD)
+ * data/built/paths timing kinds to the contract's four. `today` (YYYY-MM-DD)
  * refines "fixed": when every call closed before it, the path shows as
  * "none-open". Without `today`, the kind alone decides.
  */
@@ -259,7 +261,7 @@ export function toTimingKind(timing: Path["timing"], today?: string): Implementa
   return kind;
 }
 
-/** data/paths/<id>.yaml to the path contract (8.7). */
+/** data/built/paths/<id>.yaml to the path contract (8.7). */
 export function toImplementationPath(path: Path, today?: string): ImplementationPath {
   return {
     id: path.id,
@@ -282,13 +284,13 @@ export function toImplementationPath(path: Path, today?: string): Implementation
 /** BDL symbols that stand for "no information" (x, X, -, n): the value is not shown. */
 const NO_INFORMATION_FLAGS = new Set(["x", "X", "-", "n"]);
 
-/** A value of data/indicators.json; null when BDL marks it as no information. */
+/** A value of data/built/indicators.json; null when BDL marks it as no information. */
 export function toIndicatorValue(value: IndicatorValue): IndicatorValueContract | null {
   if (value.flag !== undefined && NO_INFORMATION_FLAGS.has(value.flag)) return null;
   return { value: value.value, year: value.year, flag: value.flag ?? null, flagText: value.flag_pl ?? null };
 }
 
-/** data/indicators.json to the map contract (8.8); median, min and max stay null when the file has none. */
+/** data/built/indicators.json to the map contract (8.8); median, min and max stay null when the file has none. */
 export function toIndicatorSet(file: IndicatorsFile): IndicatorSet {
   const values: IndicatorSet["values"] = {};
   for (const [terc, gmina] of Object.entries(file.gminas)) {
@@ -315,7 +317,7 @@ export function toIndicatorSet(file: IndicatorsFile): IndicatorSet {
   };
 }
 
-/** data/map/malopolska-gminy.geojson with the properties the map reads: the TERC in JPT_KOD_JE becomes `terc`. */
+/** data/built/map/malopolska-gminy.geojson with the properties the map reads: the TERC in JPT_KOD_JE becomes `terc`. */
 export function toBoundaries(file: GminaBoundaries): BoundariesContract {
   return {
     type: "FeatureCollection",
@@ -335,7 +337,7 @@ export function toBoundaries(file: GminaBoundaries): BoundariesContract {
 // ---------------------------------------------------------------- contacts
 
 /*
- * What data/helplines.yaml does not say: the short name of the crisis
+ * What data/curated/helplines.yaml does not say: the short name of the crisis
  * banner and the entry path of S10 that lists the line first. A line
  * missing here shows its full name and stands in both paths.
  */
@@ -370,7 +372,7 @@ export function toHelplines(file: HelplinesFile): { alarm: HelplineContract[]; s
   return { alarm: lines.filter((line) => line.group === "alarm"), support: lines.filter((line) => line.group === "support") };
 }
 
-/** The ROPS department of data/advisors.yaml, with its first phone number. */
+/** The ROPS department of data/curated/advisors.yaml, with its first phone number. */
 export function toDepartment(file: AdvisorsFile): Department {
   const { department } = file;
   return { name: department.name_pl, email: department.email, phone: department.phones[0] ?? "", hours: department.hours_pl };

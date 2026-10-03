@@ -36,26 +36,27 @@ const DERIVE = `${PY} scripts/derive-records.py build`;
 const STATIC = (step: string) => `${PY} scripts/build-static-data.py --only ${step}`;
 const VECTORS = `${PY} scripts/build-index-vectors.py`;
 const HAND = (file: string) => `hand-written and committed: git checkout -- data/${file}`;
+const RESEARCH = "researched with the skill /research-paths in Claude Code; restore a bundle";
 
 /** The command that builds each file; a bundle restores all of them: `${PY} scripts/unpack-data.py <zip>`. */
 const BUILT_BY: Record<string, string> = {
-  "data-version.json": DERIVE,
-  "innovations/": DERIVE,
-  "index-cards.json": DERIVE,
-  "index-vectors.json": VECTORS,
-  "incubators.json": `${PY} scripts/parse-catalogues.py`,
-  "places/pl-register.json": STATIC("places"),
-  "places/malopolska-localities.json": STATIC("places"),
-  "map/malopolska-gminy.geojson": STATIC("map"),
-  "indicators.json": STATIC("indicators"),
-  "implementations-derived.json": STATIC("origins"),
-  "organisations.json": STATIC("organisations"),
-  "implementations-merged.json": STATIC("organisations"),
-  "taxonomies.json": HAND("taxonomies.json"),
-  "advisors.yaml": HAND("advisors.yaml"),
-  "knowledge.yaml": HAND("knowledge.yaml"),
-  "helplines.yaml": HAND("helplines.yaml"),
-  "paths/": HAND("paths/"),
+  "built/data-version.json": DERIVE,
+  "built/innovations/": DERIVE,
+  "built/index-cards.json": DERIVE,
+  "built/index-vectors.json": VECTORS,
+  "built/incubators.json": `${PY} scripts/parse-catalogues.py`,
+  "built/places/pl-register.json": STATIC("places"),
+  "built/places/malopolska-localities.json": STATIC("places"),
+  "built/map/malopolska-gminy.geojson": STATIC("map"),
+  "built/indicators.json": STATIC("indicators"),
+  "built/implementations-derived.json": STATIC("origins"),
+  "built/organisations.json": STATIC("organisations"),
+  "built/implementations-merged.json": STATIC("organisations"),
+  "built/paths/": RESEARCH,
+  "curated/taxonomies.json": HAND("curated/taxonomies.json"),
+  "curated/advisors.yaml": HAND("curated/advisors.yaml"),
+  "curated/knowledge.yaml": HAND("curated/knowledge.yaml"),
+  "curated/helplines.yaml": HAND("curated/helplines.yaml"),
 };
 
 /** The embedding model the vectors must come from (FR-3.7); the service reads the same variable. */
@@ -129,23 +130,23 @@ export function loadRawData(options: LoadOptions = {}): RawData {
     return items;
   }
 
-  const dataVersion = json<DataVersion>("data-version.json");
-  const records = folder<BuiltInnovation>("innovations", ".json", (rel) => json(rel, "innovations/"));
-  const indexCards = json<IndexCard[]>("index-cards.json");
-  const vectors = json<IndexVectorsFile>("index-vectors.json");
-  const taxonomies = json<TaxonomiesFile>("taxonomies.json");
-  const incubators = json<IncubatorsFile>("incubators.json");
-  const places = json<PlacesRegister>("places/pl-register.json");
-  const localities = json<LocalitiesFile>("places/malopolska-localities.json");
-  const boundaries = json<GminaBoundaries>("map/malopolska-gminy.geojson");
-  const indicators = json<IndicatorsFile>("indicators.json");
-  const derived = json<ImplementationsDerivedFile>("implementations-derived.json");
-  const organisations = json<OrganisationsFile>("organisations.json");
-  const merged = json<ImplementationsMergedFile>("implementations-merged.json");
-  const advisors = yaml<AdvisorsFile>("advisors.yaml");
-  const knowledge = yaml<KnowledgeFile>("knowledge.yaml");
-  const helplines = yaml<HelplinesFile>("helplines.yaml");
-  const paths = folder<Path>("paths", ".yaml", (rel) => yaml(rel, "paths/"));
+  const dataVersion = json<DataVersion>("built/data-version.json");
+  const records = folder<BuiltInnovation>("built/innovations", ".json", (rel) => json(rel, "built/innovations/"));
+  const indexCards = json<IndexCard[]>("built/index-cards.json");
+  const vectors = json<IndexVectorsFile>("built/index-vectors.json");
+  const taxonomies = json<TaxonomiesFile>("curated/taxonomies.json");
+  const incubators = json<IncubatorsFile>("built/incubators.json");
+  const places = json<PlacesRegister>("built/places/pl-register.json");
+  const localities = json<LocalitiesFile>("built/places/malopolska-localities.json");
+  const boundaries = json<GminaBoundaries>("built/map/malopolska-gminy.geojson");
+  const indicators = json<IndicatorsFile>("built/indicators.json");
+  const derived = json<ImplementationsDerivedFile>("built/implementations-derived.json");
+  const organisations = json<OrganisationsFile>("built/organisations.json");
+  const merged = json<ImplementationsMergedFile>("built/implementations-merged.json");
+  const advisors = yaml<AdvisorsFile>("curated/advisors.yaml");
+  const knowledge = yaml<KnowledgeFile>("curated/knowledge.yaml");
+  const helplines = yaml<HelplinesFile>("curated/helplines.yaml");
+  const paths = folder<Path>("built/paths", ".yaml", (rel) => yaml(rel, "built/paths/"));
 
   // ---------------------------------------------------------- consistency
   if (dataVersion && records) {
@@ -154,28 +155,28 @@ export function loadRawData(options: LoadOptions = {}): RawData {
     const stale = (rel: string, what: string) => problems.push(`data/${rel} is stale: ${what}; ${rebuild(rel)}`);
 
     if (records.length !== dataVersion.records) {
-      stale("innovations/", `${records.length} records, data-version.json says ${dataVersion.records}`);
+      stale("built/innovations/", `${records.length} records, data-version.json says ${dataVersion.records}`);
     }
     if (indexCards) {
       const cardIds = new Set(indexCards.map((card) => card.id));
       const extra = [...cardIds].filter((id) => !ids.has(id));
       const lacking = [...ids].filter((id) => !cardIds.has(id));
       if (extra.length || lacking.length || cardIds.size !== indexCards.length) {
-        stale("index-cards.json", `ids differ from innovations/ (${extra.length} unknown, ${lacking.length} missing, ${indexCards.length - cardIds.size} repeated)`);
+        stale("built/index-cards.json", `ids differ from innovations/ (${extra.length} unknown, ${lacking.length} missing, ${indexCards.length - cardIds.size} repeated)`);
       }
     }
     if (vectors) {
       const model = options.embeddingModel ?? process.env.EMBEDDING_MODEL ?? DEFAULT_EMBEDDING_MODEL;
-      if (vectors.data_version !== version) stale("index-vectors.json", `data_version ${vectors.data_version}, data-version.json says ${version}`);
-      if (vectors.records_count !== dataVersion.records) stale("index-vectors.json", `records_count ${vectors.records_count}, data-version.json says ${dataVersion.records}`);
+      if (vectors.data_version !== version) stale("built/index-vectors.json", `data_version ${vectors.data_version}, data-version.json says ${version}`);
+      if (vectors.records_count !== dataVersion.records) stale("built/index-vectors.json", `records_count ${vectors.records_count}, data-version.json says ${dataVersion.records}`);
       const keys = Object.keys(vectors.vectors ?? {});
       const extra = keys.filter((id) => !ids.has(id));
-      if (extra.length || keys.length !== ids.size) stale("index-vectors.json", `vector keys differ from the record ids (${keys.length} keys, ${extra.length} unknown)`);
+      if (extra.length || keys.length !== ids.size) stale("built/index-vectors.json", `vector keys differ from the record ids (${keys.length} keys, ${extra.length} unknown)`);
       if (vectors.model !== model) {
-        problems.push(`data/index-vectors.json was built with ${vectors.model}, but the embedding service uses ${model} (EMBEDDING_MODEL); vectors of one model are useless with queries of another (FR-3.7); ${rebuild("index-vectors.json")}, or set EMBEDDING_MODEL`);
+        problems.push(`data/built/index-vectors.json was built with ${vectors.model}, but the embedding service uses ${model} (EMBEDDING_MODEL); vectors of one model are useless with queries of another (FR-3.7); ${rebuild("built/index-vectors.json")}, or set EMBEDDING_MODEL`);
       }
       const wrongDims = keys.filter((id) => vectors.vectors[id].length !== vectors.dims).length;
-      if (wrongDims) stale("index-vectors.json", `${wrongDims} vectors are not ${vectors.dims} long`);
+      if (wrongDims) stale("built/index-vectors.json", `${wrongDims} vectors are not ${vectors.dims} long`);
     }
     const checkImplementations = (rel: string, file: { data_version: string | null; implementations: { innovation_id: string }[] } | undefined) => {
       if (!file) return;
@@ -183,25 +184,25 @@ export function loadRawData(options: LoadOptions = {}): RawData {
       const unknown = file.implementations.filter((row) => !ids.has(row.innovation_id)).length;
       if (unknown) stale(rel, `${unknown} rows name an innovation_id that is not a record`);
     };
-    checkImplementations("implementations-derived.json", derived);
-    checkImplementations("implementations-merged.json", merged);
+    checkImplementations("built/implementations-derived.json", derived);
+    checkImplementations("built/implementations-merged.json", merged);
     if (organisations) {
-      if (organisations.data_version !== version) stale("organisations.json", `data_version ${organisations.data_version}, data-version.json says ${version}`);
+      if (organisations.data_version !== version) stale("built/organisations.json", `data_version ${organisations.data_version}, data-version.json says ${version}`);
       const unknown = [
         ...organisations.organisations.flatMap((row) => row.innovation_ids),
         ...organisations.natural_person_innovations.map((entry) => entry.innovation_id),
       ].filter((id) => !ids.has(id)).length;
-      if (unknown) stale("organisations.json", `${unknown} innovation ids are not records`);
+      if (unknown) stale("built/organisations.json", `${unknown} innovation ids are not records`);
       if (merged) {
         const orgIds = new Set(organisations.organisations.map((row) => row.id));
         const orphans = merged.implementations.filter((row) => row.organisation_id !== null && !orgIds.has(row.organisation_id)).length;
-        if (orphans) stale("implementations-merged.json", `${orphans} rows name an organisation_id that is not a row of organisations.json`);
+        if (orphans) stale("built/implementations-merged.json", `${orphans} rows name an organisation_id that is not a row of organisations.json`);
       }
     }
     if (knowledge) {
       const itemIds = new Set(knowledge.items.map((item) => item.id));
       const unknown = Object.values(knowledge.model_by_target_group).flat().filter((id) => !itemIds.has(id));
-      if (unknown.length) problems.push(`data/knowledge.yaml: model_by_target_group names unknown items ${unknown.join(", ")}; fix the file`);
+      if (unknown.length) problems.push(`data/curated/knowledge.yaml: model_by_target_group names unknown items ${unknown.join(", ")}; fix the file`);
     }
   }
 

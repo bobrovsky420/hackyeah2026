@@ -211,11 +211,11 @@ export function parseProblem(
   if (data.pair_with && !/^[PRSF]\d{2}[a-z]?$/.test(data.pair_with)) issue("pair_with", "not a problem id");
 
   const refs: [string, string[] | undefined, ReadonlySet<string> | undefined, string][] = [
-    ["expected.any_of_innovations", expected.any_of_innovations, references.innovationIds, "no record with this id in data/innovations/"],
-    ["expected.none_of_innovations", expected.none_of_innovations, references.innovationIds, "no record with this id in data/innovations/"],
-    ["expected.target_groups", expected.target_groups, references.targetGroups, "not a target-group code of data/taxonomies.json"],
-    ["target_groups_given", data.target_groups_given, references.targetGroups, "not a target-group code of data/taxonomies.json"],
-    ["expected.paths_any_of", expected.paths_any_of, references.pathIds, "no path with this id in data/paths/"],
+    ["expected.any_of_innovations", expected.any_of_innovations, references.innovationIds, "no record with this id in data/built/innovations/"],
+    ["expected.none_of_innovations", expected.none_of_innovations, references.innovationIds, "no record with this id in data/built/innovations/"],
+    ["expected.target_groups", expected.target_groups, references.targetGroups, "not a target-group code of data/curated/taxonomies.json"],
+    ["target_groups_given", data.target_groups_given, references.targetGroups, "not a target-group code of data/curated/taxonomies.json"],
+    ["expected.paths_any_of", expected.paths_any_of, references.pathIds, "no path with this id in data/built/paths/"],
   ];
   for (const [field, values, known, message] of refs) {
     if (!values || !known) continue;
@@ -224,7 +224,7 @@ export function parseProblem(
     });
   }
   if (data.place_terc && references.tercs && !references.tercs.has(data.place_terc)) {
-    issue("place_terc", `${data.place_terc}: no gmina with this TERC in data/places/pl-register.json`);
+    issue("place_terc", `${data.place_terc}: no gmina with this TERC in data/built/places/pl-register.json`);
   }
   if (issues.length > 0) return { problem: null, issues };
 

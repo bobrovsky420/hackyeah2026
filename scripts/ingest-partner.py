@@ -1,6 +1,6 @@
 """Partner-file adapter (spec FR-1.6): a CSV or XLSX of innovations -> .local/pipeline/sources/inn-partner-<slug>.json.
 
-A partner (ROPS, 3 October 2026, "blisko 200" innovations; spec A-05, OP-17) may hand over a spreadsheet
+A partner (ROPS, 3 October 2026, "blisko 200" innovations; spec A-05) may hand over a spreadsheet
 instead of pages. This script turns every row into a source record of the same shape as
 scripts/parse-catalogues.py writes (docs/innovation-record.md section 3, schemas/source-record.schema.json),
 so that the extraction skill (.claude/skills/extract-innovations) and `derive-records.py build` run unchanged.
@@ -222,7 +222,7 @@ def main():
         log("columns of the file: " + ", ".join(repr(c) for c in rows[h][1] if c))
         return 1
 
-    tax = json.load(open(os.path.join(root, "data", "taxonomies.json"), encoding="utf-8"))
+    tax = json.load(open(os.path.join(root, "data", "curated", "taxonomies.json"), encoding="utf-8"))
     schema = jsonschema.Draft202012Validator(json.load(open(os.path.join(root, "schemas", "source-record.schema.json"), encoding="utf-8")))
     existing = {}
     if os.path.isdir(out_dir):
@@ -266,7 +266,7 @@ def main():
                 flags.append(f"missing-field:{key}")
         flags += [f"redacted:{k}" for k in sorted(redacted)]
 
-        # target groups from the category column: rops_category_slug, code or label of data/taxonomies.json
+        # target groups from the category column: rops_category_slug, code or label of data/curated/taxonomies.json
         cats = split_list(vals.get("category"), sep)
         tg, unknown = map_codes(cats, tax["target_groups"], ("rops_category_slug", "label_pl"))
         flags += [f"unknown-category:{u}" for u in unknown]

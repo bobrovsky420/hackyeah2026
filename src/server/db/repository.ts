@@ -49,7 +49,7 @@ export interface RouteFacts {
 }
 
 /**
- * The cut-offs of one retention run (12.6, OP-18), computed by
+ * The cut-offs of one retention run (12.6), computed by
  * src/server/retention.ts. Each rule deletes what lies before its cut-off.
  */
 export interface RetentionCutoffs {
@@ -77,7 +77,7 @@ export interface RetentionCounts {
 export const SCREENING_LOG_RETENTION_MS = 14 * 24 * 60 * 60 * 1000;
 
 /**
- * A place filter of the console: the gminas whose label matched the typed
+ * A place filter for the lists: the gminas whose label matched a typed
  * text; `null` in the list stands for the entries without a gmina.
  */
 export type PlaceFilter = (string | null)[];
@@ -191,7 +191,7 @@ export interface Repository {
   /** Marks a kept text as reviewed; false when the entry is unknown, holds no text or was reviewed already. */
   markScreeningTextReviewed(id: string, at: string): Promise<boolean>;
 
-  // Retention (12.6, OP-18).
+  // Retention (12.6).
   /** Deletes what lies past the cut-offs; a dry run only counts it. */
   applyRetention(cutoffs: RetentionCutoffs, options: { dryRun: boolean }): Promise<RetentionCounts>;
 
