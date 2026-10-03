@@ -56,7 +56,7 @@ function exampleNeed(
 }
 
 export function exampleNeeds(): Need[] {
-  return [
+  const needs = [
     exampleNeed(
       "nd-przyklad-1",
       "1207062",
@@ -84,6 +84,21 @@ export function exampleNeeds(): Need[] {
       "przyklad-dzieci",
     ),
   ];
+  // Module I: one need approved for publication, so a route about lonely seniors shows it as a similar case.
+  needs[0] = {
+    ...needs[0],
+    status: "temat-naboru",
+    moderation: { status: "zatwierdzone", reviewer: "zespół HubMI.pl", decided_at: SEEDED_AT, reason_pl: null },
+    nearest_matches: [
+      {
+        innovation_id: "inn-nat-649",
+        fit_score: 62,
+        what_fits_pl: "Łączy samotnych seniorów z uczniami w regularnych spotkaniach.",
+        what_lacks_pl: "Nie zastępuje domu dziennego pobytu.",
+      },
+    ],
+  };
+  return needs;
 }
 
 function teamEntry(id: string, name: string, placeTerc: string, topics: string[]): Readiness {
