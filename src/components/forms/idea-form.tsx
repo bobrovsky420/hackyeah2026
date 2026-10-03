@@ -11,11 +11,9 @@ import { Notice } from "@/components/ui/notice";
 import type { Helpline, IdeaKind, IdeaStage } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { ideaKindCodes, ideaKindLabel, ideaStageCodes, ideaStageLabel, isIdeaKind, isIdeaStage, targetGroupCodes, targetGroupLabel } from "@/lib/labels";
-import type { LocalityOption, PlaceOption } from "@/lib/place-options";
 import { pluralPl } from "@/lib/text";
 import { FormFailed } from "./form-failed";
 import { HONEYPOT_FIELD, Honeypot } from "./honeypot";
-import { PlaceCombobox, type PlaceValue } from "./place-combobox";
 import { ScreenedNotice, useScreenedSubmit } from "./save-need-form";
 import { EMAIL_PATTERN } from "./use-submit-form";
 
@@ -42,12 +40,8 @@ const FOR_WHOM: TextSpec = { id: "dla-kogo", min: 3, max: 500, rows: 2, label: "
  * saved need; once stored, the card's page shows similar innovations.
  */
 export function IdeaForm({
-  places,
-  localities,
   helplines,
 }: {
-  places: PlaceOption[];
-  localities: LocalityOption[];
   /** For the human help of S10 when the gate redirects the text (FR-12.5). */
   helplines: { alarm: Helpline[]; support: Helpline[] };
 }) {
@@ -55,7 +49,6 @@ export function IdeaForm({
   const [texts, setTexts] = useState<Record<string, string>>({});
   const [stage, setStage] = useState<IdeaStage | "">("");
   const [groups, setGroups] = useState<string[]>([]);
-  const [place, setPlace] = useState<PlaceValue>({ text: "", terc: null });
   const [name, setName] = useState("");
   const [isOrganisation, setIsOrganisation] = useState(false);
   const [email, setEmail] = useState("");
@@ -84,7 +77,6 @@ export function IdeaForm({
       for_whom: value(FOR_WHOM).trim(),
       stage,
       target_groups: groups,
-      place_terc: place.terc,
       display_name: name.trim(),
       is_organisation: isOrganisation,
       email: email.trim(),
@@ -95,8 +87,7 @@ export function IdeaForm({
   }
 
   if (status === "screened" && screened === "redirected") {
-    const placeName = places.find((option) => option.terc === place.terc)?.name ?? null;
-    return <HumanHelp placeName={placeName} helplines={helplines} titleAs="h2" />;
+    return <HumanHelp placeName={null} helplines={helplines} titleAs="h2" />;
   }
 
   if (status === "sent") {
@@ -195,7 +186,6 @@ export function IdeaForm({
           value={stage}
           onChange={(next) => setStage(isIdeaStage(next) ? next : "")}
         />
-        <PlaceCombobox id="miejsce" name="miejsce" places={places} localities={localities} value={place} onChange={setPlace} />
         <Field invalid={Boolean(authorError)}>
           <Label htmlFor="autor">{t("idea.author.label")}</Label>
           {authorError && <FieldError id="autor-blad">{authorError}</FieldError>}
