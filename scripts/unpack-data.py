@@ -1,13 +1,19 @@
-"""Unpack a data bundle written by pack-data.py into data/ and .local/pipeline/ (docs/data-setup.md).
+"""Unpack a data bundle written by pack-data.py into data/, .local/pipeline/ and the replay folders (docs/data-setup.md).
 
-Order: read the bundle's manifest.json; check that the zip holds exactly the files it lists, each under data/ or
-.local/pipeline/, and that every size and sha256 matches; compare the bundle with what is already here; only then
-write. Nothing outside data/ and .local/pipeline/ is touched, and nothing is deleted (except with --prune).
+Order: read the bundle's manifest.json; check that the zip holds exactly the files it lists, each under data/,
+.local/pipeline/, .local/route-cache/ or .local/llm-replay/, and that every size and sha256 matches; compare the
+bundle with what is already here; only then write. Nothing outside those folders is touched, and nothing is deleted
+(except with --prune).
+
+Files that git tracks here (the hand-written files of data/: taxonomies, decisions, advisors, paths and so on) are
+never written: git owns them, the bundle only carries them for a machine without a checkout. When a tracked file
+differs from the bundle's copy, it is listed with the commit the bundle was packed from, so the reader can pull or
+rebuild.
 
 Refused without --force (exit 1):
   - the local data/data-version.json is of another data version built later than the bundle's (built_at);
   - a local file differs from the bundle's copy and was modified after the bundle was packed (created_at), for
-    example a hand-written file edited or pulled since.
+    example a replay file recorded since.
 A local file that differs from the bundle's copy only in line endings (git core.autocrlf on Windows) counts as the
 same file and is left as it is.
 
@@ -18,12 +24,21 @@ Usage (from the repository root, with the project venv):
   .venv/Scripts/python scripts/unpack-data.py .local/bundles/data-<version>.zip [--force] [--prune] [--root dir]
 --root unpacks into another directory tree (used for testing); the default is this repository.
 """
-import argparse, datetime, hashlib, json, os, sys, zipfile
+import argparse, datetime, hashlib, json, os, subprocess, sys, zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ALLOWED = ("data/", ".local/pipeline/")
+ALLOWED = ("data/", ".local/pipeline/", ".local/route-cache/", ".local/llm-replay/")
 RECORD_DIRS = ("data/innovations/", ".local/pipeline/sources/", ".local/pipeline/derived/")
-BUNDLE_FORMAT = 1
+BUNDLE_FORMATS = (1, 2)   # 1: data/ and .local/pipeline/ only; 2 adds the release label, previous and the replay folders
+
+
+def git_tracked(root):
+    """The paths under data/ that git tracks at root (forward slashes), or an empty set outside a git checkout."""
+    try:
+        out = subprocess.run(["git", "ls-files", "-z", "--", "data"], cwd=root, capture_output=True, check=True)
+        return {p.decode("utf-8") for p in out.stdout.split(b"\0") if p}
+    except (OSError, subprocess.CalledProcessError, UnicodeDecodeError):
+        return set()
 
 
 def fail(msg):
@@ -79,15 +94,15 @@ def main():
             manifest = json.loads(z.read("manifest.json"))
         except (KeyError, ValueError):
             fail("the bundle has no readable manifest.json")
-        if manifest.get("bundle_format") != BUNDLE_FORMAT:
-            fail(f"bundle format {manifest.get('bundle_format')}, this script reads {BUNDLE_FORMAT}")
+        if manifest.get("bundle_format") not in BUNDLE_FORMATS:
+            fail(f"bundle format {manifest.get('bundle_format')}, this script reads {' and '.join(map(str, BUNDLE_FORMATS))}")
         listed = {e["path"]: e for e in manifest["files"]}
         names = {n for n in z.namelist() if not n.endswith("/")} - {"manifest.json"}
         if names != set(listed):
             fail(f"the zip and its manifest disagree on {len(names ^ set(listed))} paths")
         bad = sorted(p for p in listed if not safe(p))
         if bad:
-            fail(f"paths outside data/ and .local/pipeline/: {', '.join(bad[:5])}")
+            fail(f"paths outside {', '.join(ALLOWED)}: {', '.join(bad[:5])}")
 
         # 1. verify every file before writing anything
         blobs = {}
@@ -103,7 +118,8 @@ def main():
     newer_data = (local is not None and local.get("version") != manifest["data_version"]
                   and (local.get("built_at") or "") > (manifest.get("built_at") or ""))
     created = datetime.datetime.fromisoformat(manifest["created_at"]).timestamp()
-    writes, same, newer_files = [], 0, []
+    tracked = git_tracked(root)
+    writes, same, newer_files, kept = [], 0, [], []
     for p, data in blobs.items():
         full = native(root, p)
         if os.path.exists(full):
@@ -112,9 +128,19 @@ def main():
             if have == data or same_text(have, data):
                 same += 1
                 continue
+            if p in tracked:            # git owns it: never written, only reported
+                kept.append(p)
+                continue
             if os.path.getmtime(full) > created:
                 newer_files.append(p)
+        elif p in tracked:              # tracked but deleted here: git checkout restores it, not the bundle
+            kept.append(p)
+            continue
         writes.append(p)
+    if kept:
+        print(f"unpack-data: {len(kept)} git-tracked files differ from the bundle and were kept, git owns them: "
+              f"{', '.join(kept[:8])}{' ...' if len(kept) > 8 else ''}; the bundle was packed from commit "
+              f"{manifest.get('git_commit') or '-'}{' (dirty)' if manifest.get('git_dirty') else ''}", file=sys.stderr)
     if (newer_data or newer_files) and not args.force:
         if newer_data:
             print(f"unpack-data: the local data version {local.get('version')} (built {local.get('built_at')}) is "
@@ -150,7 +176,9 @@ def main():
               f"check ({', '.join(stale[:5])}{' ...' if len(stale) > 5 else ''}); rerun with --prune to delete them",
               file=sys.stderr)
 
-    print(f"wrote {len(writes)} files, {same} already identical, into {root}")
+    print(f"wrote {len(writes)} files, {same} already identical, {len(kept)} kept from git, into {root}")
+    if manifest.get("release_version"):
+        print(f"release {manifest['release_version']}")
     print(f"data version {manifest['data_version']} ({manifest['records']} records, built {manifest.get('built_at')}), "
           f"parser {manifest.get('parser_version')}, prompt {manifest.get('prompt_version')}, "
           f"taxonomy {manifest.get('taxonomy_version')}")

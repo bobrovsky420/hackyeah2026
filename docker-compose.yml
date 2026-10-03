@@ -1,8 +1,11 @@
-# The local PostgreSQL 16 of the app (specification 9.1, docs/database.md).
-# The image carries pgvector, installed but unused unless FR-3.7 is switched
-# on. Hosting with the app and Caddy is Analyst 2's (12.9).
+# The local PostgreSQL 16 of the app (specification 9.1, docs/database.md),
+# and with the profile `stack` the whole app on one machine: the demo laptop
+# or any team member's laptop (docs/local-stack.md). The image carries
+# pgvector, installed but unused unless FR-3.7 is switched on. Hosting with
+# the app and Caddy is Analyst 2's (12.9).
 #
 #   npx pnpm@12.6.0 db:up    (docker compose --env-file .env.dev up -d db)
+#   docker compose --env-file .env.dev --profile stack up -d --wait
 #
 # POSTGRES_PASSWORD comes from .env.dev (git-ignored); no password is in git.
 services:
@@ -26,5 +29,66 @@ services:
       timeout: 3s
       retries: 10
 
+  # The images carry the data release DATA_RELEASE (docker/Dockerfile): a
+  # new release is `build` then `up`. Only this machine can reach the app.
+  embedding:
+    profiles: [stack]
+    image: hackyeah2026/embedding:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: embedding
+      args: &build-args
+        DATA_RELEASE: ${DATA_RELEASE:-}
+        DATA_SHA256: ${DATA_SHA256:-}
+        DATA_REPO: ${DATA_REPO:-}
+        EMBEDDING_MODEL: ${EMBEDDING_MODEL:-OPI-PIB/PolDense-400M}
+      secrets: [hf_token, github_token]
+    restart: unless-stopped
+
+  app:
+    profiles: [stack]
+    image: hackyeah2026/app:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: app
+      args: *build-args
+      secrets: [github_token]
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      embedding:
+        condition: service_healthy
+    # The model keys (HF_TOKEN, ANTHROPIC_API_KEY, ...); the lines below win.
+    env_file:
+      - path: .env.dev
+        required: false
+    environment:
+      DATABASE_URL: postgres://hubmi:${POSTGRES_PASSWORD}@db:5432/hubmi
+      EMBEDDING_URL: http://embedding:8765
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-OPI-PIB/PolDense-400M}
+      REPLAY_ONLY: ${REPLAY_ONLY:-false}
+      PUBLIC_BASE_URL: http://localhost:${APP_PORT:-3000}
+    ports:
+      - "127.0.0.1:${APP_PORT:-3000}:3000"
+    volumes:
+      # The replay files: seeded from the image on start, then recorded here.
+      - stack-local:/app/.local
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+
+secrets:
+  hf_token:
+    environment: HF_TOKEN
+  github_token:
+    environment: GITHUB_TOKEN
+
 volumes:
   db-data:
+  stack-local:

@@ -1,0 +1,19 @@
+# The build context of docker/Dockerfile (docs/local-stack.md). The data of
+# the images comes from a data release only, never from the working tree:
+# the zips of .local/bundles/ are the one exception to .local. No secrets.
+.git
+.env
+.env.*
+node_modules
+.next
+.venv
+.venv-embedding
+.local
+!.local/bundles/data-*.zip
+data
+coverage
+test-results
+playwright-report
+**/__pycache__
+*.tsbuildinfo
+next-env.d.ts
