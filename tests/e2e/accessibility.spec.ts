@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { enterPanel } from "./admin";
 import { screens, themes } from "./screens";
 
 /*
@@ -28,8 +29,9 @@ async function expectAccessible(page: Page) {
 for (const [theme, applyTheme] of Object.entries(themes)) {
   test.describe(theme, () => {
     for (const screen of screens) {
-      test(screen.name, async ({ page }) => {
+      test(screen.name, async ({ page, context, baseURL }) => {
         await applyTheme(page);
+        if (screen.admin) await enterPanel(context, baseURL ?? "http://localhost:3100");
         await page.goto(screen.path);
         await expectAccessible(page);
       });

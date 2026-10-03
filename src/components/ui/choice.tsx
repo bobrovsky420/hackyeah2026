@@ -105,6 +105,7 @@ export function CheckboxList({
  */
 export function Checkbox({
   id,
+  name,
   checked,
   onChange,
   error,
@@ -113,6 +114,8 @@ export function Checkbox({
   children,
 }: {
   id: string;
+  /** For a form posted as FormData, such as a server action. */
+  name?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   error?: string;
@@ -129,6 +132,7 @@ export function Checkbox({
       <label className={cn(tileClass, "items-start py-3")}>
         <input
           id={id}
+          name={name}
           type="checkbox"
           checked={checked}
           onChange={(event) => onChange(event.target.checked)}

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { StoredBrief, ContactRequest, ContentReport, Idea, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
+import type { StoredBrief, ContactRequest, ContentReport, Evaluation, Idea, Thread, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
 import { exampleIdeas, exampleNeeds, exampleReadiness } from "@/server/db/examples";
 import { createFileRepository } from "@/server/db/file";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
@@ -28,7 +28,7 @@ interface Target {
 }
 
 /** A store without the example entries. */
-const empty = () => ({ ...createMemoryState(), needs: [], readiness: [], ideas: [] });
+const empty = () => ({ ...createMemoryState(), needs: [], readiness: [], ideas: [], threads: [], posts: [], mentors: new Map() });
 /** The retention runs of the file store see the tests' clock, never the real day. */
 const clock = () => new Date(NOW);
 
@@ -135,6 +135,28 @@ function idea(id: string, over: Partial<Idea> = {}): Idea {
     consents: { store: true, publish: false, text_version: "v1", timestamp: at(0) },
     moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
     similar: null,
+    status: "nowy",
+    reply: null,
+    retention_until: "2027-10-03",
+    note_pl: null,
+    ...over,
+  };
+}
+
+function evaluation(id: string, over: Partial<Evaluation> = {}): Evaluation {
+  return {
+    id,
+    created_at: at(0),
+    innovation_id: "inn-1",
+    rating: 4,
+    experience: "wdrazam",
+    feedback: "Działa, ale instrukcja jest za długa.",
+    improvement: null,
+    test_signup: null,
+    author: { display_name: null, email: null },
+    consents: { store: true, contact: false, text_version: "v1", timestamp: at(0) },
+    moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
+    forwarded_at: null,
     retention_until: "2027-10-03",
     note_pl: null,
     ...over,
@@ -367,6 +389,91 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
   });
 
+  describe("evaluations of innovations (module IV)", () => {
+    it("round-trips newest first and filters by innovation", async () => {
+      await repo.addEvaluation(evaluation("oc-1", { created_at: at(-DAY) }));
+      await repo.addEvaluation(evaluation("oc-2", { innovation_id: "inn-2" }));
+      await repo.addEvaluation(evaluation("oc-3"));
+      expect((await repo.listEvaluations()).map((item) => item.id)).toEqual(["oc-3", "oc-2", "oc-1"]);
+      expect(await repo.listEvaluations("inn-1")).toEqual([evaluation("oc-3"), evaluation("oc-1", { created_at: at(-DAY) })]);
+      expect(await repo.listEvaluations("inn-9")).toEqual([]);
+    });
+  });
+
+  describe("the panel's store (module VI)", () => {
+    it("moderates and answers an idea card, keeping the reply when none is given", async () => {
+      await repo.addIdea(idea("pm-1"));
+      const decided = { status: "zatwierdzone" as const, reviewer: "AT", decided_at: at(0), reason_pl: null };
+      expect((await repo.moderateIdea("pm-1", decided))?.moderation).toEqual(decided);
+      const reply = { text_pl: "Dziękujemy.", at: at(0), by: "AT" };
+      expect(await repo.updateIdea("pm-1", { status: "w-analizie", note_pl: "notatka", reply })).toMatchObject({ status: "w-analizie", reply, note_pl: "notatka" });
+      expect((await repo.updateIdea("pm-1", { status: "przyjety", note_pl: null }))?.reply).toEqual(reply);
+      expect((await repo.updateIdea("pm-1", { status: "przyjety", note_pl: null, reply: null }))?.reply).toBeNull();
+      expect(await repo.moderateIdea("pm-9", decided)).toBeUndefined();
+    });
+
+    it("moderates and forwards an evaluation", async () => {
+      await repo.addEvaluation(evaluation("oc-1"));
+      const rejected = { status: "odrzucone" as const, reviewer: "AT", decided_at: at(0), reason_pl: "Inny powód" };
+      expect((await repo.moderateEvaluation("oc-1", rejected))?.moderation).toEqual(rejected);
+      expect(await repo.forwardEvaluation("oc-1", { at: at(DAY), note_pl: "Mailem do autorów." })).toMatchObject({ forwarded_at: at(DAY), note_pl: "Mailem do autorów." });
+      expect((await repo.getEvaluation("oc-1"))?.forwarded_at).toBe(at(DAY));
+    });
+
+    it("keeps one knowledge entry per id and one word per innovation, newest first", async () => {
+      const entry = {
+        id: "wz-1", base_id: null, title_pl: "Film", description_pl: "", url: "https://v/1", type: "video" as const,
+        target_groups: ["any"], always_show: false, hidden: false, updated_at: at(0), updated_by: "AT",
+      };
+      await repo.saveKnowledgeEntry(entry);
+      await repo.saveKnowledgeEntry({ ...entry, id: "wz-2", updated_at: at(DAY) });
+      await repo.saveKnowledgeEntry({ ...entry, hidden: true });
+      expect((await repo.listKnowledgeEntries()).map((item) => [item.id, item.hidden])).toEqual([["wz-2", false], ["wz-1", true]]);
+      const word = { innovation_id: "inn-1", status: "zweryfikowane" as const, summary_pl: null, extra_materials: [], note_pl: null, updated_at: at(0), updated_by: "AT" };
+      await repo.saveInnovationOverride(word);
+      await repo.saveInnovationOverride({ ...word, status: "ukryte" });
+      expect(await repo.listInnovationOverrides()).toHaveLength(1);
+      expect((await repo.getInnovationOverride("inn-1"))?.status).toBe("ukryte");
+    });
+  });
+
+  describe("conversations, mentors and the partnership board (module V)", () => {
+    const thread = (id: string, updatedAt: string): Thread => ({
+      id, created_at: updatedAt, updated_at: updatedAt, topic: "pytanie", subject: "Pytanie",
+      author: { display_name: "Ala", organisation: null, email: null, sector: "ngo" }, place_terc: null, target_groups: [], ref: null,
+      access_hash: "ab", mentor: null, messages: [{ id: "wd-1", at: updatedAt, author: "uzytkownik", name: null, text: "Dzień dobry." }],
+      status: "zamknieta", consent: { text_version: "v1", timestamp: updatedAt }, retention_until: "2027-10-03", note_pl: null,
+    });
+
+    it("moves a conversation with a new message to the top, reopens it for its author and keeps it 12 more months", async () => {
+      await repo.addThread(thread("rz-1", at(-DAY)));
+      await repo.addThread(thread("rz-2", at(0)));
+      expect((await repo.listThreads()).map((item) => item.id)).toEqual(["rz-2", "rz-1"]);
+      const updated = await repo.appendMessage("rz-1", { id: "wd-2", at: at(DAY), author: "uzytkownik", name: null, text: "Jeszcze pytanie." }, "2027-10-04");
+      expect(updated).toMatchObject({ updated_at: at(DAY), retention_until: "2027-10-04", status: "w-toku" });
+      expect(updated?.messages).toHaveLength(2);
+      expect((await repo.listThreads()).map((item) => item.id)).toEqual(["rz-1", "rz-2"]);
+      expect(await repo.appendMessage("rz-9", { id: "wd-3", at: at(0), author: "rops", name: "AT", text: "x" }, "2027-10-04")).toBeUndefined();
+      const mentor = { id: "mt-1", name: "M", key_hash: "cd" };
+      expect((await repo.updateThread("rz-2", { mentor, status: "w-toku" }))?.mentor).toEqual(mentor);
+    });
+
+    it("keeps one mentor per id and moderates partnership posts", async () => {
+      const mentor = { id: "mt-1", name: "Bożena", expertise_pl: "Seniorzy", target_groups: ["seniorzy"], active: true, updated_at: at(0) };
+      await repo.saveMentor(mentor);
+      await repo.saveMentor({ ...mentor, active: false });
+      expect(await repo.listMentors()).toEqual([{ ...mentor, active: false }]);
+      await repo.addPost({
+        id: "pp-1", created_at: at(0), kind: "szukam", title: "Szukamy szkoły", description: "Opis współpracy.", sector: "ngo", seeking: ["instytucja"],
+        place_terc: null, target_groups: [], author: { display_name: "Ala", organisation: null, email: null }, thread_id: "rz-1",
+        moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null }, retention_until: "2027-10-03",
+      });
+      expect(await repo.listPosts({ moderation: "zatwierdzone" })).toEqual([]);
+      await repo.moderatePost("pp-1", { status: "zatwierdzone", reviewer: "AT", decided_at: at(0), reason_pl: null });
+      expect((await repo.listPosts({ moderation: "zatwierdzone" })).map((post) => post.id)).toEqual(["pp-1"]);
+    });
+  });
+
   describe("feedback and content reports", () => {
     it("keeps feedback per route", async () => {
       await repo.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(-DAY) });
@@ -491,6 +598,8 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
       await repo.addReadiness(registration("gt-today", { retention_until: "2026-10-03" }));
       await repo.addIdea(idea("pm-old", { retention_until: "2026-10-02" }));
       await repo.addIdea(idea("pm-today", { retention_until: "2026-10-03" }));
+      await repo.addEvaluation(evaluation("oc-old", { retention_until: "2026-10-02" }));
+      await repo.addEvaluation(evaluation("oc-today", { retention_until: "2026-10-03" }));
       // Newest first, so no write applies the log's retention to the others before the run does.
       await repo.writeScreeningLog(screening(-DAY), NOW - DAY);
       await repo.writeScreeningLog(screening(-8 * DAY), NOW - 8 * DAY);
@@ -499,7 +608,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
     });
 
     it("counts without deleting in a dry run", async () => {
-      const expected = { routes: 1, feedback: 1, contacts: 1, readiness: 1, ideas: 1, screeningEntries: 1, screeningTexts: 1 };
+      const expected = { routes: 1, feedback: 1, contacts: 1, readiness: 1, ideas: 1, evaluations: 1, threads: 0, posts: 0, screeningEntries: 1, screeningTexts: 1 };
       expect(await repo.applyRetention(cutoffs, { dryRun: true })).toEqual(expected);
       expect(await repo.getRoute("rt-old")).toBeDefined();
       expect(await repo.listContacts()).toHaveLength(2);
@@ -514,6 +623,9 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
         contacts: 1,
         readiness: 1,
         ideas: 1,
+        evaluations: 1,
+        threads: 0,
+        posts: 0,
         screeningEntries: 1,
         screeningTexts: 1,
       });
@@ -523,6 +635,7 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
       expect((await repo.listContacts()).map((item) => item.id)).toEqual(["kt-new"]);
       expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-today"]);
       expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-today"]);
+      expect((await repo.listEvaluations()).map((item) => item.id)).toEqual(["oc-today"]);
       expect((await repo.listScreeningLog(NOW)).map((entry) => entry.text !== null)).toEqual([true, false]);
       // Needs stay until ROPS decides.
       expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-1"]);
@@ -532,6 +645,9 @@ describe.each([memoryTarget, fileTarget])("the repository in $name", (target) =>
         contacts: 0,
         readiness: 0,
         ideas: 0,
+        evaluations: 0,
+        threads: 0,
+        posts: 0,
         screeningEntries: 0,
         screeningTexts: 0,
       });
@@ -621,6 +737,9 @@ describe("the example entries", () => {
     expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-przyklad-1", "nd-przyklad-2", "nd-przyklad-3"]);
     expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-przyklad-1", "gt-przyklad-2"]);
     expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-przyklad-1"]);
+    expect((await repo.listThreads()).map((item) => item.id)).toEqual(["rz-przyklad-1", "rz-przyklad-2"]);
+    expect((await repo.listPosts({ moderation: "zatwierdzone" })).map((item) => item.id)).toEqual(["pp-przyklad-1"]);
+    expect((await repo.listMentors()).every((mentor) => mentor.example)).toBe(true);
   });
 
   it("the example idea card is marked and already holds its similar innovations (module III)", () => {
@@ -668,6 +787,12 @@ describe("the store file", () => {
     await first.addContact(contact("kt-1"));
     await first.addReadiness(registration("gt-1"));
     await first.addIdea(idea("pm-1"));
+    await first.addEvaluation(evaluation("oc-1"));
+    await first.saveKnowledgeEntry({
+      id: "wz-1", base_id: null, title_pl: "Film", description_pl: "", url: "https://v/1", type: "video",
+      target_groups: ["any"], always_show: false, hidden: false, updated_at: at(0), updated_by: "AT",
+    });
+    await first.saveInnovationOverride({ innovation_id: "inn-1", status: "zweryfikowane", summary_pl: null, extra_materials: [], note_pl: null, updated_at: at(0), updated_by: "AT" });
     await first.addFeedback({ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) });
     await first.addReport(report("zg-1"));
     await first.appendModerationLog(entry);
@@ -685,6 +810,9 @@ describe("the store file", () => {
     expect(await second.listContacts()).toEqual([contact("kt-1")]);
     expect(await second.listReadiness()).toEqual([registration("gt-1")]);
     expect(await second.listIdeas()).toEqual([idea("pm-1")]);
+    expect(await second.listEvaluations()).toEqual([evaluation("oc-1")]);
+    expect(await second.listKnowledgeEntries()).toHaveLength(1);
+    expect((await second.getInnovationOverride("inn-1"))?.status).toBe("zweryfikowane");
     expect(await second.listFeedback()).toEqual([{ route_id: "rt-1", value: "tak", comment: null, created_at: at(0) }]);
     expect(await second.listReports()).toEqual([report("zg-1")]);
     expect(await second.listModerationLog(10)).toEqual([entry]);
@@ -724,6 +852,30 @@ describe("the store file", () => {
     expect((await second.listContacts()).map((item) => item.id)).toEqual(["kt-new"]);
     await second.close();
     expect(JSON.parse(fs.readFileSync(file, "utf8")).state.contacts.map((item: ContactRequest) => item.id)).toEqual(["kt-new"]);
+  });
+
+  it("opens a file saved before the idea cards' panel fields, the evaluations and the panel's knowledge existed", async () => {
+    const file = fileOf("older");
+    const first = createFileRepository(file, { fresh: empty, now: clock });
+    await first.addIdea(idea("pm-1"));
+    await first.close();
+    const saved = JSON.parse(fs.readFileSync(file, "utf8"));
+    for (const card of saved.state.ideas) {
+      delete card.status;
+      delete card.reply;
+    }
+    delete saved.state.evaluations;
+    delete saved.state.knowledgeEntries;
+    delete saved.state.innovationOverrides;
+    fs.writeFileSync(file, JSON.stringify(saved));
+
+    const second = createFileRepository(file, { fresh: empty, now: clock });
+    expect(await second.getIdea("pm-1")).toMatchObject({ status: "nowy", reply: null });
+    expect(await second.listEvaluations()).toEqual([]);
+    expect(await second.listKnowledgeEntries()).toEqual([]);
+    expect(await second.listInnovationOverrides()).toEqual([]);
+    expect(fs.readdirSync(path.dirname(file)).some((name) => name.includes("unreadable"))).toBe(false);
+    await second.close();
   });
 
   it("moves a file that is not a store aside and starts with the examples", async () => {

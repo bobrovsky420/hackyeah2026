@@ -8,8 +8,11 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { getInnovation } from "@/lib/catalogue";
-import type { Innovation, Material } from "@/lib/contracts";
+import { repository } from "@/server/db";
+import { overlayInnovation } from "@/server/knowledge/overlay";
+import type { EvaluationSummary, Innovation, Material } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
+import { pluralPl } from "@/lib/text";
 import {
   costLabel,
   evidenceLabel,
@@ -18,11 +21,21 @@ import {
   targetGroupLabel,
   timeLabel,
 } from "@/lib/labels";
+import { evaluationSummary } from "@/server/evaluations";
 import { getRoute } from "@/server/route-service";
+
+/** The innovation with the panel's word on it (module VI); null when unknown or hidden by ROPS. */
+async function shownInnovation(id: string): Promise<{ item: Innovation; verified: boolean } | null> {
+  const record = getInnovation(id);
+  if (!record) return null;
+  const override = await repository().getInnovationOverride(record.id);
+  const item = overlayInnovation(record, override);
+  return item && { item, verified: override?.status === "zweryfikowane" };
+}
 
 export async function generateMetadata({ params }: PageProps<"/innovation/[id]">): Promise<Metadata> {
   const { id } = await params;
-  return { title: getInnovation(id)?.title ?? t("notFound.meta.title") };
+  return { title: (await shownInnovation(id))?.item.title ?? t("notFound.meta.title") };
 }
 
 function materialFormat(material: Material): string {
@@ -32,7 +45,7 @@ function materialFormat(material: Material): string {
 
 const sectionTitle = "text-[1.3rem] font-bold @3xl:text-[1.45rem]";
 
-function Header({ item, routeId }: { item: Innovation; routeId: string | undefined }) {
+function Header({ item, routeId, verified }: { item: Innovation; routeId: string | undefined; verified: boolean }) {
   return (
     <header className="grid gap-3">
       {routeId && (
@@ -50,12 +63,57 @@ function Header({ item, routeId }: { item: Innovation; routeId: string | undefin
         <p className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">
           {sourceBadge(item.source)}
         </p>
+        {verified && <p className="rounded-sm border-2 border-foreground px-2 text-[0.9rem] font-bold">{t("admin.verifiedBadge")}</p>}
       </div>
       <h1 id="naglowek-innowacji" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
         {item.title}
       </h1>
       {item.organisation && <p className="text-[1.1rem]">{item.organisation}</p>}
     </header>
+  );
+}
+
+/** Module IV, "Tester innowacji": the numbers of the innovation's evaluations and the way to add one. */
+function Evaluations({ item, summary }: { item: Innovation; summary: EvaluationSummary }) {
+  const empty = summary.ratings === 0 && summary.testers === 0 && summary.improvements === 0;
+  return (
+    <section aria-labelledby="opinie" className="grid gap-3">
+      <h2 id="opinie" className={sectionTitle}>
+        {t("tester.section.title")}
+      </h2>
+      {empty ? (
+        <p>{t("tester.section.empty")}</p>
+      ) : (
+        <dl className="grid gap-x-6 gap-y-2 @xl:grid-cols-[max-content_minmax(0,1fr)]">
+          {summary.average !== null && (
+            <>
+              <dt className="font-bold">{t("tester.section.average")}</dt>
+              <dd>
+                {t("tester.section.averageValue", {
+                  average: summary.average.toLocaleString("pl-PL", { maximumFractionDigits: 1 }),
+                  count: summary.ratings,
+                  unit: pluralPl(summary.ratings, {
+                    one: t("tester.section.unit.one"),
+                    few: t("tester.section.unit.few"),
+                    many: t("tester.section.unit.many"),
+                  }),
+                })}
+              </dd>
+            </>
+          )}
+          <dt className="font-bold">{t("tester.section.testers")}</dt>
+          <dd>{summary.testers}</dd>
+          <dt className="font-bold">{t("tester.section.improvements")}</dt>
+          <dd>{summary.improvements}</dd>
+        </dl>
+      )}
+      <p className="text-muted-foreground">{t("tester.section.note")}</p>
+      <div className="no-print">
+        <Link href={`/innowacja/${item.id}/testuj`} className={buttonVariants({ variant: "secondary" })}>
+          {t("tester.section.cta")}
+        </Link>
+      </div>
+    </section>
   );
 }
 
@@ -67,14 +125,16 @@ function Header({ item, routeId }: { item: Innovation; routeId: string | undefin
 export default async function InnovationPage({ params, searchParams }: PageProps<"/innovation/[id]">) {
   const { id } = await params;
   const query = await searchParams;
-  const item = getInnovation(id);
-  if (!item) notFound();
+  const shown = await shownInnovation(id);
+  if (!shown) notFound();
+  const { item, verified } = shown;
   const routeId = typeof query.droga === "string" && (await getRoute(query.droga)) ? query.droga : undefined;
+  const summary = await evaluationSummary(item.id);
 
   return (
     <article aria-labelledby="naglowek-innowacji" className="grid max-w-[48rem] gap-8">
       <FocusOnMount targetId="naglowek-innowacji" />
-      <Header item={item} routeId={routeId} />
+      <Header item={item} routeId={routeId} verified={verified} />
 
       <Notice title={t("s5.generated.title")}>
         <p>{item.summary}</p>
@@ -156,12 +216,17 @@ export default async function InnovationPage({ params, searchParams }: PageProps
         )}
       </section>
 
+      <Evaluations item={item} summary={summary} />
+
       <div className="no-print flex flex-wrap gap-3">
         <Link
           href={routeId ? `/kontakt?innowacja=${item.id}&droga=${routeId}` : `/kontakt?innowacja=${item.id}`}
           className={buttonVariants()}
         >
           {t("s2.card.contact")}
+        </Link>
+        <Link href={`/zapytaj?innowacja=${item.id}&temat=mentor`} className={buttonVariants({ variant: "secondary" })}>
+          {t("talk.askExpert")}
         </Link>
         <Link href={`/mapa?innowacja=${item.id}`} className={buttonVariants({ variant: "secondary" })}>
           {t("s5.whereNeeded")}

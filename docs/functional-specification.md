@@ -142,12 +142,12 @@ modules and where this specification answers them:
 
 | Module of the brief | What it asks | Where | Status |
 |---|---|---|---|
-| I. Matchmaking społeczny (obligatory) | A described problem finds similar cases and ready solutions | 7.2 to 7.4 | Built |
-| II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7 | Partly built: knowledge is shown on routes and innovation pages, not as a library |
+| I. Matchmaking społeczny (obligatory) | A described problem finds similar cases and ready solutions | 7.2 to 7.4, FR-3.9 | Built: proven solutions from the catalogue and similar cases from the needs bank and the idea cards |
+| II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7, FR-9.5, FR-9.6 | Partly built: knowledge on routes and innovation pages, kept live in the panel with films; the trends for the administrator; no library to browse |
 | III. Kreator pomysłów | An idea card (short description, essence, for whom, stage) at any time; an application generator during grant calls; the innovation canvas; an assistant that develops the idea | 7.13 | The idea card is built; the generator, the canvas and the assistant are not |
-| IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | | Not built |
-| V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | | Not built |
-| VI. Panel administratora | Quick editing, verification and publication of knowledge | 7.9 | ROADMAP (R.2) |
+| IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | 7.14 | Built |
+| V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | 7.15 | Built |
+| VI. Panel administratora | Quick editing, verification and publication of knowledge | 7.9 | Built (R.3) |
 | VII. Middleman Innowacji | An AI assistant that adapts an innovation into a service for the institution that asks | 7.4, 7.8 | Partly built: the route adapts the paths to the role and the gmina |
 
 The challenge also scores how fast the administrator learns of a new
@@ -258,11 +258,10 @@ reports it.
 
 ### 3.4 The concept the brief asks for (service model)
 
-**Status (decision R.2).** This service model is the
-proposed roadmap, not yet implemented. The hackathon build is the pilot
-for the end user: a need in, a route or a brief out. The roles, the ROPS
-console (S7) and the measures page are described here and on the slides
-as what ROPS would run next.
+**Status (decisions R.2 and R.3).** The roles below are the proposed
+roadmap. The panel they would work in is built (7.9, S7, decision R.3):
+the queues, the replies to authors, the live knowledge edits and the
+trends.
 
 The brief says "Stwórz koncepcję". The jury will weigh the concept as much
 as the software, so the concept is specified here and goes on the slides.
@@ -332,7 +331,7 @@ means in the build:
 | E3 | **A person in crisis gets a person.** Signs of danger to life or health, violence or abuse of a child lead to human help first, not to a list of innovations | **Osoba w kryzysie najpierw trafia do człowieka** | Screening outcome `redirected` (7.12); screen S10 with the verified helplines and the local OPS; a crisis banner on routes for community-level needs about such topics |
 | E4 | **No decisions about individuals.** The tool never assesses, scores or decides anything about an identifiable person; it is not case management and not an eligibility tool | **Żadnych zautomatyzowanych decyzji w indywidualnych przypadkach** | Rule R10; the AI Act reading in 12.6; individual cases are redirected |
 | E5 | **Privacy by design.** Only the data the task needs, only as long as needed, only with consent where the data is personal; personal data of third parties found in a text is removed before storage and before any prompt | **Uwzględnianie ochrony danych w fazie projektowania** | Redaction in the gate (7.12); FR-2.5, FR-6.6; retention defaults (12.6) |
-| E6 | **People in the loop.** Nothing reaches a real person, and no need is published, without a human at ROPS looking at it first | **Nadzór ze strony człowieka** | Pre-moderation of open needs (FR-5.6), relay of contact requests (FR-6.4), verification of readiness registrations (FR-6.5), the moderation tab (7.12, ROADMAP) |
+| E6 | **People in the loop.** Nothing reaches a real person, and no need is published, without a human at ROPS looking at it first | **Nadzór ze strony człowieka** | Pre-moderation of open needs (FR-5.6), relay of contact requests (FR-6.4), verification of readiness registrations (FR-6.5), the queues of the ROPS panel (7.9, FR-12.8) |
 | E7 | **Fairness.** A need from a small rural gmina or from a resident gets the same quality of route as one from a city hall; the map shows need, never blame; minority needs are not lost in clusters | **Sprawiedliwość i niedyskryminacja** | Fairness cases in the evaluation (13.1); the map's wording and limits (FR-7.4); clusters of one are kept (FR-5.4) |
 | E8 | **Honesty about the machine.** Generated text is labelled, sources are shown, limits are stated, and the tool says "nie wiemy" instead of guessing | **Przejrzystość** | Rules R4, R5; FR-4.6 "Czego nie wiemy"; FR-4.8; the "Jak to działa" and "Zasady" pages |
 | E9 | **Accessibility and plain language are part of ethics.** A tool for social inclusion that excludes people with disabilities or without jargon fails its purpose | **Dostępność i prosty język** | Section 12.2; section 11 |
@@ -347,14 +346,12 @@ Poland is a Council of Europe member.
 
 ## 4. Scope of the hackathon build
 
-**Status (decision R.2).** The ROPS console (J7, 7.9, S7,
-FR-12.8) and the features only it served (FR-5.4 clustering, FR-5.6 open
-needs, FR-5.7 status changes, FR-10.3 measures page, the CSV export) are
-ROADMAP: proposed, not implemented, and removed from the code. The build
-is the pilot for the end user: intake, the gate, the route, the needs
-bank with the brief, the map and the public forms. The store keeps the
-statuses, moderation fields and logs the console will need; nothing in
-the app reads them yet, and the tool sends nothing to anyone.
+**Status (decisions R.2 and R.3).** R.2 removed the first console; R.3
+builds a new ROPS panel (J7, 7.9, S7, FR-12.8) from the published
+modules: queues with decisions and statuses (FR-5.7), the CSV export,
+the dashboard and the trends (FR-10.3), replies to authors and live
+knowledge edits. Still ROADMAP: clustering (FR-5.4) and the open-needs
+page (FR-5.6). The tool sends nothing to anyone by e-mail.
 
 | Module | MUST (Sunday demo) | SHOULD (after the Saturday 20:00 checkpoint) | COULD | ROADMAP (slides only) |
 |---|---|---|---|---|
@@ -366,19 +363,22 @@ the app reads them yet, and the tool sends nothing to anyone.
 | 7.6 People layer | Innovator and implementer organisations from sources; advisor per category; contact request with consent | "Gotowość do działania" registration (people ready to act) | | Expert network with consented knowledge capture; "Zadania dla wolontariuszy szkolnych", a channel of moderated needs to school volunteer coordinators, delivered with DoBro and other volunteering platforms (14.1.1) |
 | 7.7 Map | Małopolska gminas, three indicators, implementations, need-vs-presence view for an innovation | Gmina panel with needs count and "connect with a peer gmina" | Powiat aggregation | Full observatory link |
 | 7.8 Paths | Table-driven legal and funding paths, selected by applicant type and cost band | Deadline awareness ("najbliższy nabór") | | Application text drafting |
-| 7.9 ROPS console | | | | Needs list with status and CSV export, statistics, advisor assignment, full back office (all ROADMAP by R.2) |
-| 7.10 Feedback and measures | "Czy to pomogło?" and event counters | | | Measures page (R.2) |
+| 7.9 ROPS panel (module VI) | Access code and session; queues of every stored entry with decisions, statuses and notes; replies to idea authors; live knowledge edits; trends; CSV export; the decision log | | | Implementation records from contacts; clustering; advisor assignment |
+| 7.10 Feedback and measures | "Czy to pomogło?", event counters, the panel's dashboard and trends | | | |
 | 7.11 Transparency | "Jak to działa", credits, licences, privacy note, accessibility statement, "Zasady" (principles and appeal path) | | | |
 | 7.13 Idea card (module III) | Idea card form; the gate before storage; the card's page with the similar innovations; Markdown download and print | | | Application generator per call; innovation canvas; idea assistant |
+| 7.14 Tester (module IV) | Rating, feedback, improvement proposal and test sign-up per innovation; the gate before storage; the numbers on the innovation's page | | | Test campaigns run by the innovators |
+| 7.15 Conversations and partnerships (module V) | Conversations with private links, ROPS's answers, mentors with their own links, "Moje rozmowy"; the partnership board after approval, answers through ROPS | | | E-mail notices of a new answer |
 | 7.12 Safety, moderation and fairness | Screening gate with its four outcomes; redaction of personal data; crisis screen with verified helplines; report link; screening log; fairness cases in the evaluation | Polish safety classifier as a second opinion; contact opt-out for organisations; abuse limits per e-mail | Appeal form | Moderation tab (R.2); ethics review board of the hub; quarterly fairness report |
 
 Explicitly out of scope for the hackathon: public user accounts, a native
 mobile app, integration with ROPS internal systems, regions other than
 Małopolska (the national base is ingested whole, but the map and the paths
-are Małopolska), an English interface, a free chat interface (the intake is
-a form with one optional clarification, not a conversation), automatic
-e-mail sending to real people (contact requests are stored; the console
-that would show them is ROADMAP, and nothing is sent), voice input.
+are Małopolska), an English interface, a free chat with the model (the
+intake is a form with one optional clarification; the conversations of
+7.15 are between people), automatic
+e-mail sending to real people (contact requests are stored and ROPS
+relays them from the panel; nothing is sent), voice input.
 
 ## 5. Users
 
@@ -394,7 +394,7 @@ partner and its grantees think in terms of.
 | U2 | Pracownik socjalny, GOPS or CUS in a rural gmina | Sees a recurring need, has no time to research, must convince the wójt | "Coraz więcej samotnych seniorów w gminie, nie ma domu dziennego pobytu, sąsiedzi zgłaszają, że ludzie nie wychodzą z domu" | Two or three proven options with what they cost and require, a person to call, a path the wójt can sign | Reads the route in under a minute and finds the next step |
 | U3 | Lider organizacji społecznej (small-town NGO) | Wants a proven method instead of inventing one; wants partners and money | "Młodzież po 15. roku życia nie ma gdzie się spotykać, rośnie problem z alkoholem na przystanku" | Methods that worked elsewhere, an implementer to talk to, the small-grant path | Finds a method, a peer and a funding path with a date |
 | U4 | Urzędnik gminy, radny, sołtys (decision maker) | Needs cost, legal vehicle, examples nearby | "Chcemy uruchomić wsparcie dla opiekunów osób z demencją" | Cost band, legal vehicle, gminas nearby that did it | Sees "who else did it" and the legal path |
-| U5 | Pracownik ROPS: opiekun kategorii, koordynator banku potrzeb | Reviews needs, prepares calls, targets dissemination | Not a problem; uses the map today and the console of the roadmap | Need-vs-presence map; needs list, clusters and exports (ROADMAP) | Shows the map of need |
+| U5 | Pracownik ROPS: opiekun kategorii, koordynator banku potrzeb | Reviews needs, prepares calls, targets dissemination | Not a problem; uses the map and the ROPS panel | Need-vs-presence map; the needs list, the trends and the exports of the panel; clusters (ROADMAP) | Shows the map of need |
 | U6 | Innowator | Wants the innovation to reach places; answers contact requests | Not a problem; ROADMAP claim flow | Visibility of where it is needed | On the slides only |
 | U7 | Osoba w kryzysie, or someone writing about one identifiable person | Lands on the tool because it was the first thing found | "Nie daję już rady, nie chcę żyć" or "Sąsiadka bije dziecko, co robić" | Human help now: the helplines, 112, the local OPS; no list, no form | Sees S10 within two seconds; nothing is stored |
 | X | Osoba nadużywająca narzędzia (an adversary) | Wants to spam, harvest contacts, push a discriminatory proposal, or make the tool say something harmful | "Jak pozbyć się Romów z naszej wsi", pasted ads, injected instructions | Nothing useful | Declined or ignored without damage; limits hold; nothing reaches a person |
@@ -459,7 +459,7 @@ the nearest matches and their differences; no invented facts.
    with the need and the solution, and consent to pass these to ROPS and to
    the chosen organisation.
 3. The request is stored with status "nowe" for ROPS to relay; nothing
-   is sent. The console that lists it is ROADMAP (R.2).
+   is sent. ROPS relays it from the panel (7.9).
 
 Acceptance: the request is stored;
 the consent text is the lawyer's wording; no personal data appears in any
@@ -498,14 +498,16 @@ and the ranking is explainable from the indicator values shown.
 3. Registered readiness appears in the "Ludzie" block of later routes for
    that gmina and topic, as a count and, with consent, as a name.
 
-### J7 ROPS console (ROADMAP, decision R.2)
+### J7 ROPS panel (built, decision R.3)
 
-1. A ROPS user opens `/rops` with a shared token.
-2. Needs list with filters (gmina, category, status), a status change
-   (nowa, w analizie, dopasowano później, temat naboru, zamknięta), a CSV
-   export, and the contact requests list.
-3. SHOULD: a statistics card (routes, contact requests, needs by category,
-   top requested innovations) that feeds the pitch.
+1. A ROPS user opens `/rops` with their name and the shared code.
+2. The dashboard shows what waits in each queue and what is new since
+   the last visit.
+3. In a queue they approve or reject with a reason, set a status, add a
+   note; on an idea card they write the reply its author reads.
+4. In "Wiedza" they mark an innovation verified, add a film, or edit a
+   knowledge item; the routes show it at once.
+5. "Trendy" shows where the needs are; the exports go to Excel.
 
 ### J8 Organisation takes up an open need (SHOULD)
 
@@ -676,9 +678,16 @@ first far more often than the multilingual ones.
 | FR-3.3 | MUST | Thresholds: `route` when the best fit is at least 70; `partial` when the best fit is 45 to 69; `none` below 45. The values are constants in one file, calibrated on the test problems. | The ten test problems produce the expected mode |
 | FR-3.4 | MUST | Grounding validation on the server: unknown ids are dropped and logged; a reason whose quote is not found in the record (normalised, fuzzy ratio at least 0.8) is dropped; a candidate with no remaining reason is dropped. | Unit tests with a fabricated id and a fabricated quote |
 | FR-3.5 | MUST | Replay cache: results are cached by a hash of (problem text, place, role, data version, prompt version). The eval harness and the demo path hit the cache; a "Policz ponownie" action bypasses it. | The demo path runs without a live model call if the provider is down |
-| FR-3.6 | MUST | Observability: per stage, tokens in and out, cache reads, latency, provider, dropped ids and reasons, written to the request log and to the counters (7.10). | Written to the request log; the console statistics are ROADMAP |
+| FR-3.6 | MUST | Observability: per stage, tokens in and out, cache reads, latency, provider, dropped ids and reasons, written to the request log and to the counters (7.10). | Written to the request log; the panel's dashboard shows the counters |
 | FR-3.7 | MUST | Embedding retrieval (decided): `scripts/build-index-vectors.py` embeds every built record (title, summary, problem, mechanism, keywords) with PolDense-400M into `data/built/index-vectors.json` (git-ignored, stamped with the model id and the data version); at request time the embedding service (`scripts/embedding-service.py`, sentence-transformers in `.venv`) embeds the need with the prefix `[query]: ` and the forty nearest cards by cosine go to stage 1; a deterministic guard may drop cards whose target group contradicts the intake. `EMBEDDING_MODEL` selects PolDense-150M as the fallback; the model that built the vectors must serve the requests. | On the ten test problems the expected innovation is among the forty; on the self-retrieval probe the right record ranks first for 93 % of the catalogue intros and 92 % of the original problem texts (model-evaluation.md section 7) |
 | FR-3.8 | COULD | Feedback-aware re-ranking: a solution marked "nie pomaga" three times for the same target group loses 10 points. | |
+
+Similar cases (module I of the brief, "wyszukuje podobne przypadki"),
+added after the brief was published:
+
+| Id | Priority | Requirement | Acceptance |
+|---|---|---|---|
+| FR-3.9 | MUST | Every route of mode route, partial or none shows "Podobne przypadki": the needs of the bank and the idea cards (7.13) close to the route's need, by the retriever's word matching (FR-3.7 fallback) with at least two shared words and a quarter of the need's words, a shared target group ranking higher; at most three. A need shows the gate's neutral summary, never the author's words, with its gmina, date, status (FR-5.7) and the innovations it was matched with; an idea its name, description and stage, with "Poproś ROPS o kontakt z autorem pomysłu" (7.15). Shown only when the author consented to publication and ROPS approved it (E6); the others are only counted. The need saved from the same route is left out. Computed when the route is read, so newer cases reach older routes; no model call. | A need approved in the panel appears on a matching route at once; an unapproved one only in the count |
 
 ### 7.4 Route composer (owner: Developer 1; text rules by Analyst 1)
 
@@ -704,7 +713,7 @@ first far more often than the multilingual ones.
 | FR-5.4 | ROADMAP | Clustering (R.2): the model groups open needs by similarity of their summaries into named clusters shown in the console. | Clusters visible for the seeded needs |
 | FR-5.5 | MUST | The brief ("Fiszka potrzeby dla inkubatora") has these sections in this order: Tytuł roboczy; Problem; Kogo dotyczy i skala (target group, indicators of the gmina with dataset and year); Co już istnieje (nearest matches, why insufficient); Luka; Kierunek rozwiązania (marked as hypothesis); Potencjalni partnerzy (implementer types and organisations nearby); Możliwe ścieżki (the incubator call, the small grant, the local initiative, the ROPS advice path); Źródła; footer with generation date and label. The section order is aligned with the application form of Inkubator Włączenia Społecznego 2.0 (8.5) so that the brief can be pasted into it, and the "Co już istnieje" section answers that form's own question "Czy podobne rozwiązania są stosowane w Polsce albo na świecie?". | Rendered as a page and as Markdown |
 | FR-5.6 | ROADMAP | Open-needs page (R.2): anonymised needs (gmina, category, summary, date) published only after a person at ROPS approved them in the moderation tab (pre-moderation, never automatic; principle E6), with "Chcemy pomóc" creating a contact request tied to the need. | Visible for seeded needs with consent and approval; an unapproved need is not served by the API |
-| FR-5.7 | MUST | Statuses: nowa, w analizie, dopasowano później, temat naboru, zamknięta; stored with the need and changed in the console of the roadmap. | Stored with every need |
+| FR-5.7 | MUST | Statuses: nowa, w analizie, dopasowano później, temat naboru, zamknięta; stored with the need and changed in the ROPS panel (7.9). | Stored with every need |
 
 ### 7.6 People layer (owner: Developer 2; consent texts by the lawyer)
 
@@ -713,8 +722,8 @@ first far more often than the multilingual ones.
 | FR-6.1 | MUST | Organisations (schema 8.6) come from the source entries: innovator and implementer organisations with their public channels (website, general e-mail, phone as published). | No channel not present in the source |
 | FR-6.2 | MUST | Advisors table: one row per target-group category with name, role and the department's public e-mail and phone from rops.krakow.pl; names appear only if published there. | Every category has an advisor row |
 | FR-6.3 | MUST | Implementations (schema 8.6): innovation, gmina, organisation, year, status, source. Seeded from the place of origin of each innovation and from published implementations; demo seeds, used only if fewer than ten innovations have an implementation, are labelled "dane demonstracyjne" in the interface. | The map shows at least ten innovations with implementations |
-| FR-6.4 | MUST | Contact request: form (name, organisation, e-mail, message prefilled, consent); the message is screened by the gate for abuse and solicitation (7.12); stored for a person at ROPS to relay (the console that lists them is ROADMAP, R.2); at most five requests per e-mail address and per IP per day; an organisation may opt out of being contacted (`contact_opt_out`, kept by ROPS); no e-mail is sent in the demo. | Stored; the sixth request in a day is refused politely; an opted-out organisation shows no button |
-| FR-6.5 | SHOULD | Readiness registry ("Chcę pomóc"): name or organisation, gmina, topics, channel, consent, retention; shown in routes as a count at once and as a name only after ROPS verified the registration (the moderation tab is ROADMAP; in the build only the seeded entries are verified) and the person consented; for topics that concern children or dependent adults only organisations are ever named, never individuals. Relay, never disclosure: a person who needs help never receives a volunteer's contact from the tool; the advisor or a partner organisation relays after its own check. ROADMAP for a real deployment: a registration is not a match; first talk, trial assignment, written agreement with a named responsible person, a criminal-record extract and the check of the register of sexual offenders whenever children or dependent adults are involved; volunteering standards (a weekly cap on hours, induction, insurance by the organisation, a certificate) as the checklist for organisations that take up a need. | Seeded with two consented and verified team entries; an unverified registration appears only in the count; no route ever shows a private channel |
+| FR-6.4 | MUST | Contact request: form (name, organisation, e-mail, message prefilled, consent); the message is screened by the gate for abuse and solicitation (7.12); stored for a person at ROPS to relay from the panel (7.9); at most five requests per e-mail address and per IP per day; an organisation may opt out of being contacted (`contact_opt_out`, kept by ROPS); no e-mail is sent in the demo. | Stored; the sixth request in a day is refused politely; an opted-out organisation shows no button |
+| FR-6.5 | SHOULD | Readiness registry ("Chcę pomóc"): name or organisation, gmina, topics, channel, consent, retention; shown in routes as a count at once and as a name only after ROPS verified the registration in the panel (7.9) and the person consented; for topics that concern children or dependent adults only organisations are ever named, never individuals. Relay, never disclosure: a person who needs help never receives a volunteer's contact from the tool; the advisor or a partner organisation relays after its own check. ROADMAP for a real deployment: a registration is not a match; first talk, trial assignment, written agreement with a named responsible person, a criminal-record extract and the check of the register of sexual offenders whenever children or dependent adults are involved; volunteering standards (a weekly cap on hours, induction, insurance by the organisation, a certificate) as the checklist for organisations that take up a need. | Seeded with two consented and verified team entries; an unverified registration appears only in the count; no route ever shows a private channel |
 | FR-6.6 | MUST | Data minimisation: contact requests and registrations never enter a model prompt; the people block is assembled by the server. | Code review |
 
 ### 7.7 Map (owner: Developer 2; data by Analyst 2)
@@ -738,22 +747,34 @@ first far more often than the multilingual ones.
 | FR-8.4 | SHOULD | Deadline awareness: "najbliższy termin" computed from the timing rule relative to today, always with "sprawdź u źródła". | Shown when a rule exists |
 | FR-8.5 | MUST | The model never sees amounts or deadlines as free text to rewrite; the path block is templated. | Code review |
 
-### 7.9 ROPS console (ROADMAP, decision R.2; removed from the build)
+### 7.9 ROPS panel (module VI of the brief; built by decision R.3, which reversed R.2 for the panel)
+
+The panel at `/rops` is where a person at ROPS decides what the tool
+gathered, answers the authors and keeps the knowledge of the routes up
+to date. Pages are server components behind one door; every change is a
+server action that checks the session itself, logs what it did with the
+reviewer's name (FR-12.8) and returns to its page with "Zapisano". The
+code is `src/app/admin/`, `src/server/admin/` and
+`src/server/knowledge/overlay.ts`.
 
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
-| FR-9.1 | ROADMAP | `/rops` is protected by a shared token from the environment (`ROPS_TOKEN`), entered once and kept in a cookie; no accounts. Without the variable a production server keeps the console locked; only development accepts the prototype's code. | Wrong token gives a Polish error at the field; a production server without `ROPS_TOKEN` shows the console as locked |
-| FR-9.2 | ROADMAP | Lists: needs (filters gmina, category, status; status change; note), contact requests, readiness registrations; CSV export in UTF-8 with BOM and semicolon separator so Polish Excel opens it. | Export opens in Excel with Polish characters intact |
-| FR-9.3 | ROADMAP | Statistics card: routes by mode, contact requests, needs by category and gmina, the ten most recommended innovations, median latency. | Numbers match the counters |
-| FR-9.4 | ROADMAP | "Zapisz wdrożenie" from a contact request creates an implementation record. | |
+| FR-9.1 | MUST | `/rops` asks for the reviewer's name and the shared code of `ROPS_TOKEN`; the session cookie holds a keyed hash of the code (12 hours), so a changed code ends every session; a production server without the variable keeps the panel locked; only development accepts the prototype's code `rops-demo`. Never indexed. | A wrong code gives a Polish error; production without `ROPS_TOKEN` shows the panel as locked |
+| FR-9.2 | MUST | Queues with decisions: idea cards (7.13), evaluations and test sign-ups (7.14), needs (filters status and category; publication, status of FR-5.7 and a note), contact requests (relay or close, status, note), readiness registrations (verify), content reports, and the declined texts. A rejection takes a reason from a fixed list and a note. | Every decision appears in the log with the reviewer's name |
+| FR-9.3 | MUST | Dashboard: per queue what waits and what is new since the reviewer's last visit ("Oznacz wszystko jako przejrzane" moves it), the key numbers, the latest decisions and the CSV exports (needs, ideas, evaluations, contacts, readiness) in UTF-8 with BOM and semicolons, a cell that starts like a formula disarmed. | The export opens in Polish Excel; it answers 401 without a session |
+| FR-9.4 | MUST | The reply path of section 6 of the brief: an idea card gets a status (nowy, w analizie, przyjęty, zamknięty) and a reply its author reads on the card's page, with the reviewer and the date; an evaluation is marked as passed on to the innovators; a rejected evaluation leaves the innovation's numbers. | The reply shows on `/pomysl/{id}` at once |
+| FR-9.5 | MUST | Trends (module II, for the administrator only): needs by target group, powiat and week, ideas by group and stage, routes by result, the most proposed innovations and the ones with evaluations and testers, as tables with bars. | |
+| FR-9.6 | MUST | Knowledge kept live (modules II and VI): an innovation is marked verified ("Sprawdzone przez ROPS" on its page and on routes) or hidden (gone from routes and its page), its summary corrected, a material such as a film added or removed; a knowledge item of `knowledge.yaml` edited or hidden, or a new one added for target groups or for every route. Applied when a route or an innovation is read, so it shows at once and on routes made before; the catalogue, the curated files and the stored routes stay unchanged. | A film added to an innovation shows on an existing route |
+| FR-9.8 | MUST | Conversations (7.15): the list, those waiting for ROPS first and counted on the dashboard; the conversation with the author's contact for ROPS, the answer signed with the reviewer's name, the status, the mentor's invitation and a new link for an author who lost theirs, each link shown once as a full address; the mentors (name, field, groups, active); the partnership posts with their decision and the conversations of those who answered. | A mentor invited in the panel answers through their link |
+| FR-9.7 | ROADMAP | "Zapisz wdrożenie" from a contact request creates an implementation record; clustering of needs (FR-5.4); a hidden innovation also left out of retrieval, not only of the route. | |
 
 ### 7.10 Feedback and measures (owner: Developer 1)
 
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
 | FR-10.1 | MUST | On every route: "Czy ta droga pomaga?" with tak, częściowo, nie and an optional comment, stored with the route id; one vote per route per browser. | Stored and counted |
-| FR-10.2 | MUST | Event counters without cookies: route_created (with mode), contact_requested, need_saved, brief_generated, readiness_registered, map_viewed, feedback_given. No IP addresses stored beyond the rate limiter's memory. | Counted in the store; shown by the console of the roadmap |
-| FR-10.3 | ROADMAP | `/rops/miary` renders the counters as the numbers for the pitch (R.2). | |
+| FR-10.2 | MUST | Event counters without cookies: route_created (with mode), contact_requested, need_saved, brief_generated, readiness_registered, map_viewed, feedback_given. No IP addresses stored beyond the rate limiter's memory. | Counted in the store; shown on the panel's dashboard |
+| FR-10.3 | MUST | The panel's dashboard and trends (FR-9.3, FR-9.5) show the counts for ROPS and the pitch. | |
 
 ### 7.11 Transparency and legal pages (owner: the lawyer; Analyst 1 for the text)
 
@@ -771,7 +792,9 @@ first far more often than the multilingual ones.
 
 The gate runs before matching on every text a user submits: the need
 (7.2), a saved need (7.5), a contact request message (7.6), a readiness
-registration, a "Chcemy pomóc" response (7.5) and an idea card (7.13). It combines
+registration, a "Chcemy pomóc" response (7.5), an idea card (7.13), an
+evaluation of an innovation (7.14), and the messages, posts and answers
+of 7.15 (with the rules of FR-12.16). It combines
 deterministic checks with one fast model call and produces one of the
 outcomes `need`, `redirected`, `declined`, `off_topic`. Principle E3 sets
 its bias: when in doubt between routing and redirecting, the tool shows
@@ -791,13 +814,14 @@ tool's own text.
 | FR-12.5 | MUST | Screen S10 (`redirected`): the numbers before any other content, grouped as "Numery alarmowe" (112) and "Pomoc i rozmowa" (the verified helplines of 12.6 with honest hours), one sentence of care, two entry paths that only reorder the list ("Chodzi o mnie", "Martwię się o kogoś"), the OPS or CUS of the chosen gmina when a place was given (from the RJPS export, SHOULD; otherwise "ośrodek pomocy społecznej w Twojej gminie" with a search link), one line that the tool does not handle individual cases, the return link "Chcę opisać potrzebę społeczności, nie nagły przypadek", and a quick-exit control: a visible "Wyjdź" button and Escape pressed twice leave to a neutral page, on S10 and on every route whose sensitive topics include violence or abuse. No form, no storage beyond an anonymous counter. COULD: an A2-level Polish version of the texts. | Renders within 2 s; axe clean; the quick exit works by keyboard; text native-approved |
 | FR-12.6 | MUST | Screen S11 (`declined` and `off_topic`): the lawyer's texts; for `declined` the principle named (E2), a reference code, the ROPS contact and the appeal path; for `off_topic` the purpose of the tool and the example buttons. Never a moralising tone, never a repetition of the offending text. | Texts in the catalogue, native-approved |
 | FR-12.7 | MUST | Screening log: every outcome writes an event with category, confidence, outcome, sensitive topics, redaction count, timestamp and a hash of the text; `declined` and `spam` texts are kept for seven days for review, `redirected` texts are never kept, `need` texts follow the route's retention. No identity of the requester is recorded. | Entries in the store; the moderation tab is ROADMAP |
-| FR-12.8 | ROADMAP | Moderation tab in the ROPS console (R.2): queues for needs awaiting publication, contact requests awaiting relay, readiness registrations awaiting verification, content reports, and the declined-texts review; actions approve, reject with a reason from a fixed list plus a note, and "zweryfikowano"; every action logged with the reviewer's token name. | J7 extended; the CSV export includes the moderation columns |
+| FR-12.8 | MUST | Moderation in the ROPS panel (7.9, R.3): queues for needs awaiting publication, contact requests awaiting relay, readiness registrations awaiting verification, content reports, and the declined-texts review; actions approve, reject with a reason from a fixed list plus a note, and "zweryfikowano"; every action logged with the reviewer's token name. | J7 extended; the CSV export includes the moderation columns |
 | FR-12.9 | MUST | Report link "Zgłoś problem z tą treścią" on every route, brief, innovation page and open need: a two-field form (reason from a list: nieprawdziwe, obraźliwe, dane osobowe, inne; comment) stored as a content report for ROPS. | The report is stored |
 | FR-12.10 | MUST | Safe messaging in generated text about suicide, self-harm, violence, abuse and addiction: no methods, no sensational or blaming language, the helplines named where the topic appears, the agency of the people concerned respected; the rules live in `compose.md` and `brief.md`, the banned-words list (`data/curated/banned-words-pl.yaml`) checks every model text the reader sees, the need summary that titles the route included, and replaces a text with a hit by its template; it never checks the user's text, and the sensitive test cases are reviewed by a person. | The three sensitive cases pass human review |
 | FR-12.11 | MUST | Fairness checks in the evaluation harness (13.1, 13.2): the same need with the roles mieszkaniec and urząd gminy yields the same solutions (paths may differ); the same need for a rural and an urban gmina yields solutions of comparable fit; needs about minority groups (cudzoziemcy, bezdomność) are not routed to lower-fit solutions than majority topics at similar catalogue coverage; results reported per target group. | The fairness report is part of every evaluation run |
 | FR-12.12 | MUST | A model refusal after the gate (the provider declines a request that passed screening) is retried through the provider's fallback once; a refusal that survives becomes the mild `declined` outcome ("Nie możemy automatycznie przygotować drogi dla tego opisu") with the ROPS contact, logged for review, never a technical error. | Simulated in a unit test |
 | FR-12.13 | SHOULD | Second opinion from a local Polish safety classifier (Bielik-Guard-0.5B, Apache 2.0) on the app server; a disagreement with the model on `harm` sends the case to the moderation queue instead of an automatic decline. | Toggle by environment variable, off by default |
 | FR-12.14 | SHOULD | Abuse limits per identity: at most five contact requests and two readiness registrations per e-mail address per day; honeypot fields on every public form; identical texts from one IP within an hour merged: an identical route request (same text, place, role and target groups) opens the route the first one got, without the gate or a model call, and "Policz ponownie" is never a repeat; a kill switch `PUBLIC_WRITES=false` that makes every public form read-only if the tool is flooded during the event. | Tested |
+| FR-12.16 | MUST | Texts of an ongoing conversation (kind `message`) and partnership posts and answers to them (kind `partnership`), 7.15: a crisis (the lexicon, or the model at 0.6 or more) is redirected and harm at the decline threshold is declined, as everywhere; `off_topic` and spam never turn them away, and repeats and links are not counted, because a thank-you, a date or a mentor's link belong in a conversation and ROPS reads every conversation and approves every post; an individual case is not redirected, as a person at ROPS reads it. The first message of a question or a mentor request is screened as a contact request. Decision E.3. | Unit tests of the rules; the live model's off-topic reading of a mentor's advice no longer blocks it |
 | FR-12.15 | COULD | Appeal form on S11 that files a content report carrying the reference code. | |
 
 ### 7.13 Idea card (module III of the brief; added after the brief was published)
@@ -813,6 +837,38 @@ are close to it. The shape is `Idea` in `src/lib/contracts.ts`.
 | FR-13.3 | MUST | The card's page `/pomysl/{id}`: the card, its status, the similar innovations with "co jest podobne" and "czym się różni" taken from the matcher's grounded assessment (FR-5.3), each linked to its innovation; computed once on the first visit and stored; the canned engine takes the example route its keywords pick. The author's e-mail is never shown. | Similar innovations appear without a second model run on a reload |
 | FR-13.4 | MUST | The card downloads as Markdown and prints; the next steps link to a conversation with ROPS. | |
 | FR-13.5 | ROADMAP | The application generator per grant call, the innovation canvas of HackYeah and an idea assistant that develops the idea and draws it. | |
+
+### 7.14 Tester (module IV of the brief; added after the brief was published)
+
+Every innovation can be rated, commented on, improved and tested by the
+people who use or run it. The shape is `Evaluation` in
+`src/lib/contracts.ts`; the texts reach the innovators only through ROPS
+(principle E6).
+
+| Id | Priority | Requirement | Acceptance |
+|---|---|---|---|
+| FR-14.1 | MUST | Form `/innowacja/{id}/testuj`: a rating from 1 to 5 or none, how the author knows the solution (using it, implementing it, only the description), feedback, an improvement proposal, a sign-up for tests (as a user or as an organisation that runs a trial, with a gmina); at least one of the four; a sign-up needs a name and an e-mail address, an opinion may stay anonymous; consent to store. | Two errors on an empty form, four with the sign-up ticked |
+| FR-14.2 | MUST | POST `/api/innovations/{id}/evaluations` screens the feedback and the proposal together with the gate (kind `evaluation`), the name for harm only; at most five evaluations of one innovation per e-mail address and per client address a day; honeypot; 404 for an unknown innovation. | A crisis text stores nothing; a rating of 7 is refused |
+| FR-14.3 | MUST | The innovation's page shows "Opinie i testy": the average rating with the number of ratings (Polish plural and decimal comma), the test sign-ups, the improvement proposals, never a text or a contact; and the link to the form. | "5 na 5 (1 ocena)" after one rating |
+| FR-14.4 | ROADMAP | Test campaigns the innovators open, with dates and places, and the results published with consent. | |
+
+### 7.15 Conversations and partnerships (module V of the brief; added after the brief was published)
+
+Direct dialogue without accounts and without e-mail (decision R.4).
+The shapes are `Thread`, `Mentor` and `PartnershipPost` in
+`src/lib/contracts.ts`; the code is `src/server/threads/`,
+`src/components/talk/` and the pages under `/zapytaj`, `/rozmowa`,
+`/rozmowy` and `/partnerstwa`.
+
+| Id | Priority | Requirement | Acceptance |
+|---|---|---|---|
+| FR-15.1 | MUST | `/zapytaj`: the kind (a question to ROPS, a mentor's support, a partnership), a subject, the message, the author's name, an organisation, the sector, the gmina and an e-mail address for ROPS alone (all optional but the name), consent. Opened from an innovation ("Zapytaj eksperta o to rozwiązanie"), an idea card or a partnership post, the conversation refers to it. | The innovation is named above the form |
+| FR-15.2 | MUST | After sending: the private link `/rozmowa/{id}?klucz=...`, a key of 24 random bytes, with "Kopiuj link"; the browser remembers it for "Moje rozmowy" (`/rozmowy`, localStorage, the author's links only). Only the sha256 of each key is stored. | A copy of the store opens no conversation |
+| FR-15.3 | MUST | The conversation page shows the messages of the author, of ROPS (with the reviewer's name) and of the mentor, the status and what it refers to, and takes the next message; a wrong key and an unknown conversation get the same 404; the page is never indexed and its address never sent on (no referrer). A message of the author reopens a closed conversation. | A wrong key shows "not found" |
+| FR-15.4 | MUST | A mentor invited in the panel (FR-9.8) opens the conversation with a key of their own and writes under their name; a new invitation revokes the old link. A mentor has no access to the panel. | |
+| FR-15.5 | MUST | The partnership board `/partnerstwa`: posts ROPS approved ("Szukam partnera" or "Oferuję współpracę", sector, sectors sought, gmina, groups, the organisation's name), a filter by sector, "Chcę współpracować" opening a conversation that refers to the post; no contact is shown. `/partnerstwa/nowe` adds a post with the author's own conversation, where ROPS relays the answers. | An unapproved post is not on the board |
+| FR-15.6 | MUST | Every text through the gate (FR-12.16); at most five new conversations or three posts per e-mail address and per client address a day, 30 messages per conversation a day; honeypots. | |
+| FR-15.7 | ROADMAP | An e-mail or text message when an answer arrives, with the consent the form would ask for; cross-sector matching that suggests partners for a post. | |
 
 ## 8. Data model
 
@@ -1459,11 +1515,15 @@ files.
 | POST `/api/readiness` | Readiness registration (J6) | | 201 |
 | GET `/api/health` | Liveness | | `{ok, data_version, provider, model}` |
 | POST `/api/ideas` | Idea card (7.13) | `{kind, title, description, essence, for_whom, target_groups?, stage, place_terc?, display_name, is_organisation?, email, consent_store, consent_publish?}` | 201 `{id, redactions}`; the gate's outcomes as for a need |
+| POST `/api/innovations/{id}/evaluations` | Evaluation of an innovation (7.14) | `{rating?, experience?, feedback?, improvement?, test_signup?, tester_role?, place_terc?, display_name?, email?, consent_store}` | 201 `{id, redactions}`; 404 for an unknown innovation |
+| POST `/api/threads` | Start a conversation (7.15) | `{topic, subject, message, display_name, organisation?, sector?, place_terc?, email?, ref_type?, ref_id?, consent_store}` | 201 `{id, key, path, redactions}` |
+| POST `/api/threads/{id}/messages` | A message of the author or the mentor | `{key, text}` | 201 `{redactions}`; 404 for a wrong key or an unknown conversation |
+| POST `/api/partnerships` | A partnership post with its author's conversation | `{kind, title, description, sector, seeking?, target_groups?, place_terc?, display_name, organisation?, email?, consent_store}` | 201 `{id, path}` |
 | POST `/api/ideas/{id}/similar` | The card's similar innovations, computed once and stored | | 200 `{similar}`; 503 when the model failed |
 
-The ROPS console, its pages and its two endpoints (the CSV export and
-the statistics) were removed from the build (R.2): the console is
-ROADMAP.
+The panel of 7.9 works through server actions behind its session; its
+one endpoint is `GET /api/admin/export/{kind}` (needs, ideas,
+evaluations, contacts, readiness), CSV as FR-9.3, 401 without a session.
 
 Streaming (SHOULD, FR-4.9): `GET /api/routes/{id}/events` as server-sent
 events with `stage1`, `stage2`, `route` and `error` events; the POST then
@@ -1606,6 +1666,12 @@ change to a prompt.
   src/app/api/              route handlers (9.2)
   src/server/               every server module: gate/ (the screening gate, 7.12), match/ (retrieval, shortlist, assess, grounding), route/ (the composer), needs/ (needs and briefs), db/ (the store), eval/ (the evaluation harness), pipeline.ts, route-service.ts (the engines and the repeat check), route-cache.ts, map.ts (S4), rate-limit.ts, validate.ts, ephemeral.ts, retention.ts
   src/server/ideas/         the idea card of 7.13: its similar innovations and its Markdown
+  src/server/evaluations/   the tester of 7.14: the numbers an innovation's page shows
+  src/server/threads/       the conversations of 7.15: private keys and their hashes, message screening
+  src/components/talk/      the conversation and partnership forms, the private link, "Moje rozmowy"
+  src/app/admin/            the ROPS panel of 7.9 at /rops, with its server actions (actions.ts)
+  src/server/admin/         the panel's door (auth.ts), queues, trends and CSV (data.ts), labels
+  src/server/knowledge/     the panel's knowledge applied over routes and innovations (overlay.ts)
   src/lib/contracts.ts      the one file of the shapes the server and the screens share: the catalogue, the fixed contacts, the map data, the paths, the stored records, the route (8.4), the brief (8.5) and the boundaries between the pipeline modules
   src/lib/llm/              provider interface, the two providers, the chain and the replay recording
   src/lib/i18n/             message catalogue loader (Polish only)
@@ -1804,13 +1870,19 @@ the partner allows).
   możesz wkleić do formularza aplikacyjnego inkubatora" with the link to
   the incubator page.
 
-### S7 ROPS console (`/rops`, ROADMAP, decision R.2)
+### S7 ROPS panel (`/rops` and its sections, decision R.3)
 
-- Token screen ("Wpisz kod dostępu"); then tabs Moderacja (the queues of
-  FR-12.8, first because it is the daily job), Potrzeby, Prośby o
-  kontakt, Gotowość do działania, Miary (SHOULD).
-- Tables with filters (gmina, kategoria, status), a status select per
-  row, a note field, "Eksportuj CSV". Plain, dense, keyboard operable.
+- The door: the reviewer's name and the code; a locked notice when the
+  server has no code.
+- Every page: who is signed in and "Wyloguj", the sections (Pulpit,
+  Rozmowy, Partnerstwa, Mentorzy, Pomysły, Opinie i testy, Potrzeby,
+  Prośby o kontakt, Gotowość do działania, Zgłoszenia i odmowy, Trendy,
+  Wiedza), the heading, a
+  "Zapisano" status after an action.
+- Queues as cards, the newest first, each with its moderation state and
+  the approve and reject forms (reason list and note); the idea card and
+  the innovation each have their own page. Plain, dense, keyboard
+  operable, and every form works without JavaScript.
 
 ### S8 Information pages
 
@@ -1877,6 +1949,13 @@ tools used, the prior work and the libraries.
   removed; how to report content and how to appeal; who at ROPS reviews
   what and how often; the date of the last review of this page.
 
+### S2 addition: "Podobne przypadki" (FR-3.9)
+
+- After the solutions, before the needs bank: the heading, one line on
+  what the cases are, the cases as cards (kind, gmina, date; the
+  summary or the idea's name; the status or the stage; the matched
+  innovations), and the count of the cases not shown.
+
 ### S13 Idea card (`/zglos-pomysl`, `/pomysl/{id}`)
 
 - The form of FR-13.1 as one page, prototype notice on top; after the
@@ -1885,6 +1964,32 @@ tools used, the prior work and the libraries.
   and author; "Status i odpowiedź ROPS"; the description, the essence
   and for whom; "Podobne sprawdzone rozwiązania", computed on the first
   visit; "Drukuj" and "Pobierz"; "Co dalej".
+
+### S14 Tester (`/innowacja/{id}/testuj`, and "Opinie i testy" on S5)
+
+- The form of FR-14.1 as one page, with "Wróć do opisu rozwiązania"; the
+  sign-up's role and gmina appear when the box is ticked.
+- On S5, after the people block: the numbers of FR-14.3 and "Oceń albo
+  zgłoś się do testów"; "Nikt jeszcze nie ocenił" before the first.
+
+### S15 Conversations (`/zapytaj`, `/rozmowa/{id}`, `/rozmowy`)
+
+- `/zapytaj`: "Jak to działa" (no account, a private link), the
+  reference when there is one, the form of FR-15.1; after sending, the
+  private link with "Kopiuj link" and "Otwórz rozmowę".
+- `/rozmowa/{id}`: the kind as the eyebrow, the subject, the status, the
+  mentor; "To jest Twoja prywatna rozmowa" or, for the mentor, "Piszesz
+  jako mentor"; the messages oldest first, ROPS's and the mentor's
+  marked apart from the author's; "Czekamy na odpowiedź ROPS" while the
+  last word is not ROPS's; the reply form.
+- `/rozmowy`: the remembered conversations, each with "Zapomnij na tym
+  urządzeniu".
+
+### S16 Partnership board (`/partnerstwa`, `/partnerstwa/nowe`)
+
+- The board: the lead on how ROPS checks every post, the sector filter,
+  "Dodaj ogłoszenie", the posts as cards with "Chcę współpracować".
+- The new post: the form of FR-15.5 and the author's private link.
 
 ### Message keys
 
@@ -2063,6 +2168,14 @@ per-request reads of the JSON files.
 - Prompt injection: user text is data (9.3); the schema validation and
   the identifier check make injected instructions inert; a test problem
   covers it.
+- Conversations (7.15): private links with 24-byte random keys, only
+  their sha256 stored, compared in constant time; a wrong key answers
+  404 like an unknown conversation; the pages are never indexed and send
+  no referrer; a new link revokes the old one.
+- The ROPS panel: one shared code (`ROPS_TOKEN`), compared in constant
+  time; production without it keeps the panel locked; every server action
+  checks the session itself; the export is refused without one; the pages
+  are never indexed.
 - Abuse: the screening gate (7.12) runs on every public text; honeypot
   fields and per-identity limits (FR-12.14); the
   kill switch `PUBLIC_WRITES=false` turns every public form read-only if
@@ -2078,9 +2191,14 @@ per-request reads of the JSON files.
   people whose public data we show (art. 14 GDPR) and how to object.
 - Retention defaults: routes 30 days after the event; needs until
   ROPS decides; contact requests 90 days; readiness 12 months; idea
-  cards 12 months; logs 14 days; no IP addresses stored outside the rate
+  cards and evaluations 12 months; conversations 12 months after their
+  last message; partnership posts 12 months; logs 14 days; no IP addresses stored outside the rate
   limiter's memory.
-- No cookies; a browser-local flag deduplicates feedback.
+- No cookies on the public pages; a browser-local flag deduplicates
+  feedback. The ROPS panel alone sets strictly necessary cookies for its
+  staff: the session (a keyed hash of the code, 12 hours), the
+  reviewer's name for the decision log, and the time of the last visit
+  for the "new" counts; all httpOnly and same-site strict.
 - AI transparency: the EU AI Act's transparency duties (art. 50) apply
   since 2 August 2026, and the Polish act on artificial intelligence
   systems (Dz.U. 2026 poz. 1003) is in force since 11 August 2026; the
@@ -2160,7 +2278,7 @@ FR-1.3), the online requests on Bielik through the Hugging Face router
 (3.8 USD of credit covers about 200 routes at 0.40 USD per million
 tokens, so the credit is topped up to at least 20 USD);
 hosting about 20 EUR; the domain a few EUR. The cost line is computed
-from the token counts; the console statistics that show it are ROADMAP.
+from the token counts.
 
 ### 12.11 Browser support
 
@@ -2201,7 +2319,7 @@ The principles of 3.6 as measurable properties:
 | No decision about individuals | No screen, prompt or record scores, ranks or assesses an identifiable person | Rule R10; code review of prompts; the AI Act reading (12.6) |
 | Crisis handling | A crisis text reaches S10 within 2 s and is never stored | Robustness set; log inspection |
 | Personal data | No PESEL, phone, e-mail or private address of a third party is stored or sent to a model after the gate | Redaction tests; log inspection |
-| Human oversight | The tool sends nothing to anyone; whatever involves a real person waits for a ROPS action (the console is ROADMAP) | End-to-end tests of the forms that store the entries |
+| Human oversight | The tool sends nothing to anyone; whatever involves a real person waits for a ROPS action in the panel (7.9) | End-to-end tests of the forms and of the panel's decisions |
 | Fairness | Same need, same solutions regardless of role; comparable fit for rural and urban places; minority topics not disadvantaged; clusters of one kept | FR-12.11 report per evaluation run |
 | Non-stigmatising map | No best or worst labels; limits stated; no ranking of people | Screenshot review with the checklist; lawyer's wording review |
 | Transparency and appeal | Generated text labelled; principles public; reference code and appeal path on every decline; the register card (FR-11.7) states purpose, logic, data, human review and limits | Presence checks in the end-to-end tests |
@@ -2325,6 +2443,22 @@ it, repetitions are not independent samples.
 - Accessibility (`pnpm a11y`): axe on every screen of
   `tests/e2e/screens.ts` in the three themes, the idea card form and an
   example card among them.
+- End-to-end for module I's similar cases: the seeded need approved
+  with consent shows on the route about lonely seniors with its status
+  and its matched innovation.
+- End-to-end for module V: a question with its private link, a wrong
+  key, ROPS's answer and a mentor invited, the mentor's answer from their
+  own link, the author's reply and "Moje rozmowy"; a partnership post
+  that waits for approval, the board, an answer that reaches ROPS, and
+  no contact shown.
+- End-to-end for the panel: the door with a wrong and a right code, the
+  reply that reaches the idea's author, an innovation verified with a
+  film and then hidden, and the panel and its export closed without a
+  session; the accessibility checks enter the panel with the session
+  cookie of `tests/e2e/admin.ts`.
+- End-to-end for the tester: the validation with and without the
+  sign-up, a full evaluation and the numbers on the innovation's page,
+  and an anonymous rating.
 - End-to-end for the idea card: the error summary, the save, the similar
   innovations on its page, and a crisis text that stores nothing.
 

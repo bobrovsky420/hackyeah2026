@@ -4,8 +4,9 @@ A working pilot of the end-user side of HubMI.pl, the digital core that
 ROPS Kraków plans for the Małopolska Social Innovation Hub, built for the
 HubMI.pl partner task of HackYeah 2026. It answers the partner's
 question: how do proven solutions to social problems reach the places
-that need them? The service around the pilot, the roles at ROPS and the
-moderation console, is a proposed roadmap, not yet built.
+that need them? Around the pilot, the ROPS panel at `/rops` is built:
+moderation, replies to authors, live knowledge edits and the trends of
+the needs. The roles at ROPS remain a proposed roadmap.
 
 ## What it is
 
@@ -22,6 +23,12 @@ The answer is a route, not a list:
 - **Implementation path**: the legal vehicle, the funding calls and three
   next steps.
 
+Beside the proven solutions, a route shows the similar cases others
+brought to the tool: the needs of the needs bank and the idea cards
+close to this one, with what became of them. Only the ones whose
+authors consented and that ROPS approved are shown, a need in the
+gate's neutral words; the others are only counted.
+
 When nothing fits well enough, the tool says so, files the need in a
 needs bank and drafts the brief for the next incubator call, with a
 duplicate check against the existing innovations. Needs become the
@@ -32,6 +39,20 @@ fills in an idea card: what it is, its essence, whom it is for and how
 far it got. The card's own page shows the proven solutions closest to
 it, with what is similar and what differs, quoted from the catalogue.
 
+Every innovation can be rated, commented on and improved, and people
+and organisations can sign up to test it. Its page shows only the
+numbers; the texts and the sign-ups go to ROPS, which passes them on to
+the innovators.
+
+Beyond the route, a person can talk to ROPS without an account. A
+question, a request for a mentor or an answer to a partnership post
+starts a conversation with a private link, remembered on the device;
+ROPS answers in its panel and can invite a mentor, who gets a private
+link of their own. The partnership board shows the posts ROPS approved,
+from NGOs, gminas, institutions, businesses, universities and residents;
+an answer goes through ROPS, so no contact is public. Nothing is sent by
+e-mail, and only the hashes of the links' keys are stored.
+
 It is not a web search: it never looks at the open internet, only at a
 closed catalogue of 381 described and attributed innovations. And it is
 not just RAG, a chatbot writing an answer over retrieved text: retrieval
@@ -41,14 +62,18 @@ identifier it returns is checked, and the route itself is assembled from
 structured data (people, legal vehicles, funding calls, next steps) that
 the model never writes.
 
-The concept goes beyond the software, and that part is the proposed
-roadmap, not implemented: ROPS would run the service in three roles
-(category advisor, catalogue editor, needs-bank coordinator), moderate
-every contact, need and registration in a console, and close three
-loops: need to implementation, need to new innovation, innovation to
-places. The tool already counts what ROPS would report (routes, contact
-requests, needs filed, briefs generated); the console that would show
-the numbers is part of the roadmap.
+The concept goes beyond the software: ROPS would run the service in
+three roles (category advisor, catalogue editor, needs-bank coordinator)
+and close three loops: need to implementation, need to new innovation,
+innovation to places. The roles are the proposed roadmap; the panel
+they would work in is built (decision R.3). It moderates every idea
+card, evaluation, need, contact request, registration and content
+report, answers the author of an idea on the card's own page, edits
+the knowledge of the routes without a data release (verified or hidden
+innovations, a corrected summary, an added film, new or edited
+knowledge items), shows the trends of the needs and exports every
+queue as CSV for Excel. It opens with the shared code of `ROPS_TOKEN`;
+a production server without it keeps the panel locked.
 
 Built for everyone: a Polish interface in Atkinson Hyperlegible, a
 typeface designed for readers with low vision, 7:1 text contrast, three
@@ -129,11 +154,11 @@ already decide, and the composer's when nothing is shortlisted.
    with consent and after ROPS verification), the implementation paths
    (legal vehicle, funding calls) and three next steps.
 5. **What is stored waits for ROPS.** Contact requests, saved needs,
-   registrations and content reports are stored, and the tool sends
-   nothing to anyone. The ROPS console that would relay contacts, verify
-   registrations, publish needs and review declined texts is the proposed
-   roadmap (S7 of the specification), not built. The tool never decides
-   anything about an individual.
+   registrations, idea cards, evaluations and content reports are
+   stored, and the tool sends nothing to anyone. A person at ROPS
+   decides each of them in the panel at `/rops`, and every decision is
+   logged with the reviewer's name. The tool never decides anything
+   about an individual.
 
 The ten ethics principles behind this (dignity, do no harm, a person in
 crisis gets a person, no decisions about individuals, privacy by design,

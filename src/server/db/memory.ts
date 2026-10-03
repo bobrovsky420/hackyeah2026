@@ -1,5 +1,5 @@
-import type { ContactRequest, ContentReport, Feedback, Idea, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
-import { exampleIdeas, exampleNeeds, exampleReadiness } from "./examples";
+import type { ContactRequest, ContentReport, Evaluation, Feedback, Idea, InnovationOverride, KnowledgeEntry, Mentor, PartnershipPost, Thread, ModerationLogEntry, Need, Readiness, NeedCluster, StoredBrief, Route } from "@/lib/contracts";
+import { exampleIdeas, exampleMentors, exampleNeeds, examplePosts, exampleReadiness, exampleThreads } from "./examples";
 import {
   SCREENING_LOG_RETENTION_MS,
   storableRoute,
@@ -26,6 +26,15 @@ export interface MemoryState {
   contacts: ContactRequest[];
   readiness: Readiness[];
   ideas: Idea[];
+  evaluations: Evaluation[];
+  /** The panel's knowledge items (module VI), by id. */
+  knowledgeEntries: Map<string, KnowledgeEntry>;
+  /** The panel's word on innovations (module VI), by innovation id. */
+  innovationOverrides: Map<string, InnovationOverride>;
+  /** Conversations (module V), most recently active first. */
+  threads: Thread[];
+  mentors: Map<string, Mentor>;
+  posts: PartnershipPost[];
   feedback: Feedback[];
   reports: ContentReport[];
   log: ModerationLogEntry[];
@@ -49,6 +58,12 @@ export function createMemoryState(): MemoryState {
     contacts: [],
     readiness: exampleReadiness(),
     ideas: exampleIdeas(),
+    evaluations: [],
+    knowledgeEntries: new Map(),
+    innovationOverrides: new Map(),
+    threads: exampleThreads(),
+    mentors: new Map(exampleMentors().map((mentor) => [mentor.id, mentor])),
+    posts: examplePosts(),
     feedback: [],
     reports: [],
     log: [],
@@ -288,6 +303,128 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       onChange();
       return copy(found);
     },
+    async moderateIdea(id, moderation) {
+      const found = state.ideas.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.moderation = { ...moderation };
+      onChange();
+      return copy(found);
+    },
+    async updateIdea(id, change) {
+      const found = state.ideas.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.status = change.status;
+      found.note_pl = change.note_pl;
+      if (change.reply !== undefined) found.reply = change.reply && { ...change.reply };
+      onChange();
+      return copy(found);
+    },
+
+    async addEvaluation(evaluation) {
+      insertNewestFirst(state.evaluations, evaluation, createdAt);
+      onChange();
+    },
+    async listEvaluations(innovationId) {
+      return state.evaluations.filter((item) => !innovationId || item.innovation_id === innovationId).map(copy);
+    },
+    async getEvaluation(id) {
+      const found = state.evaluations.find((item) => item.id === id);
+      return found && copy(found);
+    },
+    async moderateEvaluation(id, moderation) {
+      const found = state.evaluations.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.moderation = { ...moderation };
+      onChange();
+      return copy(found);
+    },
+    async forwardEvaluation(id, change) {
+      const found = state.evaluations.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.forwarded_at = change.at;
+      found.note_pl = change.note_pl;
+      onChange();
+      return copy(found);
+    },
+
+    async listKnowledgeEntries() {
+      return [...state.knowledgeEntries.values()].sort((a, b) => b.updated_at.localeCompare(a.updated_at)).map(copy);
+    },
+    async saveKnowledgeEntry(entry) {
+      state.knowledgeEntries.set(entry.id, copy(entry));
+      onChange();
+    },
+    async listInnovationOverrides() {
+      return [...state.innovationOverrides.values()].sort((a, b) => b.updated_at.localeCompare(a.updated_at)).map(copy);
+    },
+    async getInnovationOverride(innovationId) {
+      const found = state.innovationOverrides.get(innovationId);
+      return found && copy(found);
+    },
+    async saveInnovationOverride(override) {
+      state.innovationOverrides.set(override.innovation_id, copy(override));
+      onChange();
+    },
+
+    async addThread(thread) {
+      insertNewestFirst(state.threads, thread, (item) => item.updated_at);
+      onChange();
+    },
+    async getThread(id) {
+      const found = state.threads.find((item) => item.id === id);
+      return found && copy(found);
+    },
+    async listThreads() {
+      return state.threads.map(copy);
+    },
+    async appendMessage(id, message, retentionUntil) {
+      const index = state.threads.findIndex((item) => item.id === id);
+      if (index === -1) return undefined;
+      const [found] = state.threads.splice(index, 1);
+      found.messages.push(copy(message));
+      found.updated_at = message.at;
+      found.retention_until = retentionUntil;
+      if (found.status === "zamknieta" && message.author === "uzytkownik") found.status = "w-toku";
+      state.threads.unshift(found);
+      onChange();
+      return copy(found);
+    },
+    async updateThread(id, change) {
+      const found = state.threads.find((item) => item.id === id);
+      if (!found) return undefined;
+      Object.assign(found, copy(change));
+      onChange();
+      return copy(found);
+    },
+    async listMentors() {
+      return [...state.mentors.values()].sort((a, b) => a.name.localeCompare(b.name, "pl")).map(copy);
+    },
+    async getMentor(id) {
+      const found = state.mentors.get(id);
+      return found && copy(found);
+    },
+    async saveMentor(mentor) {
+      state.mentors.set(mentor.id, copy(mentor));
+      onChange();
+    },
+    async addPost(post) {
+      insertNewestFirst(state.posts, post, createdAt);
+      onChange();
+    },
+    async getPost(id) {
+      const found = state.posts.find((item) => item.id === id);
+      return found && copy(found);
+    },
+    async listPosts(filter = {}) {
+      return state.posts.filter((item) => !filter.moderation || item.moderation.status === filter.moderation).map(copy);
+    },
+    async moderatePost(id, moderation) {
+      const found = state.posts.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.moderation = { ...moderation };
+      onChange();
+      return copy(found);
+    },
 
     async addFeedback(entry) {
       insertNewestFirst(state.feedback, entry, createdAt);
@@ -349,6 +486,9 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       const oldContact = (item: ContactRequest) => Date.parse(item.created_at) < contactsBefore;
       const oldReadiness = (item: Readiness) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
       const oldIdea = (item: Idea) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
+      const oldEvaluation = (item: Evaluation) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
+      const oldThread = (item: Thread) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
+      const oldPost = (item: PartnershipPost) => item.retention_until.slice(0, 10) < cutoffs.readinessBefore;
       const now = Date.parse(cutoffs.screeningAt);
       const counts: RetentionCounts = {
         routes: oldRoutes.size,
@@ -356,6 +496,9 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
         contacts: state.contacts.filter(oldContact).length,
         readiness: state.readiness.filter(oldReadiness).length,
         ideas: state.ideas.filter(oldIdea).length,
+        evaluations: state.evaluations.filter(oldEvaluation).length,
+        threads: state.threads.filter(oldThread).length,
+        posts: state.posts.filter(oldPost).length,
         screeningEntries: state.screeningLog.filter((entry) => logExpired(entry, now)).length,
         screeningTexts: state.screeningLog.filter((entry) => !logExpired(entry, now) && textExpired(entry, now)).length,
       };
@@ -368,6 +511,9 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       state.contacts = state.contacts.filter((item) => !oldContact(item));
       state.readiness = state.readiness.filter((item) => !oldReadiness(item));
       state.ideas = state.ideas.filter((item) => !oldIdea(item));
+      state.evaluations = state.evaluations.filter((item) => !oldEvaluation(item));
+      state.threads = state.threads.filter((item) => !oldThread(item));
+      state.posts = state.posts.filter((item) => !oldPost(item));
       pruneScreeningLog(state, now);
       if (Object.values(counts).some((count) => count > 0)) onChange();
       return counts;

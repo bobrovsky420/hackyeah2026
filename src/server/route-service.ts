@@ -12,6 +12,7 @@ import { repository } from "@/server/db";
 import { REPEAT_WINDOW_MS } from "@/server/gate/thresholds";
 import { REDACTED, redact } from "@/server/gate";
 import { countEvent, memory, newId, nowIso } from "@/server/ephemeral";
+import { loadOverlay, overlayRoute } from "@/server/knowledge/overlay";
 
 /*
  * Creates and reads routes. Two engines: "live" runs the pipeline of
@@ -176,6 +177,8 @@ async function createCannedRoute(input: RouteInput): Promise<Route> {
 }
 
 /** A stored route, or one of the examples that exist in every run. */
+/** A stored or example route, with the panel's knowledge applied (module VI). */
 export async function getRoute(id: string): Promise<Route | undefined> {
-  return (await repository().getRoute(id)) ?? getExampleRoute(id);
+  const route = (await repository().getRoute(id)) ?? getExampleRoute(id);
+  return route && overlayRoute(route, await loadOverlay());
 }

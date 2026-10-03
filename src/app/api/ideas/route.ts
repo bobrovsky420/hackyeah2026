@@ -76,6 +76,8 @@ export async function POST(request: Request) {
     consents: { store: true, publish: body.consent_publish === true, text_version: CONSENT_VERSION, timestamp: nowIso() },
     moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
     similar: null,
+    status: "nowy",
+    reply: null,
     retention_until: retention.toISOString().slice(0, 10),
     note_pl: null,
   };

@@ -1,7 +1,7 @@
 import { closeSync, copyFileSync, fsyncSync, mkdirSync, openSync, readdirSync, readFileSync, renameSync, unlinkSync, writeSync } from "node:fs";
 import { mkdir, open, rename, unlink } from "node:fs/promises";
 import path from "node:path";
-import type { NeedCluster, StoredBrief, ContactRequest, ContentReport, Feedback, Idea, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
+import type { NeedCluster, StoredBrief, ContactRequest, ContentReport, Evaluation, Feedback, Idea, InnovationOverride, KnowledgeEntry, Mentor, PartnershipPost, Thread, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
 import { applyRetentionDefaults } from "@/server/retention";
 import { createMemoryRepository, createMemoryState, type MemoryState } from "./memory";
 import type { Repository, StoredScreeningLogEntry } from "./repository";
@@ -37,6 +37,15 @@ interface StoreFile {
     readiness: Readiness[];
     /** Absent in the files saved before the idea cards existed. */
     ideas?: Idea[];
+    /** Absent in the files saved before the evaluations existed. */
+    evaluations?: Evaluation[];
+    /** Absent in the files saved before the panel existed. */
+    knowledgeEntries?: KnowledgeEntry[];
+    innovationOverrides?: InnovationOverride[];
+    /** Absent in the files saved before the conversations existed. */
+    threads?: Thread[];
+    mentors?: Mentor[];
+    posts?: PartnershipPost[];
     feedback: Feedback[];
     reports: ContentReport[];
     log: ModerationLogEntry[];
@@ -72,6 +81,12 @@ function serialise(state: MemoryState): string {
       contacts: state.contacts,
       readiness: state.readiness,
       ideas: state.ideas,
+      evaluations: state.evaluations,
+      knowledgeEntries: [...state.knowledgeEntries.values()],
+      innovationOverrides: [...state.innovationOverrides.values()],
+      threads: state.threads,
+      mentors: [...state.mentors.values()],
+      posts: state.posts,
       feedback: state.feedback,
       reports: state.reports,
       log: state.log,
@@ -108,7 +123,16 @@ function restore(text: string): MemoryState {
     needs: state.needs,
     contacts: state.contacts,
     readiness: state.readiness,
-    ideas: Array.isArray(state.ideas) ? state.ideas : [],
+    // Cards and evaluations saved before the panel get its fields at their defaults.
+    ideas: (Array.isArray(state.ideas) ? state.ideas : []).map((idea) => ({ ...idea, status: idea.status ?? "nowy", reply: idea.reply ?? null })),
+    evaluations: (Array.isArray(state.evaluations) ? state.evaluations : []).map((item) => ({ ...item, forwarded_at: item.forwarded_at ?? null })),
+    knowledgeEntries: new Map((Array.isArray(state.knowledgeEntries) ? state.knowledgeEntries : []).map((entry) => [entry.id, entry])),
+    innovationOverrides: new Map(
+      (Array.isArray(state.innovationOverrides) ? state.innovationOverrides : []).map((override) => [override.innovation_id, override]),
+    ),
+    threads: Array.isArray(state.threads) ? state.threads : [],
+    mentors: new Map((Array.isArray(state.mentors) ? state.mentors : []).map((mentor) => [mentor.id, mentor])),
+    posts: Array.isArray(state.posts) ? state.posts : [],
     feedback: state.feedback,
     reports: state.reports,
     log: state.log,
