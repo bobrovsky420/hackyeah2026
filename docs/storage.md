@@ -33,7 +33,8 @@ actions call `repository()`, client components never do.
   renamed into place, so a reader never sees half a file. When the
   process exits, a pending write is made synchronously.
 - A fresh store (no file) starts with the example entries of
-  `examples.ts`: three needs, the two consented and verified team
+  `examples.ts`: three needs (the first approved for publication, so a
+  route about lonely seniors shows it as a similar case, FR-3.9), the two consented and verified team
   entries of the readiness registry (FR-6.5) and one idea card with its
   similar innovations (`pm-przyklad-1`, the stable address of the screen
   checks), and for 7.15 two mentors, two conversations whose keys are
