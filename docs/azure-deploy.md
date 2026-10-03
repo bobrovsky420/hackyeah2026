@@ -56,19 +56,20 @@ upload `deploy/azure/bootstrap.sh` (Manage files, Upload) and run:
 
 ```
 gh auth login            # optional: then the script sets the GitHub side too
-bash bootstrap.sh
+AZURE_SUBSCRIPTION=DimauSubscription bash bootstrap.sh
 ```
 
-When the subscription is not the one `az account show` names:
-`az account set --subscription "<name or id>"` first. The defaults
+`AZURE_SUBSCRIPTION` (a name or an id) picks the subscription; without
+it the script uses the one `az account show` names. The resource group
+`hackyeah2026-rg` is reused when it exists, and the VM goes to its
+region; otherwise the script creates it in `polandcentral`. The defaults
 (repository `bobrovsky420/hackyeah2026`, resource group
-`hackyeah2026-rg` in `polandcentral`, VM `router`) change through
-environment variables, for example
-`AZURE_LOCATION=westeurope bash bootstrap.sh` when the subscription has no
-quota in Poland Central; the list is at the top of the script. Running it
-again is safe.
+`hackyeah2026-rg`, VM `router`) change through environment variables,
+for example `AZURE_RESOURCE_GROUP=hackyeah2026-we-rg AZURE_LOCATION=westeurope`
+when the region of the group has no quota for the VM size; the list is
+at the top of the script. Running it again is safe.
 
-It creates the resource group, an app registration
+It creates the resource group when missing, an app registration
 `github-deploy-<owner>-<repo>` that GitHub Actions may log in as only
 from the environment `production` of this repository, with Contributor
 on this resource group only, and the SSH deploy key

@@ -15,9 +15,10 @@
 # The VM itself is created by the workflow's first run.
 #
 # Settings, all optional, as environment variables:
+#   AZURE_SUBSCRIPTION    name or id; default the one `az account show` names
 #   GITHUB_REPO           default bobrovsky420/hackyeah2026
-#   AZURE_RESOURCE_GROUP  default hackyeah2026-rg
-#   AZURE_LOCATION        default polandcentral
+#   AZURE_RESOURCE_GROUP  default hackyeah2026-rg; an existing group is reused
+#   AZURE_LOCATION        default the existing group's region, else polandcentral
 #   AZURE_VM_NAME         default router
 #   AZURE_DNS_LABEL       default <AZURE_VM_NAME>-<first 6 characters of the subscription id>
 #
@@ -25,21 +26,28 @@
 set -euo pipefail
 export MSYS_NO_PATHCONV=1  # Git Bash: keep /subscriptions/... as it is
 
+[ -z "${AZURE_SUBSCRIPTION:-}" ] || az account set --subscription "$AZURE_SUBSCRIPTION"
+
 REPO="${GITHUB_REPO:-bobrovsky420/hackyeah2026}"
 RG="${AZURE_RESOURCE_GROUP:-hackyeah2026-rg}"
-LOCATION="${AZURE_LOCATION:-polandcentral}"
+EXISTING_LOCATION="$(az group show -n "$RG" --query location -o tsv 2>/dev/null || true)"
+LOCATION="${AZURE_LOCATION:-${EXISTING_LOCATION:-polandcentral}}"
+if [ -n "$EXISTING_LOCATION" ] && [ "$LOCATION" != "$EXISTING_LOCATION" ]; then
+  echo "bootstrap: $RG already exists in $EXISTING_LOCATION, not $LOCATION; unset AZURE_LOCATION or pick another AZURE_RESOURCE_GROUP" >&2
+  exit 1
+fi
 VM_NAME="${AZURE_VM_NAME:-router}"
 
 SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
 TENANT_ID="$(az account show --query tenantId -o tsv)"
 DNS_LABEL="${AZURE_DNS_LABEL:-$VM_NAME-$(printf %s "$SUBSCRIPTION_ID" | cut -c1-6)}"
-echo "bootstrap: subscription $SUBSCRIPTION_ID, $RG in $LOCATION, repository $REPO"
+echo "bootstrap: subscription $(az account show --query name -o tsv) ($SUBSCRIPTION_ID), $RG in $LOCATION, repository $REPO"
 
 echo "== resource providers and the resource group"
 for ns in Microsoft.Compute Microsoft.Network; do
   az provider register --namespace "$ns" -o none
 done
-az group create -n "$RG" -l "$LOCATION" -o none
+[ -n "$EXISTING_LOCATION" ] || az group create -n "$RG" -l "$LOCATION" -o none
 RG_ID="$(az group show -n "$RG" --query id -o tsv)"
 
 echo "== the deploy identity (GitHub OIDC, environment production)"
