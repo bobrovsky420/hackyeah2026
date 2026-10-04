@@ -369,13 +369,13 @@ test("module IV: an anonymous rating needs no name or e-mail address", async ({ 
 
 test("module VI: the panel opens with the code, and the reply reaches the author's card", async ({ page }) => {
   await page.goto("/rops");
-  await page.getByLabel("Twoje imię i nazwisko lub inicjały").fill("Anna Testowa");
-  await page.getByLabel("Kod dostępu").fill("zly-kod");
+  await page.getByLabel("Login", { exact: true }).fill("Anna Testowa");
+  await page.getByLabel("Hasło", { exact: true }).fill("zly-kod");
   await page.getByRole("button", { name: "Wejdź do panelu" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "Nie udało się zalogować" })).toContainText("Kod dostępu jest nieprawidłowy.");
 
-  await page.getByLabel("Twoje imię i nazwisko lub inicjały").fill("Anna Testowa");
-  await page.getByLabel("Kod dostępu").fill(E2E_ROPS_TOKEN);
+  await page.getByLabel("Login", { exact: true }).fill("Anna Testowa");
+  await page.getByLabel("Hasło", { exact: true }).fill(E2E_ROPS_TOKEN);
   await page.getByRole("button", { name: "Wejdź do panelu" }).click();
   await expect(page.getByText("Zalogowano jako Anna Testowa")).toBeVisible();
   await expect(page.getByRole("link", { name: "Zgłoszenia pomysłów" }).first()).toBeVisible();
@@ -399,8 +399,8 @@ test("module VI: the panel opens with the code, and the reply reaches the author
 
 test("module VI: a verified innovation with a film shows on the route at once, a hidden one leaves it", async ({ page }) => {
   await page.goto("/rops");
-  await page.getByLabel("Twoje imię i nazwisko lub inicjały").fill("Anna Testowa");
-  await page.getByLabel("Kod dostępu").fill(E2E_ROPS_TOKEN);
+  await page.getByLabel("Login", { exact: true }).fill("Anna Testowa");
+  await page.getByLabel("Hasło", { exact: true }).fill(E2E_ROPS_TOKEN);
   await page.getByRole("button", { name: "Wejdź do panelu" }).click();
   await expect(page.getByText("Zalogowano jako Anna Testowa")).toBeVisible();
 
@@ -437,8 +437,8 @@ test("module VI: the panel and its export stay closed without a session", async 
 
 async function signIn(page: Page) {
   await page.goto("/rops");
-  await page.getByLabel("Twoje imię i nazwisko lub inicjały").fill("Anna Testowa");
-  await page.getByLabel("Kod dostępu").fill(E2E_ROPS_TOKEN);
+  await page.getByLabel("Login", { exact: true }).fill("Anna Testowa");
+  await page.getByLabel("Hasło", { exact: true }).fill(E2E_ROPS_TOKEN);
   await page.getByRole("button", { name: "Wejdź do panelu" }).click();
   await expect(page.getByText("Zalogowano jako Anna Testowa")).toBeVisible();
 }
@@ -545,8 +545,9 @@ test("module II: a group of the questions trend opens its questions, and the dat
   await page.goto("/rops/trendy");
   await expect(page.getByRole("heading", { name: "Pytania według grup" })).toBeVisible();
   // One question about two groups counts in both.
-  await expect(page.getByRole("link", { name: "Osoby szukające pracy" })).toBeVisible();
-  await page.getByRole("link", { name: "Cudzoziemcy" }).click();
+  const byGroup = page.locator("section").filter({ has: page.getByRole("heading", { name: "Pytania według grup" }) });
+  await expect(byGroup.getByRole("link", { name: "Osoby szukające pracy" })).toBeVisible();
+  await byGroup.getByRole("link", { name: "Cudzoziemcy" }).click();
   await page.waitForURL(/\/rops\/trendy\/pytania\?grupa=cudzoziemcy/);
   await expect(page.getByRole("combobox", { name: "Grupa" })).toHaveValue("cudzoziemcy");
   await expect(page.getByText(text)).toBeVisible();
@@ -555,4 +556,25 @@ test("module II: a group of the questions trend opens its questions, and the dat
   await page.getByRole("button", { name: "Pokaż" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Znalezione pytania: 0" })).toBeVisible();
   await expect(page.getByText(text)).toHaveCount(0);
+});
+
+test("module II: a period compares the needs with the one before it, and a powiat opens its needs", async ({ page, request }) => {
+  const text = "W naszej wsi w powiecie tatrzańskim brakuje świetlicy dla młodzieży (trend e2e).";
+  const saved = await request.post("/api/needs", {
+    data: { problem_text: text, place_terc: "1217011", target_groups: ["dzieci-mlodziez-rodziny"], consent_store: true },
+  });
+  expect(saved.ok()).toBe(true);
+
+  await signIn(page);
+  await page.goto("/rops/trendy");
+  await page.getByRole("navigation", { name: "Okres" }).getByRole("link", { name: "Ostatnie 30 dni" }).click();
+  await page.waitForURL(/okres=30-dni/);
+  const byPowiat = page.locator("section").filter({ has: page.getByRole("heading", { name: "Potrzeby według powiatów" }) });
+  await expect(byPowiat.getByRole("columnheader", { name: "Zmiana" })).toBeVisible();
+  await expect(page.getByText(/Zmiana to różnica wobec poprzedniego okresu/).first()).toBeVisible();
+  await byPowiat.getByRole("link", { name: "tatrzański" }).click();
+  await page.waitForURL(/\/rops\/potrzeby\?powiat=tatrza/);
+  await expect(page.getByRole("combobox", { name: "Powiat" })).toHaveValue("tatrzański");
+  await expect(page.getByText(text).first()).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /Znalezione potrzeby: \d+/ })).toBeVisible();
 });

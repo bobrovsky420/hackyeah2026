@@ -25,3 +25,11 @@ const dayFormat = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-
 export function warsawDay(value: string): string {
   return dayFormat.format(new Date(value));
 }
+
+const monthFormat = new Intl.DateTimeFormat("pl-PL", { month: "long", year: "numeric", timeZone: "UTC" });
+
+/** A month, YYYY-MM, as the trends name it: "październik 2026". */
+export function formatMonth(value: string): string {
+  const date = new Date(`${value}-15T12:00:00Z`);
+  return Number.isNaN(date.getTime()) ? value : monthFormat.format(date);
+}
