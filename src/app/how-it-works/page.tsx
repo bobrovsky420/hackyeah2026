@@ -7,7 +7,15 @@ import { ropsDepartment } from "@/lib/catalogue";
 
 export const metadata: Metadata = { title: t("how.meta.title") };
 
-const steps: MessageKey[] = ["s1.how.step1", "s1.how.step2", "s1.how.step3"];
+/** What a person can do in the hub, one line each, with the page that starts it; testing starts on any innovation's page. */
+const features: { href?: string; title: MessageKey; text: MessageKey }[] = [
+  { href: "/", title: "how.do.describe.title", text: "how.do.describe.text" },
+  { href: "/zglos-pomysl", title: "how.do.idea.title", text: "how.do.idea.text" },
+  { title: "how.do.test.title", text: "how.do.test.text" },
+  { href: "/zapytaj", title: "how.do.ask.title", text: "how.do.ask.text" },
+  { href: "/partnerstwa", title: "how.do.partners.title", text: "how.do.partners.text" },
+  { href: "/chce-pomoc", title: "how.do.help.title", text: "how.do.help.text" },
+];
 
 /*
  * The register card of FR-11.7, one screen, in the order of the Zurich
@@ -32,29 +40,40 @@ function cardEntries(): [MessageKey, ReactNode][] {
         <li>{t("how.card.logic.s3")}</li>
       </ol>,
     ],
-    ["how.card.data.term", t("how.card.data.text")],
     ["how.card.review.term", t("how.card.review.text")],
     ["how.card.limits.term", t("how.card.limits.text")],
-    ["how.card.evaluation.term", t("how.card.evaluation.text")],
   ];
 }
 
-/** S8: "Jak to działa" (FR-11.1) with the "Karta systemu" (FR-11.7). */
+/** S8: "Jak to działa" (FR-11.1): what a person can do, who answers, how the program works, with the "Karta systemu" (FR-11.7). */
 export default function HowItWorksPage() {
   return (
     <InfoPage title={t("how.title")} lead={t("how.lead")}>
-      <InfoSection id="kroki" title={t("s1.how.title")}>
-        <ol className="grid list-decimal gap-2 pl-6">
-          {steps.map((step) => (
-            <li key={step}>{t(step)}</li>
+      <InfoSection id="co-mozesz" title={t("how.do.title")}>
+        <ul className="grid gap-3">
+          {features.map((item) => (
+            <li key={item.title}>
+              <span className="font-bold">{item.href ? <Link href={item.href}>{t(item.title)}</Link> : t(item.title)}.</span> {t(item.text)}
+              {item.title === "how.do.ask.title" && (
+                <>
+                  {" "}
+                  <Link href="/rozmowy">{t("how.do.ask.mine")}</Link>.
+                </>
+              )}
+            </li>
           ))}
-        </ol>
+        </ul>
+      </InfoSection>
+      <InfoSection id="kto-odpowiada" title={t("how.people.title")}>
+        <p>{t("how.people.p1")}</p>
+        <p>{t("how.people.p2")}</p>
       </InfoSection>
       <InfoSection id="skad" title={t("how.sources.title")}>
         <p>{t("how.sources.p1")}</p>
         <p>{t("how.sources.p2")}</p>
       </InfoSection>
       <InfoSection id="program" title={t("how.machine.title")}>
+        <p>{t("how.machine.p0")}</p>
         <p>{t("how.machine.p1")}</p>
         <p>{t("how.machine.p2")}</p>
         <p>{t("how.machine.p3")}</p>
