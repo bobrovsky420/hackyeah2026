@@ -7,4 +7,4 @@
  */
 
 /** The map of the gminas (S4, FR-7): /mapa, its menu item and the links to it. */
-export const MAP_ENABLED = false;
+export const MAP_ENABLED = true;
