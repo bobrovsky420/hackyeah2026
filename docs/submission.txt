@@ -1,0 +1,116 @@
+HACKTRIBE SUBMISSION
+
+The texts for the HackTribe form, in plain text: paste the title, the
+problem statement, the description and what is done as they are. Each
+paragraph is one line, so the form gets no line breaks inside a
+paragraph. Limits are in docs/functional-specification.md, section 2.
+Title at most 5 words, the three other sections at most 500 words each,
+all in Polish: the rules changed on 3 October, and the submission and
+the presentation are now in Polish, with full Polish spelling. The FAQ
+asks for the names and addresses of the team members in the
+description; they count towards its 500 words. The description keeps
+the idea; the state of the build, module by module, is in "What is
+done". Recount the words after every edit. "Demo link" and
+"Instructions" go into the form's fields of the same names. Before
+pasting the instructions, replace <KOD DOSTĘPU> with the ROPS panel's
+access code (ROPS_TOKEN of the server); the code itself never goes into
+git.
+
+
+TITLE
+
+HubMI: od potrzeby do rozwiązania
+
+
+PROBLEM STATEMENT
+
+Urzędnik małej gminy widzi, że coraz więcej starszych mieszkańców żyje w samotności. Pracownica socjalna szuka sposobu, by odciążyć opiekunów osób z niepełnosprawnością. Mieszkanka chce zorganizować pomoc sąsiedzką. Każde z nich mierzy się z problemem, który ktoś już rozwiązał. Nie wie tylko, gdzie tego rozwiązania szukać.
+
+Wiedza istnieje, ale jest rozproszona. W Małopolsce w ciągu 10 lat powstało blisko 200 innowacji społecznych, a w całej Polsce znacznie więcej. Ich opisy są w raportach, bazach danych, na stronach organizacji i w publikacjach, a doświadczenie mają ludzie, którzy je wdrażali. Kto szuka rozwiązania, musi to wszystko przejrzeć sam.
+
+Lista wyników to jeszcze nie odpowiedź. Katalog pokazuje listę, a wyszukiwarka zwraca linki. Żadne z nich nie powie, które rozwiązanie pasuje do danej gminy, kto może je zrealizować, ile kosztuje, skąd wziąć pieniądze i w jakiej formie prawnej je uruchomić. Dlatego ROPS nie chce kolejnego portalu, katalogu ani wyszukiwarki, tylko narzędzia, które połączy problem z istniejącym rozwiązaniem.
+
+Dobre pomysły przechodzą niezauważone. Organizacje pozarządowe, Centra Usług Społecznych i grupy mieszkańców tworzą wartościowe mikrorozwiązania, ale rzadko wychodzą one poza gminę, w której powstały, bo ich autorom brakuje narzędzi do rozwijania i upowszechniania. Gdy rozwiązania jeszcze nie ma, potrzeba przepada: nie trafia do inkubatora ani do nikogo, kto mógłby się nią zająć.
+
+ROPS nie widzi całości. Brakuje jednego miejsca, które łączyłoby diagnozę problemów, rozwój nowych pomysłów, testowanie innowacji, upowszechnianie sprawdzonych rozwiązań i budowanie partnerstw. Bez niego trudno zobaczyć, z jakimi potrzebami i z których gmin zgłaszają się mieszkańcy i instytucje, zaplanować kolejne nabory i skierować innowacje tam, gdzie są najbardziej potrzebne.
+
+A wyzwań przybywa: starzenie się społeczeństwa, kryzys zdrowia psychicznego, samotność, wykluczenie cyfrowe, ograniczony dostęp do usług społecznych, a także wyludnianie się większości regionu przy szybkim wzroście liczby mieszkańców gmin wokół Krakowa.
+
+Narzędzie ma służyć wszystkim i nikomu nie szkodzić. Korzystać z niego będą także osoby starsze, słabowidzące i mniej obeznane z technologią. Osoba w kryzysie potrzebuje kontaktu z człowiekiem, a nie listy innowacji. Model językowy nie może zmyślać rozwiązań, kwot ani przepisów, bo błędna wskazówka kosztuje gminę czas i pieniądze. Trzeba też chronić dane osobowe zgłaszających.
+
+Pytanie brzmi więc: jak połączyć potrzebę opisaną własnymi słowami z wiedzą, sprawdzonymi rozwiązaniami i osobami gotowymi do działania, a gdy rozwiązania jeszcze nie ma, pomóc znaleźć drogę do jego stworzenia?
+
+
+DESCRIPTION
+
+Aplikacja HubMI.pl, cyfrowe serce, które ROPS w Krakowie planuje dla Małopolskiego Hubu Innowacji Społecznych: osoba zgłaszająca potrzebę znajduje rozwiązanie, a każdy wpis trafia do panelu ROPS.
+
+Więcej niż katalog: wsparcie w działaniu. Mieszkaniec, pracownik socjalny, przedstawiciel organizacji albo urzędnik opisuje potrzebę własnymi słowami i wybiera gminę. Otrzymuje drogę z czterech części:
+
+- Rozwiązania: do trzech z 381 sprawdzonych innowacji, każda z uzasadnieniem opartym na cytatach ze źródła i z wymaganiami: realizator, koszt, czas.
+- Wiedza: poradniki, modele usług i filmy.
+- Ludzie: autor innowacji, realizatorzy w pobliżu, opiekun kategorii w ROPS i osoby gotowe pomóc, za ich zgodą.
+- Ścieżka wdrożenia: forma prawna, nabory i trzy kolejne kroki.
+
+Ani wyszukiwarka, ani czatbot do dokumentów. Wyszukiwarka zwraca linki, a czatbot z RAG pisze zgrabny akapit; oba odpowiadają na każde pytanie. HubMI układa drogę według reguł, na podstawie opracowanych danych, i potrafi powiedzieć „nie”. Otwarty polski model Bielik tylko wybiera i wyjaśnia: każde odwołanie sprawdzamy w katalogu, każdy cytat w źródle, a o tym, czy dopasowanie wystarcza, decyduje program, nie model. Kwoty, terminy i podstawy prawne pochodzą z tabeli 30 ścieżek prawnych i finansowych, do której model nie ma dostępu.
+
+Gdy nic nie pasuje, mówi to wprost. Potrzeba trafia do banku potrzeb, a narzędzie przygotowuje fiszkę dla kolejnego naboru inkubatora z podobnymi istniejącymi innowacjami.
+
+Najpierw etyka. Osoba w kryzysie dostaje kontakt do ludzi, którzy mogą pomóc, a nie listę innowacji. Narzędzie niczego nikomu nie wysyła i o nikim nie decyduje.
+
+Usługa, nie tylko aplikacja. Każdy wpis czeka w panelu na decyzję pracownika ROPS. Panel ma narzędzia dla trzech ról: opiekuna kategorii, redaktora katalogu i koordynatora banku potrzeb. ROPS obsadzi te role i domknie trzy cykle: od potrzeby do wdrożenia, od potrzeby do nowej innowacji, od innowacji do miejsc, które jej potrzebują.
+
+Moduły wyzwania: pięć zaimplementowanych (I, II, IV, V, VI) i dwa częściowo (III, VII).
+
+Korzystaliśmy z agenta AI do programowania Claude Code (Anthropic); każda decyzja zespołu, źródła danych i licencje są opisane w repozytoriu.
+
+Zespół: Alexander Bobrovský (bobrovsky@seznam.cz), Anton Myshelov (omgkennyno@gmail.com), Dmytro Chernikov (me41st0@gmail.com), Dmytro Ushakov (ushakov_d@hotmail.com), Krzysztof Zając (zajkrz@gmail.com).
+
+
+WHAT IS DONE
+
+Zaimplementowane w obecnej wersji aplikacji, według modułów wyzwania:
+
+- Matchmaking społeczny (moduł I): opis potrzeby własnymi słowami, gmina i rola; do trzech sprawdzonych innowacji z oceną dopasowania i uzasadnieniem opartym na cytatach ze źródła; wiedza, ludzie i ścieżka wdrożenia z tabeli 30 ścieżek prawnych i finansowych; podobne przypadki z banku potrzeb i z fiszek pomysłów; stały link do drogi, wersja do druku i plik tekstowy do pobrania.
+- Bank potrzeb: gdy nic nie pasuje albo pasuje tylko częściowo, potrzeba trafia do banku, a narzędzie przygotowuje fiszkę dla inkubatora z najbliższymi innowacjami i sprawdza, czy podobne rozwiązanie już istnieje.
+- Zasobnik wiedzy (moduł II): poradniki, modele usług, dokumenty i filmy w drodze i na stronie każdej innowacji; dla ROPS trendy potrzeb według grup docelowych, powiatów i tygodni.
+- Kreator pomysłów (moduł III, częściowo): fiszka pomysłu (opis, istota, dla kogo, etap) z najbliższymi sprawdzonymi rozwiązaniami i z odpowiedzią ROPS na stronie fiszki.
+- Tester innowacji (moduł IV): przy każdej innowacji ocena, opinia, propozycja ulepszenia i zapis do testów; ROPS przekazuje je autorom innowacji.
+- Platforma aktywnej komunikacji (moduł V): rozmowa z ROPS bez zakładania konta, przez prywatny link; mentor zaproszony przez ROPS do rozmowy; tablica partnerstw z ogłoszeniami zaakceptowanymi przez ROPS, a odpowiedzi trafiają najpierw do ROPS, więc żadne dane kontaktowe nie są publiczne.
+- Panel administratora (moduł VI): kolejki wszystkich zgłoszeń z decyzjami odnotowanymi z nazwiskiem, statusy, odpowiedzi dla autorów, bieżące poprawki innowacji i wiedzy bez publikowania nowej wersji danych, trendy i eksport do CSV. Dane demonstracyjne, symulacja dwunastu tygodni w Małopolsce, pokazują, jak panel wygląda w codziennej pracy.
+- Middleman Innowacji (moduł VII, częściowo): ścieżka wdrożenia dopasowana do roli zgłaszającego i do gminy: forma prawna, nabory i kolejne kroki.
+
+Wspólne dla wszystkich modułów:
+
+- Filtr bezpieczeństwa przed każdym dopasowaniem: osoba w kryzysie dostaje numery telefonów zaufania i adres ośrodka pomocy społecznej, prośba dyskryminująca jest odrzucana z uzasadnieniem i informacją, do kogo można się odwołać, a dane osobowe są usuwane przed zapisem i przed każdym zapytaniem do modelu.
+- Katalog 381 innowacji: 300 z ogólnopolskiej bazy innowacjespoleczne.pl i 115 z Biblioteki Innowacji Społecznych ROPS, po scaleniu 34 duplikatów, każda z linkiem do źródła i z uznaniem autorstwa.
+- Dopasowanie: model wyszukiwania PolDense-400M wybiera 40 kandydatów, Bielik 11B ocenia dopasowanie i uzasadnia je cytatami, a program sprawdza każdy identyfikator i każdy cytat. Gdy Bielik jest niedostępny, zastępuje go Claude.
+- Dostępność: krój Atkinson Hyperlegible, kontrast 7:1, wersja kontrastowa, powiększanie tekstu, pełna obsługa klawiaturą i czytnikiem ekranu, wersja na telefon i automatyczny test dostępności każdego ekranu.
+- Jakość: testy jednostkowe i end-to-end oraz 31 przypadków testowych, które sprawdzają trafność, odporność, bezpieczeństwo i równe traktowanie.
+
+Jeszcze niezaimplementowane: generator wniosków, kanwa i asystent kreatora pomysłów, rejestr wdrożeń, grupowanie podobnych potrzeb i mapa.
+
+
+DEMO LINK
+
+https://router-16ce7c.polandcentral.cloudapp.azure.com/
+
+
+INSTRUCTIONS
+
+Aplikacja jest dostępna pod adresem https://router-16ce7c.polandcentral.cloudapp.azure.com/ tylko w czasie HackYeah 2026. Nie trzeba niczego instalować ani zakładać konta.
+
+Strona dla osób zgłaszających potrzeby:
+
+- Na stronie głównej opisz potrzebę własnymi słowami w polu „Co się dzieje i kogo dotyczy?” albo wstaw jeden z przykładów pod formularzem, na przykład „Samotni seniorzy na wsi”.
+- Możesz wybrać miejscowość lub gminę i odpowiedzieć na pytanie „Kim jesteś?”. Potem kliknij „Pokaż możliwości”.
+- Po chwili zobaczysz do trzech sprawdzonych rozwiązań z uzasadnieniem, wiedzę, osoby, które mogą pomóc, i ścieżkę wdrożenia.
+- W menu są też „Zgłoś pomysł”, „Zapytaj ROPS”, „Partnerstwa” i „Chcę pomóc”.
+
+Panel ROPS:
+
+- Otwórz https://router-16ce7c.polandcentral.cloudapp.azure.com/rops.
+- W polu „Twoje imię i nazwisko lub inicjały” wpisz dowolne inicjały; panel zapisuje je przy każdej decyzji w dzienniku.
+- W polu „Kod dostępu” wpisz <KOD DOSTĘPU> i kliknij „Wejdź do panelu”.
+- Panel zawiera dane demonstracyjne, symulację dwunastu tygodni w Małopolsce, oznaczone na każdej stronie. Warto zajrzeć do sekcji „Pulpit”, „Trendy” i „Pomysły”.
+- Pomysł, zapisana potrzeba albo pytanie do ROPS wysłane na stronie publicznej od razu trafiają do panelu, obok danych demonstracyjnych.
