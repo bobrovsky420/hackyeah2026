@@ -4,6 +4,7 @@ import { updateIdea } from "@/app/admin/actions";
 import { AdminLogin, gate } from "@/components/admin/admin-gate";
 import { AdminShell, wasSaved } from "@/components/admin/admin-shell";
 import { DecisionForm, ModerationState } from "@/components/admin/decision-form";
+import { AssistantSuggestions } from "@/components/idea/assistant-suggestions";
 import { CanvasAnswers } from "@/components/idea/canvas-answers";
 import { Button } from "@/components/ui/button";
 import { controlClass, Hint, Label } from "@/components/ui/field";
@@ -95,6 +96,13 @@ export default async function AdminIdeaPage({ params, searchParams }: PageProps<
             ))}
           </ul>
         )}
+      </section>
+
+      <section aria-labelledby="asystent" className="grid gap-3 border-t border-border pt-6">
+        <h2 id="asystent" className="text-[1.3rem] font-bold">
+          {t("admin.ideas.assistant")}
+        </h2>
+        {idea.assistant?.develop ? <AssistantSuggestions run={idea.assistant.develop} /> : <p>{t("admin.ideas.assistantNone")}</p>}
       </section>
 
       <section aria-labelledby="decyzja" className="grid gap-3 border-t border-border pt-6">

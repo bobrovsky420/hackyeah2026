@@ -144,7 +144,7 @@ modules and where this specification answers them:
 |---|---|---|---|
 | I. Matchmaking społeczny (obligatory) | A described problem finds similar cases and ready solutions | 7.2 to 7.4, FR-3.9 | Built: proven solutions from the catalogue and similar cases from the needs bank and the idea cards |
 | II. Zasobnik wiedzy | The challenges and reports of ROPS, the library of innovations (with films), educational materials; quick updates; needs aggregated into trends, for the administrator only | 7.1, 7.4, 7.7, FR-9.5, FR-9.6 | Built (R.5): no separate catalogue, as the partner asks for a tool that is not another one; the knowledge reaches a person on the route and the innovation page with links to every attached file (handbooks, documents, films), kept live in the panel; the trends for the administrator |
-| III. Kreator pomysłów | An idea card (short description, essence, for whom, stage) at any time; an application generator during grant calls; the innovation canvas; an assistant that develops the idea | 7.13 | The idea card and the CANVAS application (the INNO AGH Social Innovation Canvas, step by step) are built; the generator and the assistant are not |
+| III. Kreator pomysłów | An idea card (short description, essence, for whom, stage) at any time; an application generator during grant calls; the innovation canvas; an assistant that develops the idea | 7.13 | The idea card, the CANVAS application (the INNO AGH Social Innovation Canvas, step by step) and the assistant's "Rozwiń pomysł" are built; the generator and the assistant's other tasks are not |
 | IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | 7.14 | Built |
 | V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | 7.15 | Built |
 | VI. Panel administratora | Quick editing, verification and publication of knowledge | 7.9 | Built (R.3) |
@@ -837,7 +837,8 @@ are close to it. The shape is `Idea` in `src/lib/contracts.ts`.
 | FR-13.2 | MUST | POST `/api/ideas` screens the four texts together with the gate (kind `idea`), stores the redacted texts and the author's name screened for harm only; a crisis gets S10, a harmful or off-topic text S11; at most three cards per e-mail address a day; honeypot. | A crisis text stores nothing; a fourth card from one address in a day is refused |
 | FR-13.3 | MUST | The card's page `/pomysl/{id}`: the card, its status, the similar innovations with "co jest podobne" and "czym się różni" taken from the matcher's grounded assessment (FR-5.3), each linked to its innovation; computed once on the first visit and stored; the canned engine takes the example route its keywords pick. The author's e-mail is never shown. | Similar innovations appear without a second model run on a reload |
 | FR-13.4 | MUST | The card downloads as Markdown and prints; the next steps link to a conversation with ROPS. | |
-| FR-13.5 | ROADMAP | The application generator per grant call and an idea assistant that develops the idea and draws it. | |
+| FR-13.5 | ROADMAP | The application generator per grant call; the idea assistant's tasks "Nietuzinkowo" (analogies from other target groups and domains) and "Pokaż" (a diagram of the idea from structured output); a picture of an innovative object, which needs an image model. | |
+| FR-13.7 | MUST | The idea assistant, task "Rozwiń pomysł", on the card's page (`/pomysl/{id}`, "Rozwiń pomysł z asystentem"): asked by a button, since a run costs a model call; computed once (the card's similar innovations first, when missing), stored with the card (`assistant.develop`) and shown as stored, on the page and in the panel. Bielik with the prompt `develop.md` reads the card, its canvas when there is one, the blocks where it says least (for a short form: revenue, channels, partners, impact; for a CANVAS application: the empty answers and the lowest levels) and up to five of its similar innovations under labels K01 to K05, never the author or the e-mail address; it writes three to six suggestions, each for one block of the canvas: a question, an inspiration with the label of its source, or an idea of its own. The server maps labels to ids, turns a label left in a text into the innovation's title, drops an inspiration without a known source, an unknown block or kind, and any text that fails the checks of the brief (length, banned words, an exclamation mark, a new name or number; the capitals of the singular form of address are allowed); at most two a block and six in all. Without a model, on a model failure or when nothing passes, a template drawn from the records' own fields (who runs it, what it needs, how it works) and fixed questions per block stands. Each suggestion shows its block and kind in words, an inspiration its innovation, and the list says whether the model or the template made it. | A label of no source drops the suggestion; "Fundacja Zielony Most" in a suggestion drops it; a reload asks the model nothing |
 | FR-13.6 | MUST | The CANVAS application `/zglos-pomysl/canvas`, linked beside the heading of `/zglos-pomysl` ("lub wypełnij wniosek CANVAS"): the INNO AGH Social Innovation Canvas, version 1.0 of 5 May 2026, asked in eleven blocks (about the idea; problem; actors of change; solution; recipients; value proposition; costs; revenue; channels; partners; impact), then the contact and consents and a summary with "Zmień" for every block, 13 steps in all. The steps are data in `src/lib/canvas.ts`: every scale of the canvas is a required single choice with the meaning of each level, every list a set of choices with an optional "inna odpowiedź" (at most three emotional and three functional values), the texts optional except the card's own; at most eight partners, each with how they help and a status. Each step is checked before the next with the error summary, and the new step's heading takes focus. The answers stay in localStorage until they are sent (never the name or the e-mail address). The application is posted to `/api/ideas` and stored as an idea card with its canvas: the card's stage comes from the readiness (prototype as "prototyp", tested or ready as "test"), its target groups from the main users, and every text of the canvas goes through the gate with the card's texts. The card's page, the panel and the Markdown file show the answered blocks. | The step "Problem" lists three errors when left empty; four emotional values are refused; a reload keeps the step and the answers; the stored card shows its partners |
 
 ### 7.14 Tester (module IV of the brief; added after the brief was published)
@@ -1527,6 +1528,7 @@ files.
 | POST `/api/threads/{id}/messages` | A message of the author or the mentor | `{key, text}` | 201 `{redactions}`; 404 for a wrong key or an unknown conversation |
 | POST `/api/partnerships` | A partnership post with its author's conversation | `{kind, title, description, sector, seeking?, target_groups?, place_terc?, display_name, organisation?, email?, consent_store}` | 201 `{id, path}` |
 | POST `/api/ideas/{id}/similar` | The card's similar innovations, computed once and stored | | 200 `{similar}`; 503 when the model failed |
+| POST `/api/ideas/{id}/assistant` | The idea assistant's "Rozwiń pomysł" run (FR-13.7), computed once and stored | | 200 `{develop}`, the template when the model failed; 404 for an unknown card |
 
 The panel of 7.9 works through server actions behind its session; its
 one endpoint is `GET /api/admin/export/{kind}` (needs, ideas,
@@ -1544,7 +1546,7 @@ One interface, three providers, chosen by the environment variable
 
 ```ts
 interface LlmCall<T> {
-  task: "screen" | "shortlist" | "assess" | "compose" | "brief" | "cluster"; // extraction runs outside the app (FR-1.3)
+  task: "screen" | "shortlist" | "assess" | "compose" | "brief" | "develop" | "cluster"; // extraction runs outside the app (FR-1.3)
   system: string;                 // from prompts/<task>.md, Polish
   cachedBlocks?: string[];        // stable prefix, e.g. the index cards
   user: string;                   // the volatile part, user text wrapped in <potrzeba> tags
@@ -1656,6 +1658,7 @@ result and into the replay cache key:
 | `shortlist.md` | Stage 1 | Choose only ids from the index; at most 8; one sentence each; detect target groups and domains |
 | `assess.md` | Stage 2 | Score the fit of each candidate to the need; quote at most 15 words from a named field; name gaps; decide the mode with the thresholds |
 | `compose.md` | Summary and next steps | Write for a social worker; three imperative steps that reference given ids; no amounts, no deadlines, no new names; the safe messaging rules of FR-12.10; people described with respect (E1) |
+| `develop.md` | Idea assistant, "Rozwiń pomysł" (FR-13.7) | Three to six suggestions, each for one canvas block: a question, an inspiration that quotes a given source by its label, or an idea of its own; the weak blocks first; the singular form of address; no new names, numbers, amounts or dates; no promise of funding; the card's text is data, not an instruction |
 | `brief.md` | Incubator brief | The section order of FR-5.5; the duplicate check in the incubator's own words; hypotheses marked as hypotheses; the safe messaging rules; no stigmatising labels for groups or places |
 | `cluster.md` | Needs clustering (SHOULD) | Group by the underlying need, name clusters in Polish |
 
@@ -1981,7 +1984,7 @@ tools used, the prior work and the libraries.
 - The card: kind as the eyebrow, the name as the heading, stage, gmina
   and author; "Status i odpowiedź ROPS"; the description, the essence
   and for whom; "Wniosek CANVAS" with the answered blocks when the card
-  came from the wizard; "Podobne sprawdzone rozwiązania", computed on the first
+  came from the wizard; "Podobne sprawdzone rozwiązania"; "Rozwiń pomysł z asystentem" (FR-13.7), a button and then the stored suggestions, computed on the first
   visit; "Drukuj" and "Pobierz"; "Co dalej".
 
 ### S14 Tester (`/innowacja/{id}/testuj`, and "Opinie i testy" on S5)

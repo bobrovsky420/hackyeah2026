@@ -34,6 +34,7 @@ const MAX_TOKENS: Partial<Record<LlmTask, number>> = {
   shortlist: 4_000,
   assess: 4_000,
   brief: 8_000,
+  develop: 4_000,
 };
 
 const REFUSAL_FALLBACK_BETA = "server-side-fallback-2026-07-01";

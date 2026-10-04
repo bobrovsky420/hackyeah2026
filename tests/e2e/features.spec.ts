@@ -599,3 +599,23 @@ test("module VI: a CANVAS application is marked in the ideas list, has a filter 
   await page.waitForURL(/\/rops\/pomysly\?forma=canvas/);
   await expect(page.getByRole("navigation", { name: "Forma zgłoszenia" }).getByRole("link", { name: "Wniosek CANVAS" })).toHaveAttribute("aria-current", "page");
 });
+
+test("module III: the idea assistant answers once, with questions for the weak blocks and inspirations from the catalogue, and the panel shows them", async ({ page }) => {
+  await page.goto("/pomysl/pm-przyklad-2");
+  const assistant = page.getByRole("region", { name: "Rozwiń pomysł z asystentem" });
+  await assistant.getByRole("button", { name: "Poproś o podpowiedzi" }).click();
+  await expect(assistant.getByRole("listitem").first()).toBeVisible({ timeout: 20_000 });
+  await expect(assistant.getByRole("heading", { level: 3, name: /· Inspiracja$/ }).first()).toBeVisible();
+  await expect(assistant.getByText("Na podstawie:").first()).toBeVisible();
+  await expect(assistant.getByText(/Podpowiedzi zestawiliśmy z danych katalogu innowacji/)).toBeVisible();
+
+  // Stored: a reload shows them without asking again.
+  await page.reload();
+  await expect(assistant.getByRole("button", { name: "Poproś o podpowiedzi" })).toHaveCount(0);
+  await expect(assistant.getByRole("listitem").first()).toBeVisible();
+
+  await signIn(page);
+  await page.goto("/rops/pomysly/pm-przyklad-2");
+  await expect(page.getByRole("region", { name: "Podpowiedzi asystenta" }).getByRole("listitem").first()).toBeVisible();
+});
+
