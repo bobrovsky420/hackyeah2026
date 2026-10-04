@@ -578,3 +578,26 @@ test("module II: a period compares the needs with the one before it, and a powia
   await expect(page.getByText(text).first()).toBeVisible();
   await expect(page.getByRole("status").filter({ hasText: /Znalezione potrzeby: \d+/ })).toBeVisible();
 });
+
+test("module VI: a CANVAS application is marked in the ideas list, has a filter of its own and a row in the trends", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/rops/pomysly");
+  const canvasTitle = "Sąsiedzka wypożyczalnia sprzętu rehabilitacyjnego (wpis przykładowy)";
+  const shortTitle = "Sąsiedzkie spotkania przy wspólnym gotowaniu (wpis przykładowy)";
+  await expect(page.getByRole("listitem").filter({ hasText: canvasTitle }).getByText("Wniosek CANVAS")).toBeVisible();
+
+  await page.getByRole("navigation", { name: "Forma zgłoszenia" }).getByRole("link", { name: "Wniosek CANVAS" }).click();
+  await page.waitForURL(/forma=canvas/);
+  await expect(page.getByRole("link", { name: canvasTitle })).toBeVisible();
+  await expect(page.getByRole("link", { name: shortTitle })).toHaveCount(0);
+
+  await page.getByRole("link", { name: canvasTitle }).click();
+  await expect(page.getByRole("definition").filter({ hasText: /^Wniosek CANVAS$/ })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Wniosek CANVAS" }).getByText("Gminny Ośrodek Pomocy Społecznej")).toBeVisible();
+
+  await page.goto("/rops/trendy?widok=pomysly");
+  const byForm = page.locator("section").filter({ has: page.getByRole("heading", { name: "Pomysły według formy zgłoszenia" }) });
+  await byForm.getByRole("link", { name: "Wniosek CANVAS" }).click();
+  await page.waitForURL(/\/rops\/pomysly\?forma=canvas/);
+  await expect(page.getByRole("navigation", { name: "Forma zgłoszenia" }).getByRole("link", { name: "Wniosek CANVAS" })).toHaveAttribute("aria-current", "page");
+});

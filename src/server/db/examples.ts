@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { RoleCode, Idea, Mentor, Need, PartnershipPost, Readiness, Thread } from "@/lib/contracts";
+import { CANVAS_VERSION } from "@/lib/canvas";
 
 /*
  * The example entries every fresh store starts with (memory.ts): three
@@ -129,7 +130,11 @@ export function exampleReadiness(): Readiness[] {
   ];
 }
 
-/** Module III: one idea card of the team, with the similar innovations its page shows, so the page has a stable address. */
+/**
+ * Module III: two idea cards of the team with stable addresses: a short-form
+ * card with the similar innovations its page shows, and a CANVAS
+ * application, so the panel shows a canvas from the first start.
+ */
 export function exampleIdeas(): Idea[] {
   return [
     {
@@ -171,6 +176,66 @@ export function exampleIdeas(): Idea[] {
       },
       retention_until: "2027-10-03",
       note_pl: null,
+      example: true,
+    },
+    {
+      id: "pm-przyklad-2",
+      created_at: SEEDED_AT,
+      kind: "dobra-praktyka",
+      title: "Sąsiedzka wypożyczalnia sprzętu rehabilitacyjnego (wpis przykładowy)",
+      description:
+        "Mieszkańcy oddają do świetlicy wiejskiej balkoniki, kule i łóżka, których już nie używają, a sąsiedzi po urazie albo po szpitalu wypożyczają je bez opłat na czas potrzeby.",
+      essence: "Sprzęt krąży między sąsiadami zamiast stać w piwnicach, a pomoc jest od razu, bez czekania na refundację.",
+      for_whom: "Seniorzy po urazach i po pobycie w szpitalu oraz ich opiekunowie w małych wsiach.",
+      target_groups: ["seniorzy"],
+      stage: "test",
+      place_terc: "1207062",
+      author: { display_name: "Koło Gospodyń Wiejskich (wpis przykładowy)", is_organisation: true, email: "pm-przyklad-2@example.org" },
+      consents: { store: true, publish: true, text_version: CONSENT_VERSION, timestamp: SEEDED_AT },
+      moderation: { status: "do-weryfikacji", reviewer: null, decided_at: null, reason_pl: null },
+      similar: null,
+      status: "nowy",
+      reply: null,
+      retention_until: "2027-10-03",
+      note_pl: null,
+      // Sent as a CANVAS application (src/lib/canvas.ts), so the panel shows its canvas.
+      canvas: {
+        version: CANVAS_VERSION,
+        answers: {
+          intensity: "mocno",
+          frequency: "czesto",
+          scale: "waska",
+          supporters: "Rada sołecka, Koło Gospodyń Wiejskich, pielęgniarka środowiskowa",
+          blockers: "Osoby, które boją się odpowiedzialności za zniszczony sprzęt",
+          clarity: "jasne",
+          readiness: "przetestowane",
+          value: "bardzo-duza",
+          users: ["seniorzy", "mieszkancy"],
+          payers: ["gmina", "fundacja"],
+          authorities: ["pracownik-socjalny", "lider"],
+          emotional: ["bezpieczenstwo", "niezaleznosc", "spokoj"],
+          functional: ["koszty", "czas", "dostepnosc"],
+          fixed: ["przestrzen", "koordynacja"],
+          variable: ["dojazdy"],
+          income: "pomysl",
+          income_text: "Mała dotacja gminy na przeglądy sprzętu",
+          growth: "szanse",
+          growth_text: "",
+          direct: ["spotkania", "telefon"],
+          through: ["gmina", "lekarz"],
+          extra: ["wydarzenia-lokalne"],
+          impact_person: "wyrazny",
+          impact_person_text: "Po wyjściu ze szpitala sprzęt jest w domu tego samego dnia.",
+          impact_community: "mozliwy",
+          impact_community_text: "",
+          impact_environment: "mozliwy",
+          impact_environment_text: "Sprzęt służy dłużej i nie trafia na śmietnik.",
+        },
+        partners: [
+          { name: "Gminny Ośrodek Pomocy Społecznej", roles: ["zasieg"], status: "rozmowy" },
+          { name: "Ochotnicza Straż Pożarna", roles: ["koszty"], status: "potencjalny" },
+        ],
+      },
       example: true,
     },
   ];

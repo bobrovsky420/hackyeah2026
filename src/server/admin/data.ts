@@ -3,7 +3,9 @@ import type { ContactRequest, Evaluation, Idea, Need, Readiness, Route } from "@
 import { warsawDay } from "@/lib/dates";
 import { repository, type Repository } from "@/server/db";
 import { questionGroups } from "@/server/db/repository";
+import { canvasSections } from "@/lib/canvas";
 import { waitsForRops } from "@/server/threads/access";
+import { ideaForm, type IdeaForm } from "./labels";
 
 /*
  * What the panel (module VI) reads of the store: the queues that wait for a
@@ -179,6 +181,8 @@ export interface Trends {
   period: TrendPeriod;
   ideasByGroup: Tally[];
   ideasByStage: Tally[];
+  /** The ideas by how they were sent: the short form or the CANVAS application. */
+  ideasByForm: Tally[];
   routesByMode: Tally[];
   /** Innovation ids, most recommended first. */
   topRecommended: Tally[];
@@ -233,6 +237,7 @@ export async function trends(repo: Repository = repository(), range: TrendRange 
     ),
     ideasByGroup: compared(ideas, period, (idea) => groupsOf(idea.target_groups)),
     ideasByStage: compared(ideas, period, (idea) => [idea.stage]),
+    ideasByForm: compared(ideas, period, (idea) => [ideaForm(idea)]),
     routesByMode: compared(routes, period, (route) => [route.mode]),
     topRecommended: compared(routes, period, (route) => route.solution_ids).slice(0, TOP),
     rated: rated.sort((a, b) => b.ratings + b.testers - (a.ratings + a.testers) || b.average - a.average).slice(0, TOP),
@@ -272,6 +277,7 @@ export function filterNeeds(needs: Need[], filter: NeedTrendFilter): Need[] {
 export interface IdeaTrendFilter {
   group?: string;
   stage?: string;
+  form?: IdeaForm;
   from?: string;
   to?: string;
 }
@@ -281,6 +287,7 @@ export function filterIdeas(ideas: Idea[], filter: IdeaTrendFilter): Idea[] {
     (idea) =>
       (!filter.group || groupsOf(idea.target_groups).includes(filter.group)) &&
       (!filter.stage || idea.stage === filter.stage) &&
+      (!filter.form || ideaForm(idea) === filter.form) &&
       within(idea.created_at, filter.from ?? null, filter.to ?? "9999-12-31"),
   );
 }
@@ -362,6 +369,14 @@ const moderationCells = (item: { moderation: Need["moderation"] }) => [
   item.moderation.reason_pl,
 ];
 
+/** A CANVAS application's answers in one cell, a line per answer: "Problem: Intensywność ...: Bardzo poważny problem". */
+function canvasCell(idea: Idea): string | null {
+  if (!idea.canvas) return null;
+  return canvasSections(idea.canvas)
+    .flatMap((section) => section.rows.map((row) => `${section.title}: ${row.label} ${row.value}`))
+    .join("\n");
+}
+
 export async function exportRows(kind: ExportKind, repo: Repository = repository()): Promise<(string | number | boolean | null)[][]> {
   const gmina = (terc: string | null) => (terc ? (catalogue().gminaByTerc.get(terc)?.name ?? terc) : null);
   switch (kind) {
@@ -378,11 +393,11 @@ export async function exportRows(kind: ExportKind, repo: Repository = repository
     case "ideas": {
       const items: Idea[] = await repo.listIdeas();
       return [
-        ["id", "utworzono", "rodzaj", "nazwa", "opis", "istota", "dla_kogo", "grupy", "etap", "gmina", "autor", "organizacja", "email", "zgoda_publikacja", "status", "odpowiedz", ...moderationColumns, "notatka"],
+        ["id", "utworzono", "rodzaj", "forma", "nazwa", "opis", "istota", "dla_kogo", "grupy", "etap", "gmina", "autor", "organizacja", "email", "zgoda_publikacja", "status", "odpowiedz", ...moderationColumns, "notatka", "canvas"],
         ...items.map((item) => [
-          item.id, item.created_at, item.kind, item.title, item.description, item.essence, item.for_whom, item.target_groups.join(", "),
+          item.id, item.created_at, item.kind, ideaForm(item), item.title, item.description, item.essence, item.for_whom, item.target_groups.join(", "),
           item.stage, gmina(item.place_terc), item.author.display_name, item.author.is_organisation, item.author.email, item.consents.publish,
-          item.status, item.reply?.text_pl ?? null, ...moderationCells(item), item.note_pl,
+          item.status, item.reply?.text_pl ?? null, ...moderationCells(item), item.note_pl, canvasCell(item),
         ]),
       ];
     }

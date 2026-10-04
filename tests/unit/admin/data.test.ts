@@ -229,6 +229,22 @@ describe("the trends of module II", () => {
       expect(all.needsOverTime.at(-3)?.count).toBe(2);
     });
 
+    it("counts the ideas by form, narrows the list to one and exports the canvas", async () => {
+      const [short, canvas] = exampleIdeas();
+      const repo = createMemoryRepository({ ...createMemoryState(), needs: [], ideas: [short, canvas] });
+      expect((await trends(repo, "calosc", NOW)).ideasByForm).toEqual([
+        { key: "canvas", count: 1 },
+        { key: "formularz", count: 1 },
+      ]);
+      expect(filterIdeas([short, canvas], { form: "canvas" }).map((item) => item.id)).toEqual(["pm-przyklad-2"]);
+      const [header, ...rows] = await exportRows("ideas", repo);
+      const column = (name: string) => header.indexOf(name);
+      const sent = rows.find((row) => row[0] === "pm-przyklad-2")!;
+      expect(sent[column("forma")]).toBe("canvas");
+      expect(String(sent[column("canvas")])).toContain("Konstelacja partnerów: Gminny Ośrodek Pomocy Społecznej");
+      expect(rows.find((row) => row[0] === "pm-przyklad-1")![column("canvas")]).toBeNull();
+    });
+
     it("narrows the needs and the ideas to a bar of the trends", () => {
       const needs = [
         need("pt-1", "2026-10-01T09:00:00.000Z", ["seniorzy"], "1207062"),
