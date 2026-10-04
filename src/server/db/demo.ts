@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
+import { CANVAS_VERSION, type CanvasAnswers, type CanvasPartner } from "@/lib/canvas";
 import type {
   ContactRequest,
   ContentReport,
@@ -105,6 +106,8 @@ interface DemoRecords {
     essence: string;
     for_whom: string;
     reply_pl: string | null;
+    /** A card sent as a CANVAS application: its answers without the card's own fields. */
+    canvas?: { answers: CanvasAnswers; partners?: CanvasPartner[] };
   }[];
   contacts: { id: string; target: "innovation" | "advisor"; group: string; requester: { name: string; organisation: string | null }; message: string }[];
   readiness: { id: string; display_name: string; topics: string[] }[];
@@ -434,6 +437,7 @@ export function buildDemo(sources: DemoSources, now: number): DemoSet {
         reply,
         retention_until: yearAfter(at),
         note_pl: note(0.2),
+        ...(card.canvas && { canvas: { version: CANVAS_VERSION, answers: card.canvas.answers, partners: card.canvas.partners ?? [] } }),
         demo: true,
       },
     ];

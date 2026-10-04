@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { StoredBrief, ContactRequest, ContentReport, Evaluation, Idea, Thread, ModerationLogEntry, Need, Readiness, Route } from "@/lib/contracts";
+import { parseCanvas, stageFromReadiness } from "@/lib/canvas";
 import { exampleIdeas, exampleNeeds, exampleReadiness } from "@/server/db/examples";
 import { createFileRepository } from "@/server/db/file";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
@@ -740,14 +741,22 @@ ${title}
 });
 
 describe("the example entries", () => {
-  it("a fresh store starts with the three example needs, the two team entries and the example idea card", async () => {
+  it("a fresh store starts with the three example needs, the two team entries and the two example idea cards", async () => {
     const repo = createMemoryRepository();
     expect((await repo.listNeeds()).map((item) => item.id)).toEqual(["nd-przyklad-1", "nd-przyklad-2", "nd-przyklad-3"]);
     expect((await repo.listReadiness()).map((item) => item.id)).toEqual(["gt-przyklad-1", "gt-przyklad-2"]);
-    expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-przyklad-1"]);
+    expect((await repo.listIdeas()).map((item) => item.id)).toEqual(["pm-przyklad-1", "pm-przyklad-2"]);
     expect((await repo.listThreads()).map((item) => item.id)).toEqual(["rz-przyklad-1", "rz-przyklad-2"]);
     expect((await repo.listPosts({ moderation: "zatwierdzone" })).map((item) => item.id)).toEqual(["pp-przyklad-1"]);
     expect((await repo.listMentors()).every((mentor) => mentor.example)).toBe(true);
+  });
+
+  it("the example CANVAS application passes the checks of a posted one", () => {
+    const card = exampleIdeas().find((item) => item.canvas)!;
+    const { kind, title, description, essence, for_whom } = card;
+    const parsed = parseCanvas({ ...card.canvas!.answers, kind, title, description, essence, for_whom }, card.canvas!.partners);
+    expect(parsed.ok).toBe(true);
+    if (parsed.ok) expect(stageFromReadiness(String(parsed.canvas.answers.readiness))).toBe(card.stage);
   });
 
   it("the example idea card is marked and already holds its similar innovations (module III)", () => {

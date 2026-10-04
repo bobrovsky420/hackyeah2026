@@ -18,7 +18,9 @@
 #   test, dziala), target_groups, author (display_name, is_organisation),
 #   title, description ("Krótki opis pomysłu"), essence ("Co jest jego
 #   istotą"), for_whom ("Komu jest dedykowany", in the author's words),
-#   reply_pl (ROPS's answer to the author, or null).
+#   reply_pl (ROPS's answer to the author, or null); canvas (optional) for
+#   a card sent as a CANVAS application: answers (the codes and texts of
+#   src/lib/canvas.ts, without the card's own fields) and partners.
 # - contacts: requests "Poproś o kontakt" sent from a route. target
 #   (innovation or advisor), group (for an advisor the category asked
 #   about, for an innovation the group the asker works with), requester
@@ -879,6 +881,56 @@ ideas:
       Sąsiedzi widzą, kto potrzebuje drobnej pomocy, i mogą jej udzielić.
     for_whom: Mieszkańcy bloku, szczególnie starsi i samotni.
     reply_pl: null
+  - id: PM46
+    kind: pomysl
+    stage: prototyp
+    target_groups: [dzieci-mlodziez-rodziny]
+    author:
+      display_name: Stowarzyszenie Rodzin Aktywnych
+      is_organisation: true
+    title: Rodzinne popołudnia z grami planszowymi w bibliotece
+    description: >-
+      Raz w tygodniu biblioteka gminna otwiera salę z grami planszowymi dla
+      rodzin. Wolontariusze tłumaczą zasady, a rodzice grają razem z dziećmi
+      zamiast spędzać popołudnie przed ekranem.
+    essence: >-
+      Wspólna gra daje rodzinom czas bez telefonów i miejsce, gdzie poznają
+      inne rodziny z gminy.
+    for_whom: Rodziny z dziećmi w wieku szkolnym, szczególnie nowi mieszkańcy gminy.
+    reply_pl: null
+    canvas:
+      answers:
+        intensity: utrudnia
+        frequency: czesto
+        scale: duza
+        supporters: Dyrekcja biblioteki, rada rodziców szkoły podstawowej
+        blockers: Rodzice, którzy wolą zajęcia płatne, bo uważają je za lepsze
+        clarity: jasne
+        readiness: prototyp
+        value: korzysc-wieksza
+        users: [dzieci, rodzice, mieszkancy]
+        payers: [gmina, fundacja]
+        authorities: [dyrektor, lider]
+        emotional: [wlaczenie, samotnosc, zadowolenie]
+        functional: [koszty, dostepnosc]
+        fixed: [przestrzen, koordynacja]
+        variable: [materialy]
+        income: pomysl
+        income_text: Grant z programu dla organizacji pozarządowych
+        growth: szanse
+        direct: [spotkania, media]
+        through: [szkola, organizacja]
+        extra: [wydarzenia-lokalne]
+        impact_person: wyrazny
+        impact_community: mozliwy
+        impact_environment: maly
+      partners:
+        - name: Biblioteka Gminna
+          roles: [koszty, wartosc]
+          status: potwierdzony
+        - name: Szkoła Podstawowa
+          roles: [zasieg]
+          status: rozmowy
 
 contacts:
   - id: KT01

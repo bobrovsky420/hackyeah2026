@@ -1,7 +1,9 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { parseYaml } from "@/lib/data/yaml";
+import { parseCanvas } from "@/lib/canvas";
 import type { Route } from "@/lib/contracts";
 import { getExampleRoute } from "@/lib/mock/routes";
 import { demoCount, questions, queueCounts, trends } from "@/server/admin/data";
@@ -153,6 +155,17 @@ describe("the demonstration data of the panel", () => {
     const root = mkdtempSync(path.join(tmpdir(), "demo-"));
     expect(withDemoData(state, NOW, root)).toBe(state);
     expect(state.routes.size + state.needs.length).toBe(before);
+  });
+
+  it("every CANVAS application of the hand-written records passes the checks of a posted one", () => {
+    const records = parseYaml(readFileSync(path.join("data", "curated", "demo-records.yaml"), "utf8")) as unknown as {
+      ideas: { kind: string; title: string; description: string; essence: string; for_whom: string; canvas?: { answers: Record<string, unknown>; partners?: unknown[] } }[];
+    };
+    const sent = records.ideas.filter((card) => card.canvas);
+    expect(sent.length).toBeGreaterThan(0);
+    for (const { kind, title, description, essence, for_whom, canvas } of sent) {
+      expect(parseCanvas({ ...canvas!.answers, kind, title, description, essence, for_whom }, canvas!.partners ?? [])).toMatchObject({ ok: true });
+    }
   });
 
   it("reads the three files from data/built/ only: the hand-written ones in data/curated/ switch nothing on", () => {
