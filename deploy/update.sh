@@ -19,7 +19,7 @@ set -a; . ./.env.server; set +a
 export PATH="$HOME/.local/bin:$PATH"
 uv pip install --python .venv/bin/python -r requirements.txt
 
-vectors_sum() { sha256sum data/built/index-vectors.json 2>/dev/null | cut -d' ' -f1; }
+vectors_sum() { sha256sum data/built/index-vectors.json 2>/dev/null | cut -d' ' -f1 || true; }  # empty before the first release
 before="$(vectors_sum)"
 .venv/bin/python scripts/get-data.py --prune
 after="$(vectors_sum)"
