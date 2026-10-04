@@ -18,6 +18,10 @@ if command -v cloud-init >/dev/null; then
 fi
 # No session here answers a prompt: apt and needrestart must not ask.
 echo 'debconf debconf/frontend select Noninteractive' | sudo debconf-set-selections
+# unattended-upgrades runs daily and holds the dpkg lock for minutes: apt waits for it instead of failing.
+if [ ! -f /etc/apt/apt.conf.d/90-deploy-lock-timeout ]; then
+  echo 'DPkg::Lock::Timeout "900";' | sudo tee /etc/apt/apt.conf.d/90-deploy-lock-timeout >/dev/null
+fi
 if [ -d /etc/needrestart/conf.d ] && [ ! -f /etc/needrestart/conf.d/90-deploy.conf ]; then
   echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/90-deploy.conf >/dev/null
 fi
