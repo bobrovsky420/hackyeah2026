@@ -3,7 +3,9 @@
 For the person who runs the public demo (Analyst 2, specification 12.9).
 The app and the embedding service run as two systemd services on one
 Ubuntu server on AWS Lightsail, straight from a checkout, with Caddy in
-front for TLS. The files are in [deploy/](../deploy/).
+front for TLS. The files are in [deploy/](../deploy/). The same server
+on an Azure VM, set up and updated by a GitHub Actions pipeline instead
+of by hand, is in [azure-deploy.md](azure-deploy.md).
 
 ## What runs
 

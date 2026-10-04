@@ -6,6 +6,7 @@ import { LlmError, loadPrompt, toStageLog, type Llm, type LlmResult } from "@/li
 import type { Assessment, MatchMode, StageLog } from "@/lib/contracts";
 import { placeDescription, readerContextLine, wrapNeed, type ReaderContext } from "./context";
 import { checkQuote } from "./grounding";
+import { byWeightedFit } from "./rank";
 import { clampScore, cleanId, clip } from "./shortlist";
 import { MAX_GAPS, MAX_REASONS, MAX_TOP_IDS, PARTIAL_MIN, ROUTE_MIN, modeFor } from "./thresholds";
 
@@ -173,8 +174,16 @@ export interface ValidatedAssessment {
   notes: string[];
 }
 
-/** FR-3.3 and FR-3.4 over the model's answer. `given` maps each id to the fields the model saw. Pure, for the tests. */
-export function validateAssessment(output: AssessOutput, given: ReadonlyMap<string, Record<string, string>>): ValidatedAssessment {
+/**
+ * FR-3.3, FR-3.4 and the order of FR-3.10 over the model's answer. `given`
+ * maps each id to the fields the model saw; `dataset` gives each id its
+ * source. Pure, for the tests.
+ */
+export function validateAssessment(
+  output: AssessOutput,
+  given: ReadonlyMap<string, Record<string, string>>,
+  dataset: Pick<Dataset, "innovationById">,
+): ValidatedAssessment {
   const droppedIds: string[] = [];
   const counts = { unknownField: 0, notFound: 0, empty: 0, cut: 0 };
   let ungrounded = 0;
@@ -226,14 +235,15 @@ export function validateAssessment(output: AssessOutput, given: ReadonlyMap<stri
       adaptation_note_pl: note || null,
     });
   }
-  assessments.sort((a, b) => b.fit_score - a.fit_score);
+  assessments.sort(byWeightedFit(dataset, (a) => a.id, (a) => a.fit_score));
 
-  const mode = modeFor(assessments[0]?.fit_score ?? null);
+  // The mode from the best fit the model gave, never the weighted one (FR-3.3, FR-3.10).
+  const mode = modeFor(assessments.length > 0 ? Math.max(...assessments.map((a) => a.fit_score)) : null);
   const fit = new Map(assessments.map((a) => [a.id, a.fit_score]));
-  // The model's picks that survived, best validated fit first; its full list when it picked none.
+  // The model's picks that survived, best weighted fit first; its full list when it picked none.
   let top = [...new Set(output.top_ids.map(cleanId))].filter((id) => fit.has(id));
   if (top.length === 0) top = assessments.map((a) => a.id);
-  top.sort((a, b) => fit.get(b)! - fit.get(a)!);
+  top.sort(byWeightedFit(dataset, (id) => id, (id) => fit.get(id)!));
   // A route or a partial route shows no candidate below the partial threshold; "none" shows the nearest (S3).
   if (mode !== "none") top = top.filter((id) => fit.get(id)! >= PARTIAL_MIN);
 
@@ -372,7 +382,7 @@ export async function runAssess(
   }
 
   const merged = mergeAnswers(answers.map(({ id, result }) => ({ id, parsed: result.parsed })));
-  const { droppedIds, droppedReasons, notes, ...validated } = validateAssessment(merged.output, given);
+  const { droppedIds, droppedReasons, notes, ...validated } = validateAssessment(merged.output, given, dataset);
   if (merged.foreign.length > 0) notes.push(`assessments: ${merged.foreign.length} ids beyond the call's own candidate`);
   if (merged.repaired > 0) notes.push(`assessments: ${merged.repaired} ids taken from the call's candidate`);
   if (failures.length > 0) {

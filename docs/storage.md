@@ -123,7 +123,7 @@ partnership posts, conversations, content reports and the moderation log
 of their decisions. There is no variable: the files are the switch. A
 seeded generator draws the dates, counted back from the start of the
 server, and the decisions. Every such record has `demo: true`: the panel
-marks it and says so on every page, its trends can leave it out, and the
+marks it and says so on every page, its trends always count it, and the
 public pages and the route never show it.
 
 - The questions and texts are edited in `data/curated/demo-questions.yaml`
@@ -140,8 +140,8 @@ public pages and the route never show it.
 - A memory store (`STORE_FILE=memory`: the Playwright server, the
   scripts) never gets it.
 - Entries made while the server runs (a question the jury asks live) are
-  real and count beside the simulated ones; "Tylko prawdziwe wpisy" in
-  the trends shows them alone.
+  real and count beside the simulated ones; the panel has no filter to
+  show them alone.
 - When only some of the three files are there, the start logs which one
   is missing (`[store] ... is missing`) and the store starts with the
   examples only.

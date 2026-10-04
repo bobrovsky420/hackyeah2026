@@ -80,4 +80,9 @@ describe("toNearestMatches", () => {
     expect(matches).toHaveLength(MAX_NEAREST);
     expect(matches.map((match) => match.fit_score)).toEqual([14, 13, 12]);
   });
+
+  test("the ROPS library comes first on an equal fit (FR-3.10)", () => {
+    const matches = toNearestMatches([assessment(SENIORS, 60), assessment(BATHROOMS, 60)], dataset);
+    expect(matches.map((match) => match.innovation_id)).toEqual([BATHROOMS, SENIORS]);
+  });
 });
