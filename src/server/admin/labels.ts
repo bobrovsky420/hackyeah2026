@@ -16,6 +16,24 @@ export function ideaStatusLabel(code: IdeaStatus): string {
   return t(ideaStatusKeys[code]);
 }
 
+/** How an idea card was sent (module III): the short form, or the CANVAS application with its canvas. */
+export type IdeaForm = "formularz" | "canvas";
+
+const ideaFormKeys = {
+  formularz: "admin.ideas.form.formularz",
+  canvas: "admin.ideas.form.canvas",
+} as const satisfies Record<IdeaForm, MessageKey>;
+
+export const ideaFormCodes = Object.keys(ideaFormKeys) as IdeaForm[];
+
+export function ideaForm(idea: { canvas?: unknown }): IdeaForm {
+  return idea.canvas ? "canvas" : "formularz";
+}
+
+export function ideaFormLabel(code: IdeaForm): string {
+  return t(ideaFormKeys[code]);
+}
+
 const routeModeKeys = {
   route: "admin.trends.mode.route",
   partial: "admin.trends.mode.partial",

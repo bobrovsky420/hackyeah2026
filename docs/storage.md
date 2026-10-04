@@ -35,9 +35,9 @@ actions call `repository()`, client components never do.
 - A fresh store (no file) starts with the example entries of
   `examples.ts`: three needs (the first approved for publication, so a
   route about lonely seniors shows it as a similar case, FR-3.9), the two consented and verified team
-  entries of the readiness registry (FR-6.5) and one idea card with its
+  entries of the readiness registry (FR-6.5), one idea card with its
   similar innovations (`pm-przyklad-1`, the stable address of the screen
-  checks), and for 7.15 two mentors, two conversations whose keys are
+  checks) and one CANVAS application (`pm-przyklad-2`), and for 7.15 two mentors, two conversations whose keys are
   public on purpose (`EXAMPLE_THREAD_KEYS`) and one approved partnership
   post; all marked as examples. A conversation stores only the hashes of
   its keys, never a key.
