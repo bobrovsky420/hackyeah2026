@@ -164,10 +164,8 @@ test("FR-11.7: Jak to działa has the register card in its order", async ({ page
     "Podstawa prawna przetwarzania danych",
     "Co system robi, a czego nie",
     "Jak działa, w trzech zdaniach",
-    "Dane i czas przechowywania",
     "Gdzie decyduje człowiek",
     "Znane ograniczenia i równe traktowanie",
-    "Ostatnia ocena",
   ]);
 });
 

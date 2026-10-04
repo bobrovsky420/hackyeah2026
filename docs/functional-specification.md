@@ -781,13 +781,13 @@ code is `src/app/admin/`, `src/server/admin/` and
 
 | Id | Priority | Requirement | Acceptance |
 |---|---|---|---|
-| FR-11.1 | MUST | "Jak to działa": the sources and their dates, what the model does and does not do, what the fit score means, what "sprawdzone" means (an innovation tested in an incubator, or proven several times in practice and judged fit for dissemination by a named body), how a contact request is relayed, the data version. | Reviewed |
+| FR-11.1 | MUST | "Jak to działa": what a person can do in the hub, one line each with its page (describe a need, submit an idea or a CANVAS application, evaluate or test a solution, ask ROPS, partnerships, offer help), who at ROPS answers and how without an account or e-mail, the sources and their dates, what the model does and does not do, what the fit score means, what "sprawdzone" means (an innovation tested in an incubator, or proven several times in practice and judged fit for dissemination by a named body), how a contact request is relayed, the data version. | Reviewed |
 | FR-11.2 | MUST | "Źródła i licencje": the catalogues and their licences with attribution, the AI tools used (the coding assistants and the models in the product), prior work (none, 12.7), open-source libraries. This page is also the credits slide. | Matches the credits slide |
 | FR-11.3 | MUST | "Prywatność": what is stored, for how long, who sees it, rights, contact. | Lawyer's text |
 | FR-11.4 | MUST | "Deklaracja dostępności": the structure of the gov.pl template (the `a11y-*` identifiers) with an honest status. | Lawyer's sign-off |
 | FR-11.5 | MUST | Footer links to all five pages on every screen. | Present |
 | FR-11.6 | MUST | "Zasady" (principles) page: the ten principles of 3.6 in plain Polish; what the tool declines and redirects and why; the helplines; that the tool never decides about an individual; how personal data found in a text is handled; how to report content and how to appeal a decline (an e-mail to ROPS with the reference shown on S11); who reviews what and when. | Lawyer's sign-off; linked from S11 |
-| FR-11.7 | MUST | "Karta systemu" (register card) on "Jak to działa", one screen: purpose; operator and contact; legal basis of the processing; what the system does and does not decide; the logic in three sentences (screening, matching, composition); the data used and how long it is kept; the human review points; the known limits and the fairness measures; the date of the last evaluation run. | Present; matches the evaluation report |
+| FR-11.7 | MUST | "Karta systemu" (register card) on "Jak to działa", one screen: purpose; operator and contact; legal basis of the processing; what the system does and does not decide; the logic in three sentences (screening, matching, composition); the human review points; the known limits and the fairness measures. The data kept and how long are on "Prywatność" instead, and there is no evaluation date on the card. | Present |
 
 ### 7.12 Safety, moderation and fairness (owner: the lawyer for the policy and the texts; Developer 1 for the gate)
 
