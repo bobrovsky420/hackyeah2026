@@ -24,71 +24,69 @@ HubMI: od potrzeby do rozwiązania
 
 PROBLEM STATEMENT
 
-Urzędnik małej gminy widzi, że coraz więcej starszych mieszkańców żyje w samotności. Pracownica socjalna szuka sposobu, by odciążyć opiekunów osób z niepełnosprawnością. Mieszkanka chce zorganizować pomoc sąsiedzką. Każde z nich mierzy się z problemem, który ktoś już rozwiązał. Nie wie tylko, gdzie tego rozwiązania szukać.
+Urzędnik małej gminy widzi, że coraz więcej starszych mieszkańców żyje w samotności. Pracownica socjalna szuka sposobu, by odciążyć opiekunów osób z niepełnosprawnością. Mieszkanka chce zorganizować pomoc sąsiedzką. Każde z nich mierzy się z problemem, na który ktoś inny mógł już znaleźć odpowiedź. Nie wie tylko, gdzie jej szukać.
 
-Wiedza istnieje, ale jest rozproszona. W Małopolsce w ciągu 10 lat powstało blisko 200 innowacji społecznych, a w całej Polsce znacznie więcej. Ich opisy są w raportach, bazach danych, na stronach organizacji i w publikacjach, a doświadczenie mają ludzie, którzy je wdrażali. Kto szuka rozwiązania, musi to wszystko przejrzeć sam.
+Wiedza istnieje, ale jest rozproszona. W Małopolsce w ciągu 10 lat powstało blisko 200 innowacji społecznych, a w całej Polsce znacznie więcej. Ich opisy można znaleźć w raportach, bazach danych, na stronach organizacji i w publikacjach. Praktyczne doświadczenie mają ludzie, którzy je wdrażali. Osoba szukająca rozwiązania musi samodzielnie dotrzeć do tych informacji i kontaktów.
 
-Lista wyników to jeszcze nie odpowiedź. Katalog pokazuje listę, a wyszukiwarka zwraca linki. Żadne z nich nie powie, które rozwiązanie pasuje do danej gminy, kto może je zrealizować, ile kosztuje, skąd wziąć pieniądze i w jakiej formie prawnej je uruchomić. Dlatego ROPS nie chce kolejnego portalu, katalogu ani wyszukiwarki, tylko narzędzia, które połączy problem z istniejącym rozwiązaniem.
+Lista wyników to jeszcze nie odpowiedź. Katalog przedstawia rozwiązania, a wyszukiwarka zwraca linki. To jednak nie wystarcza, by ustalić, które rozwiązanie pasuje do danej gminy, kto może je zrealizować, ile kosztuje, skąd wziąć pieniądze i w jakiej formie prawnej je uruchomić. Dlatego ROPS nie chce kolejnego portalu, katalogu ani wyszukiwarki, tylko narzędzia, które połączy problem z istniejącym rozwiązaniem.
 
-Dobre pomysły przechodzą niezauważone. Organizacje pozarządowe, Centra Usług Społecznych i grupy mieszkańców tworzą wartościowe mikrorozwiązania, ale rzadko wychodzą one poza gminę, w której powstały, bo ich autorom brakuje narzędzi do rozwijania i upowszechniania. Gdy rozwiązania jeszcze nie ma, potrzeba przepada: nie trafia do inkubatora ani do nikogo, kto mógłby się nią zająć.
+Dobre pomysły często pozostają niezauważone. Organizacje pozarządowe, centra usług społecznych i grupy mieszkańców tworzą wartościowe lokalne rozwiązania, ale rzadko wychodzą one poza gminę, w której powstały. Ich autorom brakuje narzędzi i wsparcia w rozwijaniu oraz upowszechnianiu pomysłów. Gdy odpowiedniego rozwiązania jeszcze nie ma, brakuje sposobu, by zgłoszona potrzeba stała się punktem wyjścia do stworzenia nowej innowacji.
 
-ROPS nie widzi całości. Brakuje jednego miejsca, które łączyłoby diagnozę problemów, rozwój nowych pomysłów, testowanie innowacji, upowszechnianie sprawdzonych rozwiązań i budowanie partnerstw. Bez niego trudno zobaczyć, z jakimi potrzebami i z których gmin zgłaszają się mieszkańcy i instytucje, zaplanować kolejne nabory i skierować innowacje tam, gdzie są najbardziej potrzebne.
+ROPS potrzebuje pełniejszego obrazu. Brakuje jednego miejsca, które łączyłoby diagnozę problemów, rozwój nowych pomysłów, testowanie innowacji, upowszechnianie sprawdzonych rozwiązań i budowanie partnerstw. Bez niego trudno zobaczyć, jakie potrzeby zgłaszają mieszkańcy i instytucje z poszczególnych gmin, zaplanować kolejne nabory i skierować innowacje tam, gdzie są najbardziej potrzebne.
 
-A wyzwań przybywa: starzenie się społeczeństwa, kryzys zdrowia psychicznego, samotność, wykluczenie cyfrowe, ograniczony dostęp do usług społecznych, a także wyludnianie się większości regionu przy szybkim wzroście liczby mieszkańców gmin wokół Krakowa.
+A wyzwań przybywa: starzenie się społeczeństwa, kryzys zdrowia psychicznego, samotność, wykluczenie cyfrowe, ograniczony dostęp do usług społecznych, a także wyludnianie się wielu części regionu przy szybkim wzroście liczby mieszkańców gmin wokół Krakowa.
 
-Narzędzie ma służyć wszystkim i nikomu nie szkodzić. Korzystać z niego będą także osoby starsze, słabowidzące i mniej obeznane z technologią. Osoba w kryzysie potrzebuje kontaktu z człowiekiem, a nie listy innowacji. Model językowy nie może zmyślać rozwiązań, kwot ani przepisów, bo błędna wskazówka kosztuje gminę czas i pieniądze. Trzeba też chronić dane osobowe zgłaszających.
+Narzędzie musi być dostępne i bezpieczne. Korzystać z niego będą także osoby starsze, słabowidzące i mniej obeznane z technologią. Osoba w kryzysie potrzebuje kontaktu z człowiekiem, a nie listy innowacji. Model językowy nie może zmyślać rozwiązań, kwot ani przepisów — błędna wskazówka może prowadzić do nietrafnych decyzji oraz kosztować gminę czas i pieniądze. Trzeba też chronić dane osobowe zgłaszających.
 
-Pytanie brzmi więc: jak połączyć potrzebę opisaną własnymi słowami z wiedzą, sprawdzonymi rozwiązaniami i osobami gotowymi do działania, a gdy rozwiązania jeszcze nie ma, pomóc znaleźć drogę do jego stworzenia?
+Pytanie brzmi więc: jak połączyć potrzebę opisaną własnymi słowami z wiedzą, sprawdzonymi rozwiązaniami i osobami gotowymi do działania, a gdy rozwiązania jeszcze nie ma — pomóc znaleźć drogę do jego stworzenia?
 
 
 DESCRIPTION
 
-Aplikacja HubMI.pl, cyfrowe serce, które ROPS w Krakowie planuje dla Małopolskiego Hubu Innowacji Społecznych: osoba zgłaszająca potrzebę znajduje rozwiązanie, a każdy wpis trafia do panelu ROPS.
+HubMI.pl to aplikacja, która ma stać się cyfrowym sercem Małopolskiego Hubu Innowacji Społecznych. Łączy potrzeby mieszkańców i instytucji z istniejącymi rozwiązaniami, praktyczną wiedzą i ludźmi, którzy mogą pomóc. Zgłoszenia trafiają do panelu ROPS w Krakowie, gdzie pracownicy decydują o dalszych działaniach.
 
-Więcej niż katalog: wsparcie w działaniu. Mieszkaniec, pracownik socjalny, przedstawiciel organizacji albo urzędnik opisuje potrzebę własnymi słowami i wybiera gminę. Otrzymuje drogę z czterech części:
+Więcej niż katalog — wsparcie w działaniu. Mieszkaniec, pracownik socjalny, przedstawiciel organizacji lub urzędnik opisuje potrzebę własnymi słowami i wybiera gminę. Otrzymuje mapę działania złożoną z czterech części:
 
-- Rozwiązania: do trzech z 381 sprawdzonych innowacji, każda z uzasadnieniem opartym na cytatach ze źródła i z wymaganiami: realizator, koszt, czas.
+- Rozwiązania: do trzech propozycji z katalogu 381 innowacji społecznych. Każda zawiera uzasadnienie dopasowania oparte na cytatach ze źródeł oraz informacje o wymaganiach dotyczących realizatora, kosztów i czasu wdrożenia.
 - Wiedza: poradniki, modele usług i filmy.
-- Ludzie: autor innowacji, realizatorzy w pobliżu, opiekun kategorii w ROPS i osoby gotowe pomóc, za ich zgodą.
-- Ścieżka wdrożenia: forma prawna, nabory i trzy kolejne kroki.
+- Ludzie: autorzy innowacji, pobliscy realizatorzy oraz osoby gotowe pomóc, za ich zgodą. Docelowo także opiekun kategorii w ROPS.
+- Ścieżka wdrożenia: forma prawna, możliwości finansowania, nabory i trzy kolejne kroki.
 
-Ani wyszukiwarka, ani czatbot do dokumentów. Wyszukiwarka zwraca linki, a czatbot z RAG pisze zgrabny akapit; oba odpowiadają na każde pytanie. HubMI układa drogę według reguł, na podstawie opracowanych danych, i potrafi powiedzieć „nie”. Otwarty polski model Bielik tylko wybiera i wyjaśnia: każde odwołanie sprawdzamy w katalogu, każdy cytat w źródle, a o tym, czy dopasowanie wystarcza, decyduje program, nie model. Kwoty, terminy i podstawy prawne pochodzą z tabeli 30 ścieżek prawnych i finansowych, do której model nie ma dostępu.
+Od odpowiedzi do działania. HubMI łączy wyszukiwanie i odpowiedzi AI z uporządkowaną mapą działania. Tworzy ją według określonych reguł, na podstawie opracowanych danych. Otwarty polski model Bielik dobiera rozwiązania i wyjaśnia ich dopasowanie. System sprawdza każde odwołanie w katalogu i każdy cytat w materiale źródłowym. Rekomendacje są wyświetlane tylko wtedy, gdy wynik dopasowania osiąga ustalony próg. Kwoty, terminy i podstawy prawne są pobierane bezpośrednio z tabeli 30 ścieżek prawnych i finansowych — model ich nie generuje.
 
-Gdy nic nie pasuje, mówi to wprost. Potrzeba trafia do banku potrzeb, a narzędzie przygotowuje fiszkę dla kolejnego naboru inkubatora z podobnymi istniejącymi innowacjami.
+Gdy nie ma odpowiedniego rozwiązania, HubMI informuje o tym wprost i umożliwia zgłoszenie potrzeby do banku potrzeb. Narzędzie pomaga przygotować fiszkę, czyli kartę pomysłu, wskazując również podobne istniejące innowacje. Taka karta może posłużyć do rozwinięcia pomysłu i przygotowania zgłoszenia do naboru inkubatora.
 
-Najpierw etyka. Osoba w kryzysie dostaje kontakt do ludzi, którzy mogą pomóc, a nie listę innowacji. Narzędzie niczego nikomu nie wysyła i o nikim nie decyduje.
+Najpierw bezpieczeństwo. Osoba w kryzysie otrzymuje informacje, gdzie uzyskać pomoc człowieka. Narzędzie nie proponuje jej wtedy innowacji. Nie podejmuje decyzji o konkretnych osobach, a przekazanie zgłoszeń dalej wymaga zatwierdzenia przez pracownika ROPS.
 
-Usługa, nie tylko aplikacja. Każdy wpis czeka w panelu na decyzję pracownika ROPS. Panel ma narzędzia dla trzech ról: opiekuna kategorii, redaktora katalogu i koordynatora banku potrzeb. ROPS obsadzi te role i domknie trzy cykle: od potrzeby do wdrożenia, od potrzeby do nowej innowacji, od innowacji do miejsc, które jej potrzebują.
+Usługa, nie tylko aplikacja. Zgłoszenia oczekują w panelu na decyzję pracownika ROPS. W dalszym rozwoju proponujemy trzy role: opiekuna kategorii, redaktora katalogu i koordynatora banku potrzeb. Taki podział zadań pomoże prowadzić użytkowników od potrzeby do wdrożenia, wykorzystywać zgłoszone potrzeby do tworzenia nowych innowacji oraz docierać z istniejącymi rozwiązaniami do miejsc, w których są potrzebne.
 
-Moduły wyzwania: sześć zaimplementowanych (I, II, III, IV, V, VI) i jeden częściowo (VII).
+Zaimplementowaliśmy pięć modułów wyzwania: matchmaking społeczny (I), zasobnik wiedzy (II), tester innowacji (IV), platformę aktywnej komunikacji (V) i panel administratora (VI). Kreator pomysłów (III) i Middleman Innowacji (VII) są zaimplementowane częściowo.
 
-Korzystaliśmy z agenta AI do programowania Claude Code (Anthropic); każda decyzja zespołu, źródła danych i licencje są opisane w repozytorium.
+Przy programowaniu korzystaliśmy z agenta AI Claude Code (Anthropic). Decyzje zespołu, źródła danych i informacje o licencjach dokumentujemy w repozytorium.
 
 Zespół: Alexander Bobrovský (bobrovsky@seznam.cz), Anton Myshelov (omgkennyno@gmail.com), Dmytro Chernikov (me41st0@gmail.com), Dmytro Ushakov (ushakov_d@hotmail.com), Krzysztof Zając (zajkrz@gmail.com).
 
 
 WHAT IS DONE
 
-Zaimplementowane w obecnej wersji aplikacji, według modułów wyzwania:
+Zaimplementowane według modułów wyzwania:
 
-- Matchmaking społeczny (moduł I): opis potrzeby własnymi słowami, gmina i rola; do trzech sprawdzonych innowacji z oceną dopasowania i uzasadnieniem opartym na cytatach ze źródła; wiedza, ludzie i ścieżka wdrożenia z tabeli 30 ścieżek prawnych i finansowych; podobne przypadki z banku potrzeb i z fiszek pomysłów; stały link do drogi, wersja do druku i plik tekstowy do pobrania.
-- Bank potrzeb: gdy nic nie pasuje albo pasuje tylko częściowo, potrzeba trafia do banku, a narzędzie przygotowuje fiszkę dla inkubatora z najbliższymi innowacjami i sprawdza, czy podobne rozwiązanie już istnieje.
-- Zasobnik wiedzy (moduł II): poradniki, modele usług, dokumenty i filmy w drodze i na stronie każdej innowacji; dla ROPS trendy potrzeb według grup docelowych, powiatów i tygodni.
-- Kreator pomysłów (moduł III): fiszka pomysłu (opis, istota, dla kogo, etap) i kanwa innowacji społecznej INNO AGH wypełniana krok po kroku, z najbliższymi sprawdzonymi rozwiązaniami i z odpowiedzią ROPS na stronie fiszki.
-- Tester innowacji (moduł IV): przy każdej innowacji ocena, opinia, propozycja ulepszenia i zapis do testów; ROPS przekazuje je autorom innowacji.
-- Platforma aktywnej komunikacji (moduł V): rozmowa z ROPS bez zakładania konta, przez prywatny link; mentor zaproszony przez ROPS do rozmowy; tablica partnerstw z ogłoszeniami zaakceptowanymi przez ROPS, a odpowiedzi trafiają najpierw do ROPS, więc żadne dane kontaktowe nie są publiczne.
-- Panel administratora (moduł VI): kolejki wszystkich zgłoszeń z decyzjami odnotowanymi z nazwiskiem, statusy, odpowiedzi dla autorów, bieżące poprawki innowacji i wiedzy bez publikowania nowej wersji danych, trendy i eksport do CSV. Dane demonstracyjne, symulacja dwunastu tygodni w Małopolsce, pokazują, jak panel wygląda w codziennej pracy.
-- Middleman Innowacji (moduł VII, częściowo): ścieżka wdrożenia dopasowana do roli zgłaszającego i do gminy: forma prawna, nabory i kolejne kroki.
+- Matchmaking społeczny (moduł I): użytkownik opisuje potrzebę własnymi słowami, wskazuje gminę i rolę. Otrzymuje mapę działania: do trzech sprawdzonych innowacji z oceną dopasowania, wiedzę, kontakty i ścieżkę wdrożenia. Mapę można zachować pod stałym linkiem lub wydrukować. Osoby gotowe do pomocy mogą zarejestrować się na portalu; gdy pomoc odpowiada potrzebie, ROPS pomaga obu stronom nawiązać kontakt.
+- Bank potrzeb: gdy nie ma odpowiedniego rozwiązania lub dopasowanie jest częściowe, potrzeba trafia do banku, a narzędzie przygotowuje fiszkę dla inkubatora z najbardziej zbliżonymi innowacjami.
+- Zasobnik wiedzy (moduł II): poradniki, modele usług i filmy w mapie działania oraz na stronie każdej innowacji. ROPS może analizować trendy potrzeb według grup docelowych, powiatów i tygodni.
+- Kreator pomysłów (moduł III, częściowo): fiszka pomysłu i wniosek CANVAS wypełniany krok po kroku. Strona fiszki pokazuje podobne sprawdzone rozwiązania i odpowiedź ROPS.
+- Tester innowacji (moduł IV): możliwość wystawienia oceny, dodania opinii, zaproponowania ulepszenia i zgłoszenia się do testów przy każdej innowacji. Po zatwierdzeniu przez ROPS zgłoszenia są przekazywane autorom.
+- Platforma aktywnej komunikacji (moduł V): rozmowa z ROPS przez prywatny link, bez zakładania konta, z możliwością dołączenia mentora. Tablica partnerstw zawiera ogłoszenia zatwierdzone przez ROPS, a dane kontaktowe nie są publikowane.
+- Panel administratora (moduł VI): obsługa zgłoszeń, rejestrowanie decyzji z nazwiskiem pracownika, zarządzanie statusami i odpowiedziami dla autorów, bieżąca aktualizacja opisów innowacji i materiałów oraz eksport do CSV. Dane demonstracyjne symulują dwanaście tygodni zgłoszeń z Małopolski.
+- Middleman Innowacji (moduł VII, częściowo): ścieżka wdrożenia dopasowana do roli zgłaszającego i gminy.
 
-Wspólne dla wszystkich modułów:
+Mechanizmy wspólne:
 
-- Filtr bezpieczeństwa przed każdym dopasowaniem: osoba w kryzysie dostaje numery telefonów zaufania i adres ośrodka pomocy społecznej, prośba dyskryminująca jest odrzucana z uzasadnieniem i informacją, do kogo można się odwołać, a dane osobowe są usuwane przed zapisem i przed każdym zapytaniem do modelu.
-- Katalog 381 innowacji: 300 z ogólnopolskiej bazy innowacjespoleczne.pl i 115 z Biblioteki Innowacji Społecznych ROPS, po scaleniu 34 duplikatów, każda z linkiem do źródła i z uznaniem autorstwa.
-- Dopasowanie: model wyszukiwania PolDense-400M wybiera 40 kandydatów, Bielik 11B ocenia dopasowanie i uzasadnia je cytatami, a program sprawdza każdy identyfikator i każdy cytat. Gdy Bielik jest niedostępny, zastępuje go Claude.
-- Dostępność: krój Atkinson Hyperlegible, kontrast 7:1, wersja kontrastowa, powiększanie tekstu, pełna obsługa klawiaturą i czytnikiem ekranu, wersja na telefon i automatyczny test dostępności każdego ekranu.
-- Jakość: testy jednostkowe i end-to-end oraz 31 przypadków testowych, które sprawdzają trafność, odporność, bezpieczeństwo i równe traktowanie.
-
-Jeszcze niezaimplementowane: generator wniosków i asystent kreatora pomysłów, rejestr wdrożeń, grupowanie podobnych potrzeb i mapa.
+- Bezpieczeństwo: przed każdym dopasowaniem zgłoszenie przechodzi przez filtr bezpieczeństwa. Osoba w kryzysie otrzymuje numery telefonów zaufania i adres ośrodka pomocy społecznej. Prośby o charakterze dyskryminującym są odrzucane z uzasadnieniem. Dane osobowe są usuwane przed zapisem i każdym zapytaniem do modelu.
+- Katalog 381 innowacji: połączyliśmy 300 wpisów z ogólnopolskiej bazy innowacjespoleczne.pl i 115 z Biblioteki Innowacji Społecznych ROPS, scalając powtarzające się wpisy. Każda innowacja ma link do źródła i informację o autorstwie.
+- Dopasowanie: model wyszukiwania PolDense-400M wybiera 40 wstępnie dopasowanych rozwiązań. Bielik 11B ocenia ich dopasowanie i uzasadnia je cytatami. Gdy Bielik jest niedostępny, zastępuje go Claude.
+- Dostępność: krój pisma Atkinson Hyperlegible, kontrast 7:1, tryb wysokiego kontrastu, powiększanie tekstu, pełna obsługa klawiaturą i czytnikiem ekranu, interfejs dostosowany do telefonów i automatyczny test dostępności każdego ekranu.
+- Jakość: testy jednostkowe i end-to-end oraz 31 przypadków testowych sprawdzających trafność, odporność, bezpieczeństwo i równe traktowanie.
 
 
 DEMO LINK
