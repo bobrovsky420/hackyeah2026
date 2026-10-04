@@ -631,3 +631,70 @@ test("module III: the idea assistant answers once, with suggestions from the cat
   await expect(page.getByRole("region", { name: "Podpowiedzi asystenta" }).getByRole("listitem").first()).toBeVisible();
 });
 
+test("notifications: an answer of ROPS is new in Moje rozmowy i zgłoszenia and on the card until opened, and the panel counts what is new", async ({ page }) => {
+  // The author asks a question and sends an idea card from this browser.
+  await page.goto("/zapytaj?innowacja=inn-rops-senior-cuder");
+  await page.getByLabel("Wiadomość", { exact: true }).fill("Jak zacząć takie zajęcia w małej gminie? (powiadomienia e2e)");
+  await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Gmina Testowa e2e");
+  await page.getByRole("checkbox", { name: /przechowywał tę rozmowę/ }).check();
+  await page.getByRole("button", { name: "Wyślij wiadomość" }).click();
+  await page.getByRole("link", { name: "Otwórz rozmowę" }).click();
+  await page.waitForURL(/\/rozmowa\/rz-/);
+  const threadUrl = page.url();
+  const subject = ((await page.getByRole("heading", { level: 1 }).textContent()) ?? "").trim();
+
+  const title = "Powiadomienia e2e: sąsiedzka pomoc w zakupach";
+  await page.goto("/zglos-pomysl");
+  await page.getByLabel("Nazwa pomysłu").fill(title);
+  await page.getByLabel("Krótki opis").fill("Sąsiedzi robią zakupy starszym osobom, które nie wychodzą z domu zimą.");
+  await page.getByLabel("Co jest jego istotą?").fill("Drobna pomoc sąsiedzka zamiast samotności.");
+  await page.getByLabel("Komu jest dedykowany?").fill("Starsze osoby w bloku.");
+  await page.getByRole("radio", { name: "Pomysł, jeszcze nie zaczęty" }).check();
+  await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Sąsiad e2e");
+  await page.getByLabel("E-mail", { exact: true }).fill("sasiad@example.org");
+  await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
+  await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
+  const cardHref = (await page.getByRole("link", { name: "Zobacz zgłoszenie" }).getAttribute("href")) ?? "";
+  const ideaId = cardHref.split("/").pop()!;
+
+  await page.goto("/rozmowy");
+  const thread = page.getByRole("listitem").filter({ has: page.getByRole("link", { name: subject }) });
+  const card = page.getByRole("region", { name: "Moje zgłoszenia" }).getByRole("listitem").filter({ hasText: title });
+  await expect(thread).toBeVisible();
+  await expect(card).toBeVisible();
+  await expect(thread.getByText("Nowa odpowiedź")).toHaveCount(0);
+
+  // ROPS sees what is new in its menu and in the tab's title, then answers both.
+  await signIn(page);
+  await expect(page.getByRole("navigation", { name: "Sekcje panelu" }).getByText(/nowe od ostatniej wizyty: \d+/).first()).toBeAttached();
+  await expect(page).toHaveTitle(/^\(\d+\) /);
+  await page.goto("/rops/rozmowy");
+  await page.getByRole("link", { name: subject }).first().click();
+  await page.getByLabel("Odpowiedź ROPS").fill("Zapraszamy na konsultację w ROPS.");
+  await page.getByRole("button", { name: "Wyślij odpowiedź" }).click();
+  await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
+  await page.goto(`/rops/pomysly/${ideaId}`);
+  await page.getByRole("textbox", { name: "Odpowiedź dla autora", exact: true }).fill("Dziękujemy, pomysł trafi do naboru.");
+  await page.getByRole("button", { name: "Zapisz status i odpowiedź" }).click();
+  await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
+
+  // The author sees both as new, until they open them.
+  await page.goto("/rozmowy");
+  await expect(thread.getByText("Nowa odpowiedź", { exact: true })).toBeVisible();
+  await expect(card.getByText("Nowa odpowiedź ROPS")).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /Rozmowy z nową odpowiedzią: \d+/ })).toBeVisible();
+
+  await page.goto(cardHref);
+  await expect(page.getByText("Nowa odpowiedź od Twojej ostatniej wizyty")).toBeVisible();
+  await page.reload();
+  await expect(page.getByText("Dziękujemy, pomysł trafi do naboru.")).toBeVisible();
+  await expect(page.getByText("Nowa odpowiedź od Twojej ostatniej wizyty")).toHaveCount(0);
+
+  await page.goto(threadUrl);
+  await expect(page.getByText("Zapraszamy na konsultację w ROPS.")).toBeVisible();
+  await page.goto("/rozmowy");
+  await expect(card).toBeVisible();
+  await expect(thread.getByText("Nowa odpowiedź", { exact: true })).toHaveCount(0);
+  await expect(card.getByText("Nowa odpowiedź ROPS")).toHaveCount(0);
+});
+

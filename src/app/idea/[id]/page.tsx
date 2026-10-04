@@ -7,6 +7,7 @@ import { AssistantAsk } from "@/components/idea/assistant-ask";
 import { AssistantDiagramView } from "@/components/idea/assistant-diagram";
 import { AssistantSuggestions } from "@/components/idea/assistant-suggestions";
 import { CanvasAnswers } from "@/components/idea/canvas-answers";
+import { ReplyMarker } from "@/components/idea/reply-marker";
 import { SimilarPending } from "@/components/idea/similar-pending";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
@@ -80,8 +81,11 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
         <h2 id="status-fiszki" className={sectionTitle}>
           {t("card.reply.title")}
         </h2>
-        <p>
-          <span className="font-bold">{t("card.reply.status")}</span> {ideaStatusLabel(idea.status)}
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span>
+            <span className="font-bold">{t("card.reply.status")}</span> {ideaStatusLabel(idea.status)}
+          </span>
+          <ReplyMarker ideaId={idea.id} replyAt={idea.reply?.at ?? null} />
         </p>
         {idea.reply ? (
           <Notice tone="success" title={t("card.reply.from", { date: formatDate(idea.reply.at) })}>
