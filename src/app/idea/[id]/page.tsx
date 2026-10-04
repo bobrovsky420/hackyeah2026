@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { DocumentActions } from "@/components/document-actions";
+import { CanvasAnswers } from "@/components/idea/canvas-answers";
 import { SimilarPending } from "@/components/idea/similar-pending";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
@@ -106,6 +107,13 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
           </p>
         )}
       </Section>
+
+      {idea.canvas && (
+        <Section id="canvas" title={t("card.canvas.title")}>
+          <p>{t("card.canvas.lead")}</p>
+          <CanvasAnswers canvas={idea.canvas} />
+        </Section>
+      )}
 
       <Section id="podobne" title={t("card.similar.title")}>
         <p>{t("card.similar.lead")}</p>
