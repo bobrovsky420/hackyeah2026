@@ -8,10 +8,11 @@ import { formatDate, formatMonth } from "@/lib/dates";
 import { t, type MessageKey } from "@/lib/i18n";
 import { ideaStageLabel, isIdeaStage, targetGroupLabel } from "@/lib/labels";
 import { addDays, NO_GROUP, NO_PLACE, TREND_RANGES, trends, type Tally, type TrendPeriod, type TrendRange } from "@/server/admin/data";
-import { routeModeLabel } from "@/server/admin/labels";
+import { ideaFormCodes, ideaFormLabel, routeModeLabel, type IdeaForm } from "@/server/admin/labels";
 
 export const metadata = { title: t("admin.trends.title") };
 
+const isIdeaForm = (code: string): code is IdeaForm => (ideaFormCodes as string[]).includes(code);
 const groupLabel = (code: string) => (code === NO_GROUP ? t("admin.trends.noGroup") : targetGroupLabel(code));
 
 /** The views of the trends, a second row of tabs: one address each (?widok=), so a view can be bookmarked or sent. */
@@ -181,6 +182,17 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
                 data.ideasByStage,
                 (key) => (isIdeaStage(key) ? ideaStageLabel(key as IdeaStage) : key),
                 (key) => behind("/rops/pomysly", { etap: key }, days),
+              )}
+              empty={empty}
+              changeNote={changeNote}
+            />
+            <BarTable
+              caption={t("admin.trends.ideasByForm")}
+              keyHeader={t("admin.ideas.formField")}
+              rows={rows(
+                data.ideasByForm,
+                (key) => (isIdeaForm(key) ? ideaFormLabel(key) : key),
+                (key) => behind("/rops/pomysly", { forma: key }, days),
               )}
               empty={empty}
               changeNote={changeNote}

@@ -11,7 +11,7 @@ import { getGmina, getInnovation } from "@/lib/catalogue";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { ideaKindLabel, ideaStageLabel, targetGroupLabel } from "@/lib/labels";
-import { ideaStatusCodes, ideaStatusLabel } from "@/server/admin/labels";
+import { ideaForm, ideaFormLabel, ideaStatusCodes, ideaStatusLabel } from "@/server/admin/labels";
 import { repository } from "@/server/db";
 
 export const metadata = { title: t("admin.ideas.one") };
@@ -39,6 +39,8 @@ export default async function AdminIdeaPage({ params, searchParams }: PageProps<
         <dd>{formatDate(idea.created_at)}</dd>
         <dt className="font-bold">{t("card.kind")}</dt>
         <dd>{ideaKindLabel(idea.kind)}</dd>
+        <dt className="font-bold">{t("admin.ideas.formField")}</dt>
+        <dd>{ideaFormLabel(ideaForm(idea))}</dd>
         <dt className="font-bold">{t("card.stage")}</dt>
         <dd>{ideaStageLabel(idea.stage)}</dd>
         <dt className="font-bold">{t("card.place")}</dt>
