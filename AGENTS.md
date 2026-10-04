@@ -130,10 +130,9 @@ decisions made so far are in [docs/decision-log.md](docs/decision-log.md).
   `data/built/demo-routes.json` and copies the two files beside it, the
   set the panel's demonstration data is read from. The
   route limit is `RATE_LIMIT_ROUTES_PER_MINUTE` (default 10).
-- The map (S4) is switched off by `MAP_ENABLED` in `src/lib/features.ts`:
-  `/mapa` answers 404, nothing links to it and its e2e tests skip; the
-  code, the data and `/api/map/` stay. Setting the switch to true brings
-  it back.
+- The map (S4) has a switch, `MAP_ENABLED` in `src/lib/features.ts`, and
+  it is on. Set to false, `/mapa` answers 404, nothing links to it and its
+  e2e tests skip; the code, the data and `/api/map/` stay.
 - The map (S4) runs MapLibre GL 6 on the local GeoJSON only; its worker
   files are served from the installed package by
   `src/app/vendor/maplibre/`. The map's class colours stay the same in
