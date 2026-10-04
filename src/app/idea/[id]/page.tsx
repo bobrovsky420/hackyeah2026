@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { DocumentActions } from "@/components/document-actions";
 import { AssistantAsk } from "@/components/idea/assistant-ask";
+import { AssistantDiagramView } from "@/components/idea/assistant-diagram";
 import { AssistantSuggestions } from "@/components/idea/assistant-suggestions";
 import { CanvasAnswers } from "@/components/idea/canvas-answers";
 import { SimilarPending } from "@/components/idea/similar-pending";
@@ -150,7 +151,17 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
 
       <Section id="asystent" title={t("card.assistant.title")}>
         <p>{t("card.assistant.lead")}</p>
-        {idea.assistant?.develop ? <AssistantSuggestions run={idea.assistant.develop} /> : <AssistantAsk ideaId={idea.id} />}
+        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.develop.title")}</h3>
+        {idea.assistant?.develop ? <AssistantSuggestions run={idea.assistant.develop} headingLevel={4} /> : <AssistantAsk ideaId={idea.id} />}
+        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.show.title")}</h3>
+        {idea.assistant?.show ? (
+          <AssistantDiagramView diagram={idea.assistant.show} />
+        ) : (
+          <>
+            <p>{t("card.assistant.show.lead")}</p>
+            <AssistantAsk ideaId={idea.id} task="show" />
+          </>
+        )}
       </Section>
 
       <Section id="co-dalej" title={t("card.next.title")}>

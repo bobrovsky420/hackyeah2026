@@ -1,4 +1,4 @@
-import type { AssistantRun, ContactRequest, ContactStatus, ContentReport, Evaluation, Feedback, Idea, IdeaStatus, InnovationOverride, KnowledgeEntry, Mentor, PartnershipPost, Thread, ThreadMessage, Moderation, ModerationLogEntry, ModerationStatus, Need, NeedStatus, Readiness, VerificationStatus, NeedCluster, StoredBrief, Route, GateTextKind, ScreeningCategory, ScreeningOutcome, SensitiveTopic } from "@/lib/contracts";
+import type { ContactRequest, IdeaAssistant, ContactStatus, ContentReport, Evaluation, Feedback, Idea, IdeaStatus, InnovationOverride, KnowledgeEntry, Mentor, PartnershipPost, Thread, ThreadMessage, Moderation, ModerationLogEntry, ModerationStatus, Need, NeedStatus, Readiness, VerificationStatus, NeedCluster, StoredBrief, Route, GateTextKind, ScreeningCategory, ScreeningOutcome, SensitiveTopic } from "@/lib/contracts";
 
 /*
  * Everything the app keeps between requests, behind one async interface:
@@ -187,7 +187,7 @@ export interface Repository {
   /** Stores the similar innovations of a card once computed; undefined when the card is unknown. */
   setIdeaSimilar(id: string, similar: NonNullable<Idea["similar"]>): Promise<Idea | undefined>;
   /** Stores one run of the idea assistant on a card (module III). */
-  setIdeaAssistant(id: string, task: "develop", run: AssistantRun): Promise<Idea | undefined>;
+  setIdeaAssistant<K extends keyof IdeaAssistant>(id: string, task: K, run: NonNullable<IdeaAssistant[K]>): Promise<Idea | undefined>;
   /** The panel's decision on showing a card to others (module VI); it may be changed later. */
   moderateIdea(id: string, moderation: Moderation): Promise<Idea | undefined>;
   /** The panel's status, note and, when given, reply to the author; `reply: undefined` keeps the stored one. */

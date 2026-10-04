@@ -4,7 +4,18 @@ import { LlmError, type LlmCall } from "@/lib/llm/types";
 import { loadPrompt } from "@/lib/llm/prompts";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
 import { exampleIdeas } from "@/server/db/examples";
-import { developIdea, developRun, developUserPart, developFacts, assistantSources, weakBlocks, type AssistantDeps } from "@/server/ideas/assistant";
+import {
+  assistantSources,
+  developFacts,
+  developIdea,
+  developRun,
+  developUserPart,
+  runAssistant,
+  showRun,
+  templateDiagram,
+  weakBlocks,
+  type AssistantDeps,
+} from "@/server/ideas/assistant";
 import { bannedWords } from "@/server/route/safety";
 import { fakeLlm } from "../needs/fixtures";
 
@@ -109,3 +120,61 @@ describe("developIdea", () => {
     expect(await developIdea("pm-nieznany", deps)).toBeNull();
   });
 });
+
+describe("the diagram (Pokaż)", () => {
+  it("without a model takes every step from the card and its canvas", () => {
+    expect(templateDiagram(canvasCard)).toEqual({
+      who: [canvasCard.author.display_name],
+      what: [canvasCard.title],
+      for_whom: ["seniorzy", "mieszkańcy konkretnego miejsca"],
+      with_whom: ["Gminny Ośrodek Pomocy Społecznej", "Ochotnicza Straż Pożarna", "pracownik socjalny"],
+      change: ["bezpieczeństwo", "niezależność", "spokój"],
+    });
+    // A short form says nothing about partners or change.
+    expect(templateDiagram(shortCard)).toMatchObject({ for_whom: [expect.stringMatching(/^Samotni seniorzy/)], with_whom: [], change: [] });
+  });
+
+  it("keeps the model's phrases that pass, and a step with none passing takes the template's", async () => {
+    const run = await showRun(
+      canvasCard,
+      live(
+        fakeLlm({
+          who: ["Koło gospodyń wiejskich."],
+          what: ["wypożyczają sprzęt rehabilitacyjny sąsiadom"],
+          for_whom: ["seniorzy po pobycie w szpitalu"],
+          // A name the card does not carry, and a number.
+          with_whom: ["Fundacja Zielony Most", "300 wolontariuszy"],
+          change: [],
+        }),
+      ),
+    );
+    expect(run.source).toBe("model");
+    expect(run.steps.who).toEqual(["koło gospodyń wiejskich"]);
+    expect(run.steps.with_whom).toEqual(templateDiagram(canvasCard).with_whom);
+    expect(run.steps.change).toEqual(templateDiagram(canvasCard).change);
+  });
+
+  it("falls back to the template without a model or on a failure", async () => {
+    expect((await showRun(canvasCard, { ...live(fakeLlm({})), engine: "canned" })).source).toBe("template");
+    const failed = await showRun(
+      canvasCard,
+      live(
+        fakeLlm(() => {
+          throw new LlmError("timeout", "show", "slow");
+        }),
+      ),
+    );
+    expect(failed).toMatchObject({ source: "template", steps: templateDiagram(canvasCard) });
+  });
+
+  it("stores each task's run beside the other's", async () => {
+    const repo = createMemoryRepository({ ...createMemoryState(), ideas: [canvasCard], needs: [] });
+    const deps = { ...live(fakeLlm({ suggestions: [], who: [], what: [], for_whom: [], with_whom: [], change: [] })), repo, similar: async () => canvasCard };
+    await runAssistant(canvasCard.id, "show", deps);
+    await runAssistant(canvasCard.id, "develop", deps);
+    const stored = await repo.getIdea(canvasCard.id);
+    expect(stored?.assistant?.show?.steps.what).toEqual([canvasCard.title]);
+    expect(stored?.assistant?.develop).toBeDefined();
+  });
+});
+

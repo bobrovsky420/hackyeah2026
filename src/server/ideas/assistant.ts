@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { canvasSections, stepTitleKey } from "@/lib/canvas";
+import { canvasSections, optionKey, stepTitleKey } from "@/lib/canvas";
 import { catalogue as defaultCatalogue, type Catalogue } from "@/lib/catalogue";
-import type { AssistantBlock, AssistantRun, AssistantSuggestion, Idea, Innovation } from "@/lib/contracts";
+import type { AssistantBlock, AssistantDiagram, AssistantRun, AssistantSuggestion, DiagramStep, Idea, IdeaAssistant, Innovation } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { costLabel, ideaStageLabel, implementerLabels, targetGroupLabel, timeLabel } from "@/lib/labels";
 import { getLlm } from "@/lib/llm";
@@ -143,7 +143,7 @@ export function developFacts(idea: Idea, sources: Innovation[]): DevelopFacts {
 }
 
 /** The user part: the facts as JSON, the card's description last inside <pomysl> tags (9.3). */
-export function developUserPart(facts: DevelopFacts, description: string): string {
+export function developUserPart(facts: DevelopFacts | ShowFacts, description: string): string {
   const text = redactPatterns(description).replace(/[<>]/g, " ").trim();
   return `${JSON.stringify(facts, null, 1)}\n<pomysl>\n${text}\n</pomysl>`;
 }
@@ -298,27 +298,142 @@ export async function developRun(idea: Idea, deps: Pick<AssistantDeps, "llm" | "
   }
 }
 
+// ------------------------------------------------------- "Pokaż" (show)
+
+export const DIAGRAM_STEPS = ["who", "what", "for_whom", "with_whom", "change"] as const satisfies readonly DiagramStep[];
+
+const PHRASE = { min: 3, max: 60 };
+const PER_STEP = 3;
+
+export const showSchema = z.object({
+  who: z.array(z.string()).max(6),
+  what: z.array(z.string()).max(6),
+  for_whom: z.array(z.string()).max(6),
+  with_whom: z.array(z.string()).max(6),
+  change: z.array(z.string()).max(6),
+});
+export type ShowOutput = z.infer<typeof showSchema>;
+
+export interface ShowFacts {
+  pomysl: DevelopFacts["pomysl"];
+  canvas: DevelopFacts["canvas"];
+}
+
+const lower = (text: string) => text.charAt(0).toLocaleLowerCase("pl") + text.slice(1);
+const codes = (idea: Idea, id: string) => {
+  const value = idea.canvas?.answers[id];
+  return Array.isArray(value) ? value : [];
+};
+
+/**
+ * The diagram without a model, from the card and its canvas only: who (the
+ * organisation that sent it, else its author in general), what (the
+ * card's name), for whom (the canvas's users, else the card's own words),
+ * with whom (the canvas's partners and deciders) and what changes (the
+ * values it chose). A step the card says nothing about stays empty.
+ */
+export function templateDiagram(idea: Idea): Record<DiagramStep, string[]> {
+  const users = codes(idea, "users").map((code) => lower(t(optionKey("users", code))));
+  const values = [...codes(idea, "emotional").map((code) => t(optionKey("emotional", code))), ...codes(idea, "functional").map((code) => t(optionKey("functional", code)))];
+  return {
+    who: [idea.author.is_organisation ? idea.author.display_name : t("assistant.diagram.author")],
+    what: [idea.title],
+    for_whom: users.length > 0 ? users.slice(0, PER_STEP) : [firstSentence(idea.for_whom)],
+    with_whom: [...(idea.canvas?.partners.map((partner) => partner.name) ?? []), ...codes(idea, "authorities").map((code) => lower(t(optionKey("authorities", code))))].slice(0, PER_STEP),
+    change: values.map(lower).slice(0, PER_STEP),
+  };
+}
+
+/** The model's phrases that pass the checks, step by step; a step left without one takes the template's. */
+export function finishDiagram(
+  output: ShowOutput,
+  template: Record<DiagramStep, string[]>,
+  known: KnownText,
+  banned?: BannedWords,
+): { steps: Record<DiagramStep, string[]>; fromModel: number; notes: string[] } {
+  const notes: string[] = [];
+  let fromModel = 0;
+  const steps = Object.fromEntries(
+    DIAGRAM_STEPS.map((step) => {
+      const kept: string[] = [];
+      for (const raw of output[step]) {
+        const phrase = lower(clean(raw).replace(/[.;]+$/, ""));
+        const problem = proseProblem(phrase, PHRASE, known, banned);
+        if (problem) notes.push(`${step}: ${problem}`);
+        else if (kept.length < PER_STEP && !kept.includes(phrase)) kept.push(phrase);
+      }
+      if (kept.length > 0) fromModel += 1;
+      return [step, kept.length > 0 ? kept : template[step]];
+    }),
+  ) as Record<DiagramStep, string[]>;
+  return { steps, fromModel, notes };
+}
+
+/** One "Pokaż" run: the model's phrases that pass, step by step, else the template. */
+export async function showRun(idea: Idea, deps: Pick<AssistantDeps, "llm" | "banned" | "engine" | "now">): Promise<AssistantDiagram> {
+  const at = deps.now().toISOString();
+  const template = templateDiagram(idea);
+  if (deps.engine === "canned") return { steps: template, source: "template", prompt_version: null, at };
+  const prompt = loadPrompt("show");
+  const { pomysl, canvas } = developFacts(idea, []);
+  const facts: ShowFacts = { pomysl, canvas };
+  try {
+    const result = await deps.llm({
+      task: "show",
+      system: prompt.body,
+      promptVersion: prompt.version,
+      user: developUserPart(facts, idea.description),
+      schema: showSchema,
+      effort: "low",
+      maxTokens: 1_000,
+      temperature: 0.2,
+    });
+    const partners = idea.canvas?.partners.map((partner) => partner.name).join(" ");
+    const known = knownText(JSON.stringify(facts), idea.description, idea.title, idea.essence, idea.for_whom, partners, ADDRESS);
+    const { steps, fromModel, notes } = finishDiagram(result.parsed, template, known, deps.banned);
+    if (notes.length > 0) console.info(JSON.stringify({ event: "assistant_dropped", task: "show", notes }));
+    return fromModel > 0 ? { steps, source: "model", prompt_version: prompt.version, at } : { steps: template, source: "template", prompt_version: null, at };
+  } catch (error) {
+    if (!(error instanceof LlmError)) throw error;
+    console.warn(JSON.stringify({ event: "assistant_model_failed", task: "show", kind: error.kind }));
+    return { steps: template, source: "template", prompt_version: null, at };
+  }
+}
+
+// ------------------------------------------------------------- the runs
+
 const holder = globalThis as typeof globalThis & { __assistantInFlight?: Map<string, Promise<Idea | null>> };
 const inFlight = (holder.__assistantInFlight ??= new Map());
 
+export type AssistantTask = keyof IdeaAssistant;
+export const ASSISTANT_TASKS = ["develop", "show"] as const satisfies readonly AssistantTask[];
+
 /**
- * POST /api/ideas/{id}/assistant: the card with its "Rozwiń pomysł" run,
- * computed and stored on the first call (its similar innovations first,
- * when they are missing). Null when the card is unknown. Parallel requests
- * for one card share one run.
+ * POST /api/ideas/{id}/assistant: the card with the run of one task,
+ * computed and stored on the first call (for "Rozwiń pomysł" the similar
+ * innovations first, when missing). Null when the card is unknown.
+ * Parallel requests for one card and task share one run.
  */
-export async function developIdea(id: string, given?: Partial<AssistantDeps>): Promise<Idea | null> {
+export async function runAssistant(id: string, task: AssistantTask, given?: Partial<AssistantDeps>): Promise<Idea | null> {
   const deps = resolve(given);
   const stored = await deps.repo.getIdea(id);
   if (!stored) return null;
-  if (stored.assistant?.develop) return stored;
-  const running = inFlight.get(id);
+  if (stored.assistant?.[task]) return stored;
+  const key = `${id}:${task}`;
+  const running = inFlight.get(key);
   if (running) return running;
   const job = (async () => {
+    if (task === "show") {
+      const run = await showRun(stored, deps);
+      return (await deps.repo.setIdeaAssistant(id, "show", run)) ?? { ...stored, assistant: { ...stored.assistant, show: run } };
+    }
     const idea = stored.similar === null ? ((await deps.similar(id)) ?? stored) : stored;
     const run = await developRun(idea, deps);
     return (await deps.repo.setIdeaAssistant(id, "develop", run)) ?? { ...idea, assistant: { ...idea.assistant, develop: run } };
-  })().finally(() => inFlight.delete(id));
-  inFlight.set(id, job);
+  })().finally(() => inFlight.delete(key));
+  inFlight.set(key, job);
   return job;
 }
+
+/** "Rozwiń pomysł" alone, as the tests and the first route call it. */
+export const developIdea = (id: string, given?: Partial<AssistantDeps>) => runAssistant(id, "develop", given);

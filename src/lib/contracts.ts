@@ -340,8 +340,8 @@ export interface Idea {
   note_pl: string | null;
   /** The answers of a CANVAS application (src/lib/canvas.ts); absent on a card sent with the short form. */
   canvas?: IdeaCanvas;
-  /** The idea assistant's runs: "Rozwiń pomysł" (develop); absent until the author asks for it. */
-  assistant?: { develop?: AssistantRun };
+  /** The idea assistant's runs: "Rozwiń pomysł" (develop) and "Pokaż" (show); each absent until the author asks for it. */
+  assistant?: IdeaAssistant;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
   example?: boolean;
   /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
@@ -370,6 +370,23 @@ export interface AssistantRun {
   source: "model" | "template";
   prompt_version: string | null;
   at: string;
+}
+
+/** The steps of the idea assistant's diagram ("Pokaż"), in their order. */
+export type DiagramStep = "who" | "what" | "for_whom" | "with_whom" | "change";
+
+/** The diagram of an idea (task "Pokaż"): a few short phrases per step, empty when the card does not say. */
+export interface AssistantDiagram {
+  steps: Record<DiagramStep, string[]>;
+  source: "model" | "template";
+  prompt_version: string | null;
+  at: string;
+}
+
+/** The idea assistant's stored runs on a card, one per task. */
+export interface IdeaAssistant {
+  develop?: AssistantRun;
+  show?: AssistantDiagram;
 }
 
 /** How the author knows the innovation they evaluate (module IV, "Tester innowacji"). */

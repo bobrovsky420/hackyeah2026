@@ -600,12 +600,12 @@ test("module VI: a CANVAS application is marked in the ideas list, has a filter 
   await expect(page.getByRole("navigation", { name: "Forma zgłoszenia" }).getByRole("link", { name: "Wniosek CANVAS" })).toHaveAttribute("aria-current", "page");
 });
 
-test("module III: the idea assistant answers once, with questions for the weak blocks and inspirations from the catalogue, and the panel shows them", async ({ page }) => {
+test("module III: the idea assistant answers once, with suggestions from the catalogue and a diagram of the idea, and the panel shows them", async ({ page }) => {
   await page.goto("/pomysl/pm-przyklad-2");
   const assistant = page.getByRole("region", { name: "Rozwiń pomysł z asystentem" });
   await assistant.getByRole("button", { name: "Poproś o podpowiedzi" }).click();
   await expect(assistant.getByRole("listitem").first()).toBeVisible({ timeout: 20_000 });
-  await expect(assistant.getByRole("heading", { level: 3, name: /· Inspiracja$/ }).first()).toBeVisible();
+  await expect(assistant.getByRole("heading", { level: 4, name: /· Inspiracja$/ }).first()).toBeVisible();
   await expect(assistant.getByText("Na podstawie:").first()).toBeVisible();
   await expect(assistant.getByText(/Podpowiedzi zestawiliśmy z danych katalogu innowacji/)).toBeVisible();
 
@@ -613,6 +613,13 @@ test("module III: the idea assistant answers once, with questions for the weak b
   await page.reload();
   await expect(assistant.getByRole("button", { name: "Poproś o podpowiedzi" })).toHaveCount(0);
   await expect(assistant.getByRole("listitem").first()).toBeVisible();
+
+  // The diagram: five steps in order, from the card's own answers without a model.
+  await assistant.getByRole("button", { name: "Pokaż schemat pomysłu" }).click();
+  await expect(assistant.getByText("Kto działa")).toBeVisible({ timeout: 20_000 });
+  for (const step of ["Co robi", "Dla kogo", "Z kim", "Co się zmienia"]) await expect(assistant.getByText(step, { exact: true })).toBeVisible();
+  await expect(assistant.getByText("Gminny Ośrodek Pomocy Społecznej")).toBeVisible();
+  await expect(assistant.getByText(/Schemat zestawiliśmy z odpowiedzi w zgłoszeniu/)).toBeVisible();
 
   await signIn(page);
   await page.goto("/rops/pomysly/pm-przyklad-2");
