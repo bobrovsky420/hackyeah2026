@@ -787,7 +787,7 @@ code is `src/app/admin/`, `src/server/admin/` and
 | FR-11.4 | MUST | "Deklaracja dostępności": the structure of the gov.pl template (the `a11y-*` identifiers) with an honest status. | Lawyer's sign-off |
 | FR-11.5 | MUST | Footer links to all five pages on every screen. | Present |
 | FR-11.6 | MUST | "Zasady" (principles) page: the ten principles of 3.6 in plain Polish; what the tool declines and redirects and why; the helplines; that the tool never decides about an individual; how personal data found in a text is handled; how to report content and how to appeal a decline (an e-mail to ROPS with the reference shown on S11); who reviews what and when. | Lawyer's sign-off; linked from S11 |
-| FR-11.7 | MUST | "Karta systemu" (register card) on "Jak to działa", one screen: purpose; operator and contact; legal basis of the processing; what the system does and does not decide; the logic in three sentences (screening, matching, composition); the data used and how long it is kept; the human review points; the known limits and the fairness measures; the date of the last evaluation run. | Present; matches the evaluation report |
+| FR-11.7 | MUST | "Karta systemu" (register card) on "Jak to działa", one screen: purpose; operator and contact; legal basis of the processing; what the system does and does not decide; the logic in three sentences (screening, matching, composition); the human review points; the known limits and the fairness measures. The data kept and how long are on "Prywatność" instead, and there is no evaluation date on the card. | Present |
 
 ### 7.12 Safety, moderation and fairness (owner: the lawyer for the policy and the texts; Developer 1 for the gate)
 
