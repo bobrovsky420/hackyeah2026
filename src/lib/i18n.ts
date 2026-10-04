@@ -11,3 +11,8 @@ export function t(key: MessageKey, values?: Record<string, string | number>): st
     name in values ? String(values[name]) : match,
   );
 }
+
+/** Whether `key` has a string, for the optional texts of a schema such as the CANVAS application. */
+export function hasMessage(key: string): key is MessageKey {
+  return key in messages;
+}
