@@ -1,19 +1,46 @@
 import Link from "next/link";
 import { t } from "@/lib/i18n";
 
-/** A trend as a table with a bar per row: the numbers stay readable for screen readers and in print. A row with `href` links its label to the items behind it. */
+export interface BarRow {
+  label: string;
+  count: number;
+  /** The count of the previous period; given, the table shows the change as a signed number. */
+  previous?: number;
+  extra?: string;
+  href?: string;
+}
+
+/** A change as a signed number, with the minus sign rather than a hyphen: "+3", "\u22122", "0". */
+export function signed(change: number): string {
+  return change > 0 ? `+${change}` : change < 0 ? `\u2212${-change}` : "0";
+}
+
+/** Below this many entries in a table, a change says little: the table says so. */
+const FEW = 10;
+
+/**
+ * A trend as a table with a bar per row: the numbers stay readable for
+ * screen readers and in print. A row with `href` links its label to the
+ * items behind it. With the counts of the previous period, a "Zmiana"
+ * column shows the difference as text, never as colour alone.
+ */
 export function BarTable({
   caption,
   keyHeader,
   rows,
   empty,
+  changeNote,
 }: {
   caption: string;
   keyHeader: string;
-  rows: { label: string; count: number; extra?: string; href?: string }[];
+  rows: BarRow[];
   empty: string;
+  /** What the change is measured against, under the table. */
+  changeNote?: string;
 }) {
   const max = Math.max(1, ...rows.map((row) => row.count));
+  const withChange = rows.some((row) => row.previous !== undefined);
+  const total = rows.reduce((sum, row) => sum + row.count + (row.previous ?? 0), 0);
   return (
     <section className="grid content-start gap-3 rounded-lg border border-border bg-background p-5">
       <h2 className="text-[1.15rem] font-bold">{caption}</h2>
@@ -29,6 +56,11 @@ export function BarTable({
               <th scope="col" className="py-2 pr-4 text-right">
                 {t("admin.trends.count")}
               </th>
+              {withChange && (
+                <th scope="col" className="py-2 pr-4 text-right">
+                  {t("admin.trends.change")}
+                </th>
+              )}
               <th scope="col" className="w-1/2 py-2">
                 <span className="sr-only">{caption}</span>
               </th>
@@ -42,13 +74,20 @@ export function BarTable({
                   {row.extra && <span className="block text-[0.9rem] text-muted-foreground">{row.extra}</span>}
                 </th>
                 <td className="py-2 pr-4 text-right font-bold tabular-nums">{row.count}</td>
+                {withChange && <td className="py-2 pr-4 text-right tabular-nums">{signed(row.count - (row.previous ?? 0))}</td>}
                 <td className="py-2" aria-hidden>
-                  <span className="block h-4 rounded-sm bg-foreground" style={{ width: `${Math.max(4, (row.count / max) * 100)}%` }} />
+                  {row.count > 0 && <span className="block h-4 rounded-sm bg-foreground" style={{ width: `${Math.max(4, (row.count / max) * 100)}%` }} />}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      )}
+      {withChange && rows.length > 0 && changeNote && (
+        <p className="text-[0.9rem] text-muted-foreground">
+          {changeNote}
+          {total < FEW && ` ${t("admin.trends.few")}`}
+        </p>
       )}
     </section>
   );
