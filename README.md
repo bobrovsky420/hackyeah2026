@@ -8,6 +8,14 @@ that need them? Around the pilot, the ROPS panel at `/rops` is built:
 moderation, replies to authors, live knowledge edits and the trends of
 the needs. The roles at ROPS remain a proposed roadmap.
 
+## Live demo
+
+The app runs at
+https://router-16ce7c.polandcentral.cloudapp.azure.com/. The site is up
+and running only during HackYeah 2026; afterwards, run it from a
+checkout as [Quick start](#quick-start) says. The ROPS panel is at
+`/rops`; its access code is given to the jury with the submission.
+
 ## What it is
 
 A resident, a social worker, an NGO leader or a municipal official
