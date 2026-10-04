@@ -10,6 +10,8 @@ import {
   developIdea,
   developRun,
   developUserPart,
+  inspireRun,
+  otherFieldSources,
   runAssistant,
   showRun,
   templateDiagram,
@@ -23,7 +25,11 @@ import { fakeLlm } from "../needs/fixtures";
 
 const [shortCard, canvasCard] = exampleIdeas();
 const NOW = () => new Date("2026-10-05T10:00:00.000Z");
-const live = (llm: AssistantDeps["llm"]) => ({ llm, catalogue: catalogue(), banned: bannedWords(), engine: "live" as const, now: NOW });
+// The unit tests read the fixtures, which have no dataset: the retriever of "Spójrz inaczej" is BM25 over the catalogue.
+const noEmbed: AssistantDeps["embed"] = async () => {
+  throw new Error("no embedding service in the unit tests");
+};
+const live = (llm: AssistantDeps["llm"]) => ({ llm, catalogue: catalogue(), embed: noEmbed, banned: bannedWords(), engine: "live" as const, now: NOW });
 
 describe("weakBlocks", () => {
   it("asks about what the short form never asks", () => {
@@ -175,6 +181,51 @@ describe("the diagram (Pokaż)", () => {
     const stored = await repo.getIdea(canvasCard.id);
     expect(stored?.assistant?.show?.steps.what).toEqual([canvasCard.title]);
     expect(stored?.assistant?.develop).toBeDefined();
+  });
+});
+
+describe("Spójrz inaczej (inspire)", () => {
+  it("finds innovations for other groups only, never the card's similar ones", async () => {
+    const sources = await otherFieldSources(shortCard, live(fakeLlm({})));
+    expect(sources.length).toBeGreaterThan(0);
+    const similar = new Set(shortCard.similar!.map((match) => match.innovation_id));
+    for (const item of sources) {
+      expect(similar.has(item.id)).toBe(false);
+      expect(item.targetGroups.length).toBeGreaterThan(0);
+      expect(item.targetGroups.some((group) => shortCard.target_groups.includes(group))).toBe(false);
+    }
+  });
+
+  it("without a model gives one inspiration per source, with its group and the question of borrowing it", async () => {
+    const run = await inspireRun(shortCard, { ...live(fakeLlm({})), engine: "canned" });
+    expect(run.source).toBe("template");
+    expect(run.suggestions.length).toBeGreaterThan(0);
+    expect(run.suggestions.every((item) => item.kind === "inspiracja" && item.innovation_id !== null)).toBe(true);
+    expect(run.suggestions[0].text_pl).toMatch(/powstało dla grupy: .+ Co by było, gdyby/);
+  });
+
+  it("keeps the model's inspirations with a known source and drops every other kind", async () => {
+    const sources = await otherFieldSources(shortCard, live(fakeLlm({})));
+    const run = await inspireRun(
+      shortCard,
+      live(
+        fakeLlm({
+          suggestions: [
+            { block: "solution", kind: "inspiracja", text_pl: `„${sources[0].title}” łączy ludzi wokół wspólnego zadania. Co by było, gdyby seniorzy też gotowali według planu?`, source: "K01" },
+            { block: "revenue", kind: "pytanie", text_pl: "Kto zapłaci za produkty do wspólnego gotowania w świetlicy?", source: null },
+          ],
+        }),
+      ),
+    );
+    expect(run.source).toBe("model");
+    expect(run.suggestions).toEqual([expect.objectContaining({ kind: "inspiracja", innovation_id: sources[0].id })]);
+  });
+
+  it("stores its run beside the other tasks'", async () => {
+    const repo = createMemoryRepository({ ...createMemoryState(), ideas: [shortCard], needs: [] });
+    const deps = { ...live(fakeLlm({ suggestions: [] })), repo, similar: async () => shortCard };
+    await runAssistant(shortCard.id, "inspire", deps);
+    expect((await repo.getIdea(shortCard.id))?.assistant?.inspire?.source).toBe("template");
   });
 });
 

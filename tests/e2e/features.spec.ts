@@ -621,6 +621,11 @@ test("module III: the idea assistant answers once, with suggestions from the cat
   await expect(assistant.getByText("Gminny Ośrodek Pomocy Społecznej")).toBeVisible();
   await expect(assistant.getByText(/Schemat zestawiliśmy z odpowiedzi w zgłoszeniu/)).toBeVisible();
 
+  // Spójrz inaczej: innovations for other groups, or the plain word that there are none.
+  await assistant.getByRole("button", { name: "Spójrz inaczej" }).click();
+  await expect(assistant.getByRole("button", { name: "Spójrz inaczej" })).toHaveCount(0, { timeout: 20_000 });
+  await expect(assistant.getByText(/powstało dla grupy: .+ Co by było, gdyby|Nie znaleźliśmy w katalogu innowacji z innych dziedzin/).first()).toBeVisible();
+
   await signIn(page);
   await page.goto("/rops/pomysly/pm-przyklad-2");
   await expect(page.getByRole("region", { name: "Podpowiedzi asystenta" }).getByRole("listitem").first()).toBeVisible();

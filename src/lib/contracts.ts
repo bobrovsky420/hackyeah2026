@@ -340,7 +340,7 @@ export interface Idea {
   note_pl: string | null;
   /** The answers of a CANVAS application (src/lib/canvas.ts); absent on a card sent with the short form. */
   canvas?: IdeaCanvas;
-  /** The idea assistant's runs: "Rozwiń pomysł" (develop) and "Pokaż" (show); each absent until the author asks for it. */
+  /** The idea assistant's runs: "Rozwiń pomysł" (develop), "Pokaż" (show) and "Spójrz inaczej" (inspire); each absent until the author asks for it. */
   assistant?: IdeaAssistant;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
   example?: boolean;
@@ -387,6 +387,8 @@ export interface AssistantDiagram {
 export interface IdeaAssistant {
   develop?: AssistantRun;
   show?: AssistantDiagram;
+  /** "Spójrz inaczej": inspirations from innovations for other target groups. */
+  inspire?: AssistantRun;
 }
 
 /** How the author knows the innovation they evaluate (module IV, "Tester innowacji"). */

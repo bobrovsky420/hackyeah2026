@@ -9,10 +9,11 @@ import { t, type MessageKey } from "@/lib/i18n";
 const LABELS = {
   develop: { ask: "card.assistant.ask", pending: "card.assistant.pending" },
   show: { ask: "card.assistant.show.ask", pending: "card.assistant.show.pending" },
+  inspire: { ask: "card.assistant.inspire.ask", pending: "card.assistant.inspire.pending" },
 } as const satisfies Record<string, { ask: MessageKey; pending: MessageKey }>;
 
 /**
- * Asks the idea assistant for one task's run ("Rozwiń pomysł" or "Pokaż"):
+ * Asks the idea assistant for one task's run ("Rozwiń pomysł", "Pokaż" or "Spójrz inaczej"):
  * one press, since a run costs a model call; says that it works, shows the
  * stored result when it is there and offers another try after a failure.
  */

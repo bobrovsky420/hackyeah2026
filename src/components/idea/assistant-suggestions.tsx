@@ -15,9 +15,18 @@ const KIND_KEYS: Record<AssistantSuggestion["kind"], MessageKey> = {
  * CANVAS application and its kind in words, an inspiration with the
  * innovation it comes from, and how they were made.
  */
-export function AssistantSuggestions({ run, headingLevel = 3 }: { run: AssistantRun; headingLevel?: 3 | 4 }) {
+export function AssistantSuggestions({
+  run,
+  headingLevel = 3,
+  empty = "card.assistant.none",
+}: {
+  run: AssistantRun;
+  headingLevel?: 3 | 4;
+  /** What an empty run says. */
+  empty?: MessageKey;
+}) {
   const Heading = `h${headingLevel}` as const;
-  if (run.suggestions.length === 0) return <p>{t("card.assistant.none")}</p>;
+  if (run.suggestions.length === 0) return <p>{t(empty)}</p>;
   return (
     <div className="grid gap-3">
       <ul className="grid gap-3">

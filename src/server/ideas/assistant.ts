@@ -1,21 +1,25 @@
 import { z } from "zod";
 import { canvasSections, optionKey, stepTitleKey } from "@/lib/canvas";
 import { catalogue as defaultCatalogue, type Catalogue } from "@/lib/catalogue";
-import type { AssistantBlock, AssistantDiagram, AssistantRun, AssistantSuggestion, DiagramStep, Idea, IdeaAssistant, Innovation } from "@/lib/contracts";
+import type { AssistantBlock, AssistantDiagram, AssistantRun, AssistantSuggestion, DiagramStep, Embed, Idea, IdeaAssistant, Innovation } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { costLabel, ideaStageLabel, implementerLabels, targetGroupLabel, timeLabel } from "@/lib/labels";
 import { getLlm } from "@/lib/llm";
 import { loadPrompt } from "@/lib/llm/prompts";
 import { LlmError, type Llm } from "@/lib/llm/types";
 import { repository, type Repository } from "@/server/db";
+import { createEmbedClient } from "@/server/match";
+import { buildLexicalIndex, rankLexical, type LexicalIndex } from "@/server/match/lexical";
+import { retrieve } from "@/server/match/retrieve";
 import { clean, knownText, proseProblem, redactPatterns, type KnownText } from "@/server/needs/checks";
 import { routeEngine } from "@/server/route-service";
 import { bannedWords, type BannedWords } from "@/server/route/safety";
 import { similarForIdea } from "./index";
 
 /*
- * The idea assistant of module III ("Asystent kreatora"), task "Rozwiń
- * pomysł" with the prompt develop.md: questions, inspirations and ideas for
+ * The idea assistant of module III ("Asystent kreatora"). Three tasks:
+ * "Rozwiń pomysł", "Pokaż" (show.md, below) and "Spójrz inaczej"
+ * (inspire.md, below). "Rozwiń pomysł" with the prompt develop.md: questions, inspirations and ideas for
  * the blocks of the CANVAS application where the card says least. It reads
  * the card and its similar innovations (the matcher's, FR-5.3), so an
  * inspiration always quotes a catalogue record, which the server names by a
@@ -55,7 +59,9 @@ export type DevelopOutput = z.infer<typeof developSchema>;
 export interface AssistantDeps {
   repo: Repository;
   llm: Llm;
-  catalogue: Pick<Catalogue, "innovationById">;
+  catalogue: Pick<Catalogue, "innovationById" | "innovations" | "dataset">;
+  /** The matcher's embedding client, for "Spójrz inaczej"; the retriever falls back to BM25 without it. */
+  embed: Embed;
   banned: BannedWords;
   engine: "live" | "canned";
   /** The similar innovations of a card, computed when missing; tests pass a stand-in. */
@@ -63,12 +69,15 @@ export interface AssistantDeps {
   now: () => Date;
 }
 
+let embedClient: Embed | undefined;
+
 function resolve(given: Partial<AssistantDeps> = {}): AssistantDeps {
   const repo = given.repo ?? repository();
   return {
     repo,
     llm: given.llm ?? getLlm(),
     catalogue: given.catalogue ?? defaultCatalogue(),
+    embed: given.embed ?? (embedClient ??= createEmbedClient()),
     banned: given.banned ?? bannedWords(),
     engine: given.engine ?? routeEngine(),
     similar: given.similar ?? ((id) => similarForIdea(id, { repo })),
@@ -400,18 +409,105 @@ export async function showRun(idea: Idea, deps: Pick<AssistantDeps, "llm" | "ban
   }
 }
 
+// ---------------------------------------------- "Spójrz inaczej" (inspire)
+
+const OTHER_SOURCES = 3;
+const lexicalIndexes = new WeakMap<Innovation[], LexicalIndex>();
+
+/**
+ * Innovations for other people that work in a way close to the idea: the
+ * matcher's retriever on the card's essence and description (its vectors,
+ * else BM25), or BM25 over the catalogue without a dataset; then only the
+ * innovations that serve none of the card's target groups and are not
+ * among its similar ones, best first.
+ */
+export async function otherFieldSources(idea: Idea, deps: Pick<AssistantDeps, "catalogue" | "embed" | "engine">): Promise<Innovation[]> {
+  const query = [idea.essence, idea.description].join(" ");
+  let ranking: string[];
+  const dataset = deps.catalogue.dataset;
+  if (deps.engine === "live" && dataset) {
+    ranking = (await retrieve({ needText: query, targetGroups: [] }, dataset, deps.embed)).ids;
+  } else {
+    const all = deps.catalogue.innovations;
+    let index = lexicalIndexes.get(all);
+    if (!index) {
+      index = buildLexicalIndex(all.map((item) => ({ id: item.id, text: `${item.title} ${item.summary} ${item.mechanism}` })));
+      lexicalIndexes.set(all, index);
+    }
+    ranking = rankLexical(index, query)
+      .filter((entry) => entry.score > 0)
+      .map((entry) => entry.id);
+  }
+  const similar = new Set((idea.similar ?? []).map((match) => match.innovation_id));
+  const groups = new Set(idea.target_groups);
+  return ranking
+    .flatMap((id) => deps.catalogue.innovationById.get(id) ?? [])
+    .filter((item) => !similar.has(item.id) && item.targetGroups.length > 0 && !item.targetGroups.some((group) => groups.has(group)))
+    .slice(0, OTHER_SOURCES);
+}
+
+/** The inspirations without a model: each source's group and how it works, and the question of borrowing it. */
+export function templateInspirations(sources: Innovation[]): AssistantSuggestion[] {
+  return sources.map((item) => ({
+    block: "solution",
+    kind: "inspiracja",
+    text_pl: t("assistant.template.analogy", {
+      title: item.title,
+      groups: item.targetGroups.map((group) => targetGroupLabel(group).toLocaleLowerCase("pl")).join(", "),
+      how: firstSentence(item.mechanism || item.summary),
+    }),
+    innovation_id: item.id,
+  }));
+}
+
+/** One "Spójrz inaczej" run: the model's inspirations that pass (inspirations only), else the template. */
+export async function inspireRun(idea: Idea, deps: Pick<AssistantDeps, "llm" | "catalogue" | "embed" | "banned" | "engine" | "now">): Promise<AssistantRun> {
+  const at = deps.now().toISOString();
+  const sources = await otherFieldSources(idea, deps);
+  const template: AssistantRun = { suggestions: templateInspirations(sources), source: "template", prompt_version: null, at };
+  if (deps.engine === "canned" || sources.length === 0) return template;
+  const prompt = loadPrompt("inspire");
+  const base = developFacts(idea, sources);
+  const facts = {
+    pomysl: base.pomysl,
+    canvas: base.canvas,
+    zrodla: base.zrodla.map((source, index) => ({ ...source, dla_kogo: sources[index].targetGroups.map(targetGroupLabel) })),
+  };
+  try {
+    const result = await deps.llm({
+      task: "inspire",
+      system: prompt.body,
+      promptVersion: prompt.version,
+      user: developUserPart(facts, idea.description),
+      schema: developSchema,
+      effort: "medium",
+      maxTokens: MAX_TOKENS,
+      temperature: TEMPERATURE,
+    });
+    const known = knownText(JSON.stringify(facts), idea.description, idea.title, idea.essence, idea.for_whom, ADDRESS);
+    const output = { suggestions: result.parsed.suggestions.filter((item) => item.kind === "inspiracja").slice(0, OTHER_SOURCES) };
+    const { suggestions, notes } = finishSuggestions(output, sources, known, deps.banned);
+    if (notes.length > 0) console.info(JSON.stringify({ event: "assistant_dropped", task: "inspire", notes }));
+    return suggestions.length > 0 ? { suggestions, source: "model", prompt_version: prompt.version, at } : template;
+  } catch (error) {
+    if (!(error instanceof LlmError)) throw error;
+    console.warn(JSON.stringify({ event: "assistant_model_failed", task: "inspire", kind: error.kind }));
+    return template;
+  }
+}
+
 // ------------------------------------------------------------- the runs
 
 const holder = globalThis as typeof globalThis & { __assistantInFlight?: Map<string, Promise<Idea | null>> };
 const inFlight = (holder.__assistantInFlight ??= new Map());
 
 export type AssistantTask = keyof IdeaAssistant;
-export const ASSISTANT_TASKS = ["develop", "show"] as const satisfies readonly AssistantTask[];
+export const ASSISTANT_TASKS = ["develop", "show", "inspire"] as const satisfies readonly AssistantTask[];
 
 /**
  * POST /api/ideas/{id}/assistant: the card with the run of one task,
- * computed and stored on the first call (for "Rozwiń pomysł" the similar
- * innovations first, when missing). Null when the card is unknown.
+ * computed and stored on the first call (for "Rozwiń pomysł" and "Spójrz
+ * inaczej" the similar innovations first, when missing). Null when the card is unknown.
  * Parallel requests for one card and task share one run.
  */
 export async function runAssistant(id: string, task: AssistantTask, given?: Partial<AssistantDeps>): Promise<Idea | null> {
@@ -427,7 +523,12 @@ export async function runAssistant(id: string, task: AssistantTask, given?: Part
       const run = await showRun(stored, deps);
       return (await deps.repo.setIdeaAssistant(id, "show", run)) ?? { ...stored, assistant: { ...stored.assistant, show: run } };
     }
+    // Both other tasks need the similar innovations: develop quotes them, inspire leaves them out.
     const idea = stored.similar === null ? ((await deps.similar(id)) ?? stored) : stored;
+    if (task === "inspire") {
+      const run = await inspireRun(idea, deps);
+      return (await deps.repo.setIdeaAssistant(id, "inspire", run)) ?? { ...idea, assistant: { ...idea.assistant, inspire: run } };
+    }
     const run = await developRun(idea, deps);
     return (await deps.repo.setIdeaAssistant(id, "develop", run)) ?? { ...idea, assistant: { ...idea.assistant, develop: run } };
   })().finally(() => inFlight.delete(key));

@@ -103,9 +103,15 @@ export default async function AdminIdeaPage({ params, searchParams }: PageProps<
         <h2 id="asystent" className="text-[1.3rem] font-bold">
           {t("admin.ideas.assistant")}
         </h2>
-        {!idea.assistant?.develop && !idea.assistant?.show && <p>{t("admin.ideas.assistantNone")}</p>}
+        {!idea.assistant?.develop && !idea.assistant?.show && !idea.assistant?.inspire && <p>{t("admin.ideas.assistantNone")}</p>}
         {idea.assistant?.develop && <AssistantSuggestions run={idea.assistant.develop} />}
         {idea.assistant?.show && <AssistantDiagramView diagram={idea.assistant.show} />}
+        {idea.assistant?.inspire && (
+          <>
+            <h3 className="font-bold">{t("card.assistant.inspire.title")}</h3>
+            <AssistantSuggestions run={idea.assistant.inspire} headingLevel={4} empty="card.assistant.inspire.none" />
+          </>
+        )}
       </section>
 
       <section aria-labelledby="decyzja" className="grid gap-3 border-t border-border pt-6">

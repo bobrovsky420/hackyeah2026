@@ -162,6 +162,15 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
             <AssistantAsk ideaId={idea.id} task="show" />
           </>
         )}
+        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.inspire.title")}</h3>
+        {idea.assistant?.inspire ? (
+          <AssistantSuggestions run={idea.assistant.inspire} headingLevel={4} empty="card.assistant.inspire.none" />
+        ) : (
+          <>
+            <p>{t("card.assistant.inspire.lead")}</p>
+            <AssistantAsk ideaId={idea.id} task="inspire" />
+          </>
+        )}
       </Section>
 
       <Section id="co-dalej" title={t("card.next.title")}>
