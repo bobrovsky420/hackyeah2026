@@ -25,17 +25,26 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-border bg-background">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-4 py-4 @3xl:px-8">
-        <Link
-          href="/"
-          className="grid leading-tight text-foreground no-underline hover:text-foreground"
-          onClick={() => setMenuOpen(false)}
-        >
-          <span className="text-2xl font-extrabold tracking-tight">
-            HubMI<span className="text-primary">.pl</span>
-          </span>
-          <span className="text-[0.95rem] text-muted-foreground">{t("shell.tagline")}</span>
-        </Link>
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-2 gap-y-3 px-4 py-4 @md:gap-x-8 @3xl:px-8">
+        <div className="flex items-center gap-2 @md:gap-4">
+          {/*
+            The mark of the Małopolska region, without its wordmark, before
+            the HubMI.pl block and as tall as it; smaller on a phone, so the
+            menu button stays on the same row.
+          */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/malopolska-znak.png" alt={t("shell.malopolska")} width={92} height={90} className="h-8 w-auto @md:h-[3.2rem]" />
+          <Link
+            href="/"
+            className="grid leading-tight text-foreground no-underline hover:text-foreground"
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="text-2xl font-extrabold tracking-tight">
+              HubMI<span className="text-primary">.pl</span>
+            </span>
+            <span className="text-[0.95rem] text-muted-foreground">{t("shell.tagline")}</span>
+          </Link>
+        </div>
         <div className="no-print @6xl:hidden">
           <button
             type="button"
