@@ -77,6 +77,8 @@ export async function reviewQueue(repo: Repository = repository(), now = Date.no
 export interface Tally {
   key: string;
   count: number;
+  /** The count of the previous period of the same length, when a period is chosen. */
+  previous?: number;
 }
 
 function tally(keys: string[]): Tally[] {
@@ -93,6 +95,72 @@ export function weekStart(iso: string): string {
   return day.toISOString().slice(0, 10);
 }
 
+/** The periods of the trends (?okres=); each but "calosc" is compared with the period of the same length before it. */
+export const TREND_RANGES = ["30-dni", "3-miesiace", "12-miesiecy", "calosc"] as const;
+export type TrendRange = (typeof TREND_RANGES)[number];
+
+const RANGE_DAYS: Record<Exclude<TrendRange, "calosc">, number> = { "30-dni": 30, "3-miesiace": 91, "12-miesiecy": 365 };
+
+/** The days of a period, YYYY-MM-DD in Polish time, both ends included; `from` is null for the whole time. */
+export interface TrendPeriod {
+  range: TrendRange;
+  from: string | null;
+  to: string;
+  previous: { from: string; to: string } | null;
+  /** The step of the timeline: weeks up to three months, months beyond. */
+  grain: "week" | "month";
+}
+
+/** A day plus or minus days, on YYYY-MM-DD. */
+export function addDays(day: string, days: number): string {
+  const date = new Date(`${day}T12:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+export function trendPeriod(range: TrendRange, now = Date.now()): TrendPeriod {
+  const to = warsawDay(new Date(now).toISOString());
+  if (range === "calosc") return { range, from: null, to, previous: null, grain: "month" };
+  const days = RANGE_DAYS[range];
+  const from = addDays(to, -(days - 1));
+  return { range, from, to, previous: { from: addDays(from, -days), to: addDays(from, -1) }, grain: days > 91 ? "month" : "week" };
+}
+
+const within = (createdAt: string, from: string | null, to: string) => {
+  const day = warsawDay(createdAt);
+  return (from === null || day >= from) && day <= to;
+};
+
+/** The Monday of the week of a day, on YYYY-MM-DD. */
+const mondayOf = (day: string) => weekStart(`${day}T12:00:00Z`);
+
+/**
+ * The timeline of a period, every step from its first day (or the first
+ * entry) to its last, empty steps included, so a quiet week shows as one.
+ */
+function timeline(days: string[], period: TrendPeriod): Tally[] {
+  const first = period.from ?? [...days].sort()[0];
+  if (!first) return [];
+  const step = period.grain === "week" ? mondayOf : (day: string) => day.slice(0, 7);
+  const counts = tally(days.map(step));
+  const keys: string[] = [];
+  for (let day = first; day <= period.to; day = addDays(day, 1)) {
+    const key = step(day);
+    if (keys.at(-1) !== key) keys.push(key);
+  }
+  return keys.map((key) => ({ key, count: counts.find((row) => row.key === key)?.count ?? 0 }));
+}
+
+/** A tally of the period with the counts of the previous period beside it, including the keys that fell to zero. */
+function compared<T extends { created_at: string }>(items: T[], period: TrendPeriod, keysOf: (item: T) => string[]): Tally[] {
+  const current = tally(items.filter((item) => within(item.created_at, period.from, period.to)).flatMap(keysOf));
+  if (!period.previous) return current;
+  const { from, to } = period.previous;
+  const before = tally(items.filter((item) => within(item.created_at, from, to)).flatMap(keysOf));
+  const gone = before.filter((row) => !current.some((item) => item.key === row.key)).map((row) => ({ key: row.key, count: 0 }));
+  return [...current, ...gone].map((row) => ({ ...row, previous: before.find((item) => item.key === row.key)?.count ?? 0 }));
+}
+
 /** The key of the items without a target group in the group trends and the questions filter. */
 export const NO_GROUP = "bez-grupy";
 
@@ -106,7 +174,9 @@ export interface Trends {
   questionsByGroup: Tally[];
   needsByGroup: Tally[];
   needsByPowiat: Tally[];
-  needsByWeek: Tally[];
+  /** Needs per step of the period's timeline: Mondays (YYYY-MM-DD) or months (YYYY-MM). */
+  needsOverTime: Tally[];
+  period: TrendPeriod;
   ideasByGroup: Tally[];
   ideasByStage: Tally[];
   routesByMode: Tally[];
@@ -117,15 +187,18 @@ export interface Trends {
   totals: { needs: number; ideas: number; evaluations: number; routes: number; contacts: number; questions: number };
 }
 
-const WEEKS = 12;
 const TOP = 10;
+
+/** The powiat key of a need: the powiat of its gmina, or NO_PLACE. */
+export const NO_PLACE = "bez-miejsca";
+const powiatOf = (placeTerc: string | null) => catalogue().gminaByTerc.get(placeTerc ?? "")?.powiat ?? NO_PLACE;
 
 /**
  * The demand signal of module II: needs, ideas and evaluations aggregated
  * by area, place and time; the demonstration data, when the store holds
  * it, counts like any entry (the panel's notice says so).
  */
-export async function trends(repo: Repository = repository()): Promise<Trends> {
+export async function trends(repo: Repository = repository(), range: TrendRange = "calosc", now = Date.now()): Promise<Trends> {
   const [needs, ideas, evaluations, routes, contacts] = await Promise.all([
     repo.listNeeds(),
     repo.listIdeas(),
@@ -133,11 +206,11 @@ export async function trends(repo: Repository = repository()): Promise<Trends> {
     repo.listRouteFacts(),
     repo.listContacts(),
   ]);
-  const gminy = catalogue().gminaByTerc;
+  const period = trendPeriod(range, now);
+  const inPeriod = <T extends { created_at: string }>(items: T[]) => items.filter((item) => within(item.created_at, period.from, period.to));
   const asked = routes.filter((route) => isQuestion(route.mode));
 
-  const weeks = tally(needs.map((need) => weekStart(need.created_at))).sort((a, b) => a.key.localeCompare(b.key));
-  const counted = evaluations.filter((item) => item.moderation.status !== "odrzucone");
+  const counted = inPeriod(evaluations.filter((item) => item.moderation.status !== "odrzucone"));
   const byInnovation = new Map<string, Evaluation[]>();
   for (const item of counted) byInnovation.set(item.innovation_id, [...(byInnovation.get(item.innovation_id) ?? []), item]);
   const rated = [...byInnovation].map(([id, items]) => {
@@ -151,17 +224,70 @@ export async function trends(repo: Repository = repository()): Promise<Trends> {
   });
 
   return {
-    questionsByGroup: tally(asked.flatMap((route) => groupsOf(route.target_groups))),
-    needsByGroup: tally(needs.flatMap((need) => groupsOf(need.target_groups))),
-    needsByPowiat: tally(needs.map((need) => gminy.get(need.place_terc ?? "")?.powiat ?? "bez-miejsca")).slice(0, TOP),
-    needsByWeek: weeks.slice(-WEEKS),
-    ideasByGroup: tally(ideas.flatMap((idea) => groupsOf(idea.target_groups))),
-    ideasByStage: tally(ideas.map((idea) => idea.stage)),
-    routesByMode: tally(routes.map((route) => route.mode)),
-    topRecommended: tally(routes.flatMap((route) => route.solution_ids)).slice(0, TOP),
+    questionsByGroup: compared(asked, period, (route) => groupsOf(route.target_groups)),
+    needsByGroup: compared(needs, period, (need) => groupsOf(need.target_groups)),
+    needsByPowiat: compared(needs, period, (need) => [powiatOf(need.place_terc)]).slice(0, TOP),
+    needsOverTime: timeline(
+      needs.map((need) => warsawDay(need.created_at)),
+      period,
+    ),
+    ideasByGroup: compared(ideas, period, (idea) => groupsOf(idea.target_groups)),
+    ideasByStage: compared(ideas, period, (idea) => [idea.stage]),
+    routesByMode: compared(routes, period, (route) => [route.mode]),
+    topRecommended: compared(routes, period, (route) => route.solution_ids).slice(0, TOP),
     rated: rated.sort((a, b) => b.ratings + b.testers - (a.ratings + a.testers) || b.average - a.average).slice(0, TOP),
-    totals: { needs: needs.length, ideas: ideas.length, evaluations: counted.length, routes: routes.length, contacts: contacts.length, questions: asked.length },
+    period,
+    totals: {
+      needs: inPeriod(needs).length,
+      ideas: inPeriod(ideas).length,
+      evaluations: counted.length,
+      routes: inPeriod(routes).length,
+      contacts: inPeriod(contacts).length,
+      questions: inPeriod(asked).length,
+    },
   };
+}
+
+/** What the needs queue can be narrowed to from a bar of the trends. */
+export interface NeedTrendFilter {
+  /** A target group code, or NO_GROUP. */
+  group?: string;
+  /** A powiat's name, or NO_PLACE. */
+  powiat?: string;
+  from?: string;
+  to?: string;
+}
+
+/** The needs behind a bar of the trends: by group, powiat and days in Polish time, both ends included. */
+export function filterNeeds(needs: Need[], filter: NeedTrendFilter): Need[] {
+  return needs.filter(
+    (need) =>
+      (!filter.group || groupsOf(need.target_groups).includes(filter.group)) &&
+      (!filter.powiat || powiatOf(need.place_terc) === filter.powiat) &&
+      within(need.created_at, filter.from ?? null, filter.to ?? "9999-12-31"),
+  );
+}
+
+/** What the ideas list can be narrowed to from a bar of the trends. */
+export interface IdeaTrendFilter {
+  group?: string;
+  stage?: string;
+  from?: string;
+  to?: string;
+}
+
+export function filterIdeas(ideas: Idea[], filter: IdeaTrendFilter): Idea[] {
+  return ideas.filter(
+    (idea) =>
+      (!filter.group || groupsOf(idea.target_groups).includes(filter.group)) &&
+      (!filter.stage || idea.stage === filter.stage) &&
+      within(idea.created_at, filter.from ?? null, filter.to ?? "9999-12-31"),
+  );
+}
+
+/** The powiaty of Małopolska, in Polish order, for the needs filter. */
+export function powiaty(): string[] {
+  return [...new Set([...catalogue().gminaByTerc.values()].map((gmina) => gmina.powiat))].sort((a, b) => a.localeCompare(b, "pl"));
 }
 
 export interface QuestionFilter {

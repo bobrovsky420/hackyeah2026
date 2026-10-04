@@ -5,19 +5,40 @@ import { ModerationState } from "@/components/admin/decision-form";
 import type { IdeaStatus } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
-import { ideaKindLabel, ideaStageLabel } from "@/lib/labels";
+import { ideaKindLabel, ideaStageCodes, ideaStageLabel, targetGroupCodes, targetGroupLabel } from "@/lib/labels";
+import { filterIdeas, NO_GROUP } from "@/server/admin/data";
 import { ideaStatusCodes, ideaStatusLabel } from "@/server/admin/labels";
 import { repository } from "@/server/db";
 
 export const metadata = { title: t("admin.ideas.title") };
 
-/** Module VI: the idea cards of module III, newest first, filtered by status. */
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+const day = (value: string | string[] | undefined) => (typeof value === "string" && DAY.test(value) ? value : undefined);
+
+/**
+ * Module VI: the idea cards of module III, newest first, filtered by
+ * status; a bar of the trends opens them narrowed to its group, stage or
+ * days, and the page says so.
+ */
 export default async function AdminIdeasPage({ searchParams }: PageProps<"/admin/ideas">) {
   const session = await gate();
   if (!session) return <AdminLogin />;
   const query = await searchParams;
   const status = ideaStatusCodes.find((code) => code === query.status) as IdeaStatus | undefined;
-  const ideas = (await repository().listIdeas()).filter((idea) => !status || idea.status === status);
+  const group = [...targetGroupCodes, NO_GROUP].find((code) => code === query.grupa);
+  const stage = ideaStageCodes.find((code) => code === query.etap);
+  const from = day(query.od);
+  const to = day(query.do);
+  const ideas = filterIdeas(
+    (await repository().listIdeas()).filter((idea) => !status || idea.status === status),
+    { group, stage, from, to },
+  );
+  const fromTrends = [
+    group && t("admin.ideas.group", { group: group === NO_GROUP ? t("admin.trends.noGroup") : targetGroupLabel(group) }),
+    stage && t("admin.ideas.stage", { stage: ideaStageLabel(stage) }),
+    from && t("admin.filter.since", { date: formatDate(from) }),
+    to && t("admin.filter.until", { date: formatDate(to) }),
+  ].filter(Boolean);
 
   return (
     <AdminShell session={session} current="ideas" title={t("admin.ideas.title")} lead={t("admin.ideas.lead")}>
@@ -42,6 +63,11 @@ export default async function AdminIdeasPage({ searchParams }: PageProps<"/admin
           ))}
         </ul>
       </nav>
+      {fromTrends.length > 0 && (
+        <p role="status">
+          {t("admin.filter.fromTrends", { filter: fromTrends.join(", ") })} <Link href="/rops/pomysly">{t("admin.filter.clear")}</Link>
+        </p>
+      )}
       {ideas.length === 0 ? (
         <p>{t("admin.empty")}</p>
       ) : (

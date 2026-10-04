@@ -10,24 +10,38 @@ import type { NeedStatus } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { roleLabel, targetGroupCodes, targetGroupLabel } from "@/lib/labels";
+import { filterNeeds, NO_GROUP, NO_PLACE, powiaty } from "@/server/admin/data";
 import { needStatusCodes, needStatusLabel } from "@/server/admin/labels";
 import { repository } from "@/server/db";
 
 export const metadata = { title: t("admin.needs.title") };
 
-/** Module VI: the needs bank (FR-5.6, FR-5.7) with its filters, the publication decision and the status. */
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+const day = (value: string | string[] | undefined) => (typeof value === "string" && DAY.test(value) ? value : undefined);
+const GROUP_CODES = [...targetGroupCodes, NO_GROUP];
+const groupLabel = (code: string) => (code === NO_GROUP ? t("admin.trends.noGroup") : targetGroupLabel(code));
+
+/**
+ * Module VI: the needs bank (FR-5.6, FR-5.7) with its filters, the
+ * publication decision and the status. A bar of the trends opens it
+ * narrowed to its group, powiat or days.
+ */
 export default async function AdminNeedsPage({ searchParams }: PageProps<"/admin/needs">) {
   const session = await gate();
   if (!session) return <AdminLogin />;
   const query = await searchParams;
   const status = needStatusCodes.find((code) => code === query.status) as NeedStatus | undefined;
-  const category = targetGroupCodes.find((code) => code === query.kategoria);
-  const needs = await repository().listNeeds({ status, category });
+  const category = GROUP_CODES.find((code) => code === query.kategoria);
+  const powiatList = powiaty();
+  const powiat = [...powiatList, NO_PLACE].find((name) => name === query.powiat);
+  const from = day(query.od);
+  const to = day(query.do);
+  const needs = filterNeeds(await repository().listNeeds({ status }), { group: category, powiat, from, to });
   const back = "/rops/potrzeby";
 
   return (
     <AdminShell session={session} current="needs" title={t("admin.needs.title")} lead={t("admin.needs.lead")} saved={wasSaved(query)}>
-      <form method="get" className="no-print grid gap-3 @xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] @xl:items-end">
+      <form method="get" className="no-print grid gap-3 @xl:grid-cols-2 @4xl:grid-cols-[repeat(5,minmax(0,1fr))_auto] @4xl:items-end">
         <div className="grid gap-1">
           <Label htmlFor="filtr-status">{t("admin.needs.status")}</Label>
           <select id="filtr-status" name="status" defaultValue={status ?? ""} className={controlClass}>
@@ -43,17 +57,40 @@ export default async function AdminNeedsPage({ searchParams }: PageProps<"/admin
           <Label htmlFor="filtr-kategoria">{t("admin.needs.category")}</Label>
           <select id="filtr-kategoria" name="kategoria" defaultValue={category ?? ""} className={controlClass}>
             <option value="">{t("admin.filter.all")}</option>
-            {targetGroupCodes.map((code) => (
+            {GROUP_CODES.map((code) => (
               <option key={code} value={code}>
-                {targetGroupLabel(code)}
+                {groupLabel(code)}
               </option>
             ))}
           </select>
+        </div>
+        <div className="grid gap-1">
+          <Label htmlFor="filtr-powiat">{t("admin.needs.powiat")}</Label>
+          <select id="filtr-powiat" name="powiat" defaultValue={powiat ?? ""} className={controlClass}>
+            <option value="">{t("admin.filter.all")}</option>
+            {powiatList.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+            <option value={NO_PLACE}>{t("admin.trends.noPlace")}</option>
+          </select>
+        </div>
+        <div className="grid gap-1">
+          <Label htmlFor="filtr-od">{t("admin.filter.from")}</Label>
+          <input id="filtr-od" name="od" type="date" defaultValue={from ?? ""} className={controlClass} />
+        </div>
+        <div className="grid gap-1">
+          <Label htmlFor="filtr-do">{t("admin.filter.to")}</Label>
+          <input id="filtr-do" name="do" type="date" defaultValue={to ?? ""} className={controlClass} />
         </div>
         <Button type="submit" variant="secondary">
           {t("admin.filter.apply")}
         </Button>
       </form>
+      <p role="status" className="font-bold">
+        {t("admin.needs.found", { count: needs.length })}
+      </p>
       {needs.length === 0 ? (
         <p>{t("admin.empty")}</p>
       ) : (
