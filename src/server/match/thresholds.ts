@@ -17,6 +17,8 @@ export const RETRIEVE_K = 40;
 export const MAX_CANDIDATES = 8;
 /** The nearest retrieved cards always reach stage 2, picked by the model or not (M.9). */
 export const RETRIEVAL_FLOOR = 3;
+/** A ROPS library record ranks as if its fit were this many points higher (FR-3.10); the fit shown stays the model's. */
+export const ROPS_BONUS = 5;
 /** Per assessment (8.3). */
 export const MAX_REASONS = 3;
 export const MAX_GAPS = 3;

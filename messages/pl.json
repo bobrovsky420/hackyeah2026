@@ -1020,7 +1020,7 @@
   "how.card.decides.text": "Dobiera rozwiązania z katalogów innowacji i wyjaśnia, dlaczego pasują. Nie ocenia ludzi, nie decyduje o pomocy ani o pieniądzach i niczego nie publikuje bez decyzji pracownika ROPS.",
   "how.card.logic.term": "Jak działa, w trzech zdaniach",
   "how.card.logic.s1": "Najpierw sprawdzamy tekst: czy opisuje osobę w kryzysie, czy jest skierowany przeciw komuś i czy zawiera dane osobowe.",
-  "how.card.logic.s2": "Potem model językowy porównuje potrzebę z opisami innowacji wybranymi przez wyszukiwarkę i ocenia dopasowanie, cytując źródło.",
+  "how.card.logic.s2": "Potem model językowy porównuje potrzebę z opisami innowacji wybranymi przez wyszukiwarkę i ocenia dopasowanie, cytując źródło; przy zbliżonej ocenie pierwszeństwo mają rozwiązania z Biblioteki ROPS.",
   "how.card.logic.s3": "Na koniec program składa stronę z rozwiązaniami: wiedzę, ludzi i ścieżki wdrożenia bierze z danych, a nie z modelu.",
   "how.card.data.term": "Dane i czas przechowywania",
   "how.card.data.text": "Wyszukiwania rozwiązań przechowujemy 30 dni po zakończeniu HackYeah 2026, potrzeby do decyzji ROPS, prośby o kontakt 90 dni, zgłoszenia gotowości i pomysłów, opinie o rozwiązaniach i ogłoszenia o partnerstwie 12 miesięcy, rozmowy 12 miesięcy od ostatniej wiadomości, dzienniki 14 dni. Adresy IP są tylko chwilowo w pamięci ogranicznika liczby zapytań. W prototypie wszystkie wpisy są w jednym pliku na serwerze zespołu, bez bazy danych; serwer sam usuwa je po upływie tych okresów.",

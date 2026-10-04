@@ -15,6 +15,7 @@ import { runShortlist } from "./shortlist";
 
 export { createEmbedClient, EmbedError, type EmbedClient, type EmbedClientOptions } from "./embed";
 export { ROUTE_MIN, PARTIAL_MIN, modeFor } from "./thresholds";
+export { byWeightedFit } from "./rank";
 
 export const matchNeed: MatchNeed = async (input, { llm, dataset, embed }) => {
   const reader: ReaderContext = { placeTerc: input.placeTerc, role: input.role, targetGroups: input.targetGroups };

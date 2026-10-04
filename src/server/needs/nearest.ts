@@ -2,7 +2,7 @@ import type { Need, Route, Assessment, Embed, MatchNeed, MatchResult, StageLog }
 import type { Dataset } from "@/lib/data/to-contracts";
 import { t } from "@/lib/i18n";
 import { LlmError, type Llm, type LlmErrorKind } from "@/lib/llm/types";
-import { matchNeed } from "@/server/match";
+import { byWeightedFit, matchNeed } from "@/server/match";
 import { clean } from "./checks";
 
 /*
@@ -32,11 +32,11 @@ export function assessmentsFromRoute(route: Route): Assessment[] {
   }));
 }
 
-/** The best assessments as nearest matches; unknown ids and assessments without a reason are left out. */
+/** The best assessments as nearest matches, in the order of FR-3.10; unknown ids and assessments without a reason are left out. */
 export function toNearestMatches(assessments: Assessment[], dataset: Pick<Dataset, "innovationById">): NearestMatch[] {
   return [...assessments]
     .filter((item) => dataset.innovationById.has(item.id) && item.fit_reasons.length > 0)
-    .sort((a, b) => b.fit_score - a.fit_score)
+    .sort(byWeightedFit(dataset, (item) => item.id, (item) => item.fit_score))
     .slice(0, MAX_NEAREST)
     .map((item) => {
       const gaps = item.gaps_pl.map(clean).filter(Boolean);
