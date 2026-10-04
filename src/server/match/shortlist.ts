@@ -4,6 +4,7 @@ import { loadPrompt, toStageLog, type Llm } from "@/lib/llm";
 import type { ShortlistCandidate, StageLog } from "@/lib/contracts";
 import { findBanned } from "@/server/route/safety";
 import { readerContextLine, wrapNeed, type ReaderContext } from "./context";
+import { byWeightedFit } from "./rank";
 import { MAX_CANDIDATES, MAX_REASON_CHARS, RETRIEVAL_FLOOR } from "./thresholds";
 
 /*
@@ -141,8 +142,8 @@ export function validateShortlist(
     valid.push({ id, prelim_fit: clampScore(candidate.prelim_fit), reason_pl: clip(candidate.reason_pl, MAX_REASON_CHARS) });
   }
   if (droppedIds.length > 0) notes.push(`candidates: ${droppedIds.length} ids not among the retrieved cards`);
-  // Best first; the sort is stable, so the model's order breaks ties.
-  valid.sort((a, b) => b.prelim_fit - a.prelim_fit);
+  // Best weighted fit first, the ROPS library first on a tie (FR-3.10); the sort is stable, so the model's order breaks the rest.
+  valid.sort(byWeightedFit(dataset, (c) => c.id, (c) => c.prelim_fit));
   // The nearest cards the model left out come last, with no fit and no reason; stage 2 judges them (M.9).
   const floor = allowedIds.slice(0, RETRIEVAL_FLOOR).filter((id) => !seen.has(id));
   const room = MAX_CANDIDATES - floor.length;

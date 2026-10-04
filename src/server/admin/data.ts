@@ -2,7 +2,7 @@ import { catalogue } from "@/lib/catalogue";
 import type { ContactRequest, Evaluation, Idea, Need, Readiness, Route } from "@/lib/contracts";
 import { warsawDay } from "@/lib/dates";
 import { repository, type Repository } from "@/server/db";
-import { isReal, questionGroups } from "@/server/db/repository";
+import { questionGroups } from "@/server/db/repository";
 import { waitsForRops } from "@/server/threads/access";
 
 /*
@@ -93,9 +93,6 @@ export function weekStart(iso: string): string {
   return day.toISOString().slice(0, 10);
 }
 
-/** The value of `?dane=` that leaves the demonstration data out of the trends and the questions. */
-export const REAL_ONLY = "prawdziwe";
-
 /** The key of the items without a target group in the group trends and the questions filter. */
 export const NO_GROUP = "bez-grupy";
 
@@ -123,20 +120,18 @@ export interface Trends {
 const WEEKS = 12;
 const TOP = 10;
 
-export interface TrendsOptions {
-  /** Leave out the demonstration data (isReal): what the tool gathered for real. */
-  realOnly?: boolean;
-}
-
-/** The demand signal of module II: needs, ideas and evaluations aggregated by area, place and time. */
-export async function trends(repo: Repository = repository(), options: TrendsOptions = {}): Promise<Trends> {
-  const keep = <T extends { demo?: boolean }>(list: T[]) => (options.realOnly ? list.filter(isReal) : list);
+/**
+ * The demand signal of module II: needs, ideas and evaluations aggregated
+ * by area, place and time; the demonstration data, when the store holds
+ * it, counts like any entry (the panel's notice says so).
+ */
+export async function trends(repo: Repository = repository()): Promise<Trends> {
   const [needs, ideas, evaluations, routes, contacts] = await Promise.all([
-    repo.listNeeds().then(keep),
-    repo.listIdeas().then(keep),
-    repo.listEvaluations().then(keep),
-    repo.listRouteFacts().then(keep),
-    repo.listContacts().then(keep),
+    repo.listNeeds(),
+    repo.listIdeas(),
+    repo.listEvaluations(),
+    repo.listRouteFacts(),
+    repo.listContacts(),
   ]);
   const gminy = catalogue().gminaByTerc;
   const asked = routes.filter((route) => isQuestion(route.mode));
@@ -175,8 +170,6 @@ export interface QuestionFilter {
   /** First and last day, YYYY-MM-DD in Polish time, both included. */
   from?: string;
   to?: string;
-  /** Leave out the demonstration data. */
-  realOnly?: boolean;
 }
 
 /** The questions behind questionsByGroup, newest first, narrowed to a group and a date range. */
@@ -186,7 +179,6 @@ export async function questions(filter: QuestionFilter = {}, repo: Repository = 
     const day = warsawDay(route.created_at);
     return (
       isQuestion(route.mode) &&
-      (!filter.realOnly || isReal(route)) &&
       (!filter.group || groupsOf(questionGroups(route)).includes(filter.group)) &&
       (!filter.from || day >= filter.from) &&
       (!filter.to || day <= filter.to)

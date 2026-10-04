@@ -7,7 +7,6 @@ import { getExampleRoute } from "@/lib/mock/routes";
 import { demoCount, questions, queueCounts, trends } from "@/server/admin/data";
 import { buildDemo, readDemoSources, withDemoData, type DemoSources } from "@/server/db/demo";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
-import { isReal } from "@/server/db/repository";
 import { evaluationSummary } from "@/server/evaluations";
 import { similarCasesForRoute } from "@/server/match/similar-cases";
 
@@ -187,15 +186,13 @@ describe("panel only: the demonstration data stays off the public pages", () => 
     expect(cases.shown.some((item) => ids.has(item.id))).toBe(false);
   });
 
-  it("counts the simulated records for the banner and leaves them out of the trends and questions on request", async () => {
+  it("counts the simulated records for the banner and always in the trends and questions of the panel", async () => {
     const { repo, demo } = demoRepository();
     expect(await demoCount(repo)).toBeGreaterThan(30);
-    const all = await trends(repo);
-    const real = await trends(repo, { realOnly: true });
-    expect(all.totals.routes).toBe(demo.routes.length);
-    expect(real.totals.routes).toBe(0);
-    expect(real.totals.needs).toBe((await repo.listNeeds()).filter(isReal).length);
-    expect((await questions({ realOnly: true }, repo)).length).toBe(0);
+    const data = await trends(repo);
+    expect(data.totals.routes).toBe(demo.routes.length);
+    expect(data.totals.needs).toBe((await repo.listNeeds()).length);
+    expect((await questions({}, repo)).length).toBe(demo.routes.filter((route) => route.mode !== "declined" && route.mode !== "off_topic").length);
     expect((await queueCounts(null, repo, NOW)).find((queue) => queue.key === "threads")!.waiting).toBeGreaterThanOrEqual(0);
   });
 });
