@@ -1,3 +1,4 @@
+import { canvasSections } from "@/lib/canvas";
 import { catalogue as defaultCatalogue, getGmina, type Catalogue } from "@/lib/catalogue";
 import type { Embed, Idea, IdeaSimilar, MatchNeed } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
@@ -113,6 +114,13 @@ export function ideaMarkdown(idea: Idea, data: Pick<Catalogue, "innovationById">
   lines.push("", `## ${t("card.stage")}`, "", ideaStageLabel(idea.stage));
   lines.push("", `${t("card.kind")} ${ideaKindLabel(idea.kind)}`);
   if (gmina) lines.push(`${t("card.place")} ${gmina.name}`);
+  if (idea.canvas) {
+    lines.push("", `## ${t("card.canvas.title")}`);
+    for (const section of canvasSections(idea.canvas)) {
+      lines.push("", `### ${section.title}`);
+      for (const row of section.rows) lines.push("", `**${row.label}**`, "", row.value);
+    }
+  }
   if (idea.similar && idea.similar.length > 0) {
     lines.push("", `## ${t("card.similar.title")}`, "");
     for (const match of idea.similar) {
