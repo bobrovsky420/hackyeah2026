@@ -10,7 +10,11 @@ the presentation are now in Polish, with full Polish spelling. The FAQ
 asks for the names and addresses of the team members in the
 description; they count towards its 500 words. The description keeps
 the idea; the state of the build, module by module, is in "What is
-done". Recount the words after every edit.
+done". Recount the words after every edit. "Demo link" and
+"Instructions" go into the form's fields of the same names. Before
+pasting the instructions, replace <KOD DOSTĘPU> with the ROPS panel's
+access code (ROPS_TOKEN of the server); the code itself never goes into
+git.
 
 
 TITLE
@@ -85,3 +89,28 @@ Wspólne dla wszystkich modułów:
 - Jakość: testy jednostkowe i end-to-end oraz 31 przypadków testowych, które sprawdzają trafność, odporność, bezpieczeństwo i równe traktowanie.
 
 Jeszcze niezaimplementowane: generator wniosków, kanwa i asystent kreatora pomysłów, rejestr wdrożeń, grupowanie podobnych potrzeb i mapa.
+
+
+DEMO LINK
+
+https://router-16ce7c.polandcentral.cloudapp.azure.com/
+
+
+INSTRUCTIONS
+
+Aplikacja jest dostępna pod adresem https://router-16ce7c.polandcentral.cloudapp.azure.com/ tylko w czasie HackYeah 2026. Nie trzeba niczego instalować ani zakładać konta.
+
+Strona dla osób zgłaszających potrzeby:
+
+- Na stronie głównej opisz potrzebę własnymi słowami w polu „Co się dzieje i kogo dotyczy?” albo wstaw jeden z przykładów pod formularzem, na przykład „Samotni seniorzy na wsi”.
+- Możesz wybrać miejscowość lub gminę i odpowiedzieć na pytanie „Kim jesteś?”. Potem kliknij „Pokaż możliwości”.
+- Po chwili zobaczysz do trzech sprawdzonych rozwiązań z uzasadnieniem, wiedzę, osoby, które mogą pomóc, i ścieżkę wdrożenia.
+- W menu są też „Zgłoś pomysł”, „Zapytaj ROPS”, „Partnerstwa” i „Chcę pomóc”.
+
+Panel ROPS:
+
+- Otwórz https://router-16ce7c.polandcentral.cloudapp.azure.com/rops.
+- W polu „Twoje imię i nazwisko lub inicjały” wpisz dowolne inicjały; panel zapisuje je przy każdej decyzji w dzienniku.
+- W polu „Kod dostępu” wpisz <KOD DOSTĘPU> i kliknij „Wejdź do panelu”.
+- Panel zawiera dane demonstracyjne, symulację dwunastu tygodni w Małopolsce, oznaczone na każdej stronie. Warto zajrzeć do sekcji „Pulpit”, „Trendy” i „Pomysły”.
+- Pomysł, zapisana potrzeba albo pytanie do ROPS wysłane na stronie publicznej od razu trafiają do panelu, obok danych demonstracyjnych.
