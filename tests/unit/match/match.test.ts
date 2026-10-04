@@ -9,7 +9,7 @@ import { createEmbedClient, matchNeed } from "@/server/match/index";
 import { lexicalTerms } from "@/server/match/lexical";
 import { contradictsReader, retrieve } from "@/server/match/retrieve";
 import { shortlistSchema, validateShortlist, type ShortlistOutput } from "@/server/match/shortlist";
-import { MAX_CANDIDATES, RETRIEVAL_FLOOR } from "@/server/match/thresholds";
+import { MAX_CANDIDATES, RETRIEVAL_FLOOR, ROPS_BONUS } from "@/server/match/thresholds";
 import { quoteFieldLabel } from "@/lib/labels";
 
 /*
@@ -497,6 +497,7 @@ describe("the fields given to stage 2", () => {
         assessments: [{ id: MOBILE, fit_score: 150, fit_reasons: [reason, reason, reason, reason], gaps_pl: ["a", "b", "c", "d"], adaptation_note_pl: "" }],
       },
       new Map([[MOBILE, { problem_pl: problemOf(MOBILE) }]]),
+      dataset,
     );
     expect(out.assessments[0].fit_reasons).toHaveLength(3);
     expect(out.assessments[0].gaps_pl).toHaveLength(3);
@@ -511,11 +512,57 @@ describe("selection (M.9)", () => {
 
   test("the floor keeps its room: eight picks beyond the nearest cards leave five", async () => {
     const retrieved = (await retrieve({ needText: C01, targetGroups: [] }, dataset, embedLike(MOBILE))).ids;
-    const picks = retrieved.slice(RETRIEVAL_FLOOR, RETRIEVAL_FLOOR + 8).map((id, i) => ({ id, prelim_fit: 90 - i, reason_pl: "Pasuje." }));
+    // Ten points apart, more than the regional weight, so the order stays the model's.
+    const picks = retrieved.slice(RETRIEVAL_FLOOR, RETRIEVAL_FLOOR + 8).map((id, i) => ({ id, prelim_fit: 90 - 10 * i, reason_pl: "Pasuje." }));
     const out = validateShortlist(shortlistAnswer({ candidates: picks }), retrieved, dataset);
     expect(out.candidates).toHaveLength(MAX_CANDIDATES);
     expect(out.candidates.map((c) => c.id)).toEqual([...picks.slice(0, MAX_CANDIDATES - RETRIEVAL_FLOOR).map((p) => p.id), ...retrieved.slice(0, RETRIEVAL_FLOOR)]);
     expect(out.notes).toContain(`candidates: ${RETRIEVAL_FLOOR} beyond ${MAX_CANDIDATES} cut`);
+  });
+
+  test("the ROPS library weighs ROPS_BONUS more and comes first on a tie, at stage 1 and stage 2 (FR-3.10)", () => {
+    const national = dataset.raw.records.find((record) => record.source === "baza-krajowa")!.id;
+    const fields = new Map([
+      [MOBILE, { problem_pl: problemOf(MOBILE) }],
+      [national, { problem_pl: problemOf(national) }],
+    ]);
+    const scored = (ropsFit: number, nationalFit: number) =>
+      validateAssessment(
+        assessAnswer({
+          top_ids: [],
+          assessments: [
+            { id: national, fit_score: nationalFit, fit_reasons: [{ field: "problem_pl", quote: quoteOf(national), why_pl: "x" }], gaps_pl: [], adaptation_note_pl: null },
+            { id: MOBILE, fit_score: ropsFit, fit_reasons: [{ field: "problem_pl", quote: quoteOf(MOBILE), why_pl: "x" }], gaps_pl: [], adaptation_note_pl: null },
+          ],
+        }),
+        fields,
+        dataset,
+      );
+
+    expect(scored(80, 80).topIds).toEqual([MOBILE, national]);
+    expect(scored(80 - ROPS_BONUS, 80).topIds).toEqual([MOBILE, national]);
+    expect(scored(80 - ROPS_BONUS - 1, 80).topIds).toEqual([national, MOBILE]);
+    // The fit shown and the mode stay the model's: 63 weighs 68 and leads, but the best fit is 66, so partial.
+    const partial = scored(68 - ROPS_BONUS, 66);
+    expect(partial.topIds[0]).toBe(MOBILE);
+    expect(partial.assessments.map((a) => a.fit_score)).toEqual([68 - ROPS_BONUS, 66]);
+    expect(partial.mode).toBe("partial");
+    const route = scored(70 - ROPS_BONUS, 70);
+    expect(route.topIds[0]).toBe(MOBILE);
+    expect(route.mode).toBe("route");
+
+    const retrieved = [national, MOBILE];
+    const tie = validateShortlist(
+      shortlistAnswer({
+        candidates: [
+          { id: national, prelim_fit: 70, reason_pl: "Pasuje." },
+          { id: MOBILE, prelim_fit: 70, reason_pl: "Pasuje." },
+        ],
+      }),
+      retrieved,
+      dataset,
+    );
+    expect(tie.candidates.map((c) => c.id)).toEqual([MOBILE, national]);
   });
 
   test("merging: a lone assessment under another id is the call's own, extra ones are dropped, the best call gives the mode", () => {

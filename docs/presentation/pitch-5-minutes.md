@@ -80,10 +80,10 @@ wpis rozpatruje człowiek w panelu ROPS. *(cut)* Dane osobowe usuwamy
 przed zapisem.
 
 **[Slide 7]**
-Zadanie prosi o koncepcję, nie tylko o oprogramowanie. Droga działa, a
+Zadanie prosi o koncepcję, nie tylko o oprogramowanie. Droga jest zaimplementowana, a
 obok fiszka pomysłu, tester innowacji, rozmowy z mentorami i panel ROPS,
-w którym decyduje człowiek. Z siedmiu modułów wyzwania pięć działa
-w całości, dwa częściowo. *(pause)* Planem rozwoju są
+w którym decyduje człowiek. Z siedmiu modułów wyzwania pięć jest
+zaimplementowanych w całości, dwa częściowo. *(pause)* Planem rozwoju są
 ludzie: od poniedziałku ROPS może prowadzić usługę w trzech rolach,
 opiekun kategorii, redaktor katalogu i koordynator banku potrzeb. A
 utrzymanie kosztuje około 55 dolarów miesięcznie, mniej niż cent za

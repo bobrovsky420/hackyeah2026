@@ -7,7 +7,7 @@ import { getGmina, getInnovation } from "@/lib/catalogue";
 import { formatDateTime } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { roleLabel, targetGroupCodes, targetGroupLabel } from "@/lib/labels";
-import { demoCount, NO_GROUP, questions, REAL_ONLY } from "@/server/admin/data";
+import { NO_GROUP, questions } from "@/server/admin/data";
 import { routeModeLabel } from "@/server/admin/labels";
 import { questionGroups } from "@/server/db/repository";
 
@@ -21,8 +21,7 @@ const groupLabel = (code: string) => (code === NO_GROUP ? t("admin.trends.noGrou
 /**
  * Module II, behind a bar of "Pytania według grup": the questions asked of
  * the route, with their groups, place, result and the recommended
- * innovations, filtered by group, by day and, while the store holds the
- * demonstration data, by real entries only.
+ * innovations, filtered by group and by day.
  */
 export default async function AdminQuestionsPage({ searchParams }: PageProps<"/admin/trends/questions">) {
   const session = await gate();
@@ -31,15 +30,14 @@ export default async function AdminQuestionsPage({ searchParams }: PageProps<"/a
   const group = GROUP_CODES.find((code) => code === query.grupa);
   const from = day(query.od);
   const to = day(query.do);
-  const realOnly = query.dane === REAL_ONLY;
-  const [items, demo] = await Promise.all([questions({ group, from, to, realOnly }), demoCount()]);
+  const items = await questions({ group, from, to });
 
   return (
     <AdminShell session={session} current="trends" title={t("admin.questions.title")} lead={t("admin.questions.lead")}>
       <p>
         <Link href="/rops/trendy">{t("admin.questions.back")}</Link>
       </p>
-      <form method="get" className="no-print grid gap-3 @xl:grid-cols-2 @4xl:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_minmax(0,12rem)_minmax(0,14rem)_auto] @4xl:items-end">
+      <form method="get" className="no-print grid gap-3 @xl:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_minmax(0,12rem)_auto] @xl:items-end">
         <div className="grid gap-1">
           <Label htmlFor="filtr-grupa">{t("admin.questions.group")}</Label>
           <select id="filtr-grupa" name="grupa" defaultValue={group ?? ""} className={controlClass}>
@@ -59,15 +57,6 @@ export default async function AdminQuestionsPage({ searchParams }: PageProps<"/a
           <Label htmlFor="filtr-do">{t("admin.questions.to")}</Label>
           <input id="filtr-do" name="do" type="date" defaultValue={to ?? ""} className={controlClass} />
         </div>
-        {demo > 0 && (
-          <div className="grid gap-1">
-            <Label htmlFor="filtr-dane">{t("admin.data.label")}</Label>
-            <select id="filtr-dane" name="dane" defaultValue={realOnly ? REAL_ONLY : ""} className={controlClass}>
-              <option value="">{t("admin.data.all")}</option>
-              <option value={REAL_ONLY}>{t("admin.data.real")}</option>
-            </select>
-          </div>
-        )}
         <Button type="submit" variant="secondary">
           {t("admin.filter.apply")}
         </Button>
