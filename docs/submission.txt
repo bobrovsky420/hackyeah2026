@@ -60,9 +60,9 @@ Najpierw etyka. Osoba w kryzysie dostaje kontakt do ludzi, którzy mogą pomóc,
 
 Usługa, nie tylko aplikacja. Każdy wpis czeka w panelu na decyzję pracownika ROPS. Panel ma narzędzia dla trzech ról: opiekuna kategorii, redaktora katalogu i koordynatora banku potrzeb. ROPS obsadzi te role i domknie trzy cykle: od potrzeby do wdrożenia, od potrzeby do nowej innowacji, od innowacji do miejsc, które jej potrzebują.
 
-Moduły wyzwania: pięć zaimplementowanych (I, II, IV, V, VI) i dwa częściowo (III, VII).
+Moduły wyzwania: sześć zaimplementowanych (I, II, III, IV, V, VI) i jeden częściowo (VII).
 
-Korzystaliśmy z agenta AI do programowania Claude Code (Anthropic); każda decyzja zespołu, źródła danych i licencje są opisane w repozytoriu.
+Korzystaliśmy z agenta AI do programowania Claude Code (Anthropic); każda decyzja zespołu, źródła danych i licencje są opisane w repozytorium.
 
 Zespół: Alexander Bobrovský (bobrovsky@seznam.cz), Anton Myshelov (omgkennyno@gmail.com), Dmytro Chernikov (me41st0@gmail.com), Dmytro Ushakov (ushakov_d@hotmail.com), Krzysztof Zając (zajkrz@gmail.com).
 
@@ -74,7 +74,7 @@ Zaimplementowane w obecnej wersji aplikacji, według modułów wyzwania:
 - Matchmaking społeczny (moduł I): opis potrzeby własnymi słowami, gmina i rola; do trzech sprawdzonych innowacji z oceną dopasowania i uzasadnieniem opartym na cytatach ze źródła; wiedza, ludzie i ścieżka wdrożenia z tabeli 30 ścieżek prawnych i finansowych; podobne przypadki z banku potrzeb i z fiszek pomysłów; stały link do drogi, wersja do druku i plik tekstowy do pobrania.
 - Bank potrzeb: gdy nic nie pasuje albo pasuje tylko częściowo, potrzeba trafia do banku, a narzędzie przygotowuje fiszkę dla inkubatora z najbliższymi innowacjami i sprawdza, czy podobne rozwiązanie już istnieje.
 - Zasobnik wiedzy (moduł II): poradniki, modele usług, dokumenty i filmy w drodze i na stronie każdej innowacji; dla ROPS trendy potrzeb według grup docelowych, powiatów i tygodni.
-- Kreator pomysłów (moduł III, częściowo): fiszka pomysłu (opis, istota, dla kogo, etap) z najbliższymi sprawdzonymi rozwiązaniami i z odpowiedzią ROPS na stronie fiszki.
+- Kreator pomysłów (moduł III): fiszka pomysłu (opis, istota, dla kogo, etap) i kanwa innowacji społecznej INNO AGH wypełniana krok po kroku, z najbliższymi sprawdzonymi rozwiązaniami i z odpowiedzią ROPS na stronie fiszki.
 - Tester innowacji (moduł IV): przy każdej innowacji ocena, opinia, propozycja ulepszenia i zapis do testów; ROPS przekazuje je autorom innowacji.
 - Platforma aktywnej komunikacji (moduł V): rozmowa z ROPS bez zakładania konta, przez prywatny link; mentor zaproszony przez ROPS do rozmowy; tablica partnerstw z ogłoszeniami zaakceptowanymi przez ROPS, a odpowiedzi trafiają najpierw do ROPS, więc żadne dane kontaktowe nie są publiczne.
 - Panel administratora (moduł VI): kolejki wszystkich zgłoszeń z decyzjami odnotowanymi z nazwiskiem, statusy, odpowiedzi dla autorów, bieżące poprawki innowacji i wiedzy bez publikowania nowej wersji danych, trendy i eksport do CSV. Dane demonstracyjne, symulacja dwunastu tygodni w Małopolsce, pokazują, jak panel wygląda w codziennej pracy.
@@ -88,7 +88,7 @@ Wspólne dla wszystkich modułów:
 - Dostępność: krój Atkinson Hyperlegible, kontrast 7:1, wersja kontrastowa, powiększanie tekstu, pełna obsługa klawiaturą i czytnikiem ekranu, wersja na telefon i automatyczny test dostępności każdego ekranu.
 - Jakość: testy jednostkowe i end-to-end oraz 31 przypadków testowych, które sprawdzają trafność, odporność, bezpieczeństwo i równe traktowanie.
 
-Jeszcze niezaimplementowane: generator wniosków, kanwa i asystent kreatora pomysłów, rejestr wdrożeń, grupowanie podobnych potrzeb i mapa.
+Jeszcze niezaimplementowane: generator wniosków i asystent kreatora pomysłów, rejestr wdrożeń, grupowanie podobnych potrzeb i mapa.
 
 
 DEMO LINK
