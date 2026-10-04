@@ -60,7 +60,7 @@ Najpierw bezpieczeństwo. Osoba w kryzysie otrzymuje informacje, gdzie uzyskać 
 
 Usługa, nie tylko aplikacja. Zgłoszenia oczekują w panelu na decyzję pracownika ROPS. W dalszym rozwoju proponujemy trzy role: opiekuna kategorii, redaktora katalogu i koordynatora banku potrzeb. Taki podział zadań pomoże prowadzić użytkowników od potrzeby do wdrożenia, wykorzystywać zgłoszone potrzeby do tworzenia nowych innowacji oraz docierać z istniejącymi rozwiązaniami do miejsc, w których są potrzebne.
 
-Zaimplementowaliśmy pięć modułów wyzwania: matchmaking społeczny (I), zasobnik wiedzy (II), tester innowacji (IV), platformę aktywnej komunikacji (V) i panel administratora (VI). Kreator pomysłów (III) i Middleman Innowacji (VII) są zaimplementowane częściowo.
+Zaimplementowaliśmy sześć modułów wyzwania: matchmaking społeczny (I), zasobnik wiedzy (II), kreator pomysłów (III), tester innowacji (IV), platformę aktywnej komunikacji (V) i panel administratora (VI). Middleman Innowacji (VII) są zaimplementowane częściowo.
 
 Przy programowaniu korzystaliśmy z agenta AI Claude Code (Anthropic). Decyzje zespołu, źródła danych i informacje o licencjach dokumentujemy w repozytorium.
 
