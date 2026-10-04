@@ -2,7 +2,20 @@ import { beforeEach, describe, expect, it } from "vitest";
 import type { Evaluation, Idea, Need, Route } from "@/lib/contracts";
 import { createMemoryRepository, createMemoryState } from "@/server/db/memory";
 import type { Repository } from "@/server/db/repository";
-import { csvCell, EXPORT_KINDS, exportRows, questions, queueCounts, toCsv, trends, weekStart } from "@/server/admin/data";
+import {
+  addDays,
+  csvCell,
+  EXPORT_KINDS,
+  exportRows,
+  filterIdeas,
+  filterNeeds,
+  questions,
+  queueCounts,
+  toCsv,
+  trendPeriod,
+  trends,
+  weekStart,
+} from "@/server/admin/data";
 import { exampleIdeas, exampleNeeds } from "@/server/db/examples";
 
 const pending = { status: "do-weryfikacji" as const, reviewer: null, decided_at: null, reason_pl: null };
@@ -115,10 +128,10 @@ describe("the trends of module II", () => {
     const repo = createMemoryRepository({ ...createMemoryState(), needs, ideas: [] });
     await repo.addEvaluation(evaluation("oc-1", { rating: 5 }));
     await repo.addEvaluation(evaluation("oc-2", { rating: 1, moderation: { ...pending, status: "odrzucone" } }));
-    const data = await trends(repo);
+    const data = await trends(repo, "calosc", Date.parse(needs[0].created_at));
     expect(data.totals.needs).toBe(3);
     expect(data.needsByGroup.find((row) => row.key === "dzieci-mlodziez-rodziny")?.count).toBe(2);
-    expect(data.needsByWeek).toEqual([{ key: weekStart(needs[0].created_at), count: 3 }]);
+    expect(data.needsOverTime).toEqual([{ key: needs[0].created_at.slice(0, 7), count: 3 }]);
     expect(data.rated).toEqual([{ id: "inn-nat-649", ratings: 1, average: 5, testers: 0 }]);
     expect(data.totals.evaluations).toBe(1);
   });
@@ -159,6 +172,75 @@ describe("the trends of module II", () => {
       expect((await questions({ from: "2026-10-03" }, repo)).map((item) => item.id)).toEqual(["rt-4", "rt-3"]);
       expect((await questions({ from: "2026-10-01", to: "2026-10-02" }, repo)).map((item) => item.id)).toEqual(["rt-2", "rt-1"]);
       expect(await questions({ group: "zdrowie", from: "2026-10-02" }, repo)).toEqual([]);
+    });
+  });
+
+  describe("the periods", () => {
+    // Sunday 4 October 2026, noon in Poland.
+    const NOW = Date.parse("2026-10-04T10:00:00.000Z");
+    const need = (id: string, createdAt: string, groups: string[], placeTerc: string | null = null): Need => ({
+      ...exampleNeeds()[0],
+      id,
+      created_at: createdAt,
+      target_groups: groups,
+      place_terc: placeTerc,
+    });
+
+    it("reads the last days up to today in Poland, with the period of the same length before it", () => {
+      expect(trendPeriod("30-dni", NOW)).toEqual({
+        range: "30-dni",
+        from: "2026-09-05",
+        to: "2026-10-04",
+        previous: { from: "2026-08-06", to: "2026-09-04" },
+        grain: "week",
+      });
+      expect(trendPeriod("12-miesiecy", NOW).grain).toBe("month");
+      expect(trendPeriod("calosc", NOW)).toMatchObject({ from: null, previous: null, grain: "month" });
+      expect(addDays("2026-03-01", -1)).toBe("2026-02-28");
+    });
+
+    it("compares each row with the previous period, and keeps the rows that fell to zero", async () => {
+      const repo = createMemoryRepository({
+        ...createMemoryState(),
+        ideas: [],
+        needs: [
+          need("pt-1", "2026-10-01T09:00:00.000Z", ["seniorzy"], "1207062"),
+          need("pt-2", "2026-09-20T09:00:00.000Z", ["seniorzy"]),
+          need("pt-3", "2026-08-20T09:00:00.000Z", ["seniorzy"]),
+          need("pt-4", "2026-08-21T09:00:00.000Z", ["cudzoziemcy"]),
+          // Before both periods: counted in the whole time only.
+          need("pt-5", "2026-01-10T09:00:00.000Z", ["cudzoziemcy"]),
+        ],
+      });
+      const month = await trends(repo, "30-dni", NOW);
+      expect(month.needsByGroup).toEqual([
+        { key: "seniorzy", count: 2, previous: 1 },
+        { key: "cudzoziemcy", count: 0, previous: 1 },
+      ]);
+      expect(month.needsByPowiat.map((row) => row.key)).toEqual(["bez-miejsca", "limanowski"]);
+      expect(month.totals.needs).toBe(2);
+      // Every week of the period, the empty ones too.
+      expect(month.needsOverTime.map((row) => row.count)).toEqual([0, 0, 1, 0, 1]);
+      expect(month.needsOverTime[0].key).toBe("2026-08-31");
+
+      const all = await trends(repo, "calosc", NOW);
+      expect(all.needsByGroup.every((row) => row.previous === undefined)).toBe(true);
+      expect(all.needsOverTime.map((row) => row.key)).toEqual(["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10"]);
+      expect(all.needsOverTime.at(-3)?.count).toBe(2);
+    });
+
+    it("narrows the needs and the ideas to a bar of the trends", () => {
+      const needs = [
+        need("pt-1", "2026-10-01T09:00:00.000Z", ["seniorzy"], "1207062"),
+        need("pt-2", "2026-09-20T09:00:00.000Z", [], null),
+      ];
+      expect(filterNeeds(needs, { powiat: "limanowski" }).map((item) => item.id)).toEqual(["pt-1"]);
+      expect(filterNeeds(needs, { powiat: "bez-miejsca" }).map((item) => item.id)).toEqual(["pt-2"]);
+      expect(filterNeeds(needs, { group: "bez-grupy" }).map((item) => item.id)).toEqual(["pt-2"]);
+      expect(filterNeeds(needs, { from: "2026-09-21", to: "2026-10-01" }).map((item) => item.id)).toEqual(["pt-1"]);
+      const ideas = [idea("pm-1", "2026-10-01T09:00:00.000Z", { stage: "test", target_groups: ["seniorzy"] }), idea("pm-2", "2026-09-01T09:00:00.000Z", { stage: "pomysl", target_groups: [] })];
+      expect(filterIdeas(ideas, { stage: "test" }).map((item) => item.id)).toEqual(["pm-1"]);
+      expect(filterIdeas(ideas, { group: "seniorzy", to: "2026-09-30" })).toEqual([]);
     });
   });
 
