@@ -5,12 +5,15 @@ import { ropsDepartment } from "@/lib/catalogue";
 
 export const metadata: Metadata = { title: t("privacy.meta.title") };
 
-/** S8: "Prywatność" (FR-11.2), describing what the prototype does. */
+/** S8: "Prywatność" (FR-11.2), describing what the prototype does and how long it keeps each entry. */
 export default function PrivacyPage() {
   return (
     <InfoPage title={t("privacy.title")} lead={t("privacy.lead")}>
       <InfoSection id="serwer" title={t("privacy.server.title")}>
         <p>{t("privacy.server.p1")}</p>
+      </InfoSection>
+      <InfoSection id="okresy" title={t("privacy.retention.title")}>
+        <p>{t("privacy.retention.p1")}</p>
       </InfoSection>
       <InfoSection id="przegladarka" title={t("privacy.browser.title")}>
         <p>{t("privacy.browser.p1")}</p>

@@ -40,10 +40,8 @@ function cardEntries(): [MessageKey, ReactNode][] {
         <li>{t("how.card.logic.s3")}</li>
       </ol>,
     ],
-    ["how.card.data.term", t("how.card.data.text")],
     ["how.card.review.term", t("how.card.review.text")],
     ["how.card.limits.term", t("how.card.limits.text")],
-    ["how.card.evaluation.term", t("how.card.evaluation.text")],
   ];
 }
 
