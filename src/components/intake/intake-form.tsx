@@ -70,10 +70,13 @@ function writeDraft(draft: Draft) {
  */
 export function IntakeForm({
   children,
+  before,
   places,
   localities,
 }: {
   children: ReactNode;
+  /** Above the heading while the form shows, gone during the wait: S1's ways in. */
+  before?: ReactNode;
   places: PlaceOption[];
   localities: LocalityOption[];
 }) {
@@ -233,6 +236,7 @@ export function IntakeForm({
     <div className="grid gap-14 @5xl:grid-cols-[40rem_minmax(0,1fr)] @5xl:items-start @5xl:gap-x-12">
       {live}
       <div className="grid max-w-[40rem] gap-8">
+        {before}
         <div className="grid gap-3">
           <h1 className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">{t("s1.title")}</h1>
           <p className="text-[1.1rem]">{t("s1.lead")}</p>

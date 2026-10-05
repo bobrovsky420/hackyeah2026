@@ -873,7 +873,7 @@ The shapes are `Thread`, `Mentor` and `PartnershipPost` in
 | FR-15.5 | MUST | The partnership board `/partnerstwa`: posts ROPS approved ("Szukam partnera" or "Oferuję współpracę", sector, sectors sought, gmina, groups, the organisation's name), a filter by sector, "Chcę współpracować" opening a conversation that refers to the post; no contact is shown. `/partnerstwa/nowe` adds a post with the author's own conversation, where ROPS relays the answers. | An unapproved post is not on the board |
 | FR-15.6 | MUST | Every text through the gate (FR-12.16); at most five new conversations or three posts per e-mail address and per client address a day, 30 messages per conversation a day; honeypots. | |
 | FR-15.7 | ROADMAP | An e-mail or text message when an answer arrives, with the consent the form would ask for; cross-sector matching that suggests partners for a post. | |
-| FR-15.8 | MUST | What is new reaches the author without e-mail or an account: "Moje rozmowy i zgłoszenia" (`/rozmowy`) asks POST `/api/threads/status` with the links this browser holds and marks "Nowa odpowiedź" on each conversation that ROPS or a mentor answered after it was last opened here, with the count in a status line; it lists under "Moje zgłoszenia" the idea cards sent from this browser (localStorage, id, name and the last visit), with their status from POST `/api/ideas/status` and "Nowa odpowiedź ROPS" after a reply since the last visit; the card's page, in the browser that sent it, says "Nowa odpowiedź od Twojej ostatniej wizyty" once and marks the visit. The status endpoints return dates and statuses only, never a text; a wrong key gets nothing, as the conversation page answers 404. | An answer of ROPS shows as new until the author opens the conversation |
+| FR-15.8 | MUST | What is new reaches the author without e-mail or an account: "Moje sprawy" (`/rozmowy`) asks POST `/api/threads/status` with the links this browser holds and marks "Nowa odpowiedź" on each conversation that ROPS or a mentor answered after it was last opened here, with the count in a status line; it lists under "Moje zgłoszenia" the idea cards sent from this browser (localStorage, id, name and the last visit), with their status from POST `/api/ideas/status` and "Nowa odpowiedź ROPS" after a reply since the last visit; the card's page, in the browser that sent it, says "Nowa odpowiedź od Twojej ostatniej wizyty" once and marks the visit. "Moje sprawy" is in the site menu once this browser remembers a conversation or a card, with "nowe" and the count in words after an unread answer; on a wide screen, where the menu has no room for an eighth item, it stands in the bar above the header, and the folded menu's button shows the count in place of its icon. The confirmation of a sent card points to it. The header asks the status endpoints at most every 30 seconds per tab. The status endpoints return dates and statuses only, never a text; a wrong key gets nothing, as the conversation page answers 404. | An answer of ROPS shows as new until the author opens the conversation |
 
 ## 8. Data model
 
@@ -1784,7 +1784,10 @@ the partner allows).
 ### S1 Start (`/`)
 
 - Purpose: get the need in. Focus lands in the text box.
-- Content, top to bottom: heading "Opisz potrzebę lub problem"; the lead
+- Content, top to bottom: "Co chcesz zrobić?", four ways in, two by two
+  (on a phone the titles alone): "Mam problem w swojej okolicy" (this
+  form; it moves focus to the text box), "Mam pomysł", "Chcę pomóc" and
+  "Mam pytanie do ROPS", gone while the route is prepared; heading "Opisz potrzebę lub problem"; the lead
   from 3.1; text box with the label "Co się dzieje i kogo dotyczy?", the
   hint "Wystarczy kilka zdań. Nie wpisuj danych osobowych." and, as a
   second visible hint instead of a placeholder, "Na przykład: w naszej

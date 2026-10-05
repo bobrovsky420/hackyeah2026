@@ -105,6 +105,9 @@ export function IdeaForm({
       <div ref={doneRef} tabIndex={-1} className="grid gap-4">
         <Notice tone="success" title={t("idea.done.title")} titleAs="h2">
           <p>{t("idea.done.text")}</p>
+          <p>
+            {t("idea.done.mine")} <Link href="/rozmowy">{t("shell.nav.mine")}</Link>.
+          </p>
           {removed > 0 && (
             <p>
               {t("route.redacted.text", {

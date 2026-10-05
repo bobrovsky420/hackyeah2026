@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
-import { NewBadge } from "@/components/talk/my-threads";
+import { NewBadge } from "@/components/ui/new-badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/dates";
 import { t, type MessageKey } from "@/lib/i18n";
