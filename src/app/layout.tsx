@@ -47,6 +47,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           >
             {t("shell.skipLink")}
           </a>
+          <div aria-hidden className="brand-ribbon no-print">
+            <span className="bg-[#ec008b]" />
+            <span className="bg-[#4b3f9e]" />
+            <span className="bg-[#00b8f1]" />
+            <span className="bg-[#8dc63f]" />
+            <span className="bg-[#ffd200]" />
+          </div>
           <ViewSettings />
           <SiteHeader />
           <main id="tresc" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 pt-8 pb-16 @3xl:px-8 @3xl:pt-12">

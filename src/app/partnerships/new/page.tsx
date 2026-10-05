@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: t("talk.post.meta") };
 /** Module V: a new post for the partnership board. */
 export default function NewPartnershipPage() {
   return (
-    <InfoPage title={t("talk.post.pageTitle")} lead={t("talk.post.lead")}>
+    <InfoPage journey="help" title={t("talk.post.pageTitle")} lead={t("talk.post.lead")}>
       <Notice title={t("forms.prototype.title")}>
         <p>{t("forms.prototype.text")}</p>
       </Notice>

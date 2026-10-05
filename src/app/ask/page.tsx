@@ -38,7 +38,7 @@ export default async function AskPage({ searchParams }: PageProps<"/ask">) {
         : "";
 
   return (
-    <InfoPage title={t("talk.ask.title")} lead={t("talk.ask.lead")}>
+    <InfoPage journey="ask" title={t("talk.ask.title")} lead={t("talk.ask.lead")}>
       <Notice title={t("talk.ask.how.title")}>
         <p>{t("talk.ask.how.text")}</p>
         <p>

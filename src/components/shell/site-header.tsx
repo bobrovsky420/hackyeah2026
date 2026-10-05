@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { MAP_ENABLED } from "@/lib/features";
 import { t, type MessageKey } from "@/lib/i18n";
+import { journeyOf } from "@/lib/journeys";
 import { publicPath } from "@/lib/page-routes";
 import { cn } from "@/lib/utils";
 import { NewBadge } from "@/components/ui/new-badge";
@@ -91,10 +92,12 @@ export function SiteHeader() {
                   <Link
                     href={item.href}
                     aria-current={current ? "page" : undefined}
+                    data-journey={journeyOf(item.href) ?? undefined}
                     onClick={() => setMenuOpen(false)}
                     className={cn(
                       "inline-flex min-h-11 items-center font-bold whitespace-nowrap",
-                      current && "text-foreground no-underline shadow-[inset_0_-4px_0_var(--primary)]",
+                      // The current item is underlined in the colour of its journey (decision U.10).
+                      current && "text-foreground no-underline shadow-[inset_0_-4px_0_var(--j-rule)]",
                     )}
                   >
                     {t(item.label)}

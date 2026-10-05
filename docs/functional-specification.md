@@ -1784,6 +1784,23 @@ page (FR-12.9), and the line "Prototyp zbudowany podczas HackYeah 2026 dla
 Regionalnego Ośrodka Polityki Społecznej w Krakowie" (partner logos only if
 the partner allows).
 
+Colour (decision U.10): a 5 px ribbon in the five colours of the
+Małopolska pictogram runs above the bar, left out in print and in "Wersja
+kontrastowa". The four ways in of S1 are four journeys, each with a colour
+of the pictogram and an icon: a need (cyan, a pin), an idea (magenta, a
+bulb), help (green, a handshake heart) and a question to ROPS (violet, a
+speech bubble). The colour shows on the journey's tile, on the underline
+of its current menu item, beside the heading of its pages (S1's route,
+the need's brief and the bank, the idea forms and card, "Chcę pomóc" and
+the partnership board, "Zapytaj ROPS" and a conversation) and on the
+headings of the route's sections, each with its own icon and a rule. Every
+colour has three steps per theme: a rule for lines (3:1 on the page), an
+ink for text and icons (7:1 on the page and on the tint) and a tint for
+grounds; the contrast version gives all four its yellow. A page of no
+journey (the map, "Jak to działa", "Moje sprawy", the panel) keeps the
+accent blue, and the colour never carries meaning alone: the words and the
+icon say the same.
+
 ### S1 Start (`/`)
 
 - Purpose: get the need in. Focus lands in the text box.

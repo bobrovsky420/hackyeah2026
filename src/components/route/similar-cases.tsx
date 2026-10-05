@@ -1,3 +1,4 @@
+import { Layers } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { getGmina, getInnovation } from "@/lib/catalogue";
@@ -6,6 +7,7 @@ import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { ideaStageLabel } from "@/lib/labels";
 import { needStatusLabel } from "@/server/admin/labels";
+import { BlockHeading } from "./block-heading";
 import type { SimilarCases } from "@/server/match/similar-cases";
 
 /**
@@ -17,13 +19,8 @@ import type { SimilarCases } from "@/server/match/similar-cases";
 export function SimilarCasesBlock({ cases, routeId }: { cases: SimilarCases; routeId: string }) {
   if (cases.shown.length === 0 && cases.hiddenCount === 0) return null;
   return (
-    <section aria-labelledby="podobne-przypadki" className="grid gap-4 border-t border-border pt-8">
-      <div className="grid gap-1">
-        <h2 id="podobne-przypadki" className="text-[1.45rem] font-bold">
-          {t("cases.title")}
-        </h2>
-        <p>{t("cases.lead")}</p>
-      </div>
+    <section aria-labelledby="podobne-przypadki" className="grid gap-4 pt-6">
+      <BlockHeading id="podobne-przypadki" icon={Layers} title={t("cases.title")} lead={<p>{t("cases.lead")}</p>} />
       {cases.shown.length > 0 && (
         <ul className="grid gap-3">
           {cases.shown.map((item) => {

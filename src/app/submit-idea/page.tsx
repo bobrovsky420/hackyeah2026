@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: t("idea.meta.title") };
 /** Module III, "Kreator pomysłów": the idea card form, with the way to the longer CANVAS application. */
 export default function SubmitIdeaPage() {
   return (
-    <InfoPage
+    <InfoPage journey="idea"
       title={t("idea.title")}
       afterTitle={
         <p className="text-[1.25rem] font-bold">
