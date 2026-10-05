@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AdminLogin, gate } from "@/components/admin/admin-gate";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { StatusChip, statusTone } from "@/components/admin/status-chip";
 import type { ThreadTopic } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
@@ -58,8 +59,10 @@ export default async function AdminThreadsPage({ searchParams }: PageProps<"/adm
                 {thread.mentor && ` · ${t("admin.threads.withMentor", { name: thread.mentor.name })}`}
                 {thread.demo && ` · ${t("admin.demo")}`}
               </p>
-              <p className={waitsForRops(thread) ? "font-bold" : ""}>
-                {waitsForRops(thread) ? t("admin.threads.waiting") : threadStatusLabel(thread.status)}
+              <p>
+                <StatusChip tone={waitsForRops(thread) ? "progress" : statusTone(thread.status)}>
+                  {waitsForRops(thread) ? t("admin.threads.waiting") : threadStatusLabel(thread.status)}
+                </StatusChip>
               </p>
             </li>
           ))}

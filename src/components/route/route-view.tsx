@@ -5,6 +5,7 @@ import { ReportLink } from "@/components/report/report-link";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { JourneyMark } from "@/components/ui/journey-mark";
+import { GeneratedNote } from "@/components/ui/generated-note";
 import type { Channel, Route, SensitiveTopic } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { knowledgeTypeLabel, roleLabel, targetGroupLabel, telHref } from "@/lib/labels";
@@ -206,10 +207,10 @@ export function RouteView({ route, markdown, similar }: { route: Route; markdown
 
         {!isRoute && route.clarification_needed && route.input.problem_text && <ClarificationForm routeId={route.id} />}
 
-        <Notice title={t(isRoute ? "route.generated.title" : "route.generated.titlePartial")}>
+        <GeneratedNote title={t(isRoute ? "route.generated.title" : "route.generated.titlePartial")}>
           {route.summary_pl && <p>{route.summary_pl}</p>}
           <p className="text-[0.95rem] text-muted-foreground">{route.label_pl}</p>
-        </Notice>
+        </GeneratedNote>
 
         {route.solutions.length > 0 && (
           <Block

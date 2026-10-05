@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AdminLogin, gate } from "@/components/admin/admin-gate";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { ModerationState } from "@/components/admin/decision-form";
+import { StatusChip, statusTone } from "@/components/admin/status-chip";
 import type { IdeaStatus } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
@@ -98,9 +99,10 @@ export default async function AdminIdeasPage({ searchParams }: PageProps<"/admin
                 {formatDate(idea.created_at)} · {ideaKindLabel(idea.kind)} · {ideaStageLabel(idea.stage)} · {idea.author.display_name}
                 {idea.demo && ` · ${t("admin.demo")}`}
               </p>
-              <p>
-                <span className="font-bold">{t("admin.ideas.status")}</span> {ideaStatusLabel(idea.status)}
-                {idea.reply && ` · ${t("admin.ideas.replied")}`}
+              <p className="flex flex-wrap items-center gap-2">
+                <span className="font-bold">{t("admin.ideas.status")}</span>
+                <StatusChip tone={statusTone(idea.status)}>{ideaStatusLabel(idea.status)}</StatusChip>
+                {idea.reply && <span>{t("admin.ideas.replied")}</span>}
               </p>
               <ModerationState moderation={idea.moderation} />
             </li>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GeneratedLine } from "@/components/ui/generated-note";
 import { getInnovation } from "@/lib/catalogue";
 import type { AssistantRun, AssistantSuggestion } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
@@ -47,7 +48,7 @@ export function AssistantSuggestions({
           );
         })}
       </ul>
-      <p className="text-muted-foreground">{t(run.source === "model" ? "card.assistant.model" : "card.assistant.template")}</p>
+      <GeneratedLine model={run.source === "model"}>{t(run.source === "model" ? "card.assistant.model" : "card.assistant.template")}</GeneratedLine>
     </div>
   );
 }

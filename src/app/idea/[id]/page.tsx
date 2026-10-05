@@ -14,6 +14,8 @@ import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { JourneyMark } from "@/components/ui/journey-mark";
+import { FitMeter } from "@/components/ui/badges";
+import { GeneratedLine } from "@/components/ui/generated-note";
 import { getGmina, getInnovation } from "@/lib/catalogue";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
@@ -174,7 +176,7 @@ export default async function IdeaPage({ params, searchParams }: PageProps<"/ide
                   <h3 className="text-[1.1rem] font-bold">
                     <Link href={`/innowacja/${innovation.id}`}>{innovation.title}</Link>
                   </h3>
-                  <p className="text-muted-foreground">{t("card.similar.score", { score: match.fit_score })}</p>
+                  <FitMeter score={match.fit_score} text={t("card.similar.score", { score: match.fit_score })} />
                   <p>
                     <span className="font-bold">{t("card.similar.fits")}</span> {match.what_fits_pl}
                   </p>
@@ -186,7 +188,7 @@ export default async function IdeaPage({ params, searchParams }: PageProps<"/ide
                 </li>
               ))}
             </ul>
-            <p className="text-muted-foreground">{t("card.similar.generated")}</p>
+            <GeneratedLine>{t("card.similar.generated")}</GeneratedLine>
           </>
         )}
       </Section>

@@ -1801,6 +1801,24 @@ journey (the map, "Jak to działa", "Moje sprawy", the panel) keeps the
 accent blue, and the colour never carries meaning alone: the words and the
 icon say the same.
 
+Marks (decision U.11): a ROPS source ("Biblioteka ROPS", "Partner ROPS")
+is a badge filled in the accent, the national base an outlined one;
+"Sprawdzone przez ROPS" a green badge with a tick; target groups chips on
+the accent's tint. A fit score shows as its words, a bar in the colours of
+the journey around it, and the number, which screen readers read. A card
+has one filled button, the contact on a route's solution. Text a model
+wrote carries one mark, a sparkles icon and an accent edge: the route's
+summary, "W skrócie" of an innovation, the incubator brief, the similar
+solutions of an idea card, the assistant's results and the Middleman's
+plan; a part made without a model keeps a plain line. "nowe" and a count
+of new entries are a filled magenta pill. In the panel every state is a
+chip with an icon and its words: new (accent), in progress or waiting
+(amber, an hourglass), done (green, a tick), closed (grey) and "po
+terminie" (red, a warning triangle); each trend table draws its bars in
+the colour of the journey it counts (needs and searches cyan, ideas
+magenta, questions violet, ratings the accent), one hue per table, since
+every bar of it measures the same thing.
+
 ### S1 Start (`/`)
 
 - Purpose: get the need in. Focus lands in the text box.

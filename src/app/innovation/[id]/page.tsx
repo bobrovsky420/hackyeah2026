@@ -6,7 +6,8 @@ import { Attribution } from "@/components/innovation/attribution";
 import { ReportLink } from "@/components/report/report-link";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
-import { Notice } from "@/components/ui/notice";
+import { Chip, SourceBadge, VerifiedBadge } from "@/components/ui/badges";
+import { GeneratedNote } from "@/components/ui/generated-note";
 import { getInnovation } from "@/lib/catalogue";
 import { repository } from "@/server/db";
 import { overlayInnovation } from "@/server/knowledge/overlay";
@@ -18,7 +19,6 @@ import {
   costLabel,
   evidenceLabel,
   implementerLabels,
-  sourceBadge,
   targetGroupLabel,
   timeLabel,
 } from "@/lib/labels";
@@ -56,15 +56,11 @@ function Header({ item, routeId, verified }: { item: Innovation; routeId: string
         </Link>
       )}
       <div className="flex flex-wrap gap-2">
+        <SourceBadge source={item.source} />
+        {verified && <VerifiedBadge />}
         {item.targetGroups.slice(0, 2).map((code) => (
-          <p key={code} className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">
-            {targetGroupLabel(code)}
-          </p>
+          <Chip key={code}>{targetGroupLabel(code)}</Chip>
         ))}
-        <p className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">
-          {sourceBadge(item.source)}
-        </p>
-        {verified && <p className="rounded-sm border-2 border-foreground px-2 text-[0.9rem] font-bold">{t("admin.verifiedBadge")}</p>}
       </div>
       <h1 id="naglowek-innowacji" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
         {item.title}
@@ -137,10 +133,10 @@ export default async function InnovationPage({ params, searchParams }: PageProps
       <FocusOnMount targetId="naglowek-innowacji" />
       <Header item={item} routeId={routeId} verified={verified} />
 
-      <Notice title={t("s5.generated.title")}>
+      <GeneratedNote title={t("s5.generated.title")}>
         <p>{item.summary}</p>
         <p className="text-[0.95rem] text-muted-foreground">{t("s5.generated.label")}</p>
-      </Notice>
+      </GeneratedNote>
 
       <section aria-labelledby="fakty" className="grid gap-3">
         <h2 id="fakty" className={sectionTitle}>

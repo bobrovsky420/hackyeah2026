@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { t } from "@/lib/i18n";
+import type { Journey } from "@/lib/journeys";
 
 export interface BarRow {
   label: string;
@@ -22,7 +23,9 @@ const FEW = 10;
  * A trend as a table with a bar per row: the numbers stay readable for
  * screen readers and in print. A row with `href` links its label to the
  * items behind it. With the counts of the previous period, a "Zmiana"
- * column shows the difference as text, never as colour alone.
+ * column shows the difference as text, never as colour alone. The bars take
+ * the colour of the journey the table counts (decision U.11): one hue per
+ * table, as every bar measures the same thing.
  */
 export function BarTable({
   caption,
@@ -30,6 +33,7 @@ export function BarTable({
   rows,
   empty,
   changeNote,
+  journey,
 }: {
   caption: string;
   keyHeader: string;
@@ -37,12 +41,14 @@ export function BarTable({
   empty: string;
   /** What the change is measured against, under the table. */
   changeNote?: string;
+  /** Whose entries the table counts; none keeps the accent. */
+  journey?: Journey;
 }) {
   const max = Math.max(1, ...rows.map((row) => row.count));
   const withChange = rows.some((row) => row.previous !== undefined);
   const total = rows.reduce((sum, row) => sum + row.count + (row.previous ?? 0), 0);
   return (
-    <section className="grid content-start gap-3 rounded-lg border border-border bg-background p-5">
+    <section data-journey={journey} className="grid content-start gap-3 rounded-lg border border-border bg-background p-5">
       <h2 className="text-[1.15rem] font-bold">{caption}</h2>
       {rows.length === 0 ? (
         <p className="text-muted-foreground">{empty}</p>
@@ -76,7 +82,7 @@ export function BarTable({
                 <td className="py-2 pr-4 text-right font-bold tabular-nums">{row.count}</td>
                 {withChange && <td className="py-2 pr-4 text-right tabular-nums">{signed(row.count - (row.previous ?? 0))}</td>}
                 <td className="py-2" aria-hidden>
-                  {row.count > 0 && <span className="block h-4 rounded-sm bg-foreground" style={{ width: `${Math.max(4, (row.count / max) * 100)}%` }} />}
+                  {row.count > 0 && <span className="block h-4 rounded-sm bg-journey-ink" style={{ width: `${Math.max(4, (row.count / max) * 100)}%` }} />}
                 </td>
               </tr>
             ))}

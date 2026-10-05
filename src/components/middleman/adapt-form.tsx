@@ -12,6 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { CheckboxList, RadioList } from "@/components/ui/choice";
 import { ErrorSummary, type FormError } from "@/components/ui/error-summary";
 import { describedBy, Field, Hint, Label, TextArea } from "@/components/ui/field";
+import { GeneratedLine } from "@/components/ui/generated-note";
 import type { Helpline } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import {
@@ -289,7 +290,7 @@ function PlanView({ plan }: { plan: ServicePlan }) {
           </ul>
         )}
       </section>
-      <p className="text-muted-foreground">{t(plan.source === "model" ? "adapt.plan.model" : "adapt.plan.template")}</p>
+      <GeneratedLine model={plan.source === "model"}>{t(plan.source === "model" ? "adapt.plan.model" : "adapt.plan.template")}</GeneratedLine>
     </article>
   );
 }

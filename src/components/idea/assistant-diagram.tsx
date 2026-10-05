@@ -1,3 +1,4 @@
+import { GeneratedLine } from "@/components/ui/generated-note";
 import type { AssistantDiagram, DiagramStep } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { DIAGRAM_STEPS } from "@/server/ideas/assistant";
@@ -43,7 +44,9 @@ export function AssistantDiagramView({ diagram }: { diagram: AssistantDiagram })
           </li>
         ))}
       </ol>
-      <p className="text-muted-foreground">{t(diagram.source === "model" ? "card.assistant.show.model" : "card.assistant.show.template")}</p>
+      <GeneratedLine model={diagram.source === "model"}>
+        {t(diagram.source === "model" ? "card.assistant.show.model" : "card.assistant.show.template")}
+      </GeneratedLine>
     </div>
   );
 }

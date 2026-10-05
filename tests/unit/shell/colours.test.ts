@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { journeyOf } from "@/lib/journeys";
 
-/* The journey colours of decision U.10: which page belongs to which journey, and the contrast of every step in src/app/globals.css. */
+/* The colours of decisions U.10 and U.11: which page belongs to which journey, and the contrast of every pair of src/app/globals.css that carries text. */
 
 describe("journeyOf", () => {
   it("gives each public path its journey, and none to a page of every journey", () => {
@@ -53,6 +53,29 @@ describe("the journey colours", () => {
         expect(ratio(ink, theme.background), `${name} ${journey} ink on the page`).toBeGreaterThanOrEqual(7);
         expect(ratio(ink, tint), `${name} ${journey} ink on its tint`).toBeGreaterThanOrEqual(7);
         expect(ratio(rule, theme.background), `${name} ${journey} rule on the page`).toBeGreaterThanOrEqual(3);
+      }
+    });
+  }
+});
+
+describe("the text on the accents of decision U.11", () => {
+  const themes = { light: block(":root {"), dark: block(':root:not([data-contrast="on"])'), contrast: block(':root[data-contrast="on"]') };
+  // [text, ground, where]
+  const pairs: [string, string, string][] = [
+    ["primary-foreground", "primary", "a ROPS source badge"],
+    ["primary", "accent", "a group chip, a new entry"],
+    ["success", "success-tint", "Sprawdzone przez ROPS, a done entry"],
+    ["foreground", "warning-tint", "an entry in progress"],
+    ["muted-foreground", "muted", "a closed entry, the line under generated text"],
+    ["foreground", "muted", "generated text"],
+    ["destructive", "destructive-tint", "po terminie"],
+    ["background", "idea-ink", "the nowe badge"],
+  ];
+
+  for (const [name, theme] of Object.entries(themes)) {
+    it(`keeps them at 7:1 in the ${name} theme`, () => {
+      for (const [text, ground, where] of pairs) {
+        expect(ratio(theme[text], theme[ground]), `${name}: ${where} (${text} on ${ground})`).toBeGreaterThanOrEqual(7);
       }
     });
   }

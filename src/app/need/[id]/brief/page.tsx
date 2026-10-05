@@ -6,8 +6,8 @@ import { SectionText } from "@/components/brief/section-text";
 import { DocumentActions } from "@/components/document-actions";
 import { ReportLink } from "@/components/report/report-link";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
-import { Notice } from "@/components/ui/notice";
 import { JourneyMark } from "@/components/ui/journey-mark";
+import { GeneratedNote } from "@/components/ui/generated-note";
 import { t } from "@/lib/i18n";
 import { INCUBATOR_PAGE } from "@/server/needs/brief-template";
 import { repository } from "@/server/db";
@@ -58,9 +58,9 @@ export default async function BriefPage({ params }: PageProps<"/need/[id]/brief"
       </header>
 
       {footer && (
-        <Notice title={t("brief.generated.title")}>
+        <GeneratedNote title={t("brief.generated.title")}>
           <SectionText text={footer.text} />
-        </Notice>
+        </GeneratedNote>
       )}
 
       <DocumentActions markdown={stored.markdown} filename={`fiszka-${need.id}.md`} />
