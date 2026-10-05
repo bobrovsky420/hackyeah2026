@@ -55,6 +55,9 @@ export interface KnownText {
   numbers: Set<string>;
 }
 
+/** The capitalised forms of address of the singular "Ty" (rule 11), which the name check would read as new names. */
+export const SINGULAR_ADDRESS = "Ty Ciebie Cię Tobie Tobą Twój Twoja Twoje Twojego Twojej Twoim Twoją Twoich Twoimi Twym Twą";
+
 export function knownText(...texts: (string | null | undefined)[]): KnownText {
   const joined = texts.filter(Boolean).join(" ").normalize("NFC");
   const words = [...new Set(joined.toLocaleLowerCase("pl").match(/\p{L}+/gu) ?? [])];

@@ -96,7 +96,7 @@ export default async function AdminNeedsPage({ searchParams }: PageProps<"/admin
       ) : (
         <ul className="grid gap-4">
           {needs.map((need) => (
-            <li key={need.id} className="grid gap-2 rounded-lg border border-border p-4">
+            <li key={need.id} id={`wpis-${need.id}`} className="grid scroll-mt-6 gap-2 rounded-lg border border-border p-4">
               <h2 className="text-[1.1rem] font-bold">{need.summary_pl ?? need.problem_text.slice(0, 120)}</h2>
               <p className="text-muted-foreground">
                 {formatDate(need.created_at)} · {getGmina(need.place_terc)?.name ?? t("admin.none")}

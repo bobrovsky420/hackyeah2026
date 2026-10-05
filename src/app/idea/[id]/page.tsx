@@ -3,10 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { DocumentActions } from "@/components/document-actions";
-import { AssistantAsk } from "@/components/idea/assistant-ask";
+import { AssistantFocus, AssistantRun, type AssistantPart } from "@/components/idea/assistant-run";
 import { AssistantDiagramView } from "@/components/idea/assistant-diagram";
 import { AssistantSuggestions } from "@/components/idea/assistant-suggestions";
 import { CanvasAnswers } from "@/components/idea/canvas-answers";
+import { ExtendToCanvas } from "@/components/idea/extend-to-canvas";
 import { ReplyMarker } from "@/components/idea/reply-marker";
 import { SimilarPending } from "@/components/idea/similar-pending";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
@@ -27,6 +28,9 @@ const NO_GAPS = t("brief.existing.lacksNone");
 
 const sectionTitle = "text-[1.3rem] font-bold @3xl:text-[1.45rem]";
 
+/** The idea assistant's parts in the order of the page. */
+const PARTS: AssistantPart[] = ["develop", "show", "inspire"];
+
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <section aria-labelledby={id} className="grid gap-3 border-t border-border pt-6">
@@ -44,8 +48,9 @@ function Section({ id, title, children }: { id: string; title: string; children:
  * the first visit, stored, then shown as stored. The author's contact is
  * never shown; the card waits for ROPS before anyone else sees it.
  */
-export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
+export default async function IdeaPage({ params, searchParams }: PageProps<"/idea/[id]">) {
   const { id } = await params;
+  const query = await searchParams;
   const idea = await repository().getIdea(id);
   // The panel's demonstration data has no public card.
   if (!idea || idea.demo) notFound();
@@ -54,6 +59,14 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
     const innovation = getInnovation(match.innovation_id);
     return innovation ? [{ match, innovation }] : [];
   });
+  // The short-form card and its CANVAS application link to each other; a demonstration card stays out.
+  const repo = repository();
+  const base = idea.extends ? await repo.getIdea(idea.extends) : undefined;
+  const grown = (await repo.listIdeas()).filter((item) => item.extends === idea.id && !item.demo);
+  const assistant = idea.assistant ?? {};
+  const shown = PARTS.filter((part) => assistant[part]);
+  const missing = PARTS.filter((part) => !assistant[part]);
+  const firstShown = shown.length > 0 ? `asystent-${shown[0]}` : null;
 
   return (
     <article aria-labelledby="naglowek-fiszki" className="grid max-w-[48rem] gap-8">
@@ -74,6 +87,27 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
           )}
           <dt className="font-bold">{t("card.author")}</dt>
           <dd>{idea.author.display_name}</dd>
+          {base && !base.demo && (
+            <>
+              <dt className="font-bold">{t("card.extends")}</dt>
+              <dd>
+                <Link href={`/pomysl/${base.id}`}>{base.title}</Link>
+              </dd>
+            </>
+          )}
+          {grown.length > 0 && (
+            <>
+              <dt className="font-bold">{t("card.extendedBy")}</dt>
+              <dd>
+                {grown.map((item, index) => (
+                  <span key={item.id}>
+                    {index > 0 && ", "}
+                    <Link href={`/pomysl/${item.id}`}>{item.title}</Link>
+                  </span>
+                ))}
+              </dd>
+            </>
+          )}
         </dl>
       </header>
 
@@ -155,24 +189,30 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
 
       <Section id="asystent" title={t("card.assistant.title")}>
         <p>{t("card.assistant.lead")}</p>
-        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.develop.title")}</h3>
-        {idea.assistant?.develop ? <AssistantSuggestions run={idea.assistant.develop} headingLevel={4} /> : <AssistantAsk ideaId={idea.id} />}
-        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.show.title")}</h3>
-        {idea.assistant?.show ? (
-          <AssistantDiagramView diagram={idea.assistant.show} />
-        ) : (
+        <AssistantFocus ideaId={idea.id} targetId={firstShown} shown={shown.length} />
+        {missing.length > 0 && <AssistantRun ideaId={idea.id} parts={missing} autoStart={query.asystent === "1"} />}
+        {assistant.develop && (
           <>
-            <p>{t("card.assistant.show.lead")}</p>
-            <AssistantAsk ideaId={idea.id} task="show" />
+            <h3 id="asystent-develop" tabIndex={-1} className="text-[1.1rem] font-bold">
+              {t("card.assistant.develop.title")}
+            </h3>
+            <AssistantSuggestions run={assistant.develop} headingLevel={4} />
           </>
         )}
-        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.inspire.title")}</h3>
-        {idea.assistant?.inspire ? (
-          <AssistantSuggestions run={idea.assistant.inspire} headingLevel={4} empty="card.assistant.inspire.none" />
-        ) : (
+        {assistant.show && (
           <>
-            <p>{t("card.assistant.inspire.lead")}</p>
-            <AssistantAsk ideaId={idea.id} task="inspire" />
+            <h3 id="asystent-show" tabIndex={-1} className="text-[1.1rem] font-bold">
+              {t("card.assistant.show.title")}
+            </h3>
+            <AssistantDiagramView diagram={assistant.show} />
+          </>
+        )}
+        {assistant.inspire && (
+          <>
+            <h3 id="asystent-inspire" tabIndex={-1} className="text-[1.1rem] font-bold">
+              {t("card.assistant.inspire.title")}
+            </h3>
+            <AssistantSuggestions run={assistant.inspire} headingLevel={4} empty="card.assistant.inspire.none" />
           </>
         )}
       </Section>
@@ -183,6 +223,7 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
           <Link href={`/zapytaj?pomysl=${idea.id}`} className={buttonVariants()}>
             {t("card.next.contact")}
           </Link>
+          {!idea.canvas && <ExtendToCanvas ideaId={idea.id} />}
           <Link href="/zglos-pomysl" className={buttonVariants({ variant: "secondary" })}>
             {t("card.next.another")}
           </Link>

@@ -28,6 +28,8 @@ export default async function AdminIdeaPage({ params, searchParams }: PageProps<
   if (!idea) notFound();
   const back = `/rops/pomysly/${idea.id}`;
   const gmina = getGmina(idea.place_terc);
+  const base = idea.extends ? await repository().getIdea(idea.extends) : undefined;
+  const grown = (await repository().listIdeas()).filter((item) => item.extends === idea.id);
 
   return (
     <AdminShell session={session} current="ideas" title={idea.title} saved={wasSaved(query)}>
@@ -43,6 +45,27 @@ export default async function AdminIdeaPage({ params, searchParams }: PageProps<
         <dd>{ideaKindLabel(idea.kind)}</dd>
         <dt className="font-bold">{t("admin.ideas.formField")}</dt>
         <dd>{ideaFormLabel(ideaForm(idea))}</dd>
+        {base && (
+          <>
+            <dt className="font-bold">{t("card.extends")}</dt>
+            <dd>
+              <Link href={`/rops/pomysly/${base.id}`}>{base.title}</Link>
+            </dd>
+          </>
+        )}
+        {grown.length > 0 && (
+          <>
+            <dt className="font-bold">{t("card.extendedBy")}</dt>
+            <dd>
+              {grown.map((item, index) => (
+                <span key={item.id}>
+                  {index > 0 && ", "}
+                  <Link href={`/rops/pomysly/${item.id}`}>{item.title}</Link>
+                </span>
+              ))}
+            </dd>
+          </>
+        )}
         <dt className="font-bold">{t("card.stage")}</dt>
         <dd>{ideaStageLabel(idea.stage)}</dd>
         <dt className="font-bold">{t("card.place")}</dt>

@@ -35,7 +35,7 @@ export default async function AdminReportsPage({ searchParams }: PageProps<"/adm
             {reports.map((report) => {
               const href = reportHref(report.target.type, report.target.id);
               return (
-                <li key={report.id} className="grid gap-2 rounded-lg border border-border p-4">
+                <li key={report.id} id={`wpis-${report.id}`} className="grid scroll-mt-6 gap-2 rounded-lg border border-border p-4">
                   <p className="font-bold">
                     {t(reportReasons[report.reason])}: {href ? <Link href={href}>{report.target.id}</Link> : report.target.id}
                   </p>
@@ -65,7 +65,7 @@ export default async function AdminReportsPage({ searchParams }: PageProps<"/adm
         ) : (
           <ul className="grid gap-4">
             {declined.map((route) => (
-              <li key={route.id} className="grid gap-2 rounded-lg border border-border p-4">
+              <li key={route.id} id={`wpis-${route.id}`} className="grid scroll-mt-6 gap-2 rounded-lg border border-border p-4">
                 <p className="text-muted-foreground">
                   {formatDate(route.created_at)} · <Link href={`/droga/${route.id}`}>{route.id}</Link>
                 </p>
@@ -74,7 +74,7 @@ export default async function AdminReportsPage({ searchParams }: PageProps<"/adm
               </li>
             ))}
             {kept.map((entry) => (
-              <li key={entry.id} className="grid gap-2 rounded-lg border border-border p-4">
+              <li key={entry.id} id={`wpis-${entry.id}`} className="grid scroll-mt-6 gap-2 rounded-lg border border-border p-4">
                 <p className="text-muted-foreground">
                   {formatDate(entry.at)} · {entry.kind} · {entry.outcome}
                 </p>

@@ -29,6 +29,9 @@ export async function POST(request: Request) {
   const fields = cardFields(body);
   if ("invalid" in fields) return invalid(fields.invalid);
   const { title, description, essence, forWhom, stage, targetGroups, canvas } = fields;
+  // A CANVAS application may grow from a short-form card; an unknown or demonstration card is ignored.
+  const base = canvas && typeof body.extends === "string" ? await repository().getIdea(body.extends) : undefined;
+  const extendsId = base && !base.demo && !base.canvas ? base.id : undefined;
   const displayName = requiredText(body.display_name, 200);
   if (!displayName) return invalid("display_name");
   const email = requiredText(body.email, 200);
@@ -81,6 +84,7 @@ export async function POST(request: Request) {
     retention_until: retention.toISOString().slice(0, 10),
     note_pl: null,
     ...(canvas && { canvas: withCanvasTexts(canvas, cleanCanvasTexts) }),
+    ...(extendsId && { extends: extendsId }),
   };
   await repository().addIdea(idea);
   await countEvent(`idea_submitted:${idea.kind}`);
