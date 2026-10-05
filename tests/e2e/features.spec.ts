@@ -631,7 +631,7 @@ test("module III: the idea assistant answers once, with suggestions from the cat
   await expect(page.getByRole("region", { name: "Podpowiedzi asystenta" }).getByRole("listitem").first()).toBeVisible();
 });
 
-test("notifications: an answer of ROPS is new in Moje rozmowy i zgłoszenia and on the card until opened, and the panel counts what is new", async ({ page }) => {
+test("notifications: an answer of ROPS is new in the header, in Moje sprawy and on the card until opened, and the panel counts what is new", async ({ page }) => {
   // The author asks a question and sends an idea card from this browser.
   await page.goto("/zapytaj?innowacja=inn-rops-senior-cuder");
   await page.getByLabel("Wiadomość", { exact: true }).fill("Jak zacząć takie zajęcia w małej gminie? (powiadomienia e2e)");
@@ -677,6 +677,12 @@ test("notifications: an answer of ROPS is new in Moje rozmowy i zgłoszenia and 
   await page.getByRole("textbox", { name: "Odpowiedź dla autora", exact: true }).fill("Dziękujemy, pomysł trafi do naboru.");
   await page.getByRole("button", { name: "Zapisz status i odpowiedź" }).click();
   await expect(page.getByRole("status").getByText("Zapisano")).toBeVisible();
+
+  // The header says so on every page, before the author opens Moje sprawy. It asks the server at
+  // most every 30 seconds per tab; the test does not wait for that, it drops the saved answer.
+  await page.evaluate(() => sessionStorage.removeItem("mine:status"));
+  await page.goto("/jak-to-dziala");
+  await expect(page.getByRole("link", { name: /^Moje sprawy.*nowe odpowiedzi: \d+/ }).first()).toBeVisible();
 
   // The author sees both as new, until they open them.
   await page.goto("/rozmowy");

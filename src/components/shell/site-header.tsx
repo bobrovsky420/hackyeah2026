@@ -8,6 +8,8 @@ import { MAP_ENABLED } from "@/lib/features";
 import { t, type MessageKey } from "@/lib/i18n";
 import { publicPath } from "@/lib/page-routes";
 import { cn } from "@/lib/utils";
+import { NewBadge } from "@/components/ui/new-badge";
+import { useMine } from "./use-mine";
 
 const navigation: { href: string; label: MessageKey }[] = [
   { href: "/", label: "shell.nav.describe" },
@@ -19,9 +21,20 @@ const navigation: { href: string; label: MessageKey }[] = [
   { href: "/jak-to-dziala", label: "shell.nav.how" },
 ];
 
+/**
+ * "Moje sprawy": in the menu only once this browser remembers a
+ * conversation or an idea card (FR-15.8), and only while the menu is
+ * folded; a wide screen has it in the bar above the header (MineLink),
+ * since eight items do not fit beside the logos.
+ */
+const MINE = { href: "/rozmowy", label: "shell.nav.mine" } as const satisfies { href: string; label: MessageKey };
+
 export function SiteHeader() {
   const pathname = publicPath(usePathname());
   const [menuOpen, setMenuOpen] = useState(false);
+  const mine = useMine();
+  const unread = mine?.unread ?? 0;
+  const items = mine?.remembered ? [...navigation.slice(0, -1), MINE, ...navigation.slice(-1)] : navigation;
 
   return (
     <header className="border-b border-border bg-background">
@@ -53,8 +66,16 @@ export function SiteHeader() {
             aria-controls="menu-glowne"
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <Menu aria-hidden className="size-5" />
+            {/* A new answer takes the icon's place: the phone header has no room for more. */}
+            {unread > 0 ? (
+              <span aria-hidden className="grid size-5 place-content-center rounded-full bg-primary text-[0.8rem] font-bold text-primary-foreground">
+                {unread}
+              </span>
+            ) : (
+              <Menu aria-hidden className="size-5" />
+            )}
             {t("shell.menu")}
+            {unread > 0 && <span className="sr-only">{t("shell.menu.unread", { count: unread })}</span>}
           </button>
         </div>
         <nav
@@ -63,10 +84,10 @@ export function SiteHeader() {
           className={cn("no-print w-full @6xl:block @6xl:w-auto", menuOpen ? "block" : "hidden")}
         >
           <ul className="grid gap-1 @6xl:flex @6xl:gap-6">
-            {navigation.map((item) => {
+            {items.map((item) => {
               const current = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
               return (
-                <li key={item.href}>
+                <li key={item.href} className={item.href === MINE.href ? "@6xl:hidden" : undefined}>
                   <Link
                     href={item.href}
                     aria-current={current ? "page" : undefined}
@@ -77,6 +98,12 @@ export function SiteHeader() {
                     )}
                   >
                     {t(item.label)}
+                    {item.href === MINE.href && unread > 0 && (
+                      <span className="ml-2">
+                        <NewBadge>{t("shell.nav.new")}</NewBadge>
+                        <span className="sr-only">{t("shell.nav.unread", { count: unread })}</span>
+                      </span>
+                    )}
                   </Link>
                 </li>
               );

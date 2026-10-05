@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { NewBadge } from "@/components/talk/my-threads";
+import { NewBadge } from "@/components/ui/new-badge";
 import { t } from "@/lib/i18n";
 import { markIdeaSeen } from "./saved-ideas";
 

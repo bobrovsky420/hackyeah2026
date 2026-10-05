@@ -4,6 +4,7 @@ import { Contrast } from "lucide-react";
 import { useSyncExternalStore } from "react";
 import { t } from "@/lib/i18n";
 import { CONTRAST_KEY, TEXT_SIZE_KEY } from "@/lib/storage-keys";
+import { MineLink } from "./mine-link";
 
 type TextSize = "1" | "2" | "3";
 
@@ -62,6 +63,7 @@ export function ViewSettings() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-1.5 text-[0.9rem] @3xl:px-8">
         <p className="hidden @xl:block">{t("shell.prototypeNote")}</p>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <MineLink />
           <div role="group" aria-label={t("shell.textSize.group")} className="flex items-center gap-1.5">
             {sizes.map((size) => (
               <button

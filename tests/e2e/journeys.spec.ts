@@ -182,3 +182,28 @@ test("J3: a contact request is stored for ROPS to relay", async ({ page }) => {
   await page.getByRole("button", { name: "Wyślij prośbę" }).click();
   await expect(page.getByText("Przekazaliśmy prośbę do ROPS")).toBeVisible();
 });
+
+test("S1: the four ways in lead to their pages, the first to the description", async ({ page }) => {
+  await page.goto("/");
+  const choices = page.getByRole("navigation", { name: "Co chcesz zrobić?" });
+  await choices.getByRole("link", { name: /Mam problem w swojej okolicy/ }).click();
+  await expect(problem(page)).toBeFocused();
+  for (const [name, heading] of [
+    [/Mam pomysł/, "Zgłoś pomysł na innowację społeczną"],
+    [/Chcę pomóc/, "Chcę pomóc"],
+    [/Mam pytanie do ROPS/, /Zapytaj/],
+  ] as const) {
+    await page.goto("/");
+    await choices.getByRole("link", { name }).click();
+    await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
+  }
+});
+
+test("Moje sprawy shows in the menu only once this browser remembers something", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: /^Moje sprawy/ })).toHaveCount(0);
+  await page.evaluate(() => localStorage.setItem("idea:mine", JSON.stringify([{ id: "pm-przyklad-1", title: "Przykład", savedAt: "2026-10-01T10:00:00.000Z", seenAt: "2026-10-01T10:00:00.000Z" }])));
+  await page.reload();
+  await expect(page.getByRole("link", { name: /^Moje sprawy/ }).first()).toBeVisible();
+});
+
