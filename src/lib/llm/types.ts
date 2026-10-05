@@ -8,7 +8,7 @@ import type { z } from "zod";
  */
 
 /** The request tasks of the app; extraction runs outside the app (FR-1.3). */
-export type LlmTask = "screen" | "shortlist" | "assess" | "compose" | "brief";
+export type LlmTask = "screen" | "shortlist" | "assess" | "compose" | "brief" | "develop" | "show" | "inspire";
 
 export type LlmEffort = "low" | "medium" | "high";
 

@@ -32,6 +32,7 @@ import {
 } from "@/lib/canvas";
 import type { Helpline } from "@/lib/contracts";
 import { hasMessage, t } from "@/lib/i18n";
+import { saveIdea } from "@/components/idea/saved-ideas";
 import { CANVAS_DRAFT_KEY } from "@/lib/storage-keys";
 import { pluralPl } from "@/lib/text";
 import { FormFailed } from "./form-failed";
@@ -108,6 +109,13 @@ export function CanvasWizard({ helplines }: { helplines: { alarm: Helpline[]; su
   useEffect(() => {
     if (loaded) writeDraft(status === "sent" ? null : draft);
   }, [loaded, status, draft]);
+
+  // "Moje zgłoszenia": this browser remembers the card, so its author sees ROPS's reply.
+  const sentId = status === "sent" && typeof result?.id === "string" ? result.id : null;
+  const sentTitle = typeof answers.title === "string" ? answers.title.trim() : "";
+  useEffect(() => {
+    if (sentId) saveIdea(sentId, sentTitle);
+  }, [sentId, sentTitle]);
 
   const setAnswers = (change: SetStateAction<CanvasAnswers>) =>
     setDraft((current) => ({ ...current, answers: typeof change === "function" ? change(current.answers) : change }));

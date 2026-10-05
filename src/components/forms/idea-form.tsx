@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { saveIdea } from "@/components/idea/saved-ideas";
 import { HumanHelp } from "@/components/route/human-help";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox, CheckboxList, RadioList } from "@/components/ui/choice";
@@ -58,6 +59,13 @@ export function IdeaForm({
   const { errors, status, result, screened, summaryRef, doneRef, failedRef, submit, errorFor } = useScreenedSubmit("/api/ideas");
 
   const value = (spec: TextSpec) => texts[spec.id] ?? "";
+  const sentId = status === "sent" && typeof result?.id === "string" ? result.id : null;
+  const sentTitle = (texts[TITLE.id] ?? "").trim();
+
+  // "Moje zgłoszenia": this browser remembers the card, so its author sees ROPS's reply.
+  useEffect(() => {
+    if (sentId) saveIdea(sentId, sentTitle);
+  }, [sentId, sentTitle]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

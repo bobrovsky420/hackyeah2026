@@ -3,7 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { DocumentActions } from "@/components/document-actions";
+import { AssistantAsk } from "@/components/idea/assistant-ask";
+import { AssistantDiagramView } from "@/components/idea/assistant-diagram";
+import { AssistantSuggestions } from "@/components/idea/assistant-suggestions";
 import { CanvasAnswers } from "@/components/idea/canvas-answers";
+import { ReplyMarker } from "@/components/idea/reply-marker";
 import { SimilarPending } from "@/components/idea/similar-pending";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
@@ -77,8 +81,11 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
         <h2 id="status-fiszki" className={sectionTitle}>
           {t("card.reply.title")}
         </h2>
-        <p>
-          <span className="font-bold">{t("card.reply.status")}</span> {ideaStatusLabel(idea.status)}
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span>
+            <span className="font-bold">{t("card.reply.status")}</span> {ideaStatusLabel(idea.status)}
+          </span>
+          <ReplyMarker ideaId={idea.id} replyAt={idea.reply?.at ?? null} />
         </p>
         {idea.reply ? (
           <Notice tone="success" title={t("card.reply.from", { date: formatDate(idea.reply.at) })}>
@@ -142,6 +149,30 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[id]">) {
               ))}
             </ul>
             <p className="text-muted-foreground">{t("card.similar.generated")}</p>
+          </>
+        )}
+      </Section>
+
+      <Section id="asystent" title={t("card.assistant.title")}>
+        <p>{t("card.assistant.lead")}</p>
+        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.develop.title")}</h3>
+        {idea.assistant?.develop ? <AssistantSuggestions run={idea.assistant.develop} headingLevel={4} /> : <AssistantAsk ideaId={idea.id} />}
+        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.show.title")}</h3>
+        {idea.assistant?.show ? (
+          <AssistantDiagramView diagram={idea.assistant.show} />
+        ) : (
+          <>
+            <p>{t("card.assistant.show.lead")}</p>
+            <AssistantAsk ideaId={idea.id} task="show" />
+          </>
+        )}
+        <h3 className="text-[1.1rem] font-bold">{t("card.assistant.inspire.title")}</h3>
+        {idea.assistant?.inspire ? (
+          <AssistantSuggestions run={idea.assistant.inspire} headingLevel={4} empty="card.assistant.inspire.none" />
+        ) : (
+          <>
+            <p>{t("card.assistant.inspire.lead")}</p>
+            <AssistantAsk ideaId={idea.id} task="inspire" />
           </>
         )}
       </Section>

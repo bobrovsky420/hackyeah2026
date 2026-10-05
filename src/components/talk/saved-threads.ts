@@ -1,7 +1,8 @@
 /*
  * "Moje rozmowy": the private links of this browser, kept in localStorage
  * so a person finds their conversations again without an account. Only the
- * id, the key and the subject; storage that fails is ignored.
+ * id, the key, the subject and when it was last opened here, which tells a
+ * new answer from one already read; storage that fails is ignored.
  */
 
 export interface SavedThread {
@@ -9,6 +10,8 @@ export interface SavedThread {
   key: string;
   subject: string;
   savedAt: string;
+  /** When the author last opened it here: an answer after it is new. */
+  seenAt?: string;
 }
 
 const STORAGE_KEY = "talk:threads";
@@ -52,10 +55,14 @@ function write(items: SavedThread[]) {
   window.dispatchEvent(new Event(CHANGED));
 }
 
-export function saveThread(entry: Omit<SavedThread, "savedAt">): void {
+/** Remembers a conversation, or marks it as seen now when it is already remembered. */
+export function saveThread(entry: Omit<SavedThread, "savedAt" | "seenAt">): void {
   try {
-    const rest = readSaved().filter((item) => item.id !== entry.id);
-    write([{ ...entry, savedAt: new Date().toISOString() }, ...rest].slice(0, MAX));
+    const saved = readSaved();
+    const now = new Date().toISOString();
+    const savedAt = saved.find((item) => item.id === entry.id)?.savedAt ?? now;
+    const rest = saved.filter((item) => item.id !== entry.id);
+    write([{ ...entry, savedAt, seenAt: now }, ...rest].slice(0, MAX));
   } catch {
     // Private mode or blocked storage: the link on the page still works.
   }

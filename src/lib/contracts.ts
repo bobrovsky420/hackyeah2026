@@ -340,10 +340,55 @@ export interface Idea {
   note_pl: string | null;
   /** The answers of a CANVAS application (src/lib/canvas.ts); absent on a card sent with the short form. */
   canvas?: IdeaCanvas;
+  /** The idea assistant's runs: "Rozwiń pomysł" (develop), "Pokaż" (show) and "Spójrz inaczej" (inspire); each absent until the author asks for it. */
+  assistant?: IdeaAssistant;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
   example?: boolean;
   /** A record of the simulated pilot (src/server/db/demo.ts): the panel marks it, public pages skip it. */
   demo?: boolean;
+}
+
+/** A block of the CANVAS application (src/lib/canvas.ts) that a suggestion of the idea assistant is about. */
+export type AssistantBlock = "problem" | "actors" | "solution" | "recipients" | "value" | "costs" | "revenue" | "channels" | "partners" | "impact";
+
+/**
+ * A suggestion of the idea assistant (module III, "Asystent kreatora"): a
+ * question to think over, an inspiration taken from a catalogue innovation
+ * (always with its id), or an idea of the assistant's own (never with one).
+ */
+export interface AssistantSuggestion {
+  block: AssistantBlock;
+  kind: "pytanie" | "inspiracja" | "pomysl";
+  text_pl: string;
+  innovation_id: string | null;
+}
+
+/** One run of the assistant on a card, stored with it so a reload costs no model call. */
+export interface AssistantRun {
+  suggestions: AssistantSuggestion[];
+  /** "model" when the language model wrote them and they passed the checks; "template" when they come from the catalogue's data alone. */
+  source: "model" | "template";
+  prompt_version: string | null;
+  at: string;
+}
+
+/** The steps of the idea assistant's diagram ("Pokaż"), in their order. */
+export type DiagramStep = "who" | "what" | "for_whom" | "with_whom" | "change";
+
+/** The diagram of an idea (task "Pokaż"): a few short phrases per step, empty when the card does not say. */
+export interface AssistantDiagram {
+  steps: Record<DiagramStep, string[]>;
+  source: "model" | "template";
+  prompt_version: string | null;
+  at: string;
+}
+
+/** The idea assistant's stored runs on a card, one per task. */
+export interface IdeaAssistant {
+  develop?: AssistantRun;
+  show?: AssistantDiagram;
+  /** "Spójrz inaczej": inspirations from innovations for other target groups. */
+  inspire?: AssistantRun;
 }
 
 /** How the author knows the innovation they evaluate (module IV, "Tester innowacji"). */

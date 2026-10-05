@@ -5,9 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { t, type MessageKey } from "@/lib/i18n";
 import type { AdminSession } from "@/server/admin/auth";
-import { demoCount } from "@/server/admin/data";
+import { demoCount, queueCounts, type QueueKey } from "@/server/admin/data";
+import { TitleCount } from "./title-count";
 
 export type AdminSection = "start" | "threads" | "partnerships" | "mentors" | "ideas" | "evaluations" | "needs" | "contacts" | "readiness" | "reports" | "trends" | "knowledge";
+
+/** The queues each section of the menu holds: what is new there since the last visit is counted beside it. */
+const SECTION_QUEUES: Partial<Record<AdminSection, QueueKey[]>> = {
+  threads: ["threads"],
+  partnerships: ["partnerships"],
+  ideas: ["ideas"],
+  evaluations: ["evaluations"],
+  needs: ["needs"],
+  contacts: ["contacts"],
+  readiness: ["readiness"],
+  reports: ["reports", "declined"],
+};
 
 const SECTIONS: { key: AdminSection; href: string; label: MessageKey }[] = [
   { key: "start", href: "/rops", label: "admin.nav.start" },
@@ -25,9 +38,11 @@ const SECTIONS: { key: AdminSection; href: string; label: MessageKey }[] = [
 ];
 
 /**
- * The frame of every panel page: who is signed in, the sections, the
- * page's heading, the notice of the demonstration data while the store
- * holds it, and a saved notice.
+ * The frame of every panel page: who is signed in, the sections with the
+ * number of entries waiting that came since the reviewer's last visit
+ * (the tab's title carries the total), the page's heading, the notice of
+ * the demonstration data while the store holds it, and a saved notice.
+ * "Oznacz wszystko jako przejrzane" on the dashboard sets the visit.
  */
 export async function AdminShell({
   session,
@@ -44,7 +59,10 @@ export async function AdminShell({
   saved?: boolean;
   children: ReactNode;
 }) {
-  const demo = await demoCount();
+  const [demo, counts] = await Promise.all([demoCount(), queueCounts(session.lastVisit)]);
+  const fresh = (section: AdminSection) =>
+    (SECTION_QUEUES[section] ?? []).reduce((sum, key) => sum + (counts.find((item) => item.key === key)?.fresh ?? 0), 0);
+  const total = counts.reduce((sum, item) => sum + item.fresh, 0);
   return (
     <div className="grid gap-8">
       <div className="no-print flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -57,19 +75,29 @@ export async function AdminShell({
           </Button>
         </form>
       </div>
+      <TitleCount count={total} />
       <nav aria-label={t("admin.nav.label")} className="no-print">
         <ul className="flex flex-wrap gap-x-5 gap-y-1">
-          {SECTIONS.map((section) => (
-            <li key={section.key}>
-              <Link
-                href={section.href}
-                aria-current={section.key === current ? "page" : undefined}
-                className="inline-flex min-h-11 items-center aria-[current=page]:font-bold aria-[current=page]:no-underline"
-              >
-                {t(section.label)}
-              </Link>
-            </li>
-          ))}
+          {SECTIONS.map((section) => {
+            const count = fresh(section.key);
+            return (
+              <li key={section.key}>
+                <Link
+                  href={section.href}
+                  aria-current={section.key === current ? "page" : undefined}
+                  className="inline-flex min-h-11 items-center gap-2 aria-[current=page]:font-bold aria-[current=page]:no-underline"
+                >
+                  {t(section.label)}
+                  {count > 0 && (
+                    <span className="rounded-full bg-primary px-2 text-[0.85rem] leading-6 font-bold text-primary-foreground">
+                      <span aria-hidden>{count}</span>
+                      <span className="sr-only">, {t("admin.nav.fresh", { count })}</span>
+                    </span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
       <header className="grid gap-2">

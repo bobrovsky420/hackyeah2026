@@ -310,6 +310,13 @@ export function createMemoryRepository(state: MemoryState = createMemoryState(),
       onChange();
       return copy(found);
     },
+    async setIdeaAssistant(id, task, run) {
+      const found = state.ideas.find((item) => item.id === id);
+      if (!found) return undefined;
+      found.assistant = { ...found.assistant, [task]: copy(run) };
+      onChange();
+      return copy(found);
+    },
     async moderateIdea(id, moderation) {
       const found = state.ideas.find((item) => item.id === id);
       if (!found) return undefined;
