@@ -4,8 +4,10 @@ import { logout } from "@/app/admin/actions";
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { t, type MessageKey } from "@/lib/i18n";
+import { getLlmHealth, probeLlm } from "@/lib/llm";
 import type { AdminSession } from "@/server/admin/auth";
 import { demoCount, queueCounts, type QueueKey } from "@/server/admin/data";
+import { modelNotice } from "@/server/admin/model-notice";
 import { TitleCount } from "./title-count";
 
 export type AdminSection = "start" | "threads" | "partnerships" | "mentors" | "ideas" | "evaluations" | "needs" | "contacts" | "readiness" | "reports" | "trends" | "knowledge";
@@ -41,7 +43,8 @@ const SECTIONS: { key: AdminSection; href: string; label: MessageKey }[] = [
  * The frame of every panel page: who is signed in, the sections with the
  * number of entries waiting that came since the reviewer's last visit
  * (the tab's title carries the total), the page's heading, the notice of
- * the demonstration data while the store holds it, and a saved notice.
+ * the demonstration data while the store holds it, the warning while the
+ * language model fails (decision A.14), and a saved notice.
  * "Oznacz wszystko jako przejrzane" on the dashboard sets the visit.
  */
 export async function AdminShell({
@@ -60,6 +63,9 @@ export async function AdminShell({
   children: ReactNode;
 }) {
   const [demo, counts] = await Promise.all([demoCount(), queueCounts(session.lastVisit)]);
+  // The notes of the latest calls; an old note starts a probe for the next page, without waiting for it.
+  void probeLlm();
+  const model = modelNotice(getLlmHealth());
   const fresh = (section: AdminSection) =>
     (SECTION_QUEUES[section] ?? []).reduce((sum, key) => sum + (counts.find((item) => item.key === key)?.fresh ?? 0), 0);
   const total = counts.reduce((sum, item) => sum + item.fresh, 0);
@@ -107,6 +113,11 @@ export async function AdminShell({
         </h1>
         {lead && <p className="max-w-[48rem]">{lead}</p>}
       </header>
+      {model && (
+        <Notice tone="warning" title={model.title}>
+          <p>{model.text}</p>
+        </Notice>
+      )}
       {demo > 0 && (
         <Notice title={t("admin.demo.title")}>
           <p>{t("admin.demo.text", { count: demo })}</p>

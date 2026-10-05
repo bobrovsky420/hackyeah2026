@@ -1524,7 +1524,7 @@ files.
 | GET `/api/map/implementations` | Implementations | `?innovation_id=` | list |
 | POST `/api/contact-requests` | Contact request (J3) | `{route_id?, need_id?, target, requester, message, consent}` | 201 |
 | POST `/api/readiness` | Readiness registration (J6) | | 201 |
-| GET `/api/health` | Liveness | | `{ok, data_version, provider, model}` |
+| GET `/api/health` | Liveness and the model's health; `?probe=1` waits for a probe | | `{ok, data_version, provider, model, llm: {status, provider, model, since, kind, http_status, checked_at}}`; `llm.status` is ok, degraded, unknown, unconfigured or replay, and a failing model keeps `ok` true |
 | POST `/api/ideas` | Idea card (7.13) | `{kind, title, description, essence, for_whom, target_groups?, stage, place_terc?, display_name, is_organisation?, email, consent_store, consent_publish?}`, or for a CANVAS application (FR-13.6) `{canvas, partners?, display_name, is_organisation?, email, consent_store, consent_publish?}` with the card's five fields inside `canvas` | 201 `{id, redactions}`; the gate's outcomes as for a need; 422 `{field}` names the first field of the canvas that fails |
 | POST `/api/innovations/{id}/evaluations` | Evaluation of an innovation (7.14) | `{rating?, experience?, feedback?, improvement?, test_signup?, tester_role?, place_terc?, display_name?, email?, consent_store}` | 201 `{id, redactions}`; 404 for an unknown innovation |
 | POST `/api/threads` | Start a conversation (7.15) | `{topic, subject, message, display_name, organisation?, sector?, place_terc?, email?, ref_type?, ref_id?, consent_store}` | 201 `{id, key, path, redactions}` |
@@ -2184,6 +2184,14 @@ per-request reads of the JSON files.
 - Provider chain: openai-compatible (Bielik), then anthropic, then the
   replay cache, then the Polish error screen. A health endpoint
   reports the active provider and the data version.
+- Model health (decision A.14): every live call notes how its provider
+  fared, and a probe, one tiny call at most every five minutes, checks the
+  first configured provider when its notes are old. A timeout or an
+  unavailable host (with its HTTP status: 401 is a rejected key) makes it
+  degraded until it answers again; a refusal or a malformed answer is an
+  answer. `/api/health` reports it in `llm`, and every page of the panel
+  shows "Model językowy nie odpowiada" with since when and why while it
+  lasts, or "Brak modelu językowego" on a live server without a key.
 - The demo laptop runs the app (`next start`) and the embedding service
   locally from a checkout ([quick-start.md](quick-start.md)) with the
   replay cache filled, so the demo does not depend on the venue network or on
@@ -2197,8 +2205,18 @@ per-request reads of the JSON files.
   from user text; Markdown rendered only for the brief and sanitised.
 - Rate limits: 10 route requests per minute per IP, 20 writes per hour
   per IP for needs, contact requests and readiness.
-- Secrets only in the environment; nothing in the client bundle; HTTPS only; a basic content
-  security policy; dependency audit in CI.
+- Secrets only in the environment; nothing in the client bundle; HTTPS only;
+  dependency audit in CI.
+- Headers on every answer (decision A.15, `src/lib/security-headers.ts`):
+  a content security policy that loads everything from the app's own
+  origin (`default-src 'self'`, no objects, no framing, forms and base
+  only to itself; scripts keep `'unsafe-inline'` for the inline boot
+  scripts of Next.js and the view settings, and only the development
+  server allows eval and its websocket), HSTS for a year, `nosniff`,
+  `X-Frame-Options: DENY`, `Referrer-Policy:
+  strict-origin-when-cross-origin`, a Permissions-Policy that turns off
+  the camera, the microphone, geolocation, payment, USB and topics, and
+  `Cross-Origin-Opener-Policy: same-origin`; no `X-Powered-By`.
 - Prompt injection: user text is data (9.3); the schema validation and
   the identifier check make injected instructions inert; a test problem
   covers it.
@@ -2282,7 +2300,9 @@ per-request reads of the JSON files.
 Structured JSON logs with a request id; a table of model calls (task,
 provider, model, prompt version, tokens, cache reads, latency, dropped
 identifiers); the event counters of FR-10.2; a daily cost line computed
-from the token counts. Nothing personal in logs.
+from the token counts. Nothing personal in logs. A provider that starts or
+stops failing writes one `llm_health` line (provider, model, health, kind,
+HTTP status), the signal for an alert.
 
 ### 12.9 Hosting and operations (owner: Analyst 2)
 
@@ -2325,6 +2345,13 @@ Chrome or Edge on Windows.
 - TypeScript strict; ESLint and Prettier; small commits; `main` always
   deployable; every change runs unit tests and the affected end-to-end
   tests.
+- CI (decision A.16, `.github/workflows/ci.yml`): every pull request and
+  every push to `main` runs lint, the type check, the audit of the
+  production dependencies (high and critical findings fail it) and the
+  unit tests, and, on a production build, the journeys and the axe check
+  of every screen in the three themes, both on the data release of
+  `deploy/azure/settings.env`; a failed browser run keeps its report for
+  a week.
 - Module boundaries follow 9.5; a change that crosses `src/server/match`
   and `src/server/route` is reviewed by Developer 1.
 - Assistants never edit `tests/problems/`, the glossary or the consent

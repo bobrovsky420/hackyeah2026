@@ -821,3 +821,30 @@ test("module VII: an institution adapts an innovation and gets a service plan fr
   await expect(page.getByRole("checkbox", { name: "Mały budżet" })).toBeChecked();
 });
 
+
+test("12.5: the pages carry the security headers and load nothing their policy blocks", async ({ page }) => {
+  const blocked: string[] = [];
+  page.on("console", (message) => {
+    if (/Content Security Policy|Refused to (load|execute|connect|apply|frame|create)/i.test(message.text())) blocked.push(message.text());
+  });
+  const response = await page.goto("/");
+  const headers = response!.headers();
+  expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(headers["content-security-policy"]).not.toContain("unsafe-eval");
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["x-frame-options"]).toBe("DENY");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  expect(headers["x-powered-by"]).toBeUndefined();
+  for (const path of ["/mapa", "/innowacja/inn-nat-649", "/innowacja/inn-nat-649/dostosuj", "/zglos-pomysl/canvas", "/zapytaj", "/jak-to-dziala"]) {
+    await page.goto(path);
+    await page.waitForLoadState("networkidle");
+  }
+  expect(blocked).toEqual([]);
+});
+
+test("12.4: /api/health says whether the language model answers", async ({ request }) => {
+  const response = await request.get("/api/health");
+  expect(response.ok()).toBe(true);
+  // The runs use the recording alone, so the state is "replay" and no probe leaves the machine.
+  expect(await response.json()).toMatchObject({ ok: true, llm: { status: "replay", provider: null } });
+});

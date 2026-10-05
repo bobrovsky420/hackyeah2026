@@ -1,4 +1,5 @@
 import type { LlmTimeouts } from "@/lib/env";
+import { noteAnswer, noteFailure } from "./health";
 import { countFailure, countSuccess, logLlmCall, type LlmLogLine } from "./observability";
 import { ZERO_USAGE, type LlmProvider } from "./provider";
 import type { ReplayStore } from "./replay";
@@ -58,6 +59,7 @@ export function createLlm(options: LlmChainOptions): Llm {
           cached: false,
         };
         countSuccess(result);
+        noteAnswer(provider);
         log({ event: "llm_call", task: call.task, provider: result.provider, model: result.model, promptVersion: call.promptVersion, ...result.usage, latencyMs: result.latencyMs, cached: false, outcome: "ok", failed });
         if (replay) {
           await replay.write(call, result).catch((error: unknown) => {
@@ -72,6 +74,7 @@ export function createLlm(options: LlmChainOptions): Llm {
             : new LlmError("unavailable", call.task, `${provider.id}: ${error instanceof Error ? error.name : "error"}`, provider.name);
         failed.push(`${provider.id}:${failure.kind}`);
         countFailure(provider.name, provider.model);
+        noteFailure(provider, failure);
         lastError = failure;
         if (failure.kind === "refusal") refused = true;
       }
