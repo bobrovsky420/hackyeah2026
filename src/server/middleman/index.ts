@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { catalogue as defaultCatalogue, getGmina, implementationsOf, type Catalogue } from "@/lib/catalogue";
 import type { CostBand, EvidenceLevel, Innovation } from "@/lib/contracts";
-import type { ImplementerType } from "@/lib/data/types";
+import type { ImplementerType, Path } from "@/lib/data/types";
 import { warsawDay } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { costLabel, evidenceLabel, implementerLabels, targetGroupLabel, timeLabel } from "@/lib/labels";
@@ -57,12 +57,22 @@ function resolve(given: Partial<MiddlemanDeps> = {}): MiddlemanDeps {
   };
 }
 
+/**
+ * The plan puts a service into an institution that exists: a programme for
+ * new care places (a nursery, a day home or club) funds the facility, and
+ * its group alone would put it under every family or senior service. The
+ * route of a need still offers it.
+ */
+export function fundsTheService(path: Pick<Path, "purposes">): boolean {
+  return !path.purposes.includes("tworzenie-miejsc");
+}
+
 /** The funding paths for the institution's role and gmina: the route's selector with a dataset, else the catalogue's paths of its applicant type. */
 export function planPaths(item: Innovation, input: AdaptInput, deps: Pick<MiddlemanDeps, "catalogue" | "today">): ServicePlan["paths"] {
   const role = INSTITUTIONS[input.institution].role;
   const dataset = deps.catalogue.dataset;
   const chosen = dataset
-    ? selectPaths(dataset.raw.paths, {
+    ? selectPaths(dataset.raw.paths.filter(fundsTheService), {
         role,
         today: deps.today(),
         placeTerc: input.place_terc,
@@ -167,8 +177,9 @@ export function finishParts(
   const roles = output.roles.map(clean).filter((role) => passes(role, LIMITS.role, "role")).slice(0, 4);
   const rolesOk = roles.length >= 2;
 
-  const seen = new Set<string>();
-  const adaptations: ServicePlan["adaptations"] = [];
+  // One adaptation per constraint given, in the form's order: the model's when it passes, else the template's.
+  const byConstraint = new Map<Constraint, string>();
+  const general: string[] = [];
   for (const item of output.adaptations) {
     const code = input.constraints.find((given) => given === item.constraint) ?? null;
     if (item.constraint && !code) {
@@ -176,21 +187,26 @@ export function finishParts(
       continue;
     }
     const text = clean(item.text_pl);
-    if (adaptations.length >= 4 || (code && seen.has(code)) || !passes(text, LIMITS.adaptation, "adaptation")) continue;
-    if (code) seen.add(code);
-    adaptations.push({ constraint: code ? t(CONSTRAINTS[code]) : null, text });
+    if ((code && byConstraint.has(code)) || !passes(text, LIMITS.adaptation, "adaptation")) continue;
+    if (code) byConstraint.set(code, text);
+    else general.push(text);
   }
-  const adaptationsOk = adaptations.length > 0 || input.constraints.length === 0;
+  const adaptations: ServicePlan["adaptations"] = input.constraints.map((code, index) => ({
+    constraint: t(CONSTRAINTS[code]),
+    text: byConstraint.get(code) ?? template.adaptations[index].text,
+  }));
+  for (const text of general) if (adaptations.length < 4) adaptations.push({ constraint: null, text });
+  const adaptationsOk = byConstraint.size > 0 || general.length > 0;
 
   const steps = output.first_steps.map(clean).filter((step) => passes(step, LIMITS.step, "step")).slice(0, 3);
   const stepsOk = steps.length === 3;
 
-  for (const ok of [serviceOk, rolesOk, adaptationsOk && adaptations.length > 0, stepsOk]) if (ok) fromModel += 1;
+  for (const ok of [serviceOk, rolesOk, adaptationsOk, stepsOk]) if (ok) fromModel += 1;
   return {
     parts: {
       service: serviceOk ? service : template.service,
       roles: rolesOk ? roles : template.roles,
-      adaptations: adaptationsOk && adaptations.length > 0 ? adaptations : template.adaptations,
+      adaptations: adaptationsOk ? adaptations : template.adaptations,
       first_steps: stepsOk ? steps : template.first_steps,
     },
     fromModel,
