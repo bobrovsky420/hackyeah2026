@@ -13,6 +13,7 @@ export const screens: { name: string; path: string; admin?: boolean }[] = [
   { name: "s3-doprecyzowanie", path: "/droga/przyklad-doprecyzowanie" },
   { name: "s5-innowacja", path: "/innowacja/inn-nat-649?droga=przyklad-seniorzy" },
   { name: "s5-miis", path: "/innowacja/inn-rops-senior-cuder" },
+  { name: "m7-dostosuj", path: "/innowacja/inn-nat-649/dostosuj" },
   { name: "s6-fiszka", path: "/potrzeba/nd-przyklad-3/fiszka" },
   { name: "s9a-kontakt", path: "/kontakt?innowacja=inn-nat-649&droga=przyklad-seniorzy" },
   { name: "s9b-chce-pomoc", path: "/chce-pomoc" },

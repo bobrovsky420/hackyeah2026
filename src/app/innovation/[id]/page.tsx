@@ -217,6 +217,18 @@ export default async function InnovationPage({ params, searchParams }: PageProps
         )}
       </section>
 
+      <section aria-labelledby="dostosuj" className="no-print grid gap-3 rounded-lg border-2 border-primary p-5">
+        <h2 id="dostosuj" className={sectionTitle}>
+          {t("adapt.cta.title")}
+        </h2>
+        <p>{t("adapt.cta.text")}</p>
+        <div>
+          <Link href={`/innowacja/${item.id}/dostosuj`} className={buttonVariants()}>
+            {t("adapt.cta.title")}
+          </Link>
+        </div>
+      </section>
+
       <Evaluations item={item} summary={summary} />
 
       <div className="no-print flex flex-wrap gap-3">

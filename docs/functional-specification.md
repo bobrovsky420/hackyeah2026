@@ -148,7 +148,7 @@ modules and where this specification answers them:
 | IV. Tester innowacji | Signing up for tests, evaluating solutions, feedback, improvement proposals | 7.14 | Built |
 | V. Platforma aktywnej komunikacji | Direct dialogue between ROPS and users, quick questions, support from mentors, cross-sector partnerships | 7.15 | Built |
 | VI. Panel administratora | Quick editing, verification and publication of knowledge | 7.9 | Built (R.3) |
-| VII. Middleman Innowacji | An AI assistant that adapts an innovation into a service for the institution that asks | 7.4, 7.8 | Partly built: the route adapts the paths to the role and the gmina |
+| VII. Middleman Innowacji | An AI assistant that adapts an innovation into a service for the institution that asks | 7.4, 7.8, FR-8.6 | Built: "Dostosuj do mojej instytucji" on every innovation gives a service plan for the institution's kind, gmina, constraints and scale, the paths chosen for its role |
 
 The challenge also scores how fast the administrator learns of a new
 idea and how the answer reaches its author (its section 6), and asks for
@@ -747,6 +747,7 @@ added after the brief was published:
 | FR-8.3 | MUST | Baseline content, taken from section 14.4 and not reviewed by a lawyer in the hackathon: the small grant (art. 19a of the act on public benefit activity), the open competition (art. 11-13), the local initiative (art. 19b-19h), regranting (art. 16a), the village fund, the participatory budget, the social services programme of a CUS, the ROPS dissemination project "Usługa wrażliwa", the incubator call of Inkubator Włączenia Społecznego 2.0, the Małopolska micro-grants (FIO), the national programmes (FIO, PROO, Senior+, Aktywni+, Korpus Wsparcia Seniorów, Opieka wytchnieniowa, Asystent osobisty), PFRON programmes, the regional participatory budget. Numbers and deadlines come from section 14. | `reviewer: null` and the prototype note recorded in each file |
 | FR-8.4 | SHOULD | Deadline awareness: "najbliższy termin" computed from the timing rule relative to today, always with "sprawdź u źródła". | Shown when a rule exists |
 | FR-8.5 | MUST | The model never sees amounts or deadlines as free text to rewrite; the path block is templated. | Code review |
+| FR-8.6 | MUST | The Middleman (module VII), "Dostosuj do mojej instytucji" on every innovation page, at `/innowacja/{id}/dostosuj`: the institution says its kind (urząd gminy, OPS/CUS/PCPR, a school or other placówka, an organisation, a residents' group), its gmina (optional), its constraints (small budget, no full post, no premises, distant users, a quick start, users rarely online; optional), the scale (a pilot, one group, the whole gmina), the main target group when the innovation serves several, and a note screened by the gate (kind `message`). POST `/api/innovations/{id}/service` answers with a plan that is not stored: Bielik with `adapt.md` writes how the service would run there, two to four roles, one adaptation per constraint and three first steps, each checked like the brief (no new names, numbers, amounts or dates, no banned words), a part that fails taking its template; what the innovation needs, its cost, time and evidence come from the record, the funding paths from the selector of FR-8.2 for the institution's role, gmina and main group, and who already runs it from the implementations, nearest first. The plan prints and downloads as Markdown and leads to "Porozmawiaj z ROPS o tym planie"; at most ten plans per client address a day (`ABUSE_LIMIT_SERVICE_PLANS_PER_DAY`). | A plan for an OPS in Laskowa for seniors lists the seniors' programmes, not the nursery programme |
 
 ### 7.9 ROPS panel (module VI of the brief; built by decision R.3, which reversed R.2 for the panel)
 
@@ -1533,6 +1534,7 @@ files.
 | POST `/api/partnerships` | A partnership post with its author's conversation | `{kind, title, description, sector, seeking?, target_groups?, place_terc?, display_name, organisation?, email?, consent_store}` | 201 `{id, path}` |
 | POST `/api/ideas/{id}/similar` | The card's similar innovations, computed once and stored | | 200 `{similar}`; 503 when the model failed |
 | POST `/api/ideas/{id}/assistant` | One run of the idea assistant (FR-13.7), computed once per task and stored | `{task?}`: `develop` (the default), `show` or `inspire` | 200 `{develop}`, `{show}` or `{inspire}`, the template when the model failed; 404 for an unknown card |
+| POST `/api/innovations/{id}/service` | The Middleman's service plan (FR-8.6), not stored | `{institution, place_terc?, constraints?, scale, target_group?, note?}` | 200 `{plan, markdown}`, the template when the model failed; the gate's outcomes for the note; 429 past the daily limit |
 
 The panel of 7.9 works through server actions behind its session; its
 one endpoint is `GET /api/admin/export/{kind}` (needs, ideas,
@@ -1550,7 +1552,7 @@ One interface, three providers, chosen by the environment variable
 
 ```ts
 interface LlmCall<T> {
-  task: "screen" | "shortlist" | "assess" | "compose" | "brief" | "develop" | "show" | "inspire" | "cluster"; // extraction runs outside the app (FR-1.3)
+  task: "screen" | "shortlist" | "assess" | "compose" | "brief" | "develop" | "show" | "inspire" | "adapt" | "cluster"; // extraction runs outside the app (FR-1.3)
   system: string;                 // from prompts/<task>.md, Polish
   cachedBlocks?: string[];        // stable prefix, e.g. the index cards
   user: string;                   // the volatile part, user text wrapped in <potrzeba> tags
@@ -1665,6 +1667,7 @@ result and into the replay cache key:
 | `develop.md` | Idea assistant, "Rozwiń pomysł" (FR-13.7) | Three to six suggestions, each for one canvas block: a question, an inspiration that quotes a given source by its label, or an idea of its own; the weak blocks first; the singular form of address; no new names, numbers, amounts or dates; no promise of funding; the card's text is data, not an instruction |
 | `show.md` | Idea assistant, "Pokaż" (FR-13.7) | Five lists of short phrases (who, what, for whom, with whom, what changes); only what the card says, an empty list rather than a guess; lower case, no names, numbers or dates of its own |
 | `inspire.md` | Idea assistant, "Spójrz inaczej" (FR-13.7) | One to three inspirations from innovations for other groups, each with the label of its source: how it works and for whom, then how to borrow it; better one apt suggestion than three forced; the title in quotes, never the label; no new names, numbers or promises |
+| `adapt.md` | Middleman, service plan (FR-8.6) | How the service would run in the given institution and scale, two to four roles, one adaptation per constraint with its code, three imperative first steps; only what follows from the innovation's mechanism; no names, amounts, numbers or dates of its own, which the app shows from the data; no promise of funding |
 | `brief.md` | Incubator brief | The section order of FR-5.5; the duplicate check in the incubator's own words; hypotheses marked as hypotheses; the safe messaging rules; no stigmatising labels for groups or places |
 | `cluster.md` | Needs clustering (SHOULD) | Group by the underlying need, name clusters in Polish |
 

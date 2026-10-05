@@ -787,3 +787,37 @@ test("module VI: Do zrobienia lists what waits across the queues, oldest first, 
   await page.waitForURL(/\/rops\/pomysly\/pm-przyklad-2$/);
 });
 
+test("module VII: an institution adapts an innovation and gets a service plan from the record and the data, printable and downloadable", async ({ page }) => {
+  await page.goto("/innowacja/inn-nat-649");
+  await page.getByRole("region", { name: "Dostosuj do mojej instytucji" }).getByRole("link", { name: "Dostosuj do mojej instytucji" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: /^Dostosuj „Kapsuła czasu - recepta na samotność” do swojej instytucji$/ })).toBeVisible();
+
+  // Kind, scale and, for an innovation of two groups, the main group are required.
+  await page.getByRole("button", { name: "Przygotuj plan usługi" }).click();
+  await expect(page.getByRole("group", { name: "Sprawdź formularz" }).getByRole("link")).toHaveCount(3);
+
+  await page.getByRole("radio", { name: "Ośrodek pomocy społecznej, centrum usług społecznych albo PCPR" }).check();
+  await page.getByRole("combobox", { name: "Miejscowość lub gmina" }).fill("laskowa");
+  await page.getByRole("option", { name: "Laskowa, powiat limanowski", exact: true }).click();
+  await page.getByRole("checkbox", { name: "Mały budżet" }).check();
+  await page.getByRole("radio", { name: "Na próbę, z jedną małą grupą" }).check();
+  await page.getByRole("radio", { name: "Seniorzy" }).check();
+  await page.getByRole("button", { name: "Przygotuj plan usługi" }).click();
+
+  const plan = page.getByRole("article", { name: "Plan usługi: Kapsuła czasu - recepta na samotność" });
+  await expect(plan).toBeVisible({ timeout: 20_000 });
+  await expect(plan.getByText(/Laskowa · Na próbę, z jedną małą grupą · Seniorzy/)).toBeVisible();
+  for (const heading of ["Usługa w Twojej instytucji", "Kto i co robi", "Jak dopasować do Twoich warunków", "Pierwsze kroki", "Czego potrzeba", "Skąd finansowanie", "Kto już to wdrożył"]) {
+    await expect(plan.getByRole("heading", { level: 3, name: heading })).toBeVisible();
+  }
+  await expect(plan.getByText("Mały budżet", { exact: true })).toBeVisible();
+  await expect(plan.getByText(/Plan zestawiliśmy z opisu rozwiązania i danych/)).toBeVisible();
+
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Pobierz jako plik tekstowy" }).click()]);
+  expect(download.suggestedFilename()).toBe("plan-uslugi-inn-nat-649.md");
+
+  // Back to the form with the answers kept.
+  await page.getByRole("button", { name: "Zmień odpowiedzi" }).click();
+  await expect(page.getByRole("checkbox", { name: "Mały budżet" })).toBeChecked();
+});
+

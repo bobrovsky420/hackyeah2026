@@ -11,7 +11,7 @@ import { repository, type Repository } from "@/server/db";
 import { createEmbedClient } from "@/server/match";
 import { buildLexicalIndex, rankLexical, type LexicalIndex } from "@/server/match/lexical";
 import { retrieve } from "@/server/match/retrieve";
-import { clean, knownText, proseProblem, redactPatterns, type KnownText } from "@/server/needs/checks";
+import { clean, knownText, proseProblem, redactPatterns, SINGULAR_ADDRESS, type KnownText } from "@/server/needs/checks";
 import { routeEngine } from "@/server/route-service";
 import { bannedWords, type BannedWords } from "@/server/route/safety";
 import { similarForIdea } from "./index";
@@ -38,8 +38,6 @@ const PER_BLOCK = 2;
 const MAX_SOURCES = 5;
 const LIMITS = { min: 20, max: 320 };
 const TEMPERATURE = 0.7;
-/** The capitalised forms of address of the singular "Ty" (rule 11), which the name check would read as new names. */
-const ADDRESS = "Ty Ciebie Cię Tobie Tobą Twój Twoja Twoje Twojego Twojej Twoim Twoją Twoich Twoimi Twym Twą";
 const MAX_TOKENS = 2_000;
 
 export const developSchema = z.object({
@@ -296,7 +294,7 @@ export async function developRun(idea: Idea, deps: Pick<AssistantDeps, "llm" | "
       maxTokens: MAX_TOKENS,
       temperature: TEMPERATURE,
     });
-    const known = knownText(JSON.stringify(facts), idea.description, idea.title, idea.essence, idea.for_whom, ADDRESS);
+    const known = knownText(JSON.stringify(facts), idea.description, idea.title, idea.essence, idea.for_whom, SINGULAR_ADDRESS);
     const { suggestions, notes } = finishSuggestions(result.parsed, sources, known, deps.banned);
     if (notes.length > 0) console.info(JSON.stringify({ event: "assistant_dropped", task: "develop", notes }));
     return suggestions.length > 0 ? { suggestions, source: "model", prompt_version: prompt.version, at } : template;
@@ -398,7 +396,7 @@ export async function showRun(idea: Idea, deps: Pick<AssistantDeps, "llm" | "ban
       temperature: 0.2,
     });
     const partners = idea.canvas?.partners.map((partner) => partner.name).join(" ");
-    const known = knownText(JSON.stringify(facts), idea.description, idea.title, idea.essence, idea.for_whom, partners, ADDRESS);
+    const known = knownText(JSON.stringify(facts), idea.description, idea.title, idea.essence, idea.for_whom, partners, SINGULAR_ADDRESS);
     const { steps, fromModel, notes } = finishDiagram(result.parsed, template, known, deps.banned);
     if (notes.length > 0) console.info(JSON.stringify({ event: "assistant_dropped", task: "show", notes }));
     return fromModel > 0 ? { steps, source: "model", prompt_version: prompt.version, at } : { steps: template, source: "template", prompt_version: null, at };
@@ -484,7 +482,7 @@ export async function inspireRun(idea: Idea, deps: Pick<AssistantDeps, "llm" | "
       maxTokens: MAX_TOKENS,
       temperature: TEMPERATURE,
     });
-    const known = knownText(JSON.stringify(facts), idea.description, idea.title, idea.essence, idea.for_whom, ADDRESS);
+    const known = knownText(JSON.stringify(facts), idea.description, idea.title, idea.essence, idea.for_whom, SINGULAR_ADDRESS);
     const output = { suggestions: result.parsed.suggestions.filter((item) => item.kind === "inspiracja").slice(0, OTHER_SOURCES) };
     const { suggestions, notes } = finishSuggestions(output, sources, known, deps.banned);
     if (notes.length > 0) console.info(JSON.stringify({ event: "assistant_dropped", task: "inspire", notes }));
