@@ -200,6 +200,7 @@ test("module III: an idea card is checked field by field, stored, and its page s
   await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
   await expect(page.getByText("Zapisaliśmy zgłoszenie pomysłu")).toBeVisible();
 
+  await expect(page.getByRole("link", { name: "Rozwiń pomysł z asystentem" })).toHaveAttribute("href", /\?asystent=1#asystent$/);
   await page.getByRole("link", { name: "Zobacz zgłoszenie" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Wspólne gotowanie seniorów i młodzieży" })).toBeFocused();
   await expect(page.getByText("Testowany w małej skali")).toBeVisible();
@@ -600,31 +601,31 @@ test("module VI: a CANVAS application is marked in the ideas list, has a filter 
   await expect(page.getByRole("navigation", { name: "Forma zgłoszenia" }).getByRole("link", { name: "Wniosek CANVAS" })).toHaveAttribute("aria-current", "page");
 });
 
-test("module III: the idea assistant answers once, with suggestions from the catalogue and a diagram of the idea, and the panel shows them", async ({ page }) => {
+test("module III: the idea assistant runs its three parts at one press, shows them in place and stores them, and the panel shows them", async ({ page }) => {
   await page.goto("/pomysl/pm-przyklad-2");
   const assistant = page.getByRole("region", { name: "Rozwiń pomysł z asystentem" });
-  await assistant.getByRole("button", { name: "Poproś o podpowiedzi" }).click();
-  await expect(assistant.getByRole("listitem").first()).toBeVisible({ timeout: 20_000 });
+  await expect(assistant.getByText("Asystent przygotuje: podpowiedzi, schemat pomysłu, inspiracje z innych dziedzin.")).toBeVisible();
+  await assistant.getByRole("button", { name: "Poproś asystenta o pomoc" }).click();
+
+  // Focus moves to the first result once the page shows it.
+  await expect(assistant.getByRole("heading", { level: 3, name: "Podpowiedzi" })).toBeFocused({ timeout: 20_000 });
   await expect(assistant.getByRole("heading", { level: 4, name: /· Inspiracja$/ }).first()).toBeVisible();
   await expect(assistant.getByText("Na podstawie:").first()).toBeVisible();
-  await expect(assistant.getByText(/Podpowiedzi zestawiliśmy z danych katalogu innowacji/)).toBeVisible();
+  await expect(assistant.getByText(/Podpowiedzi zestawiliśmy z danych katalogu innowacji/).first()).toBeVisible();
+
+  // The diagram: five steps in order, from the card's own answers without a model.
+  await expect(assistant.getByRole("heading", { level: 3, name: "Schemat pomysłu" })).toBeVisible();
+  for (const step of ["Kto działa", "Co robi", "Dla kogo", "Z kim", "Co się zmienia"]) await expect(assistant.getByText(step, { exact: true })).toBeVisible();
+  await expect(assistant.getByText("Gminny Ośrodek Pomocy Społecznej")).toBeVisible();
+
+  // Inspirations from other fields, or the plain word that there are none.
+  await expect(assistant.getByRole("heading", { level: 3, name: "Inspiracje z innych dziedzin" })).toBeVisible();
+  await expect(assistant.getByText(/powstało dla grupy: .+ Co by było, gdyby|Nie znaleźliśmy w katalogu innowacji z innych dziedzin/).first()).toBeVisible();
 
   // Stored: a reload shows them without asking again.
   await page.reload();
-  await expect(assistant.getByRole("button", { name: "Poproś o podpowiedzi" })).toHaveCount(0);
-  await expect(assistant.getByRole("listitem").first()).toBeVisible();
-
-  // The diagram: five steps in order, from the card's own answers without a model.
-  await assistant.getByRole("button", { name: "Pokaż schemat pomysłu" }).click();
-  await expect(assistant.getByText("Kto działa")).toBeVisible({ timeout: 20_000 });
-  for (const step of ["Co robi", "Dla kogo", "Z kim", "Co się zmienia"]) await expect(assistant.getByText(step, { exact: true })).toBeVisible();
-  await expect(assistant.getByText("Gminny Ośrodek Pomocy Społecznej")).toBeVisible();
-  await expect(assistant.getByText(/Schemat zestawiliśmy z odpowiedzi w zgłoszeniu/)).toBeVisible();
-
-  // Spójrz inaczej: innovations for other groups, or the plain word that there are none.
-  await assistant.getByRole("button", { name: "Spójrz inaczej" }).click();
-  await expect(assistant.getByRole("button", { name: "Spójrz inaczej" })).toHaveCount(0, { timeout: 20_000 });
-  await expect(assistant.getByText(/powstało dla grupy: .+ Co by było, gdyby|Nie znaleźliśmy w katalogu innowacji z innych dziedzin/).first()).toBeVisible();
+  await expect(assistant.getByRole("button", { name: /Poproś asystenta/ })).toHaveCount(0);
+  await expect(assistant.getByRole("heading", { level: 3, name: "Schemat pomysłu" })).toBeVisible();
 
   await signIn(page);
   await page.goto("/rops/pomysly/pm-przyklad-2");
