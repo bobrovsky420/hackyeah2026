@@ -122,9 +122,12 @@ export function IdeaForm({
           )}
         </Notice>
         {ideaId && (
-          <div>
+          <div className="flex flex-wrap gap-3">
             <Link href={`/pomysl/${ideaId}`} className={buttonVariants()}>
               {t("idea.done.open")}
+            </Link>
+            <Link href={`/pomysl/${ideaId}?asystent=1#asystent`} className={buttonVariants({ variant: "secondary" })}>
+              {t("idea.done.assistant")}
             </Link>
           </div>
         )}

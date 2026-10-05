@@ -31,7 +31,7 @@ export default async function AdminPartnershipsPage({ searchParams }: PageProps<
           {posts.map((post) => {
             const answers = threads.filter((thread) => thread.ref?.type === "partnership" && thread.ref.id === post.id && thread.id !== post.thread_id);
             return (
-              <li key={post.id} className="grid gap-2 rounded-lg border border-border p-4">
+              <li key={post.id} id={`wpis-${post.id}`} className="grid scroll-mt-6 gap-2 rounded-lg border border-border p-4">
                 <h2 className="text-[1.15rem] font-bold">{post.title}</h2>
                 <p className="text-muted-foreground">
                   {t(post.kind === "szukam" ? "talk.board.kind.szukam" : "talk.board.kind.oferuje")} · {post.author.organisation ?? post.author.display_name} ·{" "}

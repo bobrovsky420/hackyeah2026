@@ -1,6 +1,8 @@
 import { catalogue } from "@/lib/catalogue";
 import type { ContactRequest, Evaluation, Idea, Need, Readiness, Route } from "@/lib/contracts";
 import { warsawDay } from "@/lib/dates";
+import { t } from "@/lib/i18n";
+import { reportReasons } from "@/lib/reports";
 import { repository, type Repository } from "@/server/db";
 import { questionGroups } from "@/server/db/repository";
 import { canvasSections } from "@/lib/canvas";
@@ -64,6 +66,95 @@ export async function queueCounts(since: string | null, repo: Repository = repos
       fresh: declined.filter((route) => isFresh(route.created_at, since)).length + keptTexts.filter((entry) => isFresh(entry.at, since)).length,
     },
   ];
+}
+
+// ------------------------------------------------------- "Do zrobienia"
+
+/** One entry that waits for a person at ROPS, for the dashboard's single list. */
+export interface TodoItem {
+  key: QueueKey;
+  id: string;
+  summary: string;
+  /** Since when it waits: its creation, or for a conversation the author's last message. */
+  since: string;
+  href: string;
+}
+
+/** Working days a reply may take before an entry is "po terminie". */
+export const OVERDUE_WORKING_DAYS = 5;
+
+/** Monday to Friday between two days in Poland, the first not counted; public holidays are not known here. */
+export function workingDaysBetween(from: string, to: string): number {
+  let days = 0;
+  const day = new Date(`${warsawDay(from)}T12:00:00Z`);
+  const end = new Date(`${warsawDay(to)}T12:00:00Z`);
+  while (day < end) {
+    day.setUTCDate(day.getUTCDate() + 1);
+    const weekday = day.getUTCDay();
+    if (weekday !== 0 && weekday !== 6) days += 1;
+  }
+  return days;
+}
+
+const firstLine = (text: string, max = 110) => {
+  const line = text.replace(/\s+/g, " ").trim();
+  return line.length > max ? `${line.slice(0, max - 1).trimEnd()}…` : line;
+};
+
+/**
+ * Everything that waits for a person at ROPS, oldest first, across the
+ * queues of queueCounts and on the same conditions, each with a link to the
+ * entry itself (the item's page, or its place in its queue's list).
+ */
+export async function todoList(repo: Repository = repository(), now = Date.now()): Promise<TodoItem[]> {
+  const [threads, posts, ideas, evaluations, needs, contacts, readiness, review] = await Promise.all([
+    repo.listThreads(),
+    repo.listPosts(),
+    repo.listIdeas(),
+    repo.listEvaluations(),
+    repo.listNeeds(),
+    repo.listContacts(),
+    repo.listReadiness(),
+    reviewQueue(repo, now),
+  ]);
+  const title = (id: string) => catalogue().innovationById.get(id)?.title ?? id;
+  const items: TodoItem[] = [
+    ...threads.filter(waitsForRops).map((thread) => ({
+      key: "threads" as const,
+      id: thread.id,
+      summary: thread.subject,
+      since: [...thread.messages].reverse().find((message) => message.author !== "rops")?.at ?? thread.updated_at,
+      href: `/rops/rozmowy/${thread.id}`,
+    })),
+    ...posts.filter((post) => post.moderation.status === "do-weryfikacji").map((post) => ({ key: "partnerships" as const, id: post.id, summary: post.title, since: post.created_at, href: `/rops/partnerstwa#wpis-${post.id}` })),
+    ...ideas
+      .filter((idea) => idea.moderation.status === "do-weryfikacji" || idea.status === "nowy")
+      .map((idea) => ({ key: "ideas" as const, id: idea.id, summary: idea.title, since: idea.created_at, href: `/rops/pomysly/${idea.id}` })),
+    ...evaluations
+      .filter((item) => item.moderation.status === "do-weryfikacji" || (item.test_signup !== null && item.forwarded_at === null))
+      .map((item) => ({ key: "evaluations" as const, id: item.id, summary: title(item.innovation_id), since: item.created_at, href: `/rops/opinie#wpis-${item.id}` })),
+    ...needs
+      .filter((need) => need.moderation.status === "do-weryfikacji")
+      .map((need) => ({ key: "needs" as const, id: need.id, summary: firstLine(need.summary_pl ?? need.problem_text), since: need.created_at, href: `/rops/potrzeby#wpis-${need.id}` })),
+    ...contacts
+      .filter((item) => item.status === "nowe")
+      .map((item) => ({ key: "contacts" as const, id: item.id, summary: firstLine(item.message), since: item.created_at, href: `/rops/kontakty#wpis-${item.id}` })),
+    ...readiness
+      .filter((item) => item.verification.status === "niezweryfikowane")
+      .map((item) => ({ key: "readiness" as const, id: item.id, summary: item.display_name, since: item.created_at, href: `/rops/gotowosc#wpis-${item.id}` })),
+    ...review.reports
+      .filter((report) => report.moderation.status === "do-weryfikacji")
+      .map((report) => ({ key: "reports" as const, id: report.id, summary: firstLine(report.comment ?? `${t(reportReasons[report.reason])}: ${report.target.id}`), since: report.created_at, href: `/rops/zgloszenia#wpis-${report.id}` })),
+    ...review.declined.map((route) => ({
+      key: "declined" as const,
+      id: route.id,
+      summary: firstLine(route.input.problem_text ?? route.id),
+      since: route.created_at,
+      href: `/rops/zgloszenia#wpis-${route.id}`,
+    })),
+    ...review.kept.map((entry) => ({ key: "declined" as const, id: entry.id, summary: firstLine(entry.text ?? entry.id), since: entry.at, href: `/rops/zgloszenia#wpis-${entry.id}` })),
+  ];
+  return items.sort((a, b) => a.since.localeCompare(b.since));
 }
 
 /** The content reports and the declined texts that wait for review (FR-12.8, FR-12.9). */

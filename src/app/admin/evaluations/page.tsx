@@ -49,7 +49,7 @@ export default async function AdminEvaluationsPage({ searchParams }: PageProps<"
           {evaluations.map((item) => {
             const innovation = getInnovation(item.innovation_id);
             return (
-              <li key={item.id} className="grid gap-2 rounded-lg border border-border p-4">
+              <li key={item.id} id={`wpis-${item.id}`} className="grid scroll-mt-6 gap-2 rounded-lg border border-border p-4">
                 <h2 className="text-[1.15rem] font-bold">
                   <Link href={`/innowacja/${item.innovation_id}`}>{innovation?.title ?? item.innovation_id}</Link>
                 </h2>

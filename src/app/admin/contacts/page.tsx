@@ -26,7 +26,7 @@ export default async function AdminContactsPage({ searchParams }: PageProps<"/ad
       ) : (
         <ul className="grid gap-4">
           {contacts.map((item) => (
-            <li key={item.id} className="grid gap-2 rounded-lg border border-border p-4">
+            <li key={item.id} id={`wpis-${item.id}`} className="grid scroll-mt-6 gap-2 rounded-lg border border-border p-4">
               <h2 className="text-[1.1rem] font-bold">
                 {item.requester.name}
                 {item.requester.organisation && `, ${item.requester.organisation}`}
