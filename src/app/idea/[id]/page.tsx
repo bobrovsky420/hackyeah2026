@@ -7,6 +7,7 @@ import { AssistantFocus, AssistantRun, type AssistantPart } from "@/components/i
 import { AssistantDiagramView } from "@/components/idea/assistant-diagram";
 import { AssistantSuggestions } from "@/components/idea/assistant-suggestions";
 import { CanvasAnswers } from "@/components/idea/canvas-answers";
+import { ExtendToCanvas } from "@/components/idea/extend-to-canvas";
 import { ReplyMarker } from "@/components/idea/reply-marker";
 import { SimilarPending } from "@/components/idea/similar-pending";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
@@ -58,6 +59,10 @@ export default async function IdeaPage({ params, searchParams }: PageProps<"/ide
     const innovation = getInnovation(match.innovation_id);
     return innovation ? [{ match, innovation }] : [];
   });
+  // The short-form card and its CANVAS application link to each other; a demonstration card stays out.
+  const repo = repository();
+  const base = idea.extends ? await repo.getIdea(idea.extends) : undefined;
+  const grown = (await repo.listIdeas()).filter((item) => item.extends === idea.id && !item.demo);
   const assistant = idea.assistant ?? {};
   const shown = PARTS.filter((part) => assistant[part]);
   const missing = PARTS.filter((part) => !assistant[part]);
@@ -82,6 +87,27 @@ export default async function IdeaPage({ params, searchParams }: PageProps<"/ide
           )}
           <dt className="font-bold">{t("card.author")}</dt>
           <dd>{idea.author.display_name}</dd>
+          {base && !base.demo && (
+            <>
+              <dt className="font-bold">{t("card.extends")}</dt>
+              <dd>
+                <Link href={`/pomysl/${base.id}`}>{base.title}</Link>
+              </dd>
+            </>
+          )}
+          {grown.length > 0 && (
+            <>
+              <dt className="font-bold">{t("card.extendedBy")}</dt>
+              <dd>
+                {grown.map((item, index) => (
+                  <span key={item.id}>
+                    {index > 0 && ", "}
+                    <Link href={`/pomysl/${item.id}`}>{item.title}</Link>
+                  </span>
+                ))}
+              </dd>
+            </>
+          )}
         </dl>
       </header>
 
@@ -197,6 +223,7 @@ export default async function IdeaPage({ params, searchParams }: PageProps<"/ide
           <Link href={`/zapytaj?pomysl=${idea.id}`} className={buttonVariants()}>
             {t("card.next.contact")}
           </Link>
+          {!idea.canvas && <ExtendToCanvas ideaId={idea.id} />}
           <Link href="/zglos-pomysl" className={buttonVariants({ variant: "secondary" })}>
             {t("card.next.another")}
           </Link>

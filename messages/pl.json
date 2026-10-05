@@ -481,9 +481,12 @@
   "idea.done.assistant": "Rozwiń pomysł z asystentem",
   "canvas.meta.title": "Wniosek CANVAS",
   "canvas.title": "Wniosek CANVAS",
-  "canvas.lead": "Opisz swój pomysł blok po bloku, według Social Innovation Canvas INNO AGH. Wniosek ma {count} kroków. Możesz wrócić do każdego kroku i coś zmienić. Dopóki nie wyślesz wniosku, odpowiedzi zostają tylko w tej przeglądarce.",
+  "canvas.lead": "Opisz swój pomysł blok po bloku, według Social Innovation Canvas INNO AGH. Wniosek ma {count} kroków i zajmuje około 15 minut. Możesz wrócić do każdego kroku i coś zmienić. Dopóki nie wyślesz wniosku, odpowiedzi zostają tylko w tej przeglądarce.",
   "canvas.source": "Wniosek opiera się na INNO AGH Social Innovation Canvas, wersja 1.0 z 5 maja 2026, stworzonym na podstawie Social Innovation Canvas The New Global School.",
   "canvas.short": "Wolisz krótszy formularz? Wypełnij zwykłe zgłoszenie pomysłu.",
+  "canvas.basedOn.title": "Rozbudowujesz zgłoszenie „{title}”",
+  "canvas.basedOn.text": "Nazwę, opis, istotę i odbiorców przepisaliśmy ze zgłoszenia. Sprawdź je i uzupełnij pozostałe kroki. Wniosek zapiszemy jako nowe zgłoszenie, połączone z poprzednim.",
+  "canvas.hints.title": "Podpowiedzi asystenta do tego kroku",
   "canvas.steps": "Kroki wniosku",
   "canvas.progress": "Krok {current} z {total}",
   "canvas.next": "Dalej",
@@ -1713,5 +1716,8 @@
   "route.declined.mild": "Nie możemy automatycznie przygotować rozwiązań dla tego opisu.",
   "compose.summary.helplines": "Numery wsparcia znajdziesz na górze strony.",
   "card.canvas.title": "Wniosek CANVAS",
-  "card.canvas.lead": "Odpowiedzi z wniosku według Social Innovation Canvas INNO AGH."
+  "card.canvas.lead": "Odpowiedzi z wniosku według Social Innovation Canvas INNO AGH.",
+  "card.extend": "Rozbuduj do wniosku CANVAS",
+  "card.extends": "Rozbudowa zgłoszenia:",
+  "card.extendedBy": "Rozbudowano do wniosku CANVAS:"
 }

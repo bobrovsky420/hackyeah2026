@@ -705,3 +705,71 @@ test("notifications: an answer of ROPS is new in the header, in Moje sprawy and 
   await expect(card.getByText("Nowa odpowiedź ROPS")).toHaveCount(0);
 });
 
+test("module III: a short-form card grows into a CANVAS application with its fields and the assistant's hints, and the two link to each other", async ({ page }) => {
+  const title = "Rozbudowa e2e: wspólne ogródki przy bloku";
+  await page.goto("/zglos-pomysl");
+  await page.getByLabel("Nazwa pomysłu").fill(title);
+  await page.getByLabel("Krótki opis").fill("Mieszkańcy bloku zakładają wspólne ogródki warzywne na trawniku przy budynku.");
+  await page.getByLabel("Co jest jego istotą?").fill("Wspólna praca przy ogródku łączy sąsiadów.");
+  await page.getByLabel("Komu jest dedykowany?").fill("Mieszkańcy bloku, także starsi.");
+  await page.getByRole("radio", { name: "Pomysł, jeszcze nie zaczęty" }).check();
+  await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Sąsiedzi e2e");
+  await page.getByLabel("E-mail", { exact: true }).fill("ogrodki@example.org");
+  await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
+  await page.getByRole("button", { name: "Zapisz zgłoszenie" }).click();
+  await page.getByRole("link", { name: "Zobacz zgłoszenie" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+  const cardUrl = page.url();
+
+  // The assistant first, so the wizard has its hints.
+  await page.getByRole("button", { name: "Poproś asystenta o pomoc" }).click();
+  await expect(page.getByRole("heading", { level: 3, name: "Podpowiedzi" })).toBeFocused({ timeout: 20_000 });
+
+  await page.getByRole("link", { name: "Rozbuduj do wniosku CANVAS" }).click();
+  await page.waitForURL(/\/zglos-pomysl\/canvas\?z=/);
+  await expect(page.getByText(`Rozbudowujesz zgłoszenie „${title}”`)).toBeVisible();
+  await expect(page.getByLabel("Nazwa pomysłu")).toHaveValue(title);
+  await expect(page.getByLabel("Krótki opis")).toHaveValue(/wspólne ogródki warzywne/);
+
+  const next = page.getByRole("button", { name: "Dalej" });
+  await next.click();
+  await page.getByRole("radio", { name: /^Utrudnia działanie/ }).check();
+  await page.getByRole("radio", { name: /^Często/ }).check();
+  await page.getByRole("radio", { name: /^Wąska grupa/ }).check();
+  await next.click();
+  await next.click();
+  await expect(page.getByLabel("Na czym polega rozwiązanie i co jest jego istotą?")).toHaveValue("Wspólna praca przy ogródku łączy sąsiadów.");
+  await page.getByRole("radio", { name: /^Rozwiązanie jest jasne/ }).check();
+  await page.getByRole("radio", { name: /^Pomysł/ }).check();
+  await page.getByRole("radio", { name: /^Korzyść jest większa niż koszt/ }).check();
+  await next.click();
+  await expect(page.getByLabel("Komu rozwiązanie ma realnie pomóc?")).toHaveValue("Mieszkańcy bloku, także starsi.");
+  await next.click();
+  await next.click();
+  await next.click();
+
+  // A weak block of a short form: the assistant's question for it stands in the step.
+  await expect(page.getByRole("heading", { level: 2, name: "Źródła dochodów" })).toBeFocused();
+  await expect(page.getByRole("complementary", { name: "Podpowiedzi asystenta do tego kroku" }).getByText(/^Pytanie:/).first()).toBeVisible();
+  await page.getByRole("radio", { name: /^Nie wiemy jeszcze/ }).check();
+  await page.getByRole("radio", { name: /^Brak jasnych dodatkowych źródeł/ }).check();
+  await next.click();
+  await next.click();
+  await next.click();
+  for (const group of [/^Osoba:/, /^Społeczność:/, /^Środowisko:/]) {
+    await page.getByRole("group", { name: group }).getByRole("radio", { name: /^Możliwy wpływ/ }).check();
+  }
+  await next.click();
+  await page.getByLabel("Imię i nazwisko lub nazwa organizacji").fill("Sąsiedzi e2e");
+  await page.getByLabel("E-mail", { exact: true }).fill("ogrodki@example.org");
+  await page.getByRole("checkbox", { name: /przechowywał zgłoszenie/ }).check();
+  await next.click();
+  await page.getByRole("button", { name: "Wyślij wniosek" }).click();
+  await page.getByRole("link", { name: "Zobacz zgłoszenie" }).click();
+
+  // The application names the card it grew from, and the card names the application.
+  await expect(page.getByRole("definition").getByRole("link", { name: title })).toBeVisible();
+  await page.goto(cardUrl);
+  await expect(page.getByText("Rozbudowano do wniosku CANVAS:")).toBeVisible();
+});
+

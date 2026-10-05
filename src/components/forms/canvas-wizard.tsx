@@ -30,8 +30,8 @@ import {
   type CanvasField,
   type CanvasPartner,
 } from "@/lib/canvas";
-import type { Helpline } from "@/lib/contracts";
-import { hasMessage, t } from "@/lib/i18n";
+import type { AssistantSuggestion, Helpline } from "@/lib/contracts";
+import { hasMessage, t, type MessageKey } from "@/lib/i18n";
 import { saveIdea } from "@/components/idea/saved-ideas";
 import { CANVAS_DRAFT_KEY } from "@/lib/storage-keys";
 import { pluralPl } from "@/lib/text";
@@ -52,7 +52,23 @@ interface Draft {
   furthest: number;
   answers: CanvasAnswers;
   partners: CanvasPartner[];
+  /** The short-form card this application grows from, when it was opened from one. */
+  basedOn?: string;
 }
+
+/** A short-form card the wizard grows from: its fields to start with, and the assistant's suggestions per step. */
+export interface CanvasBase {
+  id: string;
+  title: string;
+  answers: CanvasAnswers;
+  hints: Partial<Record<string, { kind: AssistantSuggestion["kind"]; text: string }[]>>;
+}
+
+const HINT_KIND_KEYS: Record<AssistantSuggestion["kind"], MessageKey> = {
+  pytanie: "card.assistant.kind.pytanie",
+  inspiracja: "card.assistant.kind.inspiracja",
+  pomysl: "card.assistant.kind.pomysl",
+};
 
 function readDraft(): Draft | null {
   try {
@@ -83,7 +99,14 @@ const sectionTitle = "text-[1.3rem] font-bold @3xl:text-[1.45rem]";
  * the heading of a new step takes focus. The answers stay in this browser
  * until they are sent, and are sent as one card through the gate.
  */
-export function CanvasWizard({ helplines }: { helplines: { alarm: Helpline[]; support: Helpline[] } }) {
+export function CanvasWizard({
+  helplines,
+  base,
+}: {
+  helplines: { alarm: Helpline[]; support: Helpline[] };
+  /** Opened with "Rozbuduj do wniosku CANVAS" from a short-form card (`?z=`). */
+  base?: CanvasBase;
+}) {
   const [draft, setDraft] = useState<Draft>(EMPTY);
   const { step, furthest, answers, partners } = draft;
   const [stepErrorsShown, setStepErrorsShown] = useState<FormError[]>([]);
@@ -100,10 +123,15 @@ export function CanvasWizard({ helplines }: { helplines: { alarm: Helpline[]; su
   // The draft is read after the first render, so the server's HTML and the browser's first render agree.
   useEffect(() => {
     const saved = readDraft();
+    // A draft of this card, or any draft without a card to grow from, is restored; a new card starts from its own fields.
+    const restore = saved && (!base || saved.basedOn === base.id);
     // Restoring the draft from localStorage has to wait for the browser.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (saved) setDraft({ ...saved, step: Math.min(saved.step, SUMMARY), furthest: Math.min(saved.furthest, SUMMARY) });
+    if (restore) setDraft({ ...saved, step: Math.min(saved.step, SUMMARY), furthest: Math.min(saved.furthest, SUMMARY) });
+    else if (base) setDraft({ ...EMPTY, answers: { ...EMPTY.answers, ...base.answers }, basedOn: base.id });
     setLoaded(true);
+    // Read once on arrival.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -161,6 +189,7 @@ export function CanvasWizard({ helplines }: { helplines: { alarm: Helpline[]; su
       return;
     }
     void submit([], {
+      ...(draft.basedOn && { extends: draft.basedOn }),
       canvas: answers,
       partners,
       display_name: name.trim(),
@@ -174,7 +203,7 @@ export function CanvasWizard({ helplines }: { helplines: { alarm: Helpline[]; su
 
   function startOver() {
     if (!window.confirm(t("canvas.clear.confirm"))) return;
-    setDraft(EMPTY);
+    setDraft(base ? { ...EMPTY, answers: { ...EMPTY.answers, ...base.answers }, basedOn: base.id } : EMPTY);
     goTo(0);
   }
 
@@ -527,12 +556,32 @@ export function CanvasWizard({ helplines }: { helplines: { alarm: Helpline[]; su
 
       <section aria-labelledby="krok-tytul" className="grid gap-6">
         <header className="grid gap-2">
-          <p className="font-bold text-muted-foreground">{t("canvas.progress", { current: step + 1, total: STEP_IDS.length })}</p>
+          <p id="krok-postep" className="font-bold text-muted-foreground">
+            {t("canvas.progress", { current: step + 1, total: STEP_IDS.length })}
+          </p>
+          <div aria-hidden className="h-2 overflow-hidden rounded-full border border-border bg-muted">
+            <div className="h-full bg-primary" style={{ width: `${((step + 1) / STEP_IDS.length) * 100}%` }} />
+          </div>
           <h2 id="krok-tytul" tabIndex={-1} className={sectionTitle}>
             {title}
           </h2>
           <p>{t(stepLeadKey(stepId))}</p>
         </header>
+
+        {base?.hints[stepId] && base.hints[stepId]!.length > 0 && (
+          <aside aria-labelledby="krok-podpowiedzi" className="grid gap-2 rounded-md border-2 border-border bg-muted p-4">
+            <h3 id="krok-podpowiedzi" className="font-bold">
+              {t("canvas.hints.title")}
+            </h3>
+            <ul className="grid list-disc gap-1 pl-5">
+              {base.hints[stepId]!.map((hint, index) => (
+                <li key={index}>
+                  <span className="font-bold">{t(HINT_KIND_KEYS[hint.kind])}:</span> {hint.text}
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
 
         <ErrorSummary ref={stepSummaryRef} errors={stepErrorsShown} />
 

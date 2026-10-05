@@ -340,6 +340,8 @@ export interface Idea {
   note_pl: string | null;
   /** The answers of a CANVAS application (src/lib/canvas.ts); absent on a card sent with the short form. */
   canvas?: IdeaCanvas;
+  /** The short-form card a CANVAS application grew from ("Rozbuduj do wniosku CANVAS"); the two link to each other. */
+  extends?: string;
   /** The idea assistant's runs: "Rozwiń pomysł" (develop), "Pokaż" (show) and "Spójrz inaczej" (inspire); each absent until the author asks for it. */
   assistant?: IdeaAssistant;
   /** A seed entry of the team, for the demo and the screen checks; absent on real cards. */
