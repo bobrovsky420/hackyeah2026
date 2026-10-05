@@ -5,7 +5,8 @@ import { AdminShell, wasSaved } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/dates";
 import { t, type MessageKey } from "@/lib/i18n";
-import { EXPORT_KINDS, queueCounts, trends, type QueueKey } from "@/server/admin/data";
+import { pluralPl } from "@/lib/text";
+import { EXPORT_KINDS, OVERDUE_WORKING_DAYS, queueCounts, todoList, trends, workingDaysBetween, type QueueKey } from "@/server/admin/data";
 import { repository } from "@/server/db";
 
 const QUEUES: Record<QueueKey, { href: string; label: MessageKey }> = {
@@ -20,6 +21,29 @@ const QUEUES: Record<QueueKey, { href: string; label: MessageKey }> = {
   declined: { href: "/rops/zgloszenia", label: "admin.queue.declined" },
 };
 
+const TODO_KINDS: Record<QueueKey, MessageKey> = {
+  threads: "admin.todo.kind.threads",
+  partnerships: "admin.todo.kind.partnerships",
+  ideas: "admin.todo.kind.ideas",
+  evaluations: "admin.todo.kind.evaluations",
+  needs: "admin.todo.kind.needs",
+  contacts: "admin.todo.kind.contacts",
+  readiness: "admin.todo.kind.readiness",
+  reports: "admin.todo.kind.reports",
+  declined: "admin.todo.kind.declined",
+};
+
+/** How many oldest entries "Do zrobienia" shows before "Pokaż wszystkie". */
+const TODO_SHOWN = 12;
+
+function waitText(days: number): string {
+  if (days === 0) return t("admin.todo.today");
+  return t("admin.todo.wait", {
+    count: days,
+    unit: pluralPl(days, { one: t("admin.todo.unit.one"), few: t("admin.todo.unit.few"), many: t("admin.todo.unit.many") }),
+  });
+}
+
 const EXPORT_LABELS: Record<(typeof EXPORT_KINDS)[number], MessageKey> = {
   needs: "admin.export.needs",
   ideas: "admin.export.ideas",
@@ -29,19 +53,73 @@ const EXPORT_LABELS: Record<(typeof EXPORT_KINDS)[number], MessageKey> = {
 };
 
 /**
- * The panel's start (module VI): what waits for a person at ROPS, with what
- * is new since the reviewer's last visit (the notification of a new idea
- * the brief asks about), the key numbers and the latest decisions.
+ * The panel's start (module VI): "Do zrobienia", everything that waits for
+ * a person at ROPS in one list, oldest first, with how long it waits and
+ * "po terminie" past OVERDUE_WORKING_DAYS; then the queues with what is new
+ * since the reviewer's last visit (the notification of a new idea the
+ * brief asks about), the key numbers and the latest decisions.
  */
 export default async function AdminStartPage({ searchParams }: PageProps<"/admin">) {
   const session = await gate();
   if (!session) return <AdminLogin />;
   const query = await searchParams;
-  const [counts, numbers, log] = await Promise.all([queueCounts(session.lastVisit), trends(), repository().listModerationLog(10)]);
+  const [counts, numbers, log, todo] = await Promise.all([queueCounts(session.lastVisit), trends(), repository().listModerationLog(10), todoList()]);
   const fresh = counts.reduce((sum, item) => sum + item.fresh, 0);
+  const today = new Date().toISOString();
+  const waiting = todo.map((item) => ({ ...item, days: workingDaysBetween(item.since, today) }));
+  const overdue = waiting.filter((item) => item.days > OVERDUE_WORKING_DAYS).length;
+  const all = query.wszystkie === "1";
+  const shown = all ? waiting : waiting.slice(0, TODO_SHOWN);
 
   return (
     <AdminShell session={session} current="start" title={t("admin.start.title")} lead={t("admin.start.lead")} saved={wasSaved(query)}>
+      <section aria-labelledby="do-zrobienia" className="grid gap-3">
+        <h2 id="do-zrobienia" className="text-[1.3rem] font-bold">
+          {t("admin.todo.title")}
+        </h2>
+        <p>{t("admin.todo.lead", { days: OVERDUE_WORKING_DAYS })}</p>
+        {waiting.length === 0 ? (
+          <p>{t("admin.todo.none")}</p>
+        ) : (
+          <>
+            <p className="font-bold">
+              {t("admin.todo.count", { count: waiting.length })} {overdue > 0 && t("admin.todo.overdueCount", { count: overdue })}
+            </p>
+            <ol className="grid gap-2">
+              {shown.map((item) => {
+                const late = item.days > OVERDUE_WORKING_DAYS;
+                return (
+                  <li
+                    key={`${item.key}-${item.id}`}
+                    className={`grid gap-0.5 rounded-md border px-3 py-2 ${late ? "border-2 border-l-8 border-destructive" : "border-border"}`}
+                  >
+                    <Link href={item.href} className="font-bold">
+                      {item.summary}
+                    </Link>
+                    <span className="text-[0.95rem]">
+                      <span className="text-muted-foreground">{t(TODO_KINDS[item.key])}</span>
+                      {" · "}
+                      {waitText(item.days)}
+                      {late && (
+                        <>
+                          {" · "}
+                          <span className="font-bold text-destructive">{t("admin.todo.overdue")}</span>
+                        </>
+                      )}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+            {!all && waiting.length > TODO_SHOWN && (
+              <p>
+                <Link href="/rops?wszystkie=1#do-zrobienia">{t("admin.todo.all", { count: waiting.length })}</Link>
+              </p>
+            )}
+          </>
+        )}
+      </section>
+
       <section aria-labelledby="kolejki" className="grid gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="kolejki" className="text-[1.3rem] font-bold">

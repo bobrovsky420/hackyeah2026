@@ -11,6 +11,8 @@ import {
   filterNeeds,
   questions,
   queueCounts,
+  todoList,
+  workingDaysBetween,
   toCsv,
   trendPeriod,
   trends,
@@ -265,3 +267,28 @@ describe("the trends of module II", () => {
     expect(weekStart("2026-09-28T00:00:00.000Z")).toBe("2026-09-28");
   });
 });
+
+describe("Do zrobienia", () => {
+  it("counts the working days in Poland, the first day not counted", () => {
+    // Friday 2 October 2026 to Monday 5 October: one working day.
+    expect(workingDaysBetween("2026-10-02T09:00:00.000Z", "2026-10-05T09:00:00.000Z")).toBe(1);
+    expect(workingDaysBetween("2026-10-05T09:00:00.000Z", "2026-10-05T18:00:00.000Z")).toBe(0);
+    expect(workingDaysBetween("2026-09-25T09:00:00.000Z", "2026-10-05T09:00:00.000Z")).toBe(6);
+    // 22:30 UTC on Sunday is already Monday in Poland.
+    expect(workingDaysBetween("2026-10-04T22:30:00.000Z", "2026-10-05T10:00:00.000Z")).toBe(0);
+  });
+
+  it("lists what waits across the queues, oldest first, on the queues' own conditions", async () => {
+    const repo = createMemoryRepository({ ...createMemoryState(), needs: [], ideas: [] });
+    await repo.addIdea(idea("pm-1", "2026-10-03T10:00:00.000Z"));
+    await repo.addIdea(idea("pm-2", "2026-09-20T10:00:00.000Z"));
+    // Decided and in analysis: nothing waits.
+    await repo.addIdea(idea("pm-3", "2026-09-01T10:00:00.000Z", { status: "w-analizie", moderation: { ...pending, status: "zatwierdzone" } }));
+    await repo.addEvaluation(evaluation("oc-1", { created_at: "2026-09-25T10:00:00.000Z" }));
+    const items = (await todoList(repo)).filter((item) => item.key === "ideas" || item.key === "evaluations");
+    expect(items.map((item) => item.id)).toEqual(["pm-2", "oc-1", "pm-1"]);
+    expect(items[0]).toMatchObject({ key: "ideas", href: "/rops/pomysly/pm-2" });
+    expect(items[1].href).toBe("/rops/opinie#wpis-oc-1");
+  });
+});
+

@@ -773,3 +773,17 @@ test("module III: a short-form card grows into a CANVAS application with its fie
   await expect(page.getByText("Rozbudowano do wniosku CANVAS:")).toBeVisible();
 });
 
+test("module VI: Do zrobienia lists what waits across the queues, oldest first, each leading to its entry", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/rops");
+  const todo = page.getByRole("region", { name: "Do zrobienia" });
+  await expect(todo.getByText(/^Czeka: \d+\./)).toBeVisible();
+  const first = todo.getByRole("listitem").first();
+  await expect(first.getByText(/ · czeka (od dziś|\d+ (dzień roboczy|dni robocze|dni roboczych))/)).toBeVisible();
+  // The example idea card waits for its first look.
+  const card = todo.getByRole("listitem").filter({ hasText: "Sąsiedzka wypożyczalnia sprzętu rehabilitacyjnego (wpis przykładowy)" });
+  await expect(card.getByText("Zgłoszenie pomysłu")).toBeVisible();
+  await card.getByRole("link").click();
+  await page.waitForURL(/\/rops\/pomysly\/pm-przyklad-2$/);
+});
+

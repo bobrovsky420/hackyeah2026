@@ -23,7 +23,7 @@ export default async function AdminReadinessPage({ searchParams }: PageProps<"/a
       ) : (
         <ul className="grid gap-4">
           {entries.map((item) => (
-            <li key={item.id} className="grid gap-2 rounded-lg border border-border p-4">
+            <li key={item.id} id={`wpis-${item.id}`} className="grid scroll-mt-6 gap-2 rounded-lg border border-border p-4">
               <h2 className="text-[1.1rem] font-bold">{item.display_name}</h2>
               <p className="text-muted-foreground">
                 {formatDate(item.created_at)} · {getGmina(item.place_terc)?.name ?? t("admin.none")}
