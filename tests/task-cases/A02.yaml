@@ -1,0 +1,18 @@
+id: A02
+task: adapt
+title: Urząd gminy Ochotnica Dolna, mobilna pomoc terapeutyczna dla rodzin
+why: >-
+  Three constraints at once: the model once dropped the "no full post"
+  adaptation for a number, and the nursery programme topped the paths of a
+  crisis team.
+innovation: inn-rops-mobilna-pomoc-terapeutyczna
+input:
+  institution: gmina
+  place_terc: "1211102"
+  constraints: [etat, lokal, dojazd]
+  scale: gmina
+expect:
+  items_min: 3
+  mentions:
+    first_role: "Twoja instytucja|urząd|gmin"
+  paths_exclude: [aktywny-maluch]

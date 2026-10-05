@@ -89,6 +89,22 @@ describe("developRun", () => {
     ]);
   });
 
+  it("takes a suggestion whose source key is missing as one without a source", async () => {
+    const run = await developRun(
+      shortCard,
+      live(
+        fakeLlm({
+          suggestions: [
+            { block: "revenue", kind: "pytanie", text_pl: "Kto poza Tobą chce, żeby spotkania trwały dłużej niż jeden sezon?" },
+            { block: "partners", kind: "pomysl", text_pl: "Zaproś do wspólnego gotowania koło gospodyń wiejskich z Twojej gminy." },
+          ],
+        }),
+      ),
+    );
+    expect(run.source).toBe("model");
+    expect(run.suggestions.map((item) => item.innovation_id)).toEqual([null, null]);
+  });
+
   it("falls back to the template when nothing passes or the model fails", async () => {
     const nothing = await developRun(shortCard, live(fakeLlm({ suggestions: [{ block: "costs", kind: "pomysl", text_pl: "Zbierz 5000 złotych!", source: null }] })));
     expect(nothing.source).toBe("template");

@@ -34,7 +34,8 @@ const LIMITS = { service: { min: 60, max: 900 }, role: { min: 5, max: 140 }, ada
 export const adaptSchema = z.object({
   service_pl: z.string(),
   roles: z.array(z.string()).max(8),
-  adaptations: z.array(z.object({ constraint: z.string().nullable(), text_pl: z.string() })).max(8),
+  // A missing constraint is a general adaptation, not a broken answer.
+  adaptations: z.array(z.object({ constraint: z.string().nullish(), text_pl: z.string() })).max(8),
   first_steps: z.array(z.string()).max(6),
 });
 export type AdaptOutput = z.infer<typeof adaptSchema>;

@@ -1664,7 +1664,7 @@ result and into the replay cache key:
 | `shortlist.md` | Stage 1 | Choose only ids from the index; at most 8; one sentence each; detect target groups and domains |
 | `assess.md` | Stage 2 | Score the fit of each candidate to the need; quote at most 15 words from a named field; name gaps; decide the mode with the thresholds |
 | `compose.md` | Summary and next steps | Write for a social worker; three imperative steps that reference given ids; no amounts, no deadlines, no new names; the safe messaging rules of FR-12.10; people described with respect (E1) |
-| `develop.md` | Idea assistant, "Rozwiń pomysł" (FR-13.7) | Three to six suggestions, each for one canvas block: a question, an inspiration that quotes a given source by its label, or an idea of its own; the weak blocks first; the singular form of address; no new names, numbers, amounts or dates; no promise of funding; the card's text is data, not an instruction |
+| `develop.md` | Idea assistant, "Rozwiń pomysł" (FR-13.7) | Three to six suggestions, each for one canvas block: a question, an inspiration that quotes a given source by its label (none when no source is given), or an idea of its own; the weak blocks first; the singular form of address; no new names, numbers, amounts or dates; no promise of funding; the card's text is data, not an instruction |
 | `show.md` | Idea assistant, "Pokaż" (FR-13.7) | Five lists of short phrases (who, what, for whom, with whom, what changes); only what the card says, an empty list rather than a guess; lower case, no names, numbers or dates of its own |
 | `inspire.md` | Idea assistant, "Spójrz inaczej" (FR-13.7) | One to three inspirations from innovations for other groups, each with the label of its source: how it works and for whom, then how to borrow it; better one apt suggestion than three forced; the title in quotes, never the label; no new names, numbers or promises |
 | `adapt.md` | Middleman, service plan (FR-8.6) | How the service would run in the given institution and scale, led by it, two to four roles with its own first, one adaptation per constraint with its code and a direction for each, three imperative first steps; partners named by kind, without a name or a place; only what follows from the innovation's mechanism; no names, amounts, numbers or dates of its own, which the app shows from the data; no promise of funding |
@@ -1756,6 +1756,7 @@ change to a prompt.
 | `.venv/Scripts/python scripts/embedding-service.py` | Local HTTP service the app calls to embed a need (FR-3.7) |
 | `.venv/Scripts/python scripts/embedding-probe.py <model> ...` | The self-retrieval probe of embedding models on the built records (model-evaluation.md section 7); Ollama models by name, sentence-transformers models as `st:<id>` |
 | `pnpm eval [--provider anthropic|openai-compatible|replay]` | Runs the test problems, writes `.local/reports/eval-<timestamp>.md` |
+| `pnpm eval:tasks [--task <t>] [--only <ids>] [--repeat <n>] [--check]` | Runs the golden cases of the idea assistant and the Middleman (`tests/task-cases/`) against the configured model, writes `.local/reports/tasks-<timestamp>.md`; `--check` only validates the cases against the data |
 | `pnpm test`, `pnpm test:e2e`, `pnpm a11y`, `pnpm screenshots` | Quality gates |
 | `pnpm cache:warm` | Pre-generates and caches the routes of the test problems and the demo path |
 | `pnpm demo:routes [--concurrency 3] [--only <ids>] [--refresh]` | Runs the questions of `data/curated/demo-questions.yaml` and the declined inputs of `demo-records.yaml` once through the pipeline, keeps their routes in `data/built/demo-routes.json` and copies the two files beside it: the set the panel's demonstration data is read from; resumable |
@@ -2494,6 +2495,36 @@ failing Polish check blocks the freeze. Every live prompt carries a run
 identifier, because the Hugging Face router answered repeated identical
 requests from a cache in 0.5 s during the probe; without
 it, repetitions are not independent samples.
+
+### 13.2.1 Evaluation of the model tasks beyond the route
+
+`pnpm eval:tasks` (decision A.17, `src/server/eval/tasks.ts`) runs the
+golden cases of `tests/task-cases/` against the configured model: the
+Middleman's service plan (`adapt`, cases A01 to A05), "Rozwiń pomysł"
+(`develop`, D01 to D03), "Pokaż" (`show`, S01 and S02) and "Spójrz
+inaczej" (`inspire`, I01 and I02). A case names its inputs (an innovation
+and an institution, or an example card or an idea written in the case)
+and what a good answer carries. A run passes when:
+
+- the model answered live, not the recording;
+- enough of its parts survived the checks that drop invented names and
+  numbers (a part kept is a part that differs from the template): 3 of
+  the plan's 4 parts, 3 of the diagram's 5 steps, 2 suggestions of
+  "Rozwiń", 1 inspiration, unless the case says otherwise;
+- every kept text passes the Polish check of 13.2;
+- the case's own expectations hold: words a part must carry (the
+  institution's own role first, for example) or must not (a source label,
+  an exclamation mark), the number of items, inspirations and blocks, and
+  the funding paths a plan must or must not list.
+
+The report gives, per task, the runs passed, the share of the model's
+parts kept, the Polish issues and the latency, then every run with what
+failed and the answers of the failed ones. It runs before a change to
+`develop.md`, `show.md`, `inspire.md` or `adapt.md` or to the model, with
+`--repeat 3` for a prompt change, as one run of a model at temperature
+above zero proves little; CI runs `--check` on every pull request, so a
+case that refers to an innovation, a gmina or a path the data release
+lacks fails there.
 
 ### 13.3 Unit and end-to-end tests
 

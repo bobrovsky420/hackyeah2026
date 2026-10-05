@@ -1,0 +1,17 @@
+id: A05
+task: adapt
+title: Szkoła bez wolnego etatu i lokalu, odwiedziny seniorów przez młodzież
+why: >-
+  A school as the institution, for seniors, without a free post or a room of
+  its own: the school must lead and the plan must not add a facility.
+innovation: inn-nat-sztafeta-pokolen-2
+input:
+  institution: placowka
+  place_terc: "1219053"
+  constraints: [etat, lokal]
+  scale: grupa
+  target_group: seniorzy
+expect:
+  mentions:
+    first_role: "Twoja instytucja|szkoł|placówk|nauczyciel|dyrek"
+  paths_exclude: [aktywny-maluch, asy-priorytet-v]

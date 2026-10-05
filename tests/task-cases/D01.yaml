@@ -1,0 +1,14 @@
+id: D01
+task: develop
+title: Rozwiń krótkie zgłoszenie o sąsiedzkim gotowaniu
+why: >-
+  A short card leaves revenue, channels, partners and impact unanswered; the
+  suggestions must start there and borrow from a known innovation.
+idea:
+  example: 0
+expect:
+  items_min: 3
+  inspirations_min: 1
+  blocks_any: [revenue, channels, partners, impact]
+  avoids:
+    suggestions: "\\bK\\d{2}\\b|!"

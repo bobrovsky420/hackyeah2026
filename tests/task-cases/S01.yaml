@@ -1,0 +1,9 @@
+id: S01
+task: show
+title: Schemat wniosku CANVAS o wypożyczalni sprzętu rehabilitacyjnego
+why: The diagram must take who, what, for whom, with whom and what changes from the application.
+idea:
+  example: 1
+expect:
+  mentions:
+    what: "wypożycz|sprzęt|rehabilit"

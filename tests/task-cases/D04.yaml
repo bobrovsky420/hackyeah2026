@@ -1,0 +1,14 @@
+id: D04
+task: develop
+title: Rozwiń krótkie zgłoszenie, do którego katalog nie ma podobnych rozwiązań
+why: >-
+  With no sources the model must not write inspirations: on the first runs
+  it named a source "K01" it was never given, and the check dropped it.
+idea:
+  example: 0
+  similar: []
+expect:
+  items_min: 3
+  inspirations_min: 0
+  avoids:
+    suggestions: "\\bK\\d{2}\\b|!"

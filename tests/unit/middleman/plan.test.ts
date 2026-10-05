@@ -78,6 +78,12 @@ describe("servicePlan", () => {
     ]);
   });
 
+  it("takes an adaptation without its constraint key as a general one", async () => {
+    const plan = (await servicePlan(ID, input, live(fakeLlm({ ...good, adaptations: [good.adaptations[0], { text_pl: "Zacznij od jednej grupy seniorów, a kolejne zaproś po pierwszych spotkaniach." }] }))))!;
+    expect(plan.source).toBe("model");
+    expect(plan.adaptations).toContainEqual({ constraint: null, text: "Zacznij od jednej grupy seniorów, a kolejne zaproś po pierwszych spotkaniach." });
+  });
+
   it("puts the template in place of a part that fails the checks", async () => {
     const item = catalogue().innovationById.get(ID)!;
     const template = templateParts(item, input);

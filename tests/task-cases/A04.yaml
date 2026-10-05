@@ -1,0 +1,17 @@
+id: A04
+task: adapt
+title: Grupa mieszkańców w gminie Mszana Dolna, gra o zmianie w okolicy dla dzieci
+why: >-
+  Residents who rarely go online: the adaptation must reach people without
+  the internet, and the paths are the residents' own.
+innovation: inn-nat-bunja
+input:
+  institution: mieszkancy
+  place_terc: "1207092"
+  constraints: [cyfrowe]
+  scale: pilot
+expect:
+  mentions:
+    first_role: "Twoja instytucja|mieszkań|grupa"
+    adaptations: "osobiś|telefon|ogłosze|spotka|plakat|ulotk"
+  paths_any: [inicjatywa-lokalna, budzet-obywatelski, malopolska-lokalnie, fundusz-solecki]

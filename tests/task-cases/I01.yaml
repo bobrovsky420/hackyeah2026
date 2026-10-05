@@ -1,0 +1,10 @@
+id: I01
+task: inspire
+title: Inspiracje z innych dziedzin dla sąsiedzkiego gotowania
+why: The inspirations must come from innovations made for other groups and say how to borrow them.
+idea:
+  example: 0
+expect:
+  items_min: 1
+  avoids:
+    suggestions: "\\bK\\d{2}\\b|!"
