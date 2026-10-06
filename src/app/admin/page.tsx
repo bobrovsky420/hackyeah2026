@@ -3,6 +3,8 @@ import { markSeen } from "@/app/admin/actions";
 import { AdminLogin, gate } from "@/components/admin/admin-gate";
 import { AdminShell, wasSaved } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
+import { StatusChip } from "@/components/admin/status-chip";
+import { NewBadge } from "@/components/ui/new-badge";
 import { formatDate } from "@/lib/dates";
 import { t, type MessageKey } from "@/lib/i18n";
 import { pluralPl } from "@/lib/text";
@@ -96,16 +98,10 @@ export default async function AdminStartPage({ searchParams }: PageProps<"/admin
                     <Link href={item.href} className="font-bold">
                       {item.summary}
                     </Link>
-                    <span className="text-[0.95rem]">
+                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.95rem]">
                       <span className="text-muted-foreground">{t(TODO_KINDS[item.key])}</span>
-                      {" · "}
-                      {waitText(item.days)}
-                      {late && (
-                        <>
-                          {" · "}
-                          <span className="font-bold text-destructive">{t("admin.todo.overdue")}</span>
-                        </>
-                      )}
+                      <StatusChip tone={item.days === 0 ? "new" : "progress"}>{waitText(item.days)}</StatusChip>
+                      {late && <StatusChip tone="late">{t("admin.todo.overdue")}</StatusChip>}
                     </span>
                   </li>
                 );
@@ -145,8 +141,8 @@ export default async function AdminStartPage({ searchParams }: PageProps<"/admin
               <p>
                 {t("admin.start.waiting")} <span className="font-bold tabular-nums">{item.waiting}</span>
               </p>
-              <p className={item.fresh > 0 ? "font-bold" : "text-muted-foreground"}>
-                {t("admin.start.fresh")} <span className="tabular-nums">{item.fresh}</span>
+              <p className={item.fresh > 0 ? "flex flex-wrap items-center gap-2 font-bold" : "text-muted-foreground"}>
+                {t("admin.start.fresh")} {item.fresh > 0 ? <NewBadge>{String(item.fresh)}</NewBadge> : <span className="tabular-nums">0</span>}
               </p>
             </li>
           ))}

@@ -4,6 +4,7 @@ import { AdminShell, wasSaved } from "@/components/admin/admin-shell";
 import { DecisionForm, ModerationState } from "@/components/admin/decision-form";
 import { Button } from "@/components/ui/button";
 import { controlClass, Label } from "@/components/ui/field";
+import { StatusChip, statusTone } from "@/components/admin/status-chip";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
 import { contactStatusCodes, contactStatusLabel } from "@/server/admin/labels";
@@ -37,8 +38,9 @@ export default async function AdminContactsPage({ searchParams }: PageProps<"/ad
                 {item.demo && ` · ${t("admin.demo")}`}
               </p>
               <p className="whitespace-pre-line">{item.message}</p>
-              <p>
-                <span className="font-bold">{t("admin.contacts.status")}</span> {contactStatusLabel(item.status)}
+              <p className="flex flex-wrap items-center gap-2">
+                <span className="font-bold">{t("admin.contacts.status")}</span>
+                <StatusChip tone={statusTone(item.status)}>{contactStatusLabel(item.status)}</StatusChip>
               </p>
               <ModerationState moderation={item.moderation} />
               {item.moderation.status === "do-weryfikacji" && (

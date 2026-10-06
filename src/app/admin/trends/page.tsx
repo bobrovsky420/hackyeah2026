@@ -125,6 +125,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
           <>
             <div className="grid content-start gap-2">
               <BarTable
+                journey="ask"
                 caption={t("admin.trends.questionsByGroup")}
                 keyHeader={t("admin.trends.group")}
                 rows={rows(data.questionsByGroup, groupLabel, (key) => behind("/rops/trendy/pytania", { grupa: key }, days))}
@@ -137,6 +138,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
               </p>
             </div>
             <BarTable
+              journey="need"
               caption={t("admin.trends.needsByGroup")}
               keyHeader={t("admin.trends.group")}
               rows={rows(data.needsByGroup, groupLabel, (key) => behind("/rops/potrzeby", { kategoria: key }, days))}
@@ -144,6 +146,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
               changeNote={changeNote}
             />
             <BarTable
+              journey="need"
               caption={t("admin.trends.needsByPowiat")}
               keyHeader={t("admin.trends.powiat")}
               rows={rows(
@@ -155,6 +158,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
               changeNote={changeNote}
             />
             <BarTable
+              journey="need"
               caption={t(period.grain === "week" ? "admin.trends.needsByWeek" : "admin.trends.needsByMonth")}
               keyHeader={t(period.grain === "week" ? "admin.trends.week" : "admin.trends.month")}
               rows={data.needsOverTime.map((row) => ({
@@ -169,6 +173,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
         {view === "pomysly" && (
           <>
             <BarTable
+              journey="idea"
               caption={t("admin.trends.ideasByGroup")}
               keyHeader={t("admin.trends.group")}
               rows={rows(data.ideasByGroup, groupLabel, (key) => behind("/rops/pomysly", { grupa: key }, days))}
@@ -176,6 +181,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
               changeNote={changeNote}
             />
             <BarTable
+              journey="idea"
               caption={t("admin.trends.ideasByStage")}
               keyHeader={t("card.stage")}
               rows={rows(
@@ -187,6 +193,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
               changeNote={changeNote}
             />
             <BarTable
+              journey="idea"
               caption={t("admin.trends.ideasByForm")}
               keyHeader={t("admin.ideas.formField")}
               rows={rows(
@@ -217,6 +224,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
         {view === "drogi" && (
           <>
             <BarTable
+              journey="need"
               caption={t("admin.trends.routesByMode")}
               keyHeader={t("admin.trends.mode")}
               rows={rows(data.routesByMode, (key) => routeModeLabel(key))}
@@ -224,6 +232,7 @@ export default async function AdminTrendsPage({ searchParams }: PageProps<"/admi
               changeNote={changeNote}
             />
             <BarTable
+              journey="need"
               caption={t("admin.trends.topRecommended")}
               keyHeader={t("admin.trends.innovation")}
               rows={rows(

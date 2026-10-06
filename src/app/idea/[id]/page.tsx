@@ -13,6 +13,9 @@ import { SimilarPending } from "@/components/idea/similar-pending";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
+import { JourneyMark } from "@/components/ui/journey-mark";
+import { FitMeter } from "@/components/ui/badges";
+import { GeneratedLine } from "@/components/ui/generated-note";
 import { getGmina, getInnovation } from "@/lib/catalogue";
 import { formatDate } from "@/lib/dates";
 import { t } from "@/lib/i18n";
@@ -72,7 +75,10 @@ export default async function IdeaPage({ params, searchParams }: PageProps<"/ide
     <article aria-labelledby="naglowek-fiszki" className="grid max-w-[48rem] gap-8">
       <FocusOnMount targetId="naglowek-fiszki" />
       <header className="grid gap-2">
-        <p className="font-bold text-muted-foreground">{t(idea.kind === "pomysl" ? "card.eyebrow.pomysl" : "card.eyebrow.praktyka")}</p>
+        <p className="flex items-center gap-2 font-bold text-muted-foreground">
+          <JourneyMark journey="idea" size="sm" />
+          {t(idea.kind === "pomysl" ? "card.eyebrow.pomysl" : "card.eyebrow.praktyka")}
+        </p>
         <h1 id="naglowek-fiszki" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
           {idea.title}
         </h1>
@@ -170,7 +176,7 @@ export default async function IdeaPage({ params, searchParams }: PageProps<"/ide
                   <h3 className="text-[1.1rem] font-bold">
                     <Link href={`/innowacja/${innovation.id}`}>{innovation.title}</Link>
                   </h3>
-                  <p className="text-muted-foreground">{t("card.similar.score", { score: match.fit_score })}</p>
+                  <FitMeter score={match.fit_score} text={t("card.similar.score", { score: match.fit_score })} />
                   <p>
                     <span className="font-bold">{t("card.similar.fits")}</span> {match.what_fits_pl}
                   </p>
@@ -182,7 +188,7 @@ export default async function IdeaPage({ params, searchParams }: PageProps<"/ide
                 </li>
               ))}
             </ul>
-            <p className="text-muted-foreground">{t("card.similar.generated")}</p>
+            <GeneratedLine>{t("card.similar.generated")}</GeneratedLine>
           </>
         )}
       </Section>

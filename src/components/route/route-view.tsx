@@ -1,9 +1,11 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BookOpen, Puzzle, Signpost, Users, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ReportLink } from "@/components/report/report-link";
 import { buttonVariants } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
+import { JourneyMark } from "@/components/ui/journey-mark";
+import { GeneratedNote } from "@/components/ui/generated-note";
 import type { Channel, Route, SensitiveTopic } from "@/lib/contracts";
 import { t, type MessageKey } from "@/lib/i18n";
 import { knowledgeTypeLabel, roleLabel, targetGroupLabel, telHref } from "@/lib/labels";
@@ -11,6 +13,7 @@ import { allPaths, getInnovation } from "@/lib/catalogue";
 import { placeText, placeWhere } from "@/lib/places";
 import { pluralPl } from "@/lib/text";
 import { cn } from "@/lib/utils";
+import { BlockHeading } from "./block-heading";
 import { ClarificationForm } from "./clarification-form";
 import { CrisisBanner } from "./crisis-banner";
 import { FocusOnMount } from "./focus-on-mount";
@@ -40,15 +43,10 @@ function channelHref(channel: Channel): string {
   return channel.value;
 }
 
-function Block({ id, title, lead, children }: { id: string; title: string; lead: string; children: ReactNode }) {
+function Block({ id, icon, title, lead, children }: { id: string; icon: LucideIcon; title: string; lead: string; children: ReactNode }) {
   return (
-    <section aria-labelledby={id} className="grid gap-4 border-t border-border pt-8">
-      <div className="grid gap-1">
-        <h2 id={id} className="text-[1.4rem] font-bold @3xl:text-[1.6rem]">
-          {title}
-        </h2>
-        <p className="text-muted-foreground">{lead}</p>
-      </div>
+    <section aria-labelledby={id} className="grid gap-4 pt-6">
+      <BlockHeading id={id} icon={icon} title={title} lead={<p className="text-muted-foreground">{lead}</p>} />
       {children}
     </section>
   );
@@ -132,7 +130,7 @@ export function RouteView({ route, markdown, similar }: { route: Route; markdown
   const hasPlace = route.input.place_terc !== null;
 
   return (
-    <div className="grid gap-10 @4xl:grid-cols-[minmax(0,1fr)_18rem] @4xl:items-start @4xl:gap-12">
+    <div data-journey="need" className="grid gap-10 @4xl:grid-cols-[minmax(0,1fr)_18rem] @4xl:items-start @4xl:gap-12">
       <FocusOnMount targetId="naglowek-drogi" />
       <div className="grid min-w-0 gap-8">
         {topics.some((topic) => exitTopics.includes(topic)) && <QuickExit />}
@@ -141,7 +139,10 @@ export function RouteView({ route, markdown, similar }: { route: Route; markdown
             <ArrowLeft aria-hidden className="size-5" />
             {t("route.changeText")}
           </Link>
-          <p className="font-bold text-muted-foreground">{t("route.eyebrow")}</p>
+          <p className="flex items-center gap-2 font-bold text-muted-foreground">
+            <JourneyMark journey="need" size="sm" />
+            {t("route.eyebrow")}
+          </p>
           <h1
             id="naglowek-drogi"
             tabIndex={-1}
@@ -206,14 +207,15 @@ export function RouteView({ route, markdown, similar }: { route: Route; markdown
 
         {!isRoute && route.clarification_needed && route.input.problem_text && <ClarificationForm routeId={route.id} />}
 
-        <Notice title={t(isRoute ? "route.generated.title" : "route.generated.titlePartial")}>
+        <GeneratedNote title={t(isRoute ? "route.generated.title" : "route.generated.titlePartial")}>
           {route.summary_pl && <p>{route.summary_pl}</p>}
           <p className="text-[0.95rem] text-muted-foreground">{route.label_pl}</p>
-        </Notice>
+        </GeneratedNote>
 
         {route.solutions.length > 0 && (
           <Block
             id="rozwiazania"
+            icon={Puzzle}
             title={t(isRoute ? "s2.block.solutions.title" : "s3.block.nearest.title")}
             lead={t(isRoute ? "s2.block.solutions.lead" : "s3.block.nearest.lead")}
           >
@@ -248,7 +250,7 @@ export function RouteView({ route, markdown, similar }: { route: Route; markdown
         )}
 
         {isRoute && route.knowledge.length > 0 && (
-          <Block id="wiedza" title={t("s2.block.knowledge.title")} lead={t("s2.block.knowledge.lead")}>
+          <Block id="wiedza" icon={BookOpen} title={t("s2.block.knowledge.title")} lead={t("s2.block.knowledge.lead")}>
             <ul className="grid list-disc gap-2 pl-6">
               {route.knowledge.map((item) => (
                 <li key={item.url}>
@@ -260,12 +262,13 @@ export function RouteView({ route, markdown, similar }: { route: Route; markdown
           </Block>
         )}
 
-        <Block id="ludzie" title={t("s2.block.people.title")} lead={t("s2.block.people.lead")}>
+        <Block id="ludzie" icon={Users} title={t("s2.block.people.title")} lead={t("s2.block.people.lead")}>
           <People route={route} />
         </Block>
 
         <Block
           id="sciezka"
+          icon={Signpost}
           title={t("s2.block.paths.title")}
           lead={t(isRoute ? "s2.block.paths.lead" : "s3.block.paths.lead")}
         >

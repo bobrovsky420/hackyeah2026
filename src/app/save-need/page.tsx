@@ -19,7 +19,7 @@ export default async function SaveNeedPage({ searchParams }: PageProps<"/save-ne
   const gmina = getGmina(route?.input.place_terc);
 
   return (
-    <InfoPage
+    <InfoPage journey="need"
       title={t("s9c.title")}
       lead={t("s9c.lead")}
       top={

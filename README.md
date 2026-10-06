@@ -5,8 +5,10 @@ ROPS Kraków plans for the Małopolska Social Innovation Hub, built for the
 HubMI.pl partner task of HackYeah 2026. It answers the partner's
 question: how do proven solutions to social problems reach the places
 that need them? Around the pilot, the ROPS panel at `/rops` is built:
-moderation, replies to authors, live knowledge edits and the trends of
-the needs. The roles at ROPS remain a proposed roadmap.
+a to-do list, moderation, replies to authors, live knowledge edits and
+the trends. The roles at ROPS remain a proposed roadmap. All seven
+modules of the partner's brief are built; the one part missing is the
+generator of applications for grant calls in module III.
 
 ## Live demo
 
@@ -18,6 +20,8 @@ checkout as [Quick start](#quick-start) says. The ROPS panel is at
 
 ## What it is
 
+The start page offers four ways in, phrased as what a person has: a
+problem in their area, an idea, an offer of help, a question to ROPS.
 A resident, a social worker, an NGO leader or a municipal official
 describes a need in plain Polish and picks their municipality (gmina).
 The answer is a route, not a list:
@@ -42,6 +46,10 @@ needs bank and drafts the brief for the next incubator call, with a
 duplicate check against the existing innovations. Needs become the
 demand signal the incubators lack today.
 
+The map at `/mapa` turns the question around: for an innovation, the
+gminas whose GUS indicators show the need, where it already runs and
+where needs were filed, each layer also as a table.
+
 A person with an idea, or with a practice already tried in microscale,
 fills in an idea card: what it is, its essence, whom it is for and how
 far it got. Or they fill in the CANVAS application, the INNO AGH
@@ -49,6 +57,27 @@ Social Innovation Canvas asked one block at a time: problem, actors of
 change, solution, recipients, value, costs, revenue, channels, partners
 and impact. The card's own page shows the proven solutions closest to
 it, with what is similar and what differs, quoted from the catalogue.
+
+An assistant then helps develop the idea, in one action ("Poproś
+asystenta o pomoc"): questions and inspirations for the weakest blocks of
+the canvas ("Podpowiedzi"), a diagram of who does what, for whom, with
+whom and what changes ("Schemat pomysłu"), and innovations made for
+other groups that the idea could borrow from ("Inspiracje z innych
+dziedzin"). A short card can grow into a CANVAS application ("Rozbuduj
+do wniosku CANVAS"): the wizard starts from its answers and shows the
+assistant's suggestions at each step, and the two cards link to each
+other.
+
+An institution that wants to run an innovation itself asks for a
+service plan ("Dostosuj do mojej instytucji", on every innovation's
+page). Its kind, gmina, constraints (a small budget, no full post, no
+premises, distant users, a quick start, users rarely online), scale and
+main target group give a plan: how the service would run there, who
+does what, one adaptation per constraint and three first steps. What
+the innovation needs, its cost, the funding paths for the institution's
+role and gmina, and who already runs it, nearest first, come from the
+data, never from the model. The plan prints and downloads, and is not
+stored.
 
 Every innovation can be rated, commented on and improved, and people
 and organisations can sign up to test it. Its page shows only the
@@ -62,7 +91,10 @@ ROPS answers in its panel and can invite a mentor, who gets a private
 link of their own. The partnership board shows the posts ROPS approved,
 from NGOs, gminas, institutions, businesses, universities and residents;
 an answer goes through ROPS, so no contact is public. Nothing is sent by
-e-mail, and only the hashes of the links' keys are stored.
+e-mail, and only the hashes of the links' keys are stored. Instead,
+"Moje sprawy" in the header lists the conversations and idea cards sent
+from this browser and marks "nowe" when ROPS or a mentor has answered
+since the last visit.
 
 It is not a web search: it never looks at the open internet, only at a
 closed catalogue of 381 described and attributed innovations. And it is
@@ -77,19 +109,30 @@ The concept goes beyond the software: ROPS would run the service in
 three roles (category advisor, catalogue editor, needs-bank coordinator)
 and close three loops: need to implementation, need to new innovation,
 innovation to places. The roles are the proposed roadmap; the panel
-they would work in is built (decision R.3). It moderates every idea
-card, evaluation, need, contact request, registration and content
-report, answers the author of an idea on the card's own page, edits
-the knowledge of the routes without a data release (verified or hidden
-innovations, a corrected summary, an added film, new or edited
-knowledge items), shows the trends of the needs and exports every
-queue as CSV for Excel. It opens with the shared code of `ROPS_TOKEN`;
-a production server without it keeps the panel locked.
+they would work in is built (decision R.3). It opens with "Do
+zrobienia": everything that waits for a person at ROPS in one list,
+oldest first, marked "po terminie" after five working days, while the
+number of new entries beside each section and in the tab's title tells
+the reviewer what came in. It moderates every idea card, evaluation,
+need, contact request, registration and content report, answers the
+author of an idea on the card's own page, edits the knowledge of the
+routes without a data release (verified or hidden innovations, a
+corrected summary, an added film, new or edited knowledge items), shows
+the assistant's results with each card, and exports every queue as CSV
+for Excel. Its trends count the questions, needs, ideas, ratings and
+routes for a chosen period, with the change against the period before,
+and every bar leads to the entries behind it. The panel takes the
+shared code of `ROPS_TOKEN`; a production server without it keeps the
+panel locked.
 
 Built for everyone: a Polish interface in Atkinson Hyperlegible, a
 typeface designed for readers with low vision, 7:1 text contrast, three
 display themes, full keyboard use, a phone layout and an axe check of
-every screen. Blind users can use it with a screen reader.
+every screen. Blind users can use it with a screen reader. Colour helps
+without carrying meaning alone: each of the four ways in has a colour of
+the Małopolska pictogram, carried to its menu item, its pages and the
+route's sections, always beside words and an icon, and checked at 7:1 in
+every theme.
 
 ## Quick start
 
@@ -171,6 +214,15 @@ already decide, and the composer's when nothing is shortlisted.
    logged with the reviewer's name. The tool never decides anything
    about an individual.
 
+Beyond the route, the same model writes more, each text only from the
+data it is given: the incubator brief of a need with no proven
+solution (`brief.md`), the idea assistant's three tasks (`develop.md`,
+`show.md`, `inspire.md`) and the Middleman's service plan (`adapt.md`).
+Every text is checked for names, numbers, amounts and dates its sources
+do not carry; a part that fails takes a template made from the data, and
+without a model the whole answer comes from the templates. Text a model
+wrote carries one mark, a sparkles icon, so a reader always knows.
+
 The ten ethics principles behind this (dignity, do no harm, a person in
 crisis gets a person, no decisions about individuals, privacy by design,
 people in the loop, fairness, honesty about the machine, accessibility
@@ -190,7 +242,7 @@ flowchart TD
         pages["<b>Pages and /api/*</b>"] --> gate["<b>Gate</b>"] --> matcher["<b>Matcher</b>"] --> composer["<b>Composer</b>"] --> needs["<b>Needs bank</b>"]
     end
 
-    entries[("<b>Entries store</b><br>one JSON file: needs, contacts,<br>registrations, reports, logs")]
+    entries[("<b>Entries store</b><br>one JSON file: needs, ideas,<br>conversations, contacts, reports, logs")]
     llm["<b>Model adapter</b><br>Bielik on the HF router, then Claude,<br>then the replay recording"]
     embed["<b>Embedding service</b><br>PolDense-400M, Python"]
     catalogue[("<b>Catalogue</b><br>data/, JSON, read-only")]
@@ -220,8 +272,12 @@ flowchart TD
   without the network. A replay cache keeps a route stable for the same
   need.
 - **Model layer** (`src/lib/llm/`): one adapter over Bielik on the
-  Hugging Face router, then Claude, then recorded answers; the prompts
-  are versioned files in `prompts/`.
+  Hugging Face router, then Claude, then recorded answers. Any
+  OpenAI-compatible host can stand in for the router through
+  `OPENAI_COMPAT_BASE_URL`, `OPENAI_COMPAT_MODEL` and
+  `OPENAI_COMPAT_API_KEY` (any value for a local host), for example
+  Bielik in LM Studio on a laptop. The prompts are versioned files in
+  `prompts/`.
 - **Retriever**: PolDense-400M in a small Python service; when it is
   down, the matcher falls back to a lexical scorer, so the app keeps
   answering.
@@ -229,7 +285,8 @@ flowchart TD
   from the two source catalogues and public GUS data, shipped as a
   versioned data release and read by the app through one facade. The
   record contract is [docs/innovation-record.md](docs/innovation-record.md).
-- **Storage**: no database; the entries (needs, contact requests,
+- **Storage**: no database; the entries (needs, idea cards,
+  conversations, partnership posts, evaluations, contact requests,
   registrations, reports, logs) are kept in memory and saved to one
   JSON file after every change, with retention run by the server.
 - **Deployment**: one Ubuntu server on AWS Lightsail, the

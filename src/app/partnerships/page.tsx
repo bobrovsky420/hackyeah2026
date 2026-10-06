@@ -26,7 +26,7 @@ export default async function PartnershipsPage({ searchParams }: PageProps<"/par
   );
 
   return (
-    <InfoPage title={t("talk.board.title")} lead={t("talk.board.lead")}>
+    <InfoPage journey="help" title={t("talk.board.title")} lead={t("talk.board.lead")}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <form method="get" className="no-print grid gap-2 @xl:grid-cols-[minmax(0,18rem)_auto] @xl:items-end">
           <div className="grid gap-1">

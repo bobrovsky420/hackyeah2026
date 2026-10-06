@@ -779,7 +779,7 @@ test("module VI: Do zrobienia lists what waits across the queues, oldest first, 
   const todo = page.getByRole("region", { name: "Do zrobienia" });
   await expect(todo.getByText(/^Czeka: \d+\./)).toBeVisible();
   const first = todo.getByRole("listitem").first();
-  await expect(first.getByText(/ · czeka (od dziś|\d+ (dzień roboczy|dni robocze|dni roboczych))/)).toBeVisible();
+  await expect(first.getByText(/^czeka (od dziś|\d+ (dzień roboczy|dni robocze|dni roboczych))$/)).toBeVisible();
   // The example idea card waits for its first look.
   const card = todo.getByRole("listitem").filter({ hasText: "Sąsiedzka wypożyczalnia sprzętu rehabilitacyjnego (wpis przykładowy)" });
   await expect(card.getByText("Zgłoszenie pomysłu")).toBeVisible();

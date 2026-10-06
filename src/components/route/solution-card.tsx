@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Attribution } from "@/components/innovation/attribution";
 import { buttonVariants } from "@/components/ui/button";
+import { FitMeter, SourceBadge, VerifiedBadge } from "@/components/ui/badges";
 import type { RouteSolution } from "@/lib/contracts";
 import { t } from "@/lib/i18n";
 import {
@@ -9,7 +10,6 @@ import {
   fitLabel,
   implementerLabels,
   quoteFieldLabel,
-  sourceBadge,
   timeLabel,
   whereItRunsLabel,
 } from "@/lib/labels";
@@ -37,10 +37,8 @@ export function SolutionCard({
     <article aria-labelledby={headingId} className="grid gap-4 rounded-lg border border-border bg-background p-5">
       <div className="grid gap-1.5">
         <div className="flex flex-wrap gap-2">
-          <p className="rounded-sm border border-input px-2 text-[0.9rem] font-bold text-muted-foreground">{sourceBadge(item.source)}</p>
-          {solution.verified_by_rops && (
-            <p className="rounded-sm border-2 border-foreground px-2 text-[0.9rem] font-bold">{t("admin.verifiedBadge")}</p>
-          )}
+          <SourceBadge source={item.source} />
+          {solution.verified_by_rops && <VerifiedBadge />}
         </div>
         <h3 id={headingId} className="text-[1.25rem] leading-snug font-bold">
           <Link href={detailsHref}>{item.title}</Link>
@@ -48,10 +46,7 @@ export function SolutionCard({
         {item.organisation && <p>{item.organisation}</p>}
       </div>
 
-      <p className="flex flex-wrap items-baseline gap-x-3 font-bold">
-        {fitLabel(solution.fit_score)}
-        <span className="font-normal text-muted-foreground tabular-nums">{t("fit.score", { score: solution.fit_score })}</span>
-      </p>
+      <FitMeter score={solution.fit_score} label={fitLabel(solution.fit_score)} text={t("fit.score", { score: solution.fit_score })} />
 
       <div className="grid gap-2">
         <h4 className="font-bold">{t(partial ? "s3.card.matches" : "s2.card.why")}</h4>
@@ -114,7 +109,7 @@ export function SolutionCard({
         <Link href={detailsHref} className={buttonVariants({ variant: "secondary" })}>
           {t("s2.card.details")}
         </Link>
-        <Link href={`/kontakt?innowacja=${item.id}&droga=${routeId}`} className={buttonVariants({ variant: "secondary" })}>
+        <Link href={`/kontakt?innowacja=${item.id}&droga=${routeId}`} className={buttonVariants()}>
           {t("s2.card.contact")}
         </Link>
       </div>

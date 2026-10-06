@@ -37,7 +37,7 @@ export default async function CanvasPage({ searchParams }: PageProps<"/submit-id
   const from = typeof query.z === "string" ? await repository().getIdea(query.z) : undefined;
   const base = from && !from.demo && !from.canvas ? baseOf(from) : undefined;
   return (
-    <InfoPage
+    <InfoPage journey="idea"
       title={t("canvas.title")}
       afterTitle={
         <p>

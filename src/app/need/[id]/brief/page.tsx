@@ -6,7 +6,8 @@ import { SectionText } from "@/components/brief/section-text";
 import { DocumentActions } from "@/components/document-actions";
 import { ReportLink } from "@/components/report/report-link";
 import { FocusOnMount } from "@/components/route/focus-on-mount";
-import { Notice } from "@/components/ui/notice";
+import { JourneyMark } from "@/components/ui/journey-mark";
+import { GeneratedNote } from "@/components/ui/generated-note";
 import { t } from "@/lib/i18n";
 import { INCUBATOR_PAGE } from "@/server/needs/brief-template";
 import { repository } from "@/server/db";
@@ -46,7 +47,10 @@ export default async function BriefPage({ params }: PageProps<"/need/[id]/brief"
     <article aria-labelledby="naglowek-fiszki" className="grid max-w-[48rem] gap-8">
       <FocusOnMount targetId="naglowek-fiszki" />
       <header className="grid gap-2">
-        <p className="font-bold text-muted-foreground">{t("brief.eyebrow")}</p>
+        <p className="flex items-center gap-2 font-bold text-muted-foreground">
+          <JourneyMark journey="need" size="sm" />
+          {t("brief.eyebrow")}
+        </p>
         <p className="text-muted-foreground">{t("brief.titleLabel")}</p>
         <h1 id="naglowek-fiszki" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
           {stored.brief.title}
@@ -54,9 +58,9 @@ export default async function BriefPage({ params }: PageProps<"/need/[id]/brief"
       </header>
 
       {footer && (
-        <Notice title={t("brief.generated.title")}>
+        <GeneratedNote title={t("brief.generated.title")}>
           <SectionText text={footer.text} />
-        </Notice>
+        </GeneratedNote>
       )}
 
       <DocumentActions markdown={stored.markdown} filename={`fiszka-${need.id}.md`} />

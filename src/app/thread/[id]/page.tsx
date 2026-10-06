@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { RememberThread } from "@/components/talk/remember-thread";
 import { ReplyForm } from "@/components/talk/reply-form";
 import { Notice } from "@/components/ui/notice";
+import { JourneyMark } from "@/components/ui/journey-mark";
 import { getGmina, getInnovation, helplines } from "@/lib/catalogue";
 import type { Thread } from "@/lib/contracts";
 import { formatDate } from "@/lib/dates";
@@ -44,7 +45,10 @@ export default async function ThreadPage({ params, searchParams }: PageProps<"/t
     <article aria-labelledby="naglowek-rozmowy" className="grid max-w-[48rem] gap-8">
       {role === "uzytkownik" && <RememberThread id={thread.id} keyValue={key} subject={thread.subject} />}
       <header className="grid gap-2">
-        <p className="font-bold text-muted-foreground">{topicLabel(thread.topic)}</p>
+        <p className="flex items-center gap-2 font-bold text-muted-foreground">
+          <JourneyMark journey="ask" size="sm" />
+          {topicLabel(thread.topic)}
+        </p>
         <h1 id="naglowek-rozmowy" tabIndex={-1} className="text-[1.75rem] leading-tight font-bold @3xl:text-[2.2rem]">
           {thread.subject}
         </h1>

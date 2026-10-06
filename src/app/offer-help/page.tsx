@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: t("s9b.meta.title") };
 /** S9b: "Chcę pomóc", the readiness registry. */
 export default function ReadinessPage() {
   return (
-    <InfoPage title={t("s9b.title")} lead={t("s9b.lead")}>
+    <InfoPage journey="help" title={t("s9b.title")} lead={t("s9b.lead")}>
       <Notice title={t("forms.prototype.title")}>
         <p>{t("forms.prototype.text")}</p>
       </Notice>
