@@ -1,0 +1,23 @@
+id: D03
+task: develop
+title: Rozwiń pomysł młodzieżowej pracowni naprawy rowerów w świetlicy
+why: >-
+  An idea written in the case, not an example of the store, with two similar
+  innovations to inspire from.
+idea:
+  title: Młodzieżowa pracownia naprawy rowerów w świetlicy wiejskiej
+  description: >-
+    W naszej wsi młodzież po lekcjach nie ma co robić. Chcemy otworzyć w
+    świetlicy pracownię, w której nastolatki pod okiem wolontariusza
+    naprawiają rowery sąsiadów i uczą się majsterkowania.
+  essence: Młodzież uczy się naprawiać i pomaga sąsiadom.
+  for_whom: Nastolatki z małej wsi i ich sąsiedzi.
+  target_groups: [dzieci-mlodziez-rodziny]
+  stage: pomysl
+  place_terc: "1211102"
+  similar: [inn-nat-wszystko-w-twoich-rekach-warsztaty-konstrukcyjne-3, inn-nat-bunja]
+expect:
+  items_min: 3
+  inspirations_min: 1
+  avoids:
+    suggestions: "\\bK\\d{2}\\b|!"

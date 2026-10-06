@@ -1,0 +1,14 @@
+id: D02
+task: develop
+title: Rozwiń wniosek CANVAS o wypożyczalni sprzętu rehabilitacyjnego
+why: >-
+  A full CANVAS application, with no weak block to lean on. The example card
+  has no similar innovations yet, so the case gives two, as the app would
+  compute them before the assistant runs.
+idea:
+  example: 1
+  similar: [inn-nat-biblioteka-senior-dla-seniora, inn-rops-sciezka-motosensoryczna]
+expect:
+  items_min: 3
+  avoids:
+    suggestions: "\\bK\\d{2}\\b|!"

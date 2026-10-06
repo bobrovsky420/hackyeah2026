@@ -1,0 +1,22 @@
+id: A01
+task: adapt
+title: Ośrodek pomocy w Laskowej, warsztaty komputerowe dla seniorów
+why: >-
+  The first live run gave every role to the school and none to the OPS, and
+  the funding paths once listed "Aktywny Maluch" for a senior service.
+innovation: inn-nat-649
+input:
+  institution: ops
+  place_terc: "1207062"
+  constraints: [budzet, dojazd]
+  scale: pilot
+  target_group: seniorzy
+  note: Mamy jedną pracownicę socjalną na pół etatu i świetlicę w remizie.
+expect:
+  mentions:
+    first_role: "Twoja instytucja|ośrod|OPS|pomocy społecznej|socjaln"
+    service: "warsztat|komputer"
+  avoids:
+    service: "!"
+  paths_exclude: [aktywny-maluch, asy-priorytet-v]
+  paths_any: [korpus-wsparcia-seniorow, cus-program-uslug]

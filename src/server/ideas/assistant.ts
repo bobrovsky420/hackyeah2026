@@ -47,7 +47,8 @@ export const developSchema = z.object({
         block: z.string(),
         kind: z.string(),
         text_pl: z.string(),
-        source: z.string().nullable(),
+        // Bielik leaves the key out of a question or an idea of its own about one run in four (decision A.17); missing is null.
+        source: z.string().nullish(),
       }),
     )
     .max(12),

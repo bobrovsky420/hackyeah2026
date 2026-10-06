@@ -1,0 +1,68 @@
+# The checks of every pull request and of main (12.5, 13.3, decision A.16):
+# lint, types, the audit of the production dependencies, the unit tests and
+# the golden cases of the model tasks against the data (no model call);
+# then, on a production build, the journeys and the axe check of every
+# screen in the three themes. Both jobs run on the data release named in
+# deploy/azure/settings.env, as the server does; the browser tests make no
+# model call (playwright.config.ts). deploy-azure.yml stays a manual run.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, types, audit and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/data
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - name: Audit of the production dependencies
+        run: pnpm audit --prod --audit-level high
+      - run: pnpm test
+      - name: Golden cases of the model tasks, against the data
+        run: pnpm eval:tasks --check
+
+  browser:
+    name: Journeys and accessibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/data
+      - name: Install Playwright's Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Journeys and the axe check
+        run: pnpm exec playwright test --project=e2e --project=a11y
+      - name: Keep the report of a failed run
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: .local/playwright-report
+          retention-days: 7

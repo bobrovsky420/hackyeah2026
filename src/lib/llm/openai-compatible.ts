@@ -111,8 +111,8 @@ export class OpenAiCompatProvider implements LlmProvider {
         return this.complete(call, messages, options);
       }
       const kind = errorKind(error);
-      const status = error instanceof APIError && error.status ? ` ${error.status}` : "";
-      throw new LlmError(kind, call.task, `${this.id}: ${kind}${status}`, this.name);
+      const status = error instanceof APIError && error.status ? error.status : null;
+      throw new LlmError(kind, call.task, `${this.id}: ${kind}${status ? ` ${status}` : ""}`, this.name, status);
     }
   }
 

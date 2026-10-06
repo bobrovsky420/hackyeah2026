@@ -1,6 +1,7 @@
 import { anthropicConfig, llmProvider, llmReplayDir, llmTimeouts, openAiCompatConfig, type LlmProviderName } from "@/lib/env";
 import { AnthropicProvider } from "./anthropic";
 import { createLlm } from "./chain";
+import { healthOf, probe, type LlmHealth } from "./health";
 import { OpenAiCompatProvider } from "./openai-compatible";
 import type { LlmProvider } from "./provider";
 import { createReplayStore } from "./replay";
@@ -19,6 +20,7 @@ export { createLlm, type LlmChainOptions } from "./chain";
 export { loadPrompt, PromptError, type Prompt } from "./prompts";
 export { createReplayStore, replayKey, type ReplayStore } from "./replay";
 export { getLlmCounters, toStageLog, estimateCostUsd, type LlmCounter } from "./observability";
+export type { LlmHealth, LlmHealthStatus } from "./health";
 export type { LlmProvider } from "./provider";
 export { LlmError } from "./types";
 export type { Llm, LlmCall, LlmResult, LlmTask, LlmErrorKind } from "./types";
@@ -65,4 +67,16 @@ export function describeLlm(): { provider: string; model: string | null; configu
     model: head ? head.model : null,
     configured: configured.map((provider) => provider.id),
   };
+}
+
+/** Whether the first configured provider answers (health.ts), from the notes of the calls and the probe. */
+export function getLlmHealth(): LlmHealth {
+  const { providers, head } = build();
+  return healthOf(providers, head === "replay");
+}
+
+/** Checks the first configured provider with one tiny call when its notes are old; resolves when done. */
+export function probeLlm(): Promise<void> {
+  const { providers, head } = build();
+  return probe(providers, head === "replay");
 }

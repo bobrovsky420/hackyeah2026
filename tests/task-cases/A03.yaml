@@ -1,0 +1,18 @@
+id: A03
+task: adapt
+title: Stowarzyszenie rodziców w gminie Bochnia, przerwa regeneracyjna dla opiekunów
+why: >-
+  An organisation with two volunteers and a quick start: the paths must be
+  the organisations' calls, not the nursery programme.
+innovation: inn-nat-program-przerwy-regeneracyjnej-2
+input:
+  institution: ngo
+  place_terc: "1201022"
+  constraints: [szybko, budzet]
+  scale: grupa
+  note: Jesteśmy stowarzyszeniem rodziców, mamy dwóch wolontariuszy.
+expect:
+  mentions:
+    first_role: "Twoja instytucja|organizacj|stowarzysz"
+  paths_exclude: [aktywny-maluch, asy-priorytet-v]
+  paths_any: [otwarty-konkurs-ofert, proo, nowefio]

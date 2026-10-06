@@ -1,0 +1,10 @@
+id: S02
+task: show
+title: Schemat krótkiego zgłoszenia o sąsiedzkim gotowaniu
+why: A short card says nothing about partners or change; the model must not invent them.
+idea:
+  example: 0
+expect:
+  kept_min: 2
+  mentions:
+    what: "gotow|spotka|kuchni"

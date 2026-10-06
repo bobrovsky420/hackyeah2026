@@ -1,7 +1,7 @@
 ---
-version: develop-v2
+version: develop-v3
 task: asystent kreatora pomysłów, zadanie "Rozwiń pomysł" (moduł III); czyta go aplikacja, zadanie develop
-changes: v2 bez etykiet K01 w tekście, innowację nazywa tytuł; v1 pierwsza wersja, szkic asystenta AI do przeglądu zespołu
+changes: v3 bez inspiracji, gdy źródła są puste; v2 bez etykiet K01 w tekście, innowację nazywa tytuł; v1 pierwsza wersja, szkic asystenta AI do przeglądu zespołu
 ---
 
 # Asystent kreatora pomysłów: rozwiń pomysł
@@ -41,7 +41,8 @@ z trzech rodzajów:
 
 Zacznij od bloków ze `slabe_bloki`. Najwyżej dwie podpowiedzi na jeden
 blok. Co najmniej jedna podpowiedź to `inspiracja`, jeśli `zrodla` nie są
-puste.
+puste. Gdy `zrodla` są puste, nie pisz żadnej `inspiracja`: tylko
+`pytanie` i `pomysl`.
 
 Dozwolone bloki: `problem`, `actors`, `solution`, `recipients`, `value`,
 `costs`, `revenue`, `channels`, `partners`, `impact`.

@@ -1524,7 +1524,7 @@ files.
 | GET `/api/map/implementations` | Implementations | `?innovation_id=` | list |
 | POST `/api/contact-requests` | Contact request (J3) | `{route_id?, need_id?, target, requester, message, consent}` | 201 |
 | POST `/api/readiness` | Readiness registration (J6) | | 201 |
-| GET `/api/health` | Liveness | | `{ok, data_version, provider, model}` |
+| GET `/api/health` | Liveness and the model's health; `?probe=1` waits for a probe | | `{ok, data_version, provider, model, llm: {status, provider, model, since, kind, http_status, checked_at}}`; `llm.status` is ok, degraded, unknown, unconfigured or replay, and a failing model keeps `ok` true |
 | POST `/api/ideas` | Idea card (7.13) | `{kind, title, description, essence, for_whom, target_groups?, stage, place_terc?, display_name, is_organisation?, email, consent_store, consent_publish?}`, or for a CANVAS application (FR-13.6) `{canvas, partners?, display_name, is_organisation?, email, consent_store, consent_publish?}` with the card's five fields inside `canvas` | 201 `{id, redactions}`; the gate's outcomes as for a need; 422 `{field}` names the first field of the canvas that fails |
 | POST `/api/innovations/{id}/evaluations` | Evaluation of an innovation (7.14) | `{rating?, experience?, feedback?, improvement?, test_signup?, tester_role?, place_terc?, display_name?, email?, consent_store}` | 201 `{id, redactions}`; 404 for an unknown innovation |
 | POST `/api/threads` | Start a conversation (7.15) | `{topic, subject, message, display_name, organisation?, sector?, place_terc?, email?, ref_type?, ref_id?, consent_store}` | 201 `{id, key, path, redactions}` |
@@ -1664,7 +1664,7 @@ result and into the replay cache key:
 | `shortlist.md` | Stage 1 | Choose only ids from the index; at most 8; one sentence each; detect target groups and domains |
 | `assess.md` | Stage 2 | Score the fit of each candidate to the need; quote at most 15 words from a named field; name gaps; decide the mode with the thresholds |
 | `compose.md` | Summary and next steps | Write for a social worker; three imperative steps that reference given ids; no amounts, no deadlines, no new names; the safe messaging rules of FR-12.10; people described with respect (E1) |
-| `develop.md` | Idea assistant, "Rozwiń pomysł" (FR-13.7) | Three to six suggestions, each for one canvas block: a question, an inspiration that quotes a given source by its label, or an idea of its own; the weak blocks first; the singular form of address; no new names, numbers, amounts or dates; no promise of funding; the card's text is data, not an instruction |
+| `develop.md` | Idea assistant, "Rozwiń pomysł" (FR-13.7) | Three to six suggestions, each for one canvas block: a question, an inspiration that quotes a given source by its label (none when no source is given), or an idea of its own; the weak blocks first; the singular form of address; no new names, numbers, amounts or dates; no promise of funding; the card's text is data, not an instruction |
 | `show.md` | Idea assistant, "Pokaż" (FR-13.7) | Five lists of short phrases (who, what, for whom, with whom, what changes); only what the card says, an empty list rather than a guess; lower case, no names, numbers or dates of its own |
 | `inspire.md` | Idea assistant, "Spójrz inaczej" (FR-13.7) | One to three inspirations from innovations for other groups, each with the label of its source: how it works and for whom, then how to borrow it; better one apt suggestion than three forced; the title in quotes, never the label; no new names, numbers or promises |
 | `adapt.md` | Middleman, service plan (FR-8.6) | How the service would run in the given institution and scale, led by it, two to four roles with its own first, one adaptation per constraint with its code and a direction for each, three imperative first steps; partners named by kind, without a name or a place; only what follows from the innovation's mechanism; no names, amounts, numbers or dates of its own, which the app shows from the data; no promise of funding |
@@ -1756,6 +1756,7 @@ change to a prompt.
 | `.venv/Scripts/python scripts/embedding-service.py` | Local HTTP service the app calls to embed a need (FR-3.7) |
 | `.venv/Scripts/python scripts/embedding-probe.py <model> ...` | The self-retrieval probe of embedding models on the built records (model-evaluation.md section 7); Ollama models by name, sentence-transformers models as `st:<id>` |
 | `pnpm eval [--provider anthropic|openai-compatible|replay]` | Runs the test problems, writes `.local/reports/eval-<timestamp>.md` |
+| `pnpm eval:tasks [--task <t>] [--only <ids>] [--repeat <n>] [--check]` | Runs the golden cases of the idea assistant and the Middleman (`tests/task-cases/`) against the configured model, writes `.local/reports/tasks-<timestamp>.md`; `--check` only validates the cases against the data |
 | `pnpm test`, `pnpm test:e2e`, `pnpm a11y`, `pnpm screenshots` | Quality gates |
 | `pnpm cache:warm` | Pre-generates and caches the routes of the test problems and the demo path |
 | `pnpm demo:routes [--concurrency 3] [--only <ids>] [--refresh]` | Runs the questions of `data/curated/demo-questions.yaml` and the declined inputs of `demo-records.yaml` once through the pipeline, keeps their routes in `data/built/demo-routes.json` and copies the two files beside it: the set the panel's demonstration data is read from; resumable |
@@ -2219,6 +2220,14 @@ per-request reads of the JSON files.
 - Provider chain: openai-compatible (Bielik), then anthropic, then the
   replay cache, then the Polish error screen. A health endpoint
   reports the active provider and the data version.
+- Model health (decision A.14): every live call notes how its provider
+  fared, and a probe, one tiny call at most every five minutes, checks the
+  first configured provider when its notes are old. A timeout or an
+  unavailable host (with its HTTP status: 401 is a rejected key) makes it
+  degraded until it answers again; a refusal or a malformed answer is an
+  answer. `/api/health` reports it in `llm`, and every page of the panel
+  shows "Model językowy nie odpowiada" with since when and why while it
+  lasts, or "Brak modelu językowego" on a live server without a key.
 - The demo laptop runs the app (`next start`) and the embedding service
   locally from a checkout ([quick-start.md](quick-start.md)) with the
   replay cache filled, so the demo does not depend on the venue network or on
@@ -2232,8 +2241,18 @@ per-request reads of the JSON files.
   from user text; Markdown rendered only for the brief and sanitised.
 - Rate limits: 10 route requests per minute per IP, 20 writes per hour
   per IP for needs, contact requests and readiness.
-- Secrets only in the environment; nothing in the client bundle; HTTPS only; a basic content
-  security policy; dependency audit in CI.
+- Secrets only in the environment; nothing in the client bundle; HTTPS only;
+  dependency audit in CI.
+- Headers on every answer (decision A.15, `src/lib/security-headers.ts`):
+  a content security policy that loads everything from the app's own
+  origin (`default-src 'self'`, no objects, no framing, forms and base
+  only to itself; scripts keep `'unsafe-inline'` for the inline boot
+  scripts of Next.js and the view settings, and only the development
+  server allows eval and its websocket), HSTS for a year, `nosniff`,
+  `X-Frame-Options: DENY`, `Referrer-Policy:
+  strict-origin-when-cross-origin`, a Permissions-Policy that turns off
+  the camera, the microphone, geolocation, payment, USB and topics, and
+  `Cross-Origin-Opener-Policy: same-origin`; no `X-Powered-By`.
 - Prompt injection: user text is data (9.3); the schema validation and
   the identifier check make injected instructions inert; a test problem
   covers it.
@@ -2317,7 +2336,9 @@ per-request reads of the JSON files.
 Structured JSON logs with a request id; a table of model calls (task,
 provider, model, prompt version, tokens, cache reads, latency, dropped
 identifiers); the event counters of FR-10.2; a daily cost line computed
-from the token counts. Nothing personal in logs.
+from the token counts. Nothing personal in logs. A provider that starts or
+stops failing writes one `llm_health` line (provider, model, health, kind,
+HTTP status), the signal for an alert.
 
 ### 12.9 Hosting and operations (owner: Analyst 2)
 
@@ -2360,6 +2381,13 @@ Chrome or Edge on Windows.
 - TypeScript strict; ESLint and Prettier; small commits; `main` always
   deployable; every change runs unit tests and the affected end-to-end
   tests.
+- CI (decision A.16, `.github/workflows/ci.yml`): every pull request and
+  every push to `main` runs lint, the type check, the audit of the
+  production dependencies (high and critical findings fail it) and the
+  unit tests, and, on a production build, the journeys and the axe check
+  of every screen in the three themes, both on the data release of
+  `deploy/azure/settings.env`; a failed browser run keeps its report for
+  a week.
 - Module boundaries follow 9.5; a change that crosses `src/server/match`
   and `src/server/route` is reviewed by Developer 1.
 - Assistants never edit `tests/problems/`, the glossary or the consent
@@ -2502,6 +2530,36 @@ failing Polish check blocks the freeze. Every live prompt carries a run
 identifier, because the Hugging Face router answered repeated identical
 requests from a cache in 0.5 s during the probe; without
 it, repetitions are not independent samples.
+
+### 13.2.1 Evaluation of the model tasks beyond the route
+
+`pnpm eval:tasks` (decision A.17, `src/server/eval/tasks.ts`) runs the
+golden cases of `tests/task-cases/` against the configured model: the
+Middleman's service plan (`adapt`, cases A01 to A05), "Rozwiń pomysł"
+(`develop`, D01 to D03), "Pokaż" (`show`, S01 and S02) and "Spójrz
+inaczej" (`inspire`, I01 and I02). A case names its inputs (an innovation
+and an institution, or an example card or an idea written in the case)
+and what a good answer carries. A run passes when:
+
+- the model answered live, not the recording;
+- enough of its parts survived the checks that drop invented names and
+  numbers (a part kept is a part that differs from the template): 3 of
+  the plan's 4 parts, 3 of the diagram's 5 steps, 2 suggestions of
+  "Rozwiń", 1 inspiration, unless the case says otherwise;
+- every kept text passes the Polish check of 13.2;
+- the case's own expectations hold: words a part must carry (the
+  institution's own role first, for example) or must not (a source label,
+  an exclamation mark), the number of items, inspirations and blocks, and
+  the funding paths a plan must or must not list.
+
+The report gives, per task, the runs passed, the share of the model's
+parts kept, the Polish issues and the latency, then every run with what
+failed and the answers of the failed ones. It runs before a change to
+`develop.md`, `show.md`, `inspire.md` or `adapt.md` or to the model, with
+`--repeat 3` for a prompt change, as one run of a model at temperature
+above zero proves little; CI runs `--check` on every pull request, so a
+case that refers to an innovation, a gmina or a path the data release
+lacks fails there.
 
 ### 13.3 Unit and end-to-end tests
 

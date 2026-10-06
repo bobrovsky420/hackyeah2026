@@ -1,0 +1,23 @@
+# The data release of deploy/azure/settings.env, downloaded from GitHub and
+# unpacked into data/ with scripts/unpack-data.py (docs/data-setup.md): the
+# catalogue, places and paths the server reads, which are not in git.
+name: Data release
+description: Download and unpack the data release that the server runs on
+runs:
+  using: composite
+  steps:
+    - name: Download and unpack the data release
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        release=$(sed -n 's/^DATA_RELEASE=//p' deploy/azure/settings.env)
+        repo=$(sed -n 's/^DATA_REPO=//p' deploy/azure/settings.env)
+        repo=${repo:-$GITHUB_REPOSITORY}
+        if [ -z "$release" ]; then
+          echo "::error::no DATA_RELEASE in deploy/azure/settings.env"
+          exit 1
+        fi
+        mkdir -p .local/bundles
+        gh release download "data-$release" -R "$repo" -p "data-$release.zip" -D .local/bundles
+        python3 scripts/unpack-data.py ".local/bundles/data-$release.zip"

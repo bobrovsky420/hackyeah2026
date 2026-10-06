@@ -117,7 +117,7 @@ export class AnthropicProvider implements LlmProvider {
         throw new LlmError("timeout", call.task, "anthropic: timeout", this.name);
       }
       if (error instanceof APIError) {
-        throw new LlmError("unavailable", call.task, `anthropic: unavailable${error.status ? ` ${error.status}` : ""}`, this.name);
+        throw new LlmError("unavailable", call.task, `anthropic: unavailable${error.status ? ` ${error.status}` : ""}`, this.name, error.status ?? null);
       }
       // The parse helper throws when the text is not valid JSON for the schema.
       throw new LlmError("invalid_output", call.task, "anthropic: the answer failed the schema", this.name);

@@ -7,8 +7,8 @@ import type { z } from "zod";
  * so unit tests pass a fake one and never reach the network.
  */
 
-/** The request tasks of the app; extraction runs outside the app (FR-1.3). */
-export type LlmTask = "screen" | "shortlist" | "assess" | "compose" | "brief" | "develop" | "show" | "inspire" | "adapt";
+/** The request tasks of the app; extraction runs outside the app (FR-1.3). "probe" is the health check's tiny call (health.ts). */
+export type LlmTask = "screen" | "shortlist" | "assess" | "compose" | "brief" | "develop" | "show" | "inspire" | "adapt" | "probe";
 
 export type LlmEffort = "low" | "medium" | "high";
 
@@ -64,6 +64,8 @@ export class LlmError extends Error {
     readonly task: LlmTask,
     message: string,
     readonly provider: string | null = null,
+    /** The HTTP status of the provider's answer, when it gave one: 401 is a rejected key. */
+    readonly status: number | null = null,
   ) {
     super(message);
     this.name = "LlmError";

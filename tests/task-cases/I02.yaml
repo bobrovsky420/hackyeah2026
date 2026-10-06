@@ -1,0 +1,16 @@
+id: I02
+task: inspire
+title: Inspiracje z innych dziedzin dla młodzieżowej pracowni rowerów
+why: An idea of the case for young people, so the inspirations come from seniors, migrants or disability.
+idea:
+  title: Młodzieżowa pracownia naprawy rowerów w świetlicy wiejskiej
+  description: >-
+    W naszej wsi młodzież po lekcjach nie ma co robić. Chcemy otworzyć w
+    świetlicy pracownię, w której nastolatki pod okiem wolontariusza
+    naprawiają rowery sąsiadów i uczą się majsterkowania.
+  essence: Młodzież uczy się naprawiać i pomaga sąsiadom.
+  for_whom: Nastolatki z małej wsi i ich sąsiedzi.
+  target_groups: [dzieci-mlodziez-rodziny]
+  similar: [inn-nat-wszystko-w-twoich-rekach-warsztaty-konstrukcyjne-3]
+expect:
+  items_min: 1
